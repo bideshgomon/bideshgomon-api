@@ -8,6 +8,7 @@ use App\Models\University;
 use App\Models\Course;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Http; // ✅ For potential API calls (future use)
 
 class PublicPageController extends Controller
 {
@@ -42,6 +43,34 @@ class PublicPageController extends Controller
             'universities' => $universities,
             'degreeLevels' => $degreeLevels,
             'fieldsOfStudy' => $fieldsOfStudy,
+        ]);
+    }
+
+    /**
+     * 🏫 Display details for a specific university.
+     */
+    public function showUniversityDetail(University $university): Response
+    {
+        // Load related data for full details
+        $universityData = $university->load('country', 'courses');
+
+        // Render the University Detail page
+        return Inertia::render('Public/UniversityDetail', [
+            'university' => $universityData,
+        ]);
+    }
+
+    /**
+     * 📘 Display details for a specific course.
+     */
+    public function showCourseDetail(Course $course): Response
+    {
+        // Load related university and its country
+        $courseData = $course->load('university.country');
+
+        // Render the Course Detail page
+        return Inertia::render('Public/CourseDetail', [
+            'course' => $courseData,
         ]);
     }
 }

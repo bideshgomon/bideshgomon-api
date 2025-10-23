@@ -1,44 +1,51 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\GuidanceController;
-use App\Http\Controllers\PublicPageController; // ✅ Added for public pages
-use App\Http\Controllers\Admin\UniversityPageController;
-use App\Http\Controllers\Admin\CoursePageController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+// Controllers
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\GuidanceController;
+use App\Http\Controllers\PublicPageController;
+use App\Http\Controllers\Admin\UniversityPageController;
+use App\Http\Controllers\Admin\CoursePageController;
+use App\Http\Controllers\Admin\JobCategoryPageController; // <-- ADDED FROM MERGE
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you define your application's web routes.
-| These are loaded by the RouteServiceProvider and assigned to the "web" middleware group.
-|
+| These routes handle both public and authenticated sections of
+| the BideshGomon application.
+|--------------------------------------------------------------------------
 */
-
 
 // 🏠 --- PUBLIC ROUTES ---
 Route::get('/', function () {
     return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
+        'canLogin'    => Route::has('login'),
         'canRegister' => Route::has('register'),
     ]);
 })->name('welcome');
 
-// 🎓 University Search (Public)
+// 🎓 University Search & Detail (Public)
 Route::get('/universities', [PublicPageController::class, 'showUniversitySearch'])
     ->name('public.universities.search');
 
-// 📚 Course Search (Public) <-- ADDED FROM MERGE
+Route::get('/universities/{university}', [PublicPageController::class, 'showUniversityDetail'])
+    ->name('public.universities.show'); // ✅ Added detail route
+
+// 📚 Course Search & Detail (Public)
 Route::get('/courses', [PublicPageController::class, 'showCourseSearch'])
     ->name('public.courses.search');
+
+Route::get('/courses/{course}', [PublicPageController::class, 'showCourseDetail'])
+    ->name('public.courses.show'); // ✅ Added detail route
 
 
 // 👤 --- AUTHENTICATED USER ROUTES ---
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Dashboard (for students / consultants)
+    // Dashboard for logged-in users
     Route::get('/dashboard', [GuidanceController::class, 'dashboard'])->name('dashboard');
 
     // Profile Management
@@ -61,6 +68,11 @@ Route::middleware(['auth', 'verified', 'role:admin'])
         Route::get('/courses', [CoursePageController::class, 'index'])->name('courses.index');
         Route::get('/courses/create', [CoursePageController::class, 'create'])->name('courses.create');
         Route::get('/courses/{course}/edit', [CoursePageController::class, 'edit'])->name('courses.edit');
+        
+        // 💼 Job Category Management <-- ADDED FROM MERGE
+        Route::get('/job-categories', [JobCategoryPageController::class, 'index'])->name('job-categories.index');
+        Route::get('/job-categories/create', [JobCategoryPageController::class, 'create'])->name('job-categories.create');
+        Route::get('/job-categories/{jobCategory}/edit', [JobCategoryPageController::class, 'edit'])->name('job-categories.edit');
     });
 
 

@@ -36,6 +36,7 @@ use App\Http\Controllers\Api\Admin\StateController;
 use App\Http\Controllers\Api\Admin\CityController;
 use App\Http\Controllers\Api\Admin\UniversityController;
 use App\Http\Controllers\Api\Admin\CourseController;
+use App\Http\Controllers\Api\Admin\JobCategoryController; // <-- ADDED FROM MERGE
 
 // 👤 User Profile Controllers
 use App\Http\Controllers\Api\UserProfile\UserEducationController;
@@ -63,13 +64,11 @@ Route::get('/search/universities', [PublicSearchController::class, 'searchUniver
 Route::get('/search/courses', [PublicSearchController::class, 'searchCourses'])
     ->name('api.public.search.courses');
 
-// <-- ADDED FROM MERGE -->
 Route::get('/universities/{university}', [PublicSearchController::class, 'showUniversityDetail'])
     ->name('api.public.universities.show'); 
     
 Route::get('/courses/{course}', [PublicSearchController::class, 'showCourseDetail'])
     ->name('api.public.courses.show');
-// <-- END MERGE -->
 
 
 /*
@@ -100,7 +99,6 @@ Route::middleware('auth:sanctum')->group(function () {
         ->name('api.document-types.index');
 
     // 🧑‍🎓 USER PROFILE (CV) ROUTES
-    // This apiResource group is cleaner and replaces the individual routes
     Route::prefix('profile')->name('profile.')->group(function() {
         Route::apiResource('education', UserEducationController::class)->except(['show']);
         Route::apiResource('work-experience', UserWorkExperienceController::class)->except(['show']);
@@ -110,11 +108,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('languages', UserLanguageController::class)->except(['show']);
         Route::apiResource('technical-education', UserTechnicalEducationController::class)->except(['show']);
         Route::apiResource('memberships', UserMembershipController::class)->except(['show']);
-        
-        // NOTE: The 'UserExperienceController' and 'UserSkillsController' 
-        // from your original file seemed to be duplicates or older versions.
-        // The `apiResource` routes above are the modern, standard way
-        // and cover the functionality.
     });
 });
 
@@ -125,7 +118,7 @@ Route::middleware('auth:sanctum')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->name('admin.')->group(function () {
+Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->name('api.admin.')->group(function () {
     // Bulk upload for countries
     Route::post('countries/bulk', [CountryController::class, 'bulkUpload'])->name('countries.bulk');
 
@@ -137,4 +130,5 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->name('admin.
     // ✅ NEW ADMIN ENDPOINTS
     Route::apiResource('universities', UniversityController::class);
     Route::apiResource('courses', CourseController::class);
+    Route::apiResource('job-categories', JobCategoryController::class); // <-- ADDED FROM MERGE
 });

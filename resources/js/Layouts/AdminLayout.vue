@@ -11,7 +11,10 @@ const adminLinks = [
     { name: 'Dashboard', href: '#', current: currentRoute.startsWith('/admin/dashboard') },
     { name: 'Universities', href: route('admin.universities.index'), current: currentRoute.startsWith('/admin/universities') },
     { name: 'Courses', href: route('admin.courses.index'), current: currentRoute.startsWith('/admin/courses') },
-    { name: 'Manage Users', href: '#', current: currentRoute.startsWith('/admin/users') },
+    // --- ADDED ---
+    { name: 'Job Categories', href: route('admin.job-categories.index'), current: currentRoute.startsWith('/admin/job-categories') }, 
+    // --- MODIFIED ---
+    { name: 'Manage Users', href: '#', current: false }, 
 ];
 
 // --- Flash message logic ---
@@ -34,7 +37,6 @@ watch(
 
 <template>
     <AuthenticatedLayout>
-        <!-- ✅ Flash Success -->
         <div
             v-if="showFlash && flash.success"
             class="fixed top-20 right-5 z-50 p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 shadow"
@@ -43,7 +45,6 @@ watch(
             <span class="font-medium">Success!</span> {{ flash.success }}
         </div>
 
-        <!-- ⚠️ Flash Error -->
         <div
             v-if="showFlash && flash.error"
             class="fixed top-20 right-5 z-50 p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 shadow"
@@ -56,7 +57,6 @@ watch(
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <div class="lg:grid lg:grid-cols-12 lg:gap-x-5">
 
-                    <!-- 🧭 Sidebar -->
                     <aside class="py-6 px-2 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">
                         <nav class="space-y-1">
                             <Link
@@ -76,7 +76,6 @@ watch(
                         </nav>
                     </aside>
 
-                    <!-- 📦 Main content slot -->
                     <div class="space-y-6 sm:px-6 lg:px-0 lg:col-span-9">
                         <slot />
                     </div>

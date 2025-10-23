@@ -83,7 +83,7 @@ const formatCurrency = (value) => {
                                     placeholder="e.g., Computer Science"
                                 />
                             </div>
-                             <div>
+                            <div>
                                 <label for="university" class="block text-sm font-medium text-gray-700 dark:text-gray-300">University</label>
                                 <select
                                     id="university"
@@ -109,7 +109,7 @@ const formatCurrency = (value) => {
                                     </option>
                                 </select>
                             </div>
-                             <div>
+                            <div>
                                 <label for="field" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Field of Study</label>
                                 <select
                                     id="field"
@@ -129,29 +129,37 @@ const formatCurrency = (value) => {
                         </div>
 
                         <div v-else>
-                             <div v-if="courses.data.length === 0 && firstLoadComplete" class="text-center py-10 text-gray-500 dark:text-gray-400">
+                            <div v-if="courses.data.length === 0 && firstLoadComplete" class="text-center py-10 text-gray-500 dark:text-gray-400">
                                 No courses found matching your criteria.
                             </div>
+                            
                             <div v-else class="space-y-4">
-                                <div v-for="course in courses.data" :key="course.id" class="border dark:border-gray-700 rounded-lg p-4 shadow">
-                                     <h3 class="font-semibold text-lg">{{ course.name }}</h3>
-                                     <p class="text-sm text-gray-600 dark:text-gray-400">
-                                         <Link :href="route('public.universities.search', { search: course.university.name })" class="hover:underline text-brand-primary">
-                                            {{ course.university.name }}
-                                        </Link>
+                                <Link
+                                    v-for="course in courses.data"
+                                    :key="course.id"
+                                    :href="route('public.courses.show', course.id)"
+                                    class="block border dark:border-gray-700 rounded-lg p-4 shadow hover:shadow-md hover:border-brand-primary dark:hover:border-blue-500 transition-all duration-200"
+                                >
+                                    <h3 class="font-semibold text-lg text-brand-primary dark:text-blue-400">{{ course.name }}</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                                        <span @click.stop> 
+                                            <Link :href="route('public.universities.show', course.university.id)" class="hover:underline">
+                                                {{ course.university.name }}
+                                            </Link>
+                                        </span>
                                         - {{ course.university.city }}, {{ course.university.country.name }}
-                                     </p>
-                                     <div class="mt-2 text-sm text-gray-800 dark:text-gray-300 flex flex-wrap gap-x-4 gap-y-1">
-                                         <span><strong>Level:</strong> {{ course.degree_level }}</span>
-                                         <span><strong>Field:</strong> {{ course.field_of_study }}</span>
-                                         <span v-if="course.duration_years"><strong>Duration:</strong> {{ course.duration_years }} years</span>
-                                         <span v-if="course.tuition_fee"><strong>Tuition:</strong> {{ formatCurrency(course.tuition_fee) }}/year</span>
-                                         <span v-if="course.application_deadline"><strong>Apply by:</strong> {{ course.application_deadline }}</span>
-                                     </div>
-                                     <p v-if="course.description" class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                                         {{ course.description.substring(0, 150) }}{{ course.description.length > 150 ? '...' : '' }}
-                                     </p>
-                                     </div>
+                                    </p>
+                                    <div class="mt-2 text-sm text-gray-800 dark:text-gray-300 flex flex-wrap gap-x-4 gap-y-1">
+                                        <span><strong>Level:</strong> {{ course.degree_level }}</span>
+                                        <span><strong>Field:</strong> {{ course.field_of_study }}</span>
+                                        <span v-if="course.duration_years"><strong>Duration:</strong> {{ course.duration_years }} years</span>
+                                        <span v-if="course.tuition_fee"><strong>Tuition:</strong> {{ formatCurrency(course.tuition_fee) }}/year</span>
+                                        <span v-if="course.application_deadline"><strong>Apply by:</strong> {{ course.application_deadline }}</span>
+                                    </div>
+                                    <p v-if="course.description" class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                        {{ course.description.substring(0, 150) }}{{ course.description.length > 150 ? '...' : '' }}
+                                    </p>
+                                </Link> 
                             </div>
                         </div>
 
