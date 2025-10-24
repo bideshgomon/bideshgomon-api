@@ -8,7 +8,7 @@ use App\Models\University;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class CoursePageController extends Controller
+class CourseController extends Controller
 {
     /**
      * Display the list of courses.

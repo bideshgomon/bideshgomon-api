@@ -1,6 +1,5 @@
-import './bootstrap'; // <-- MUST BE FIRST
+import './bootstrap';
 import '../css/app.css';
-import '../css/custom-style.css'; // <-- This is our new line
 
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
@@ -11,11 +10,12 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
+    // This is the crucial part. It finds and loads your .vue files.
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
             .use(plugin)
-            .use(ZiggyVue)
+            .use(ZiggyVue) // Make sure Ziggy is used
             .mount(el);
     },
     progress: {

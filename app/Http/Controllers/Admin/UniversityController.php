@@ -8,7 +8,7 @@ use App\Models\Country;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class UniversityPageController extends Controller
+class UniversityController extends Controller
 {
     /**
      * Display the list of universities.

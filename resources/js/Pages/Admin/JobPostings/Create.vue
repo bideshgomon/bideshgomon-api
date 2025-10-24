@@ -1,199 +1,225 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import TextareaInput from '@/Components/TextareaInput.vue';
-import Checkbox from '@/Components/Checkbox.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
+import InputError from '@/Components/InputError.vue';
+import Checkbox from '@/Components/Checkbox.vue';
+import Textarea from '@/Components/Textarea.vue'; // We created this earlier
+import SelectInput from '@/Components/SelectInput.vue'; // Need to create this
 
-const props = defineProps({
-    categories: Array,
-    countries: Array,
+defineProps({
+    categories: Array, // Passed from JobController@create
 });
 
 const form = useForm({
-    job_category_id: null,
-    country_id: null,
+    job_category_id: '',
     title: '',
-    company_name: '',
-    location_city: '',
-    employment_type: 'Full-time',
     description: '',
-    responsibilities: '',
-    qualifications: '',
-    skills_required: '',
-    salary_min: '',
-    salary_max: '',
-    salary_currency: 'USD',
-    salary_period: 'Yearly',
+    company_name: '',
+    location: '',
+    salary_range: '',
+    employment_type: 'Full-time', // Default value
+    experience_level: '',
+    requirements: '', // Will be handled as JSON/Array later if needed
+    responsibilities: '', // Will be handled as JSON/Array later if needed
     apply_url: '',
-    posting_date: new Date().toISOString().split('T')[0], // Default to today
-    closing_date: '',
-    status: 'active',
-    is_featured: false,
+    is_active: true,
 });
 
 const submit = () => {
-    form.post(route('api.admin.job-postings.store'), {
-        onSuccess: () => form.reset(), // Consider resetting specific fields only
+    form.post(route('admin.jobs.store'), {
+        onSuccess: () => form.reset(),
+        // Consider handling requirements/responsibilities array conversion here if needed
     });
 };
 
 const employmentTypes = ['Full-time', 'Part-time', 'Contract', 'Temporary', 'Internship'];
-const salaryPeriods = ['Hourly', 'Weekly', 'Monthly', 'Yearly'];
-const statuses = ['active', 'expired', 'filled'];
+const experienceLevels = ['Entry-level', 'Mid-level', 'Senior-level', 'Manager', 'Executive'];
 
 </script>
 
 <template>
-    <Head title="Add Job Posting" />
+    <Head title="Create Job Posting" />
 
     <AdminLayout>
-        <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-            <section>
-                <header class="mb-6">
-                    <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Add New Job Posting</h2>
-                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Enter details for the new job opportunity.</p>
-                </header>
+        <template #header>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                Create Job Posting
+            </h2>
+        </template>
 
-                <form @submit.prevent="submit" class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <InputLabel for="title" value="Job Title" />
-                            <TextInput id="title" type="text" class="mt-1 block w-full" v-model="form.title" required autofocus />
-                            <InputError class="mt-2" :message="form.errors.title" />
-                        </div>
-                        <div>
-                            <InputLabel for="company_name" value="Company Name" />
-                            <TextInput id="company_name" type="text" class="mt-1 block w-full" v-model="form.company_name" required />
-                            <InputError class="mt-2" :message="form.errors.company_name" />
-                        </div>
-                    </div>
+        <div class="py-12">
+            <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 md:p-8 bg-white border-b border-gray-200">
+                        <form @submit.prevent="submit">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <InputLabel for="title" value="Job Title" />
+                                    <TextInput
+                                        id="title"
+                                        type="text"
+                                        class="mt-1 block w-full"
+                                        v-model="form.title"
+                                        required
+                                        autofocus
+                                    />
+                                    <InputError class="mt-2" :message="form.errors.title" />
+                                </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                         <div>
-                            <InputLabel for="job_category_id" value="Job Category" />
-                            <select id="job_category_id" v-model="form.job_category_id" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 rounded-md shadow-sm">
-                                <option :value="null">Select Category (Optional)</option>
-                                <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
-                            </select>
-                            <InputError class="mt-2" :message="form.errors.job_category_id" />
-                        </div>
-                        <div>
-                            <InputLabel for="country_id" value="Country" />
-                            <select id="country_id" v-model="form.country_id" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 rounded-md shadow-sm">
-                                 <option :value="null">Select Country (Optional)</option>
-                                <option v-for="country in countries" :key="country.id" :value="country.id">{{ country.name }}</option>
-                            </select>
-                            <InputError class="mt-2" :message="form.errors.country_id" />
-                        </div>
-                         <div>
-                            <InputLabel for="location_city" value="City (Optional)" />
-                            <TextInput id="location_city" type="text" class="mt-1 block w-full" v-model="form.location_city" />
-                            <InputError class="mt-2" :message="form.errors.location_city" />
-                        </div>
-                    </div>
+                                <div>
+                                    <InputLabel for="job_category_id" value="Job Category" />
+                                    <SelectInput
+                                        id="job_category_id"
+                                        class="mt-1 block w-full"
+                                        v-model="form.job_category_id"
+                                        required
+                                    >
+                                        <option value="" disabled>Select a category</option>
+                                        <option v-for="category in categories" :key="category.id" :value="category.id">
+                                            {{ category.name }}
+                                        </option>
+                                    </SelectInput>
+                                    <InputError class="mt-2" :message="form.errors.job_category_id" />
+                                </div>
 
-                    <div>
-                        <InputLabel for="employment_type" value="Employment Type" />
-                        <select id="employment_type" v-model="form.employment_type" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 rounded-md shadow-sm">
-                            <option v-for="type in employmentTypes" :key="type" :value="type">{{ type }}</option>
-                        </select>
-                        <InputError class="mt-2" :message="form.errors.employment_type" />
-                    </div>
+                                <div>
+                                    <InputLabel for="company_name" value="Company Name" />
+                                    <TextInput
+                                        id="company_name"
+                                        type="text"
+                                        class="mt-1 block w-full"
+                                        v-model="form.company_name"
+                                    />
+                                    <InputError class="mt-2" :message="form.errors.company_name" />
+                                </div>
 
-                    <div>
-                        <InputLabel for="description" value="Job Description" />
-                        <TextareaInput id="description" class="mt-1 block w-full" v-model="form.description" rows="5" required />
-                        <InputError class="mt-2" :message="form.errors.description" />
-                    </div>
-                     <div>
-                        <InputLabel for="responsibilities" value="Responsibilities (Optional)" />
-                        <TextareaInput id="responsibilities" class="mt-1 block w-full" v-model="form.responsibilities" rows="3" />
-                        <InputError class="mt-2" :message="form.errors.responsibilities" />
-                    </div>
-                     <div>
-                        <InputLabel for="qualifications" value="Qualifications (Optional)" />
-                        <TextareaInput id="qualifications" class="mt-1 block w-full" v-model="form.qualifications" rows="3" />
-                        <InputError class="mt-2" :message="form.errors.qualifications" />
-                    </div>
-                     <div>
-                        <InputLabel for="skills_required" value="Skills Required (Optional, comma-separated)" />
-                        <TextInput id="skills_required" type="text" class="mt-1 block w-full" v-model="form.skills_required" />
-                        <InputError class="mt-2" :message="form.errors.skills_required" />
-                    </div>
+                                <div>
+                                    <InputLabel for="location" value="Location" />
+                                    <TextInput
+                                        id="location"
+                                        type="text"
+                                        class="mt-1 block w-full"
+                                        v-model="form.location"
+                                        placeholder="e.g., Dhaka, Bangladesh or Remote"
+                                    />
+                                    <InputError class="mt-2" :message="form.errors.location" />
+                                </div>
 
-                    <div class="border-t dark:border-gray-700 pt-6">
-                        <h3 class="text-md font-medium text-gray-900 dark:text-gray-100 mb-2">Salary Information (Optional)</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                            <div>
-                                <InputLabel for="salary_min" value="Min Salary" />
-                                <TextInput id="salary_min" type="number" step="0.01" class="mt-1 block w-full" v-model="form.salary_min" />
-                                <InputError class="mt-2" :message="form.errors.salary_min" />
+                                <div>
+                                    <InputLabel for="salary_range" value="Salary Range (Optional)" />
+                                    <TextInput
+                                        id="salary_range"
+                                        type="text"
+                                        class="mt-1 block w-full"
+                                        v-model="form.salary_range"
+                                        placeholder="e.g., $50k - $70k per year"
+                                    />
+                                    <InputError class="mt-2" :message="form.errors.salary_range" />
+                                </div>
+                                
+                                <div>
+                                    <InputLabel for="apply_url" value="Apply URL / Email (Optional)" />
+                                    <TextInput
+                                        id="apply_url"
+                                        type="text"
+                                        class="mt-1 block w-full"
+                                        v-model="form.apply_url"
+                                        placeholder="Link or email address for applications"
+                                    />
+                                    <InputError class="mt-2" :message="form.errors.apply_url" />
+                                </div>
+
+
+                                <div>
+                                    <InputLabel for="employment_type" value="Employment Type" />
+                                    <SelectInput
+                                        id="employment_type"
+                                        class="mt-1 block w-full"
+                                        v-model="form.employment_type"
+                                        required
+                                    >
+                                        <option v-for="type in employmentTypes" :key="type" :value="type">
+                                            {{ type }}
+                                        </option>
+                                    </SelectInput>
+                                    <InputError class="mt-2" :message="form.errors.employment_type" />
+                                </div>
+
+                                <div>
+                                    <InputLabel for="experience_level" value="Experience Level (Optional)" />
+                                     <SelectInput
+                                        id="experience_level"
+                                        class="mt-1 block w-full"
+                                        v-model="form.experience_level"
+                                    >
+                                        <option value="" >Select level (optional)</option>
+                                        <option v-for="level in experienceLevels" :key="level" :value="level">
+                                            {{ level }}
+                                        </option>
+                                    </SelectInput>
+                                    <InputError class="mt-2" :message="form.errors.experience_level" />
+                                </div>
+
+                                <div class="md:col-span-2">
+                                    <InputLabel for="description" value="Job Description" />
+                                    <Textarea
+                                        id="description"
+                                        class="mt-1 block w-full"
+                                        v-model="form.description"
+                                        rows="6"
+                                    />
+                                    <InputError class="mt-2" :message="form.errors.description" />
+                                </div>
+
+                                <div class="md:col-span-2">
+                                    <InputLabel for="requirements" value="Requirements (Optional)" />
+                                    <Textarea
+                                        id="requirements"
+                                        class="mt-1 block w-full"
+                                        v-model="form.requirements"
+                                        rows="4"
+                                        placeholder="List key requirements, one per line (optional)"
+                                    />
+                                    <InputError class="mt-2" :message="form.errors.requirements" />
+                                </div>
+
+                                <div class="md:col-span-2">
+                                    <InputLabel for="responsibilities" value="Responsibilities (Optional)" />
+                                    <Textarea
+                                        id="responsibilities"
+                                        class="mt-1 block w-full"
+                                        v-model="form.responsibilities"
+                                        rows="4"
+                                        placeholder="List key responsibilities, one per line (optional)"
+                                    />
+                                    <InputError class="mt-2" :message="form.errors.responsibilities" />
+                                </div>
+
+                                <div class="md:col-span-2 block">
+                                    <label class="flex items-center">
+                                        <Checkbox name="is_active" v-model:checked="form.is_active" />
+                                        <span class="ms-2 text-sm text-gray-600">Active (Visible on public site)</span>
+                                    </label>
+                                    <InputError class="mt-2" :message="form.errors.is_active" />
+                                </div>
+
                             </div>
-                             <div>
-                                <InputLabel for="salary_max" value="Max Salary" />
-                                <TextInput id="salary_max" type="number" step="0.01" class="mt-1 block w-full" v-model="form.salary_max" />
-                                <InputError class="mt-2" :message="form.errors.salary_max" />
-                            </div>
-                             <div>
-                                <InputLabel for="salary_currency" value="Currency" />
-                                <TextInput id="salary_currency" type="text" class="mt-1 block w-full" v-model="form.salary_currency" placeholder="e.g., USD" />
-                                <InputError class="mt-2" :message="form.errors.salary_currency" />
-                            </div>
-                            <div>
-                                <InputLabel for="salary_period" value="Period" />
-                                <select id="salary_period" v-model="form.salary_period" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 rounded-md shadow-sm">
-                                    <option v-for="period in salaryPeriods" :key="period" :value="period">{{ period }}</option>
-                                </select>
-                                <InputError class="mt-2" :message="form.errors.salary_period" />
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="border-t dark:border-gray-700 pt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-                         <div>
-                            <InputLabel for="apply_url" value="Apply URL (Optional)" />
-                            <TextInput id="apply_url" type="url" class="mt-1 block w-full" v-model="form.apply_url" placeholder="https://..." />
-                            <InputError class="mt-2" :message="form.errors.apply_url" />
-                        </div>
-                        <div>
-                            <InputLabel for="posting_date" value="Posting Date (Optional)" />
-                            <TextInput id="posting_date" type="date" class="mt-1 block w-full" v-model="form.posting_date" />
-                            <InputError class="mt-2" :message="form.errors.posting_date" />
-                        </div>
-                         <div>
-                            <InputLabel for="closing_date" value="Closing Date (Optional)" />
-                            <TextInput id="closing_date" type="date" class="mt-1 block w-full" v-model="form.closing_date" />
-                            <InputError class="mt-2" :message="form.errors.closing_date" />
-                        </div>
+                            <div class="flex items-center justify-end mt-6">
+                                <Link :href="route('admin.jobs.index')" class="text-sm text-gray-600 hover:text-gray-900 underline mr-4">
+                                    Cancel
+                                </Link>
+                                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                                    Create Job
+                                </PrimaryButton>
+                            </div>
+                        </form>
                     </div>
-
-                     <div class="border-t dark:border-gray-700 pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                         <div>
-                            <InputLabel for="status" value="Status" />
-                            <select id="status" v-model="form.status" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 rounded-md shadow-sm">
-                                <option v-for="s in statuses" :key="s" :value="s" class="capitalize">{{ s }}</option>
-                            </select>
-                            <InputError class="mt-2" :message="form.errors.status" />
-                        </div>
-                         <div class="flex items-center pt-6">
-                            <label class="flex items-center">
-                                <Checkbox name="is_featured" v-model:checked="form.is_featured" />
-                                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">Featured Job</span>
-                            </label>
-                            <InputError class="mt-2" :message="form.errors.is_featured" />
-                        </div>
-                    </div>
-
-                    <div class="flex items-center gap-4 pt-6 border-t dark:border-gray-700">
-                        <PrimaryButton :disabled="form.processing">{{ form.processing ? 'Saving...' : 'Save Job Posting' }}</PrimaryButton>
-                        <Link :href="route('admin.job-postings.index')" class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-25 transition ease-in-out duration-150">Cancel</Link>
-                    </div>
-                </form>
-            </section>
+                </div>
+            </div>
         </div>
     </AdminLayout>
 </template>

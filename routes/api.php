@@ -2,35 +2,19 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\User;
+// Removed unused App\Models\User import
 
-// --- TEMPORARY TEST ROUTE ---
-Route::get('/get-admin-token', function () {
-    $user = User::where('email', 'admin@bideshgomon.com')->first();
-    if (!$user) {
-        return response()->json(['message' => 'Admin user not found. Please run: php artisan migrate:fresh --seed'], 404);
-    }
-    $user->tokens()->delete();
-    $token = $user->createToken('postman-test-token');
-    return response()->json([
-        'message' => 'Use this token in your "Authorization" header',
-        'token' => $token->plainTextToken,
-    ]);
-});
-// ------------------------------
-
-
-// --- IMPORT ALL CONTROLLERS ---
+// --- CONTROLLER IMPORTS ---
 
 // Auth + Shared
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PrebuiltDataController;
 use App\Http\Controllers\Api\DocumentTypeController;
 
-// 🧭 Public Search
+// Public Search
 use App\Http\Controllers\Api\PublicSearchController;
 
-// 🏛️ Admin Controllers
+// Admin Controllers
 use App\Http\Controllers\Api\Admin\CountryController;
 use App\Http\Controllers\Api\Admin\StateController;
 use App\Http\Controllers\Api\Admin\CityController;
@@ -39,10 +23,9 @@ use App\Http\Controllers\Api\Admin\CourseController;
 use App\Http\Controllers\Api\Admin\JobCategoryController;
 use App\Http\Controllers\Api\Admin\JobPostingController;
 
-// 👤 User Profile Controllers
+// User Profile Controllers (ensure namespaces match your project, e.g., App\Http\Controllers\Profile\*)
+// Assuming the controllers exist in the specified Api\UserProfile namespace
 use App\Http\Controllers\Api\UserProfile\UserEducationController;
-use App\Http\Controllers\Api\UserProfile\UserExperienceController;
-use App\Http\Controllers\Api\UserProfile\UserSkillsController;
 use App\Http\Controllers\Api\UserProfile\UserPortfolioController;
 use App\Http\Controllers\Api\UserProfile\UserDocumentController;
 use App\Http\Controllers\Api\UserProfile\UserWorkExperienceController;
@@ -55,85 +38,85 @@ use App\Http\Controllers\Api\UserProfile\UserMembershipController;
 
 /*
 |--------------------------------------------------------------------------
-| PUBLIC SEARCH ROUTES
+| PUBLIC API ROUTES (No Authentication Required)
 |--------------------------------------------------------------------------
 */
 
+// Public Search Routes
 Route::get('/search/universities', [PublicSearchController::class, 'searchUniversities'])
     ->name('api.public.search.universities');
 
 Route::get('/search/courses', [PublicSearchController::class, 'searchCourses'])
     ->name('api.public.search.courses');
 
+Route::get('/search/jobs', [PublicSearchController::class, 'searchJobPostings'])
+    ->name('api.public.search.jobs'); // Renamed from job-postings for consistency
+
+// Public Detail Routes
 Route::get('/universities/{university}', [PublicSearchController::class, 'showUniversityDetail'])
-    ->name('api.public.universities.show'); 
-    
+    ->name('api.public.universities.show');
+
 Route::get('/courses/{course}', [PublicSearchController::class, 'showCourseDetail'])
     ->name('api.public.courses.show');
 
-// --- ADDED FROM MERGE ---
-Route::get('/search/jobs', [PublicSearchController::class, 'searchJobPostings'])->name('api.public.search.jobs');
+// Public Auth Routes (Register/Login)
+Route::post('/register', [AuthController::class, 'register'])->name('api.public.register'); // Added name
+Route::post('/login', [AuthController::class, 'login'])->name('api.public.login'); // Added name
 
 
 /*
 |--------------------------------------------------------------------------
-| AUTHENTICATED ROUTES
+| AUTHENTICATED API ROUTES (Require 'auth:sanctum' Middleware)
 |--------------------------------------------------------------------------
 */
+Route::middleware(['auth:sanctum'])->group(function () {
 
-// Default authenticated user route
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user()->load('role'); // Eager load role
-})->name('api.user');
+    // Get Authenticated User Details
+    Route::get('/user', function (Request $request) {
+        return $request->user()->load('role'); // Eager load role
+    })->name('api.user'); // Consistent name
 
+    // General Authenticated Routes
+    Route::get('/me', [AuthController::class, 'me'])->name('api.me'); // Added name
+    Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout'); // Added name
+    Route::get('/prebuilt-data', [PrebuiltDataController::class, 'getAll'])->name('api.prebuilt-data'); // Added name
 
-// --- PUBLIC AUTH ROUTES ---
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
-
-
-// --- PROTECTED ROUTES ---
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/me', [AuthController::class, 'me']);
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/prebuilt-data', [PrebuiltDataController::class, 'getAll']);
-
-    // 📄 Document Types
+    // Document Types (Authenticated)
     Route::get('/document-types', [DocumentTypeController::class, 'index'])
         ->name('api.document-types.index');
 
-    // 🧑‍🎓 USER PROFILE (CV) ROUTES
-    Route::prefix('profile')->name('profile.')->group(function() {
-        Route::apiResource('education', UserEducationController::class)->except(['show']);
+    // User Profile API Resources (Already Prefixed & Named Correctly)
+    Route::prefix('profile')->name('api.profile.')->group(function() { // Name includes 'api.' prefix
+        Route::apiResource('educations', UserEducationController::class)->except(['show']);
+        // Note: Check if 'work-experience' or 'experiences' should be used based on your model/controller
         Route::apiResource('work-experience', UserWorkExperienceController::class)->except(['show']);
         Route::apiResource('documents', UserDocumentController::class)->only(['index', 'store', 'destroy']);
-        Route::apiResource('skills', UserSkillController::class)->only(['index', 'store', 'destroy']);
+        Route::apiResource('skills', UserSkillController::class)->only(['index', 'store', 'destroy']); // Changed from post/delete to apiResource
         Route::apiResource('licenses', UserLicenseController::class)->except(['show']);
         Route::apiResource('languages', UserLanguageController::class)->except(['show']);
         Route::apiResource('technical-education', UserTechnicalEducationController::class)->except(['show']);
         Route::apiResource('memberships', UserMembershipController::class)->except(['show']);
+        Route::apiResource('portfolios', UserPortfolioController::class)->except(['show']); // Included from fix
     });
-});
 
+    /*
+    |--------------------------------------------------------------------------
+    | ADMIN-ONLY API ROUTES (Require 'auth:sanctum' and 'role:admin' Middleware)
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('admin')->middleware(['role:admin'])->name('api.admin.')->group(function () { // Name includes 'api.' prefix
+        // Bulk upload for countries
+        Route::post('countries/bulk', [CountryController::class, 'bulkUpload'])->name('countries.bulk');
 
-/*
-|--------------------------------------------------------------------------
-| ADMIN-ONLY PROTECTED ROUTES
-|--------------------------------------------------------------------------
-*/
+        // Admin CRUD API routes
+        Route::apiResource('countries', CountryController::class);
+        Route::apiResource('states', StateController::class);
+        Route::apiResource('cities', CityController::class);
+        Route::apiResource('universities', UniversityController::class);
+        Route::apiResource('courses', CourseController::class);
+        Route::apiResource('job-categories', JobCategoryController::class);
+        Route::apiResource('job-postings', JobPostingController::class);
+        // Add other admin-specific API routes here if needed
+    });
 
-Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->name('api.admin.')->group(function () {
-    // Bulk upload for countries
-    Route::post('countries/bulk', [CountryController::class, 'bulkUpload'])->name('countries.bulk');
-
-    // CRUD routes
-    Route::apiResource('countries', CountryController::class);
-    Route::apiResource('states', StateController::class);
-    Route::apiResource('cities', CityController::class);
-
-    // ✅ NEW ADMIN ENDPOINTS
-    Route::apiResource('universities', UniversityController::class);
-    Route::apiResource('courses', CourseController::class);
-    Route::apiResource('job-categories', JobCategoryController::class);
-    Route::apiResource('job-postings', JobPostingController::class);
-});
+}); // End of auth:sanctum middleware group

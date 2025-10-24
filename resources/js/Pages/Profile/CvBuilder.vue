@@ -2,7 +2,7 @@
 import ProfileLayout from '@/Layouts/ProfileLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { BriefcaseIcon, AcademicCapIcon, SparklesIcon, UserCircleIcon, DocumentTextIcon } from '@heroicons/vue/24/outline';
-import SectionBorder from '@/Components/SectionBorder.vue';
+// The unused 'SectionBorder' import has been removed.
 
 defineProps({
     user: Object,
@@ -48,7 +48,8 @@ const getInitials = (name) => {
                     >
                         Download PDF
                     </a>
-                    </div>
+
+                </div>
 
                 <div class="bg-white shadow-xl sm:rounded-lg p-8 md:p-12">
                     <div class="flex items-center mb-8">

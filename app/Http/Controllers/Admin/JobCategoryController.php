@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\Rule;
 
-class JobCategoryPageController extends Controller
+class JobCategoryController extends Controller
 {
     /**
      * Display the list of job categories.

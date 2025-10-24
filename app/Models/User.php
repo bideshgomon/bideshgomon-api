@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-// Traits are correctly included
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable, SoftDeletes;
@@ -30,6 +29,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'phone',
         'avatar',
         'is_active',
+        // --- ADD SKILLS HERE IF IT'S NOT ALREADY ---
+        'skills',
     ];
 
     /**
@@ -49,15 +50,14 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected function casts(): array
     {
-        // 'skills' is correctly NOT cast here, aligning with the relationship approach
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            // --- THIS IS THE FIX ---
+            'skills' => 'array',
         ];
     }
-
-    // --- Relationships ---
 
     /**
      * Get the role associated with the user.
@@ -65,6 +65,14 @@ class User extends Authenticatable implements MustVerifyEmail
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
+    }
+
+    /**
+     * Check if the user has a specific role.
+     */
+    public function hasRole(string $roleName): bool
+    {
+        return $this->role?->name === $roleName;
     }
 
     /**
@@ -88,16 +96,17 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function experiences(): HasMany
     {
-        // Assuming UserExperience is the intended model
         return $this->hasMany(UserExperience::class);
     }
 
     /**
-     * The skills that belong to the user (Many-to-Many).
+     * The skills that belong to the user.
+     * --- THIS RELATIONSHIP MUST HAVE A DIFFERENT NAME ---
+     * --- BECAUSE 'skills' IS ALREADY A COLUMN. ---
+     * --- We will rename it to 'skillSet' ---
      */
-    public function skills(): BelongsToMany
+    public function skillSet(): BelongsToMany
     {
-        // Correctly defined BelongsToMany relationship
         return $this->belongsToMany(Skill::class, 'user_skill');
     }
 
@@ -117,18 +126,27 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(UserPortfolio::class);
     }
 
-    // --- Helper Methods ---
-
     /**
-     * Check if the user has a specific role.
+     * Get the consultant profile associated with the user (if they are a consultant).
      */
-    public function hasRole(string $roleName): bool
+    public function consultantProfile(): HasOne
     {
-        // Correctly uses the nullsafe operator and checks the name property
-        return $this->role?->name === $roleName;
+        return $this->hasOne(ConsultantProfile::class);
     }
 
-    // ---
-    // Confirmed: There is NO 'getSkillsAttribute' method present.
-    // ---
+    /**
+     * Get the appointments this user has booked (as a client).
+     */
+    public function appointmentsAsClient(): HasMany
+    {
+        return $this->hasMany(Appointment::class, 'user_id');
+    }
+
+    /**
+     * Get the appointments this user is assigned to (as a consultant).
+     */
+    public function appointmentsAsConsultant(): HasMany
+    {
+        return $this->hasMany(Appointment::class, 'consultant_id');
+    }
 }
