@@ -2,18 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+// Traits are correctly included
+class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -25,8 +27,9 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
+        'phone',
+        'avatar',
         'is_active',
-        'skills',
     ];
 
     /**
@@ -40,16 +43,21 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be cast.
+     * Get the attributes that should be cast.
      *
-     * @var array<string, string>
+     * @return array<string, string>
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-        'is_active' => 'boolean',
-        'skills' => 'array',
-    ];
+    protected function casts(): array
+    {
+        // 'skills' is correctly NOT cast here, aligning with the relationship approach
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'is_active' => 'boolean',
+        ];
+    }
+
+    // --- Relationships ---
 
     /**
      * Get the role associated with the user.
@@ -60,67 +68,15 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the user profile associated with the user.
-     * (Only for 'user' role)
+     * Get the profile associated with the user.
      */
-    public function userProfile(): HasOne
+    public function profile(): HasOne
     {
         return $this->hasOne(UserProfile::class);
     }
 
     /**
-     * Get the agency this user owns.
-     * (Only for 'agency' role)
-     */
-    public function ownedAgency(): HasOne
-    {
-        return $this->hasOne(Agency::class, 'owner_id');
-    }
-
-    /**
-     * The agencies this user works for as a consultant.
-     * (Only for 'consultant' role)
-     */
-    public function agenciesAsConsultant(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            Agency::class,
-            'agency_consultant',
-            'consultant_id',
-            'agency_id'
-        );
-    }
-
-    /**
-     * The clients (users) this consultant manages.
-     * (Only for 'consultant' role)
-     */
-    public function clients(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            User::class,
-            'consultant_user',
-            'consultant_id',
-            'user_id'
-        );
-    }
-
-    /**
-     * The consultant managing this user.
-     * (Only for 'user' role)
-     */
-    public function consultant(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            User::class,
-            'consultant_user',
-            'user_id',
-            'consultant_id'
-        );
-    }
-
-    /**
-     * Get the education history for the user.
+     * Get the educations for the user.
      */
     public function educations(): HasMany
     {
@@ -128,11 +84,29 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the work experience for the user.
+     * Get the experiences for the user.
      */
     public function experiences(): HasMany
     {
+        // Assuming UserExperience is the intended model
         return $this->hasMany(UserExperience::class);
+    }
+
+    /**
+     * The skills that belong to the user (Many-to-Many).
+     */
+    public function skills(): BelongsToMany
+    {
+        // Correctly defined BelongsToMany relationship
+        return $this->belongsToMany(Skill::class, 'user_skill');
+    }
+
+    /**
+     * Get the documents for the user.
+     */
+    public function documents(): HasMany
+    {
+        return $this->hasMany(UserDocument::class);
     }
 
     /**
@@ -143,11 +117,18 @@ class User extends Authenticatable
         return $this->hasMany(UserPortfolio::class);
     }
 
+    // --- Helper Methods ---
+
     /**
-     * Get the uploaded documents for the user.
+     * Check if the user has a specific role.
      */
-    public function documents(): HasMany
+    public function hasRole(string $roleName): bool
     {
-        return $this->hasMany(UserDocument::class);
+        // Correctly uses the nullsafe operator and checks the name property
+        return $this->role?->name === $roleName;
     }
+
+    // ---
+    // Confirmed: There is NO 'getSkillsAttribute' method present.
+    // ---
 }

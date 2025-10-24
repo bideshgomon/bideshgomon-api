@@ -8,12 +8,13 @@ const currentRoute = usePage().url;
 
 // Sidebar links for admin
 const adminLinks = [
-    { name: 'Dashboard', href: '#', current: currentRoute.startsWith('/admin/dashboard') },
+    // --- MODIFIED ---
+    { name: 'Dashboard', href: route('admin.dashboard'), current: currentRoute === '/admin' || currentRoute.startsWith('/admin/dashboard') },
+    // ---
     { name: 'Universities', href: route('admin.universities.index'), current: currentRoute.startsWith('/admin/universities') },
     { name: 'Courses', href: route('admin.courses.index'), current: currentRoute.startsWith('/admin/courses') },
-    // --- ADDED ---
-    { name: 'Job Categories', href: route('admin.job-categories.index'), current: currentRoute.startsWith('/admin/job-categories') }, 
-    // --- MODIFIED ---
+    { name: 'Job Categories', href: route('admin.job-categories.index'), current: currentRoute.startsWith('/admin/job-categories') },
+    { name: 'Job Postings', href: route('admin.job-postings.index'), current: currentRoute.startsWith('/admin/job-postings') }, 
     { name: 'Manage Users', href: '#', current: false }, 
 ];
 

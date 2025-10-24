@@ -36,7 +36,8 @@ use App\Http\Controllers\Api\Admin\StateController;
 use App\Http\Controllers\Api\Admin\CityController;
 use App\Http\Controllers\Api\Admin\UniversityController;
 use App\Http\Controllers\Api\Admin\CourseController;
-use App\Http\Controllers\Api\Admin\JobCategoryController; // <-- ADDED FROM MERGE
+use App\Http\Controllers\Api\Admin\JobCategoryController;
+use App\Http\Controllers\Api\Admin\JobPostingController;
 
 // 👤 User Profile Controllers
 use App\Http\Controllers\Api\UserProfile\UserEducationController;
@@ -69,6 +70,9 @@ Route::get('/universities/{university}', [PublicSearchController::class, 'showUn
     
 Route::get('/courses/{course}', [PublicSearchController::class, 'showCourseDetail'])
     ->name('api.public.courses.show');
+
+// --- ADDED FROM MERGE ---
+Route::get('/search/jobs', [PublicSearchController::class, 'searchJobPostings'])->name('api.public.search.jobs');
 
 
 /*
@@ -130,5 +134,6 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->name('api.ad
     // ✅ NEW ADMIN ENDPOINTS
     Route::apiResource('universities', UniversityController::class);
     Route::apiResource('courses', CourseController::class);
-    Route::apiResource('job-categories', JobCategoryController::class); // <-- ADDED FROM MERGE
+    Route::apiResource('job-categories', JobCategoryController::class);
+    Route::apiResource('job-postings', JobPostingController::class);
 });

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Country;
 use App\Models\University;
 use App\Models\Course;
+use App\Models\JobCategory; // <-- Included from merge
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Http; // ✅ For potential API calls (future use)
@@ -71,6 +72,21 @@ class PublicPageController extends Controller
         // Render the Course Detail page
         return Inertia::render('Public/CourseDetail', [
             'course' => $courseData,
+        ]);
+    }
+
+    /**
+     * Display the public job search page.
+     */
+    public function showJobSearch(): Response // <-- Included from merge
+    {
+        // Fetch data needed for search filters
+        $categories = JobCategory::where('is_active', true)->orderBy('name')->get(['id', 'name']);
+        $countries = Country::orderBy('name')->get(['id', 'name']);
+
+        return Inertia::render('Public/Jobs', [
+            'categories' => $categories,
+            'countries' => $countries,
         ]);
     }
 }

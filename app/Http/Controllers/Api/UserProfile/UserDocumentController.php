@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\UserProfile;
 use App\Http\Controllers\Controller;
 use App\Models\UserDocument;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Storage; // <-- Import Storage facade
 
 class UserDocumentController extends Controller
 {
@@ -63,12 +63,18 @@ class UserDocumentController extends Controller
     public function destroy(Request $request, UserDocument $document)
     {
         // Check if the authenticated user owns this document
-        if ($request->user()->id !== $document->user_id) {
+        // Using Laravel's authorization (Policies are recommended for more complex cases)
+        if ($request->user()->cannot('delete', $document)) {
+             // Or check directly: if ($request->user()->id !== $document->user_id)
             return response()->json(['message' => 'Forbidden'], 403);
         }
 
-        // 1. Delete the file from storage
-        Storage::disk('public')->delete($document->file_path);
+        // --- UPDATED SECTION ---
+        // 1. Delete the file from storage if it exists
+        if ($document->file_path && Storage::disk('public')->exists($document->file_path)) {
+            Storage::disk('public')->delete($document->file_path);
+        }
+        // --- END UPDATED SECTION ---
 
         // 2. Delete the record from the database
         $document->delete();

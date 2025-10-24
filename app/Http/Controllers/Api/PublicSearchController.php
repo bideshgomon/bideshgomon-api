@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\University;
 use App\Models\Course;
+use App\Models\JobPosting; // <-- ADDED
 use Illuminate\Http\Request;
 
 class PublicSearchController extends Controller
@@ -73,7 +74,7 @@ class PublicSearchController extends Controller
     /**
      * Show details for a specific university.
      */
-    public function showUniversityDetail(University $university) // <-- ADDED FROM MERGE
+    public function showUniversityDetail(University $university)
     {
         // Eager load country and the list of courses offered
         return $university->load('country', 'courses');
@@ -82,9 +83,44 @@ class PublicSearchController extends Controller
     /**
      * Show details for a specific course.
      */
-    public function showCourseDetail(Course $course) // <-- ADDED FROM MERGE
+    public function showCourseDetail(Course $course)
     {
         // Eager load the university and the university's country
         return $course->load('university.country');
+    }
+
+    /**
+     * Search for job postings based on filters.
+     */
+    public function searchJobPostings(Request $request) // <-- ADDED THIS METHOD
+    {
+        $query = JobPosting::with(['jobCategory', 'country']) // Eager load relationships
+                           ->where('status', 'active') // Only show active jobs
+                           ->orderBy('is_featured', 'desc') // Show featured first
+                           ->latest(); // Then by newest
+
+        // Filter by Job Category ID
+        if ($request->filled('job_category_id')) {
+            $query->where('job_category_id', $request->input('job_category_id'));
+        }
+
+        // Filter by Country ID
+        if ($request->filled('country_id')) {
+            $query->where('country_id', $request->input('country_id'));
+        }
+
+        // Filter by Search Term (Title, Company, Skills)
+        if ($request->filled('search')) {
+            $searchTerm = $request->input('search');
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('title', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('company_name', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('skills_required', 'LIKE', "%{$searchTerm}%"); // Basic skill search
+            });
+        }
+
+        // Add more filters later (e.g., employment_type, salary range)
+
+        return $query->paginate(15);
     }
 }
