@@ -39,9 +39,7 @@ return [
     // ... other services like mailgun, ses, stripe ...
 
     'gemini' => [
-        'api_key' => env('AIzaSyAdYJkMcvOvrRXh-PgV3hu3Ormp3Op7ur4'),
+        'api_key' => env('GEMINI_API_KEY'), // <- Correct
     ],
 
 ];
-
-

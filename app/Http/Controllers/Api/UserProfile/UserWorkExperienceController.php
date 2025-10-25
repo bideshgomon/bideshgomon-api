@@ -5,71 +5,71 @@ namespace App\Http\Controllers\Api\UserProfile;
 use App\Http\Controllers\Controller;
 use App\Models\UserWorkExperience;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserWorkExperienceController extends Controller
 {
     /**
-     * Display a listing of the user's work experiences.
+     * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        // Fetch only the work experiences belonging to the authenticated user
-        return $request->user()->workExperiences()->with('country')->orderBy('start_date', 'desc')->get();
+        $experiences = Auth::user()->experiences()->orderBy('end_date', 'desc')->get();
+        return response()->json($experiences);
     }
 
     /**
-     * Store a new work experience for the user.
+     * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'company_name' => 'required|string|max:255',
-            'designation' => 'required|string|max:255',
-            'responsibilities' => 'nullable|string',
+            'position' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
-            'is_current' => 'required|boolean',
-            'country_id' => 'nullable|exists:countries,id',
-            'city' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'is_current' => 'boolean',
         ]);
 
-        // Securely create the record associated with the logged-in user
-        $workExperience = $request->user()->workExperiences()->create($validated);
+        $experience = Auth::user()->experiences()->create($validated);
 
-        return response()->json($workExperience->load('country'), 201);
+        return response()->json($experience, 201);
     }
 
     /**
-     * Update the specified work experience.
+     * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, UserWorkExperience $workExperience)
     {
+        // ✅ [SECURITY FIX] Check ownership
+        if ($workExperience->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
         $validated = $request->validate([
             'company_name' => 'required|string|max:255',
-            'designation' => 'required|string|max:255',
-            'responsibilities' => 'nullable|string',
+            'position' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
-            'is_current' => 'required|boolean',
-            'country_id' => 'nullable|exists:countries,id',
-            'city' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'is_current' => 'boolean',
         ]);
 
-        // Find the record *within the user's collection*
-        $workExperience = $request->user()->workExperiences()->findOrFail($id);
-        
         $workExperience->update($validated);
 
-        return response()->json($workExperience->load('country'));
+        return response()->json($workExperience);
     }
 
     /**
-     * Remove the specified work experience.
+     * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, string $id)
+    public function destroy(UserWorkExperience $workExperience)
     {
-        // Find the record *within the user's collection*
-        $workExperience = $request->user()->workExperiences()->findOrFail($id);
+        // ✅ [SECURITY FIX] Check ownership
+        if ($workExperience->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
 
         $workExperience->delete();
 

@@ -6,17 +6,31 @@ use Illuminate\Http\Request;
 use App\Models\Country;
 use App\Models\University;
 use App\Models\Course;
-use App\Models\JobCategory; // <-- Included from merge
+use App\Models\JobCategory;
+use App\Models\JobPosting;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Support\Facades\Http; // ✅ For potential API calls (future use)
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Route; // <-- Add this
 
 class PublicPageController extends Controller
 {
     /**
+     * 🚀 Display the public welcome/home page.
+     * THIS IS THE MISSING METHOD.
+     */
+    public function welcome(): Response
+    {
+        return Inertia::render('Welcome', [
+            'canLogin' => Route::has('login'),
+            'canRegister' => Route::has('register'),
+        ]);
+    }
+
+    /**
      * 🏛 Display the public university search page.
      */
-    public function showUniversitySearch(): Response
+    public function universities(): Response // Renamed from showUniversitySearch
     {
         // Fetch countries for filter dropdown
         $countries = Country::orderBy('name')->get(['id', 'name']);
@@ -30,7 +44,7 @@ class PublicPageController extends Controller
     /**
      * 🎓 Display the public course search page.
      */
-    public function showCourseSearch(): Response
+    public function courses(): Response // Renamed from showCourseSearch
     {
         // Fetch all universities for filters
         $universities = University::orderBy('name')->get(['id', 'name']);
@@ -50,7 +64,7 @@ class PublicPageController extends Controller
     /**
      * 🏫 Display details for a specific university.
      */
-    public function showUniversityDetail(University $university): Response
+    public function universityDetail(University $university): Response // Renamed from showUniversityDetail
     {
         // Load related data for full details
         $universityData = $university->load('country', 'courses');
@@ -64,7 +78,7 @@ class PublicPageController extends Controller
     /**
      * 📘 Display details for a specific course.
      */
-    public function showCourseDetail(Course $course): Response
+    public function courseDetail(Course $course): Response // Renamed from showCourseDetail
     {
         // Load related university and its country
         $courseData = $course->load('university.country');
@@ -76,9 +90,9 @@ class PublicPageController extends Controller
     }
 
     /**
-     * Display the public job search page.
+     * 💼 Display the public job search page.
      */
-    public function showJobSearch(): Response // <-- Included from merge
+    public function jobs(): Response // Renamed from showJobSearch
     {
         // Fetch data needed for search filters
         $categories = JobCategory::where('is_active', true)->orderBy('name')->get(['id', 'name']);
@@ -87,6 +101,19 @@ class PublicPageController extends Controller
         return Inertia::render('Public/Jobs', [
             'categories' => $categories,
             'countries' => $countries,
+        ]);
+    }
+    
+    /**
+     * 💼 Display details for a specific job posting.
+     * (Assuming you have a JobPosting model and a 'Public/JobDetail' Vue page)
+     */
+    public function jobDetail(JobPosting $jobPosting): Response
+    {
+        $jobPosting->load(['jobCategory', 'country']);
+
+        return Inertia::render('Public/JobDetail', [
+            'job' => $jobPosting,
         ]);
     }
 }

@@ -5,72 +5,73 @@ namespace App\Http\Controllers\Api\UserProfile;
 use App\Http\Controllers\Controller;
 use App\Models\UserEducation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserEducationController extends Controller
 {
     /**
      * Display a listing of the user's education.
      */
-    public function index(Request $request)
+    public function index()
     {
-        // $request->user() is the authenticated user.
-        // We fetch only the education history that belongs to them.
-        return $request->user()->educations()->with('degree', 'university')->orderBy('start_date', 'desc')->get();
+        $educations = Auth::user()->educations()->orderBy('end_date', 'desc')->get();
+        return response()->json($educations);
     }
 
     /**
-     * Store a new education record for the user.
+     * Store a newly created education record in storage.
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'degree_id' => 'nullable|exists:degrees,id',
-            'university_id' => 'nullable|exists:universities,id',
-            'custom_degree' => 'nullable|string|max:255',
-            'custom_university' => 'nullable|string|max:255',
+            'institution' => 'required|string|max:255',
+            'degree' => 'required|string|max:255',
+            'field_of_study' => 'nullable|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
-            'is_current' => 'required|boolean',
-            'result' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'is_current' => 'boolean',
         ]);
 
-        // Securely create the record associated with the logged-in user
-        $education = $request->user()->educations()->create($validated);
+        $education = Auth::user()->educations()->create($validated);
 
-        return response()->json($education->load('degree', 'university'), 201);
+        return response()->json($education, 201);
     }
 
     /**
-     * Update the specified education record.
+     * Update the specified education record in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, UserEducation $education)
     {
+        // ✅ [SECURITY FIX] Check ownership
+        if ($education->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
         $validated = $request->validate([
-            'degree_id' => 'nullable|exists:degrees,id',
-            'university_id' => 'nullable|exists:universities,id',
-            'custom_degree' => 'nullable|string|max:255',
-            'custom_university' => 'nullable|string|max:255',
+            'institution' => 'required|string|max:255',
+            'degree' => 'required|string|max:255',
+            'field_of_study' => 'nullable|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
-            'is_current' => 'required|boolean',
-            'result' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'is_current' => 'boolean',
         ]);
 
-        // Find the record *within the user's collection*
-        $education = $request->user()->educations()->findOrFail($id);
-        
         $education->update($validated);
 
-        return response()->json($education->load('degree', 'university'));
+        return response()->json($education);
     }
 
     /**
-     * Remove the specified education record.
+     * Remove the specified education record from storage.
      */
-    public function destroy(Request $request, string $id)
+    public function destroy(UserEducation $education)
     {
-        // Find the record *within the user's collection*
-        $education = $request->user()->educations()->findOrFail($id);
+        // ✅ [SECURITY FIX] Check ownership
+        if ($education->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
 
         $education->delete();
 

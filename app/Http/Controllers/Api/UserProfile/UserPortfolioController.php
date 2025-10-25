@@ -5,65 +5,69 @@ namespace App\Http\Controllers\Api\UserProfile;
 use App\Http\Controllers\Controller;
 use App\Models\UserPortfolio;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage; // <-- Import Storage facade
+use Illuminate\Support\Facades\Auth;
 
 class UserPortfolioController extends Controller
 {
     /**
-     * Display a listing of the user's portfolio items.
+     * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        // Fetch only portfolio items belonging to the authenticated user
-        return $request->user()->portfolios()->orderBy('created_at', 'desc')->get();
+        $portfolios = Auth::user()->portfolios()->orderBy('created_at', 'desc')->get();
+        return response()->json($portfolios);
     }
 
     /**
-     * Store a new portfolio item for the user.
+     * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        // Note: Image upload is not handled in this store method in the original file.
-        // It might be handled via a separate update/upload endpoint.
         $validated = $request->validate([
-            'project_title' => 'required|string|max:255',
-            'project_url' => 'required|url|max:255',
-            'description' => 'nullable|string|max:1000',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'url' => 'nullable|url',
+            // Add validation for file uploads if you handle them here
         ]);
 
-        // Create the portfolio item associated with the authenticated user
-        $portfolio = $request->user()->portfolios()->create($validated);
+        $portfolio = Auth::user()->portfolios()->create($validated);
 
         return response()->json($portfolio, 201);
     }
 
-    // --- ADDED DESTROY METHOD WITH FIXES ---
     /**
-     * Remove the specified portfolio item.
+     * Update the specified resource in storage.
      */
-    public function destroy(Request $request, UserPortfolio $portfolio)
+    public function update(Request $request, UserPortfolio $portfolio)
     {
-        // --- ADDED AUTHORIZATION CHECK ---
-        // Check if the authenticated user owns this portfolio item
-        if ($request->user()->id !== $portfolio->user_id) {
-            // Using direct ID check for simplicity, Policies are another option.
+        // ✅ [SECURITY FIX] Check ownership
+        if ($portfolio->user_id !== Auth::id()) {
             return response()->json(['message' => 'Forbidden'], 403);
         }
-        // --- END AUTHORIZATION CHECK ---
+        
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'url' => 'nullable|url',
+        ]);
 
+        $portfolio->update($validated);
 
-        // --- ADDED FILE DELETION LOGIC ---
-        // Delete the image file from storage if it exists
-        // Assumes 'image_path' is the column storing the file path
-        if ($portfolio->image_path && Storage::disk('public')->exists($portfolio->image_path)) {
-            Storage::disk('public')->delete($portfolio->image_path);
+        return response()->json($portfolio);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(UserPortfolio $portfolio)
+    {
+        // ✅ [SECURITY FIX] Check ownership
+        if ($portfolio->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Forbidden'], 403);
         }
-        // --- END FILE DELETION LOGIC ---
 
-        // Delete the database record
         $portfolio->delete();
 
-        return response()->json(['message' => 'Portfolio item deleted successfully']);
+        return response()->json(null, 204);
     }
-    // --- END ADDED DESTROY METHOD ---
 }

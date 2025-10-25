@@ -15,16 +15,17 @@ class Country extends Model
      *
      * @var array<int, string>
      */
+    // --- FIX: Update fillable to match the migration and seeder ---
     protected $fillable = [
         'name',
-        'iso2',
-        'iso3',
-        'phone_code',
-        'capital',
-        'currency',
-        'region',
-        'subregion',
+        'code',
+        'iso_code_3',
+        'country_code',
+        'continent',
+        'nationality',
+        'is_active',
     ];
+    // -----------------------------------------------------------
 
     /**
      * Get the universities located in this country.

@@ -1,3 +1,11 @@
+/* resources/css/app.css */
+
+/* * FIX: Import the brand stylesheet here.
+ * This file is located at 'resources/css/custom-style.css'
+ * and will now be correctly processed by Vite and PostCSS.
+ */
+@import 'custom-style.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

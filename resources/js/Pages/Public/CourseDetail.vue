@@ -15,11 +15,6 @@ const formatCurrency = (value) => {
     return `$${Number(value).toLocaleString()}`;
 };
 
-// Computed property for logo URL of the university
-const universityLogoUrl = computed(() => {
-    return props.course.university?.logo_path ? `/storage/${props.course.university.logo_path}` : null;
-});
-
 </script>
 
 <template>
@@ -80,7 +75,7 @@ const universityLogoUrl = computed(() => {
 
 
                         <div class="mt-8 pt-6 border-t dark:border-gray-700">
-                            <Link :href="route('public.courses.search')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-brand-primary">
+                            <Link :href="route('public.courses')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-brand-primary">
                                 &larr; Back to Course Search
                             </Link>
                              <span class="mx-2 text-gray-300 dark:text-gray-600">|</span>

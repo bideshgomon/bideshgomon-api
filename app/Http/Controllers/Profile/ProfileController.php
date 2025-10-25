@@ -1,11 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Profile;
+namespace App\Http\Controllers\Profile; // Assuming this is the correct namespace based on stack trace
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Controller; // Assuming base controller
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Http\Requests\UpdateUserProfileDetailsRequest;
-use App\Models\DocumentType;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,6 +12,9 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
+// Make sure UserProfile model is imported if used directly
+use App\Models\UserProfile;
+
 class ProfileController extends Controller
 {
     /**
@@ -21,30 +22,21 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
-        // This is our custom logic
-        $user = $request->user()->load([
-            'profile',
-            'educations' => fn ($query) => $query->orderBy('start_date', 'desc'),
-            'experiences' => fn ($query) => $query->orderBy('is_current', 'desc')->orderBy('start_date', 'desc'),
-            // --- UPDATE THIS LINE TO USE skillSet ---
-            'skillSet' => fn ($query) => $query->orderBy('name'),
-            'portfolios' => fn ($query) => $query->orderBy('created_at', 'desc'),
-            'documents.documentType'
-        ]);
+        // ✅ [FIX] Use the correct relationship name 'userProfile'
+        // Pre-load the userProfile relationship if needed by the Inertia page
+        $user = $request->user()->load('userProfile');
 
         return Inertia::render('Profile/Edit', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => session('status'),
-            // We pass all our custom data to the page
-            'user_profile_data' => $user,
-            'document_types' => DocumentType::orderBy('name')->get(),
+             // Pass the profile data if your Vue component expects it directly
+             // Make sure the User model correctly loads 'userProfile'
+            'userProfile' => $user->userProfile,
         ]);
     }
 
-    // ... (rest of the file is the same)
-
     /**
-     * Update the user's profile information (name, email).
+     * Update the user's profile information.
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
@@ -59,15 +51,29 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit');
     }
 
-    /**
-     * Update the user's custom profile details (bio, phone, address).
+     /**
+     * Update the user's profile details (from UserProfile model).
+     * Assuming you have a separate route/method for this based on web.php
      */
-    public function updateDetails(UpdateUserProfileDetailsRequest $request): RedirectResponse
+    public function updateDetails(Request $request): RedirectResponse
     {
-        $request->user()->profile()->updateOrCreate(
-            ['user_id' => $request->user()->id],
-            $request->validated()
-        );
+        // ✅ [FIX] Use the correct relationship name 'userProfile'
+        $user = $request->user();
+        $userProfile = $user->userProfile; // Get the related profile model
+
+        if (!$userProfile) {
+             // Handle case where profile doesn't exist, maybe create it
+             $userProfile = UserProfile::create(['user_id' => $user->id]);
+        }
+
+        $validated = $request->validate([
+            'bio' => 'nullable|string|max:1000',
+            'address' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            // Add other UserProfile fields here
+        ]);
+
+        $userProfile->update($validated);
 
         return Redirect::route('profile.edit')->with('status', 'profile-details-updated');
     }

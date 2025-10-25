@@ -20,7 +20,7 @@ class AuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:2255|unique:users',
+            'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
@@ -102,7 +102,7 @@ class AuthController extends Controller
         } elseif ($user->role->name === 'agency') {
             $user->load('ownedAgency');
         } 
-        // ✅ BUG FIX: Added logic for 'consultant' role
+        // ✅ [BUG FIX] Added logic for 'consultant' role
         elseif ($user->role->name === 'consultant') {
             $user->load('agenciesAsConsultant', 'clients');
         }

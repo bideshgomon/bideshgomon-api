@@ -1,72 +1,69 @@
 <?php
 
-namespace App\Http\Controllers\Profile; // Corrected Namespace based on typical structure
+namespace App\Http\Controllers\Profile; // Assuming namespace based on context
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; // Keep Auth facade for download method simplicity
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Response as HttpResponse; // Use alias to avoid conflict
+// If you need PDF generation: use Barryvdh\DomPDF\Facade\Pdf;
 
 class CvBuilderController extends Controller
 {
     /**
-     * Display the CV builder preview page.
+     * Display the CV builder page.
      */
     public function show(Request $request): Response
     {
-        // Use $request->user() - loads authenticated user
-        $user = $request->user()->load([
-            'profile', // Load the profile relationship
-            'educations' => fn ($query) => $query->orderBy('start_date', 'desc'),
-            // Order experiences: current ones first, then by start date descending
-            'experiences' => fn ($query) => $query->orderBy('is_current', 'desc')->orderBy('start_date', 'desc'),
-            'skills' => fn ($query) => $query->orderBy('name'), // Load skills relationship
+        $user = $request->user();
+
+        // ✅ [FIX] Use the correct relationship name 'userProfile'
+        // Eager load all necessary relationships for the CV builder page
+        $user->load([
+            'userProfile', // Correct relationship name
+            'educations' => fn ($query) => $query->orderBy('end_date', 'desc'),
+            'experiences' => fn ($query) => $query->orderBy('end_date', 'desc'), // Assumes 'experiences' now points to UserWorkExperience
+            'skillSet', // Assumes 'skillSet' is the correct name for the skills relationship
             'portfolios' => fn ($query) => $query->orderBy('created_at', 'desc'),
-            'documents' => fn ($query) => $query->with('documentType') // Include documents if needed for preview
+            'documents' // Load documents if needed on this page
+            // Add other relationships like languages, licenses, etc. if needed
         ]);
 
-        // Ensure the Inertia component path matches your file structure
-        // Using 'Profile/CvBuilder' as it's more standard than 'Profile/Partials/CvBuilder'
-        return Inertia::render('Profile/CvBuilder', [
-            // Use 'userProfile' prop name consistent with previous Vue component examples
-            'userProfile' => $user,
-            // Skills are loaded via relationship, no need to pass separately if using the relationship correctly
+        return Inertia::render('Profile/CvBuilder', [ // Assuming this is your Inertia component name
+            'user' => $user, // Pass the user model with all loaded relationships
         ]);
     }
 
     /**
-     * Generate and download the user's CV as a PDF.
+     * Download the user's CV as a PDF (Example Implementation).
      */
-    public function download(): HttpResponse // Correct return type hint
+    public function download(Request $request)
     {
-        // Load the authenticated user with all necessary relationships for the PDF
-        // Using Auth::user() here for simplicity as $request isn't needed otherwise
-        $user = Auth::user()->load([
-            'profile',
-            'educations' => fn ($query) => $query->orderBy('start_date', 'desc'),
-            'experiences' => fn ($query) => $query->orderBy('is_current', 'desc')->orderBy('start_date', 'desc'),
-            'skills' => fn ($query) => $query->orderBy('name'),
+        $user = $request->user();
+        $user->load([
+            'userProfile',
+            'educations' => fn ($query) => $query->orderBy('end_date', 'desc'),
+            'experiences' => fn ($query) => $query->orderBy('end_date', 'desc'),
+            'skillSet',
             'portfolios' => fn ($query) => $query->orderBy('created_at', 'desc'),
-            // Add 'documents' here if your PDF template requires them
+             // Add other relationships as needed for the PDF
         ]);
 
-        // Prepare data for the Blade view
-        $data = ['user' => $user]; // Pass the loaded user object to the view
+        // --- Example using DomPDF ---
+        // 1. Create a Blade view (e.g., resources/views/cv/template.blade.php)
+        // 2. Pass the $user data to the view
+        // 3. Style the Blade view for PDF output
 
-        // Ensure 'resources/views/pdf/cv_template.blade.php' exists
-        $pdf = Pdf::loadView('pdf.cv_template', $data);
+        /*
+        $pdf = Pdf::loadView('cv.template', ['user' => $user]);
+        return $pdf->download($user->name . '_CV.pdf');
+        */
 
-        // Optional: Set paper size and orientation
-        // $pdf->setPaper('A4', 'portrait');
-
-        // Generate a dynamic filename (e.g., "john-doe-cv-YYYYMMDD.pdf")
-        $filename = Str::slug($user->name) . '-cv-' . date('Ymd') . '.pdf';
-
-        // Return the PDF as a download response
-        return $pdf->download($filename);
+        // --- Placeholder Response ---
+        // Replace this with your actual PDF generation logic
+        return response()->json([
+            'message' => 'PDF download endpoint not fully implemented.',
+            'user_data' => $user // For testing, you can see the data structure
+        ]);
     }
 }

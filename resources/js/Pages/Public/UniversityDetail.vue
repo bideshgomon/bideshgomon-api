@@ -87,7 +87,7 @@ const logoUrl = computed(() => {
                         </div>
 
                          <div class="mt-8 pt-6 border-t dark:border-gray-700">
-                            <Link :href="route('public.universities.search')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-brand-primary">
+                            <Link :href="route('public.universities')" class="text-sm text-gray-600 dark:text-gray-400 hover:text-brand-primary">
                                 &larr; Back to University Search
                             </Link>
                         </div>

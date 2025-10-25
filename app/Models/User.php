@@ -8,145 +8,119 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\SoftDeletes; // Keep SoftDeletes if used
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens; // Keep HasApiTokens for API authentication
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, Notifiable, SoftDeletes;
+    // Combine traits from both versions, ensuring Sanctum is included
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
         'role_id',
-        'phone',
-        'avatar',
+        'phone', // From second version
+        'avatar', // From second version
         'is_active',
-        // --- ADD SKILLS HERE IF IT'S NOT ALREADY ---
-        'skills',
+        'skills', // JSON column from second version
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
-            // --- THIS IS THE FIX ---
-            'skills' => 'array',
+            'skills' => 'array', // Cast JSON column to array from second version
         ];
     }
 
-    /**
-     * Get the role associated with the user.
-     */
+    // --- Relationships ---
+
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
     }
 
-    /**
-     * Check if the user has a specific role.
-     */
     public function hasRole(string $roleName): bool
     {
+        // Using nullsafe operator from second version is good practice
         return $this->role?->name === $roleName;
     }
 
-    /**
-     * Get the profile associated with the user.
-     */
+    // Renamed from userProfile() in first version to profile() in second
     public function profile(): HasOne
     {
         return $this->hasOne(UserProfile::class);
     }
 
-    /**
-     * Get the educations for the user.
-     */
     public function educations(): HasMany
     {
         return $this->hasMany(UserEducation::class);
     }
 
-    /**
-     * Get the experiences for the user.
-     */
     public function experiences(): HasMany
     {
+        // Ensure this points to the correct Experience model if you consolidated
         return $this->hasMany(UserExperience::class);
     }
 
-    /**
-     * The skills that belong to the user.
-     * --- THIS RELATIONSHIP MUST HAVE A DIFFERENT NAME ---
-     * --- BECAUSE 'skills' IS ALREADY A COLUMN. ---
-     * --- We will rename it to 'skillSet' ---
-     */
+    // Relationship for Many-to-Many skills (from second version)
     public function skillSet(): BelongsToMany
     {
         return $this->belongsToMany(Skill::class, 'user_skill');
     }
 
-    /**
-     * Get the documents for the user.
-     */
     public function documents(): HasMany
     {
         return $this->hasMany(UserDocument::class);
     }
 
-    /**
-     * Get the portfolio items for the user.
-     */
     public function portfolios(): HasMany
     {
         return $this->hasMany(UserPortfolio::class);
     }
 
-    /**
-     * Get the consultant profile associated with the user (if they are a consultant).
-     */
+    // Consultant specific relationship (from second version)
     public function consultantProfile(): HasOne
     {
         return $this->hasOne(ConsultantProfile::class);
     }
 
-    /**
-     * Get the appointments this user has booked (as a client).
-     */
+    // Appointment relationships (from second version)
     public function appointmentsAsClient(): HasMany
     {
         return $this->hasMany(Appointment::class, 'user_id');
     }
 
-    /**
-     * Get the appointments this user is assigned to (as a consultant).
-     */
     public function appointmentsAsConsultant(): HasMany
     {
         return $this->hasMany(Appointment::class, 'consultant_id');
     }
+
+    // --- ADDED Relationship from first code block ---
+    /**
+     * Get the flight bookings associated with the user.
+     */
+    public function flightBookings(): HasMany
+    {
+        return $this->hasMany(FlightBooking::class);
+    }
+    // --- END ADDED Relationship ---
+
+    // --- Note: Removed relationships from first code block that were ---
+    // --- differently named or structured in the second, preferred version ---
+    // public function ownedAgency(): HasOne { ... } // Replaced by role logic?
+    // public function agenciesAsConsultant(): BelongsToMany { ... } // Replaced by role logic?
+    // public function clients(): BelongsToMany { ... } // Replaced by role logic/appointments?
+    // public function consultant(): BelongsToMany { ... } // Replaced by role logic/appointments?
 }

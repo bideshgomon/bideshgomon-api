@@ -8,8 +8,11 @@ return new class extends Migration {
         Schema::create('countries', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('iso_code', 2)->unique();
-            $table->string('iso_code_3', 3)->unique();
+            // --- FIX: Change 'iso_code' to 'code' and make it nullable ---
+            $table->string('code', 10)->nullable()->unique();
+            
+            // --- FIX: Remove or make other non-seeded columns nullable ---
+            $table->string('iso_code_3', 3)->nullable()->unique(); // Make nullable
             $table->string('country_code', 10)->nullable();
             $table->string('continent')->nullable();
             $table->string('nationality')->nullable();

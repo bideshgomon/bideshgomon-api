@@ -1,153 +1,130 @@
 <script setup>
-import { ref } from 'vue';
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownLink from '@/Components/DropdownLink.vue';
-import NavLink from '@/Components/NavLink.vue';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link, usePage } from '@inertiajs/vue3';
-import {
-    HomeIcon,
-    BuildingOfficeIcon,
-    AcademicCapIcon,
-    BriefcaseIcon,
-    ChevronDownIcon,
-    Bars3Icon,
-    XMarkIcon,
-    UserGroupIcon,
-    CogIcon,
-    ClipboardDocumentCheckIcon,
-    IdentificationIcon,
-} from '@heroicons/vue/24/outline';
-import AdminNavLink from "@/Components/AdminNavLink.vue"; 
-import FlashMessage from "@/Components/FlashMessage.vue";
+import { ref, watch, computed } from 'vue';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
-const showingNavigationDropdown = ref(false);
-const page = usePage();
+// --- Active link logic ---
+const currentRoute = usePage().url;
 
+// Sidebar links for admin
+const adminLinks = computed(() => [
+    {
+        name: 'Dashboard',
+        href: route('admin.dashboard'),
+        current: route().current('admin.dashboard'),
+    },
+    // Student Visa
+    {
+        name: 'Universities',
+        href: route('admin.universities.index'),
+        current: currentRoute.startsWith('/admin/universities'),
+    },
+    {
+        name: 'Courses',
+        href: route('admin.courses.index'),
+        current: currentRoute.startsWith('/admin/courses'),
+    },
+    // Work Visa
+    {
+        name: 'Job Categories',
+        href: route('admin.job-categories.index'),
+        current: currentRoute.startsWith('/admin/job-categories'),
+    },
+    {
+        name: 'Job Postings',
+        href: route('admin.job-postings.index'), // Correct route name
+        current: currentRoute.startsWith('/admin/job-postings'),
+    },
+    // Air Ticketing
+    {
+        name: 'Airlines',
+        href: route('admin.airlines.index'),
+        current: currentRoute.startsWith('/admin/airlines'),
+    },
+    {
+        name: 'Airports',
+        href: route('admin.airports.index'),
+        current: currentRoute.startsWith('/admin/airports'),
+    },
+    {
+        name: 'Flights',
+        href: route('admin.flights.index'),
+        current: currentRoute.startsWith('/admin/flights'),
+    },
+    // Users & Settings
+    {
+        name: 'Manage Users',
+        href: route('admin.users.index'), // Correct route name
+        current: currentRoute.startsWith('/admin/users'),
+    },
+    {
+        name: 'Settings',
+        href: route('admin.settings.index'), // Correct route name
+        current: currentRoute.startsWith('/admin/settings'),
+    },
+]);
+
+// --- Flash message logic ---
+const flash = ref(usePage().props.flash);
+const showFlash = ref(false);
+
+watch(
+    () => usePage().props.flash,
+    (newFlash) => {
+        flash.value = newFlash;
+        if (newFlash && (newFlash.success || newFlash.error)) {
+            showFlash.value = true;
+            setTimeout(() => (showFlash.value = false), 3000);
+        }
+    },
+    { deep: true }
+);
 </script>
 
 <template>
-    <div>
-        <FlashMessage />
+    <AuthenticatedLayout>
+        <div
+            v-if="showFlash && flash.success"
+            class="fixed top-20 right-5 z-50 p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 shadow"
+            role="alert"
+        >
+            <span class="font-medium">Success!</span> {{ flash.success }}
+        </div>
+        <div
+            v-if="showFlash && flash.error"
+            class="fixed top-20 right-5 z-50 p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 shadow"
+            role="alert"
+        >
+            <span class="font-medium">Error!</span> {{ flash.error }}
+        </div>
 
-        <div class="min-h-screen bg-gray-100 flex">
-            <aside 
-                class="w-64 bg-gray-800 text-gray-200 flex-shrink-0 sm:block" 
-                :class="{ 'block': showingNavigationDropdown, 'hidden': !showingNavigationDropdown }"
-            >
-                <div class="flex items-center justify-center h-16 bg-gray-900 shadow-md">
-                    <Link :href="route('dashboard')">
-                        <ApplicationLogo class="block h-9 w-auto" />
-                    </Link>
+        <div class="py-12">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+                <div class="lg:grid lg:grid-cols-12 lg:gap-x-5">
+                    <aside class="py-6 px-2 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">
+                        <nav class="space-y-1">
+                            <Link
+                                v-for="item in adminLinks"
+                                :key="item.name"
+                                :href="item.href"
+                                :class="[
+                                    item.current
+                                        ? 'bg-gray-100 dark:bg-gray-700 text-brand-primary dark:text-white'
+                                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800',
+                                    'group rounded-md px-3 py-2 flex items-center text-sm font-medium',
+                                ]"
+                                :aria-current="item.current ? 'page' : undefined"
+                            >
+                                <span class="truncate">{{ item.name }}</span>
+                            </Link>
+                        </nav>
+                    </aside>
+
+                    <div class="space-y-6 sm:px-6 lg:px-0 lg:col-span-9">
+                        <slot />
+                    </div>
                 </div>
-                
-                <nav class="mt-4">
-                    <AdminNavLink :href="route('admin.dashboard')" :active="route().current('admin.dashboard')">
-                        <HomeIcon class="h-5 w-5 mr-3" />
-                        Dashboard
-                    </AdminNavLink>
-                    
-                    <div class="px-4 mt-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                        Management
-                    </div>
-                    
-                    <AdminNavLink :href="route('admin.universities.index')" :active="route().current('admin.universities.*')">
-                        <BuildingOfficeIcon class="h-5 w-5 mr-3" />
-                        Universities
-                    </AdminNavLink>
-                    <AdminNavLink :href="route('admin.courses.index')" :active="route().current('admin.courses.*')">
-                        <AcademicCapIcon class="h-5 w-5 mr-3" />
-                        Courses
-                    </AdminNavLink>
-                    <AdminNavLink :href="route('admin.job-categories.index')" :active="route().current('admin.job-categories.*')">
-                        <BriefcaseIcon class="h-5 w-5 mr-3" />
-                        Job Categories
-                    </AdminNavLink>
-                    <AdminNavLink :href="route('admin.jobs.index')" :active="route().current('admin.jobs.*')">
-                        <BriefcaseIcon class="h-5 w-5 mr-3" />
-                        Job Postings
-                    </AdminNavLink>
-                    
-                    <AdminNavLink :href="route('admin.consultation-services.index')" :active="route().current('admin.consultation-services.*')">
-                        <ClipboardDocumentCheckIcon class="h-5 w-5 mr-3" />
-                        Consultation Services
-                    </AdminNavLink>
-                    
-                    <AdminNavLink :href="route('admin.consultants.index')" :active="route().current('admin.consultants.*')">
-                        <IdentificationIcon class="h-5 w-5 mr-3" />
-                        Consultants
-                    </AdminNavLink>
-
-                    <div class="px-4 mt-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                        System
-                    </div>
-                    <AdminNavLink href="#"> <UserGroupIcon class="h-5 w-5 mr-3" />
-                        Users
-                    </AdminNavLink>
-                    <AdminNavLink href="#"> <CogIcon class="h-5 w-5 mr-3" />
-                        Settings
-                    </AdminNavLink>
-
-                </nav>
-            </aside>
-
-            <div class="flex-1 flex flex-col">
-                <header class="bg-white shadow-sm border-b border-gray-200">
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div class="flex justify-between h-16">
-                            <div class="flex">
-                                <div class="flex items-center sm:hidden">
-                                    <button
-                                        @click="showingNavigationDropdown = !showingNavigationDropdown"
-                                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
-                                    >
-                                        <Bars3Icon class="h-6 w-6" :class="{ 'hidden': showingNavigationDropdown, 'inline-flex': !showingNavigationDropdown }" />
-                                        <XMarkIcon class="h-6 w-6" :class="{ 'hidden': !showingNavigationDropdown, 'inline-flex': showingNavigationDropdown }" />
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                                <div class="ms-3 relative">
-                                    <Dropdown align="right" width="48">
-                                        <template #trigger>
-                                            <span class="inline-flex rounded-md">
-                                                <button
-                                                    type="button"
-                                                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
-                                                >
-                                                    {{ $page.props.auth.user.name }}
-
-                                                    <ChevronDownIcon class="ms-2 -me-0.5 h-4 w-4" />
-                                                </button>
-                                            </span>
-                                        </template>
-
-                                        <template #content>
-                                            <DropdownLink :href="route('dashboard')"> User Dashboard </DropdownLink>
-                                            <DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
-                                            <DropdownLink :href="route('logout')" method="post" as="button">
-                                                Log Out
-                                            </DropdownLink>
-                                        </template>
-                                    </Dropdown>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </header>
-
-                <header class="bg-white shadow" v-if="$slots.header">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        <slot name="header" />
-                    </div>
-                </header>
-
-                <main class="flex-1 p-6">
-                    <slot />
-                </main>
             </div>
         </div>
-    </div>
+    </AuthenticatedLayout>
 </template>
