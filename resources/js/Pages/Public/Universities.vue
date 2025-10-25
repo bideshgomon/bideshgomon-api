@@ -1,5 +1,5 @@
 <script setup>
-import GuestLayout from '@/Layouts/GuestLayout.vue';
+import PublicLayout from '@/Layouts/PublicLayout.vue'; // PATCH: Changed layout
 import Pagination from '@/Components/Pagination.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link } from '@inertiajs/vue3';
@@ -16,7 +16,7 @@ const props = defineProps({
 const searchTerm = ref('');
 const selectedCountry = ref('');
 const universities = ref({ data: [], links: [] });
-const isLoading = ref(false);
+const isLoading = ref(true); // PATCH: Set to true on initial load
 const firstLoadComplete = ref(false);
 
 // Fetch universities via API
@@ -46,97 +46,106 @@ onMounted(fetchUniversities);
 </script>
 
 <template>
-    <Head title="Search Universities" />
+    <Head title="Find a University" />
 
-    <GuestLayout>
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900 dark:text-gray-100">
-                        <h2 class="text-2xl font-semibold mb-6">Find Your University</h2>
+    <PublicLayout>
+        
+        <div class="hero" style="padding-top: 4rem; padding-bottom: 4rem; background-color: #fff; border-bottom: 1px solid var(--brand-border);">
+            <div class="container">
+                <h1 style="font-size: 2.5rem;">Find Your University</h1>
+                <p class="mt-2" style="font-size: 1.1rem; color: #555;">Search thousands of institutions worldwide to find your perfect match.</p>
+            </div>
+        </div>
 
-                        <!-- Filters -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                            <div>
-                                <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Search by Name or City
-                                </label>
-                                <TextInput
-                                    id="search"
-                                    type="text"
-                                    class="mt-1 block w-full"
-                                    v-model="searchTerm"
-                                    placeholder="e.g., Oxford or London"
-                                />
-                            </div>
-                            <div>
-                                <label for="country" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Country
-                                </label>
-                                <select
-                                    id="country"
-                                    class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                                    v-model="selectedCountry"
-                                >
-                                    <option value="">All Countries</option>
-                                    <option v-for="country in countries" :key="country.id" :value="country.id">
-                                        {{ country.name }}
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Loading -->
-                        <div v-if="isLoading" class="text-center py-10">
-                            <p>Loading universities...</p>
-                        </div>
-
-                        <!-- Results -->
-                        <div v-else>
-                            <!-- No results -->
-                            <div v-if="universities.data.length === 0 && firstLoadComplete" class="text-center py-10 text-gray-500 dark:text-gray-400">
-                                No universities found matching your criteria.
-                            </div>
-
-                            <!-- Cards -->
-                            <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                <Link
-                                    v-for="uni in universities.data"
-                                    :key="uni.id"
-                                    :href="route('public.universities.show', uni.id)"
-                                    class="block border dark:border-gray-700 rounded-lg p-4 shadow hover:shadow-lg hover:border-brand-primary dark:hover:border-blue-500 transition-all duration-200"
-                                >
-                                    <img
-                                        v-if="uni.logo_path"
-                                        :src="`/storage/${uni.logo_path}`"
-                                        alt="Logo"
-                                        class="h-16 w-auto mb-3 mx-auto"
-                                    />
-                                    <div
-                                        v-else
-                                        class="h-16 w-16 bg-gray-200 dark:bg-gray-700 rounded mb-3 mx-auto flex items-center justify-center text-gray-500"
-                                    >
-                                        ?
-                                    </div>
-
-                                    <h3 class="font-semibold text-lg text-center">{{ uni.name }}</h3>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 text-center">
-                                        {{ uni.city }}, {{ uni.country?.name }}
-                                    </p>
-                                    <div class="mt-3 text-center">
-                                        <span class="text-brand-primary hover:underline text-sm">
-                                            View Details <span aria-hidden="true">&rarr;</span>
-                                        </span>
-                                    </div>
-                                </Link>
-                            </div>
-                        </div>
-
-                        <!-- Pagination -->
-                        <Pagination class="mt-6" :links="universities.links" />
+        <div class="container py-8 md:py-12">
+            
+            <div class="p-4 bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="search" class="font-semibold">Search by Name or City</label>
+                        <TextInput
+                            id="search"
+                            type="text"
+                            class="mt-1 block w-full"
+                            vLocation-model="searchTerm"
+                            placeholder="e.g., 'University of Toronto' or 'Sydney'"
+                        />
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="country" class="font-semibold">Filter by Country</label>
+                        <select
+                            id="country"
+                            class="mt-1 block w-full"
+                            v-model="selectedCountry"
+                        >
+                            <option value="">All Countries</option>
+                            <option v-for="country in countries" :key="country.id" :value="country.id">
+                                {{ country.name }}
+                            </option>
+                        </select>
                     </div>
                 </div>
             </div>
+
+            <div v-if="isLoading && !firstLoadComplete" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div v-for="n in 6" :key="n" class="card animate-pulse">
+                    <div class="h-16 w-16 bg-gray-200 rounded mb-3 mx-auto"></div>
+                    <div class="h-6 bg-gray-200 rounded w-3/4 mx-auto mb-2"></div>
+                    <div class="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
+                    <div class="mt-3 text-center">
+                        <div class="h-4 bg-gray-200 rounded w-1/4 mx-auto"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div v-else>
+                <div v-if="universities.data.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <Link
+                        v-for="uni in universities.data"
+                        :key="uni.id"
+                        :href="route('public.universities.show', uni.id)"
+                        class="card text-decoration-none"
+                    >
+                        <img
+                            v-if="uni.logo_path"
+                            :src="`/storage/${uni.logo_path}`"
+                            :alt="`${uni.name} Logo`"
+                            class="h-16 w-auto mb-3 mx-auto"
+                            style="max-width: 150px; object-fit: contain;"
+                        />
+                        <div
+                            v-else
+                            class="h-16 w-16 bg-gray-200 dark:bg-gray-700 rounded-full mb-3 mx-auto flex items-center justify-center text-gray-500 text-2xl font-bold"
+                        >
+                            {{ uni.name.charAt(0) }}
+                        </div>
+
+                        <h3 class="font-semibold text-lg text-center" style="color: var(--brand-dark);">{{ uni.name }}</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 text-center">
+                            {{ uni.city }}, {{ uni.country?.name }}
+                        </p>
+                        <div class="mt-3 text-center">
+                            <span class="font-semibold" style="color: var(--brand-primary); text-decoration: none;">
+                                View Details <span aria-hidden="true">&rarr;</span>
+                            </span>
+                        </div>
+                    </Link>
+                </div>
+                
+                <div v-else class="text-center py-12">
+                    <h3 class="text-xl font-semibold text-gray-700">No Universities Found</h3>
+                    <p class="text-gray-500 mt-2">Try adjusting your search filters.</p>
+                </div>
+
+                <Pagination class="mt-8" :links="universities.links" />
+            </div>
         </div>
-    </GuestLayout>
+    </PublicLayout>
 </template>
+
+<style scoped>
+/* Ensure cards are not underlined when wrapped in <Link> */
+.card {
+    text-decoration: none;
+}
+</style>

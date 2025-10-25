@@ -37,18 +37,25 @@ class CoursePageController extends Controller
     }
 
     /**
-     * Show the form for editing the specified course.
+     * Show the form for editing an existing course.
      */
     public function edit(Course $course): Response
     {
         $universities = University::orderBy('name')->get(['id', 'name']);
 
-        // Eager load the university relationship for the course being edited
-        $course->load('university');
-
         return Inertia::render('Admin/Courses/Edit', [
-            'course' => $course,
+            'course' => $course->load('university'),
             'universities' => $universities,
+        ]);
+    }
+
+    /**
+     * Display a single course (optional detail page).
+     */
+    public function show(Course $course): Response
+    {
+        return Inertia::render('Admin/Courses/Show', [
+            'course' => $course->load('university'),
         ]);
     }
 }

@@ -7,6 +7,7 @@ use App\Models\University;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
 
 class UniversityController extends Controller
 {
@@ -16,7 +17,12 @@ class UniversityController extends Controller
     public function index()
     {
         // Eager load the 'country' relationship
-        return University::with('country')->latest()->paginate(10);
+        $universities = University::with('country')->latest()->paginate(10);
+
+        // ✅ Return an Inertia view (not JSON)
+        return Inertia::render('Admin/Universities/Index', [
+            'universities' => $universities,
+        ]);
     }
 
     /**
@@ -40,7 +46,7 @@ class UniversityController extends Controller
             $logoPath = $request->file('logo')->store('university-logos', 'public');
         }
 
-        $university = University::create([
+        University::create([
             'name' => $validated['name'],
             'country_id' => $validated['country_id'],
             'city' => $validated['city'],
@@ -50,7 +56,10 @@ class UniversityController extends Controller
             'ranking' => $validated['ranking'] ?? null,
         ]);
 
-        return response()->json($university->load('country'), 201);
+        // ✅ Instead of JSON, return redirect for Inertia
+        return redirect()
+            ->route('admin.universities.index')
+            ->with('success', 'University created successfully!');
     }
 
     /**
@@ -58,8 +67,10 @@ class UniversityController extends Controller
      */
     public function show(University $university)
     {
-        // Load relationships for detailed view
-        return $university->load('country', 'courses');
+        // ✅ Return Inertia page instead of JSON
+        return Inertia::render('Admin/Universities/Show', [
+            'university' => $university->load('country', 'courses'),
+        ]);
     }
 
     /**
@@ -78,7 +89,7 @@ class UniversityController extends Controller
         ]);
 
         $data = $validated;
-        
+
         if ($request->hasFile('logo')) {
             // Delete the old logo if it exists
             if ($university->logo_path) {
@@ -90,7 +101,10 @@ class UniversityController extends Controller
 
         $university->update($data);
 
-        return response()->json($university->load('country'), 200);
+        // ✅ Redirect for Inertia
+        return redirect()
+            ->route('admin.universities.index')
+            ->with('success', 'University updated successfully!');
     }
 
     /**
@@ -103,9 +117,11 @@ class UniversityController extends Controller
             Storage::disk('public')->delete($university->logo_path);
         }
 
-        // Delete the university record (courses will cascade if DB is set up)
         $university->delete();
 
-        return response()->json(null, 204); // No Content
+        // ✅ Redirect back instead of JSON
+        return redirect()
+            ->back()
+            ->with('success', 'University deleted successfully!');
     }
 }

@@ -59,6 +59,8 @@ h1.brand-title {
   transition: all 0.2s ease;
   border: 1px solid transparent;
   cursor: pointer;
+  text-decoration: none; /* Added for <Link> compatibility */
+  text-align: center; /* Added for consistency */
 }
 
 .btn:hover {
@@ -163,7 +165,7 @@ textarea:focus {
   border-radius: 10px;
   border: 1px solid var(--brand-border);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  padding: 1.5rem;
+  padding: 2rem 2.5rem; /* Increased padding for auth forms */
   transition: all 0.2s ease;
 }
 
@@ -230,13 +232,14 @@ textarea:focus {
 }
 
 .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem; /* Increased spacing */
 }
 
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 600;
+    font-size: 0.9rem; /* Added */
 }
 
 .text-center {

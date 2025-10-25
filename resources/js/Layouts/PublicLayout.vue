@@ -1,45 +1,58 @@
-<template>
-    <div>
-        <Head :title="title" />
+<script setup>
+import { Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import PublicFooter from '@/Components/PublicFooter.vue'; // <-- Import the new component
 
-        <PublicHeader />
+// Assuming logos are in /public/images/ (adjust if needed)
+const logoUrl = '/images/bideshgomonlogo.png';
+
+// Access page props for authentication status
+const page = usePage();
+const user = computed(() => page.props.auth.user);
+
+</script>
+
+<template>
+    <div class="public-layout">
+        <nav class="navbar">
+            <Link :href="route('welcome')">
+                <img
+                    :src="logoUrl"
+                    alt="Bidesh Gomon"
+                    class="navbar-logo-img"
+                    style="max-height: 35px; width: auto; display: block;"
+                />
+            </Link>
+            <div class="nav-links">
+                <Link :href="route('public.universities')">Universities</Link>
+                <Link :href="route('public.courses')">Courses</Link>
+                <Link :href="route('public.jobs')">Jobs</Link>
+                </div>
+            <div class="nav-auth">
+                <Link v-if="!user" :href="route('login')" class="btn btn-outline" style="margin-right: 0.5rem;">Login</Link>
+                <Link v-if="!user" :href="route('register')" class="btn btn-primary">Register</Link>
+                <Link v-else :href="route('dashboard')" class="btn btn-secondary">Dashboard</Link>
+            </div>
+        </nav>
 
         <main>
             <slot />
         </main>
 
-        <PublicFooter />
+        <PublicFooter /> {/* <-- Use the imported component */}
+
     </div>
 </template>
 
-<script setup>
-import { Head } from '@inertiajs/vue3';
-import PublicHeader from '@/Components/PublicHeader.vue';
-import PublicFooter from '@/Components/PublicFooter.vue';
-
-defineProps({
-    title: String,
-});
-</script>
-
-<style>
-/* Load brand-specific styles - NOTE: Better practice is to import this in resources/js/app.js */
-/* If custom-style.css is not in public/css, adjust path */
-/* @import '/css/custom-style.css'; */
-/* Or if it's in resources/css: */
-/* @import '../../css/custom-style.css'; */
-
-/* Define CSS variables if custom-style.css relies on them and isn't loaded globally */
- :root {
-    --brand-primary: #007bff; /* Example Blue */
-    --brand-secondary: #6c757d; /* Example Gray */
-    --brand-light: #f8f9fa; /* Example Light Gray */
-    --brand-border: #dee2e6; /* Example Border Gray */
-    /* Add other variables as needed */
- }
-
-.brand-font-primary {
-    font-family: 'Arial', sans-serif;
+<style scoped>
+/* Scoped styles remain the same */
+.public-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--brand-light);
 }
-
+main { flex-grow: 1; }
+.nav-links a { font-weight: 600; }
+.nav-auth { display: flex; align-items: center; }
 </style>

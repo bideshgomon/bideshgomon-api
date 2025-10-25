@@ -1,8 +1,11 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import Pagination from '@/Components/Pagination.vue';
+import TextInput from '@/Components/TextInput.vue'; // For search
+import DangerButton from '@/Components/DangerButton.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue'; // For Add button
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
-import Pagination from '@/Components/Pagination.vue';
 import { debounce } from 'lodash';
 
 const props = defineProps({
@@ -10,17 +13,10 @@ const props = defineProps({
     filters: Object,
 });
 
-const search = ref(props.filters.search);
-
-const fetchAirlines = (url) => {
-    router.get(url, { search: search.value }, {
-        preserveState: true,
-        replace: true,
-    });
-};
+const search = ref(props.filters.search || '');
 
 watch(search, debounce((value) => {
-    router.get(route('admin.airlines.index'), { search: value }, {
+    router.get(route('admin.airlines.index'), { search: value || undefined }, {
         preserveState: true,
         replace: true,
     });
@@ -28,8 +24,10 @@ watch(search, debounce((value) => {
 
 const deleteAirline = (id) => {
     if (confirm('Are you sure you want to delete this airline?')) {
-        router.delete(route('admin.api.airlines.destroy', id), {
-            onSuccess: () => fetchAirlines(props.airlines.path),
+        // PATCH: Target API route for deletion
+        router.delete(route('api.admin.airlines.destroy', id), {
+            preserveScroll: true,
+            // onSuccess handled by AdminLayout flash
         });
     }
 };
@@ -39,59 +37,66 @@ const deleteAirline = (id) => {
     <Head title="Manage Airlines" />
 
     <AdminLayout>
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">
-                        <div class="flex justify-between items-center mb-6">
-                            <h1 class="text-2xl font-bold">Manage Airlines</h1>
-                            <Link :href="route('admin.airlines.create')" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                                Add Airline
-                            </Link>
-                        </div>
+        <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+            <section>
+                <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div>
+                        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                            Airlines
+                        </h2>
+                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                            Manage all airlines in the system.
+                        </p>
+                    </div>
+                    <Link :href="route('admin.airlines.create')">
+                        <PrimaryButton>Add New Airline</PrimaryButton>
+                    </Link>
+                </header>
 
-                        <div class="mb-4">
-                            <input
-                                type="text"
-                                v-model="search"
-                                placeholder="Search by name or code..."
-                                class="w-full px-3 py-2 border border-gray-300 rounded"
-                            />
-                        </div>
+                <div class="mb-4">
+                     <TextInput
+                        type="text"
+                        v-model="search"
+                        placeholder="Search by name or IATA code..."
+                        class="w-full sm:w-1/2 lg:w-1/3"
+                    />
+                </div>
 
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full bg-white">
+                <div class="flow-root">
+                    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                            <table class="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
                                 <thead>
                                     <tr>
-                                        <th class="py-2 px-4 border-b">Name</th>
-                                        <th class="py-2 px-4 border-b">Code</th>
-                                        <th class="py-2 px-4 border-b">Actions</th>
+                                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-0">Name</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">IATA Code</th>
+                                        <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
+                                            <span class="sr-only">Actions</span>
+                                        </th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr v-for="airline in airlines.data" :key="airline.id">
-                                        <td class="py-2 px-4 border-b">{{ airline.name }}</td>
-                                        <td class="py-2 px-4 border-b">{{ airline.code }}</td>
-                                        <td class="py-2 px-4 border-b">
-                                            <Link :href="route('admin.airlines.edit', airline.id)" class="text-blue-500 hover:text-blue-700 mr-2">
-                                                Edit
-                                            </Link>
-                                            <button @click="deleteAirline(airline.id)" class="text-red-500 hover:text-red-700">
-                                                Delete
-                                            </button>
+                                <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
+                                    <tr v-if="!airlines.data || airlines.data.length === 0">
+                                        <td colspan="3" class="py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                                            No airlines found matching your search.
                                         </td>
                                     </tr>
-                                    <tr v-if="airlines.data.length === 0">
-                                        <td colspan="3" class="py-4 px-4 border-b text-center">No airlines found.</td>
+                                    <tr v-for="airline in airlines.data" :key="airline.id">
+                                        <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-0">{{ airline.name }}</td>
+                                        <td class="px-3 py-4 text-sm text-gray-500 dark:text-gray-400">{{ airline.iata_code }}</td>
+                                        <td class="relative py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0 space-x-2 whitespace-nowrap">
+                                            <Link :href="route('admin.airlines.edit', airline.id)" class="text-brand-primary hover:text-opacity-80">Edit</Link>
+                                            <DangerButton @click="deleteAirline(airline.id)" class="text-xs px-2 py-1">Delete</DangerButton>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-
-                        <Pagination :links="airlines.links" @page-click="fetchAirlines" class="mt-6" />
                     </div>
                 </div>
-            </div>
+
+                <Pagination class="mt-6" :links="airlines.links" />
+            </section>
         </div>
     </AdminLayout>
 </template>

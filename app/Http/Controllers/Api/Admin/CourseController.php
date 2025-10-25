@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Illuminate\Validation\Rule;
 
 class CourseController extends Controller
 {
@@ -20,7 +22,15 @@ class CourseController extends Controller
             $query->where('university_id', $request->university_id);
         }
 
-        return $query->latest()->paginate(10);
+        $courses = $query->latest()->paginate(10);
+
+        // ✅ Return an Inertia view, not JSON
+        return Inertia::render('Admin/Courses/Index', [
+            'courses' => $courses,
+            'filters' => [
+                'university_id' => $request->university_id,
+            ],
+        ]);
     }
 
     /**
@@ -39,9 +49,12 @@ class CourseController extends Controller
             'application_deadline' => 'nullable|date',
         ]);
 
-        $course = Course::create($validated);
+        Course::create($validated);
 
-        return response()->json($course->load('university'), 201);
+        // ✅ FIX: redirect instead of JSON
+        return redirect()
+            ->route('admin.courses.index')
+            ->with('success', 'Course created successfully!');
     }
 
     /**
@@ -49,7 +62,10 @@ class CourseController extends Controller
      */
     public function show(Course $course)
     {
-        return $course->load('university');
+        // ✅ Use Inertia view for details
+        return Inertia::render('Admin/Courses/Show', [
+            'course' => $course->load('university'),
+        ]);
     }
 
     /**
@@ -59,7 +75,10 @@ class CourseController extends Controller
     {
         $validated = $request->validate([
             'university_id' => 'required|exists:universities,id',
-            'name' => 'required|string|max:255',
+            'name' => [
+                'required', 'string', 'max:255',
+                Rule::unique('courses')->ignore($course->id)
+            ],
             'degree_level' => 'required|string|max:100',
             'field_of_study' => 'required|string|max:100',
             'tuition_fee' => 'nullable|numeric|min:0',
@@ -70,7 +89,10 @@ class CourseController extends Controller
 
         $course->update($validated);
 
-        return response()->json($course->load('university'), 200);
+        // ✅ FIX: redirect for Inertia flow
+        return redirect()
+            ->route('admin.courses.index')
+            ->with('success', 'Course updated successfully!');
     }
 
     /**
@@ -80,6 +102,9 @@ class CourseController extends Controller
     {
         $course->delete();
 
-        return response()->json(null, 204); // No Content
+        // ✅ FIX: redirect instead of JSON
+        return redirect()
+            ->back()
+            ->with('success', 'Course deleted successfully!');
     }
 }

@@ -4,36 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasMany; // <-- IMPORT
 
 class Country extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    // --- FIX: Update fillable to match the migration and seeder ---
     protected $fillable = [
         'name',
-        'code',
-        'iso_code_3',
-        'country_code',
-        'continent',
-        'nationality',
+        'code', // e.g., 'US', 'CA'
         'is_active',
     ];
-    // -----------------------------------------------------------
 
     /**
-     * Get the universities located in this country.
+     * Get the states for the country.
      */
-    public function universities(): HasMany
+    public function states(): HasMany // <-- ADD THIS METHOD
     {
-        return $this->hasMany(University::class);
+        return $this->hasMany(State::class);
     }
 
-    // Add other relationships later if needed (e.g., states, users)
+    // You might also have these if needed, but 'states' is essential here
+    // public function cities(): HasManyThrough { ... }
+    // public function airports(): HasManyThrough { ... }
 }
