@@ -14,7 +14,8 @@ class UserProfile extends Model
         'user_id',
         'first_name',
         'last_name',
-        'phone',
+        'phone', // Added from User model
+        'avatar', // Added from User model
         'dob',
         'nationality',
         'passport_number',
@@ -23,21 +24,16 @@ class UserProfile extends Model
         'city',
         'country',
         'ai_analysis_results',
+        'bio',
+        'passport_expiry',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
     protected $casts = [
         'dob' => 'date',
+        'passport_expiry' => 'date',
         'ai_analysis_results' => 'array',
     ];
 
-    /**
-     * Get the user this profile belongs to.
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

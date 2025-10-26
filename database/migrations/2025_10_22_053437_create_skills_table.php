@@ -9,7 +9,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->string('category')->nullable(); // 'tech', 'trade', 'soft-skill'
+            $table->string('category')->nullable(); // Optional category
             $table->timestamps();
         });
     }

@@ -6,35 +6,35 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Agency extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'owner_id',
-        'company_name',
-        'contact_email',
-        'contact_phone',
+        'name',
         'address',
+        'city',
+        'country',
         'license_number',
+        'website',
         'status',
     ];
 
-    /**
-     * Get the owner (a user with 'agency' role) of this agency.
-     */
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    /**
-     * Get the consultants (users with 'consultant' role)
-     * associated with this agency.
-     */
     public function consultants(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'agency_consultant', 'agency_id', 'consultant_id');
+    }
+
+    public function clients(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'agency_user', 'agency_id', 'user_id');
     }
 }

@@ -1,10 +1,7 @@
-<?php
-
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Model;
-
-class VisaType extends Model
-{
-    //
+<?php namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory; use Illuminate\Database\Eloquent\Model;
+class VisaType extends Model {
+    use HasFactory;
+    protected $fillable = ['name', 'description', 'category'];
+    public $timestamps = false; // Matches migration
 }

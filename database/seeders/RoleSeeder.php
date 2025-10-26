@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\Role;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str; // <-- 1. IMPORT THE STRING HELPER
+use Illuminate\Support\Str;
 
 class RoleSeeder extends Seeder
 {
@@ -14,16 +14,10 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        // 2. Use firstOrCreate to create roles with slugs
-        
-        Role::firstOrCreate(
-            ['slug' => 'admin'], // Check if slug exists
-            ['name' => 'admin']  // Create with name if not
-        );
-
-        Role::firstOrCreate(
-            ['slug' => 'user'],  // Check if slug exists
-            ['name' => 'user']   // Create with name if not
-        );
+        // Use firstOrCreate to ensure roles are only created once
+        Role::firstOrCreate(['slug' => 'admin'], ['name' => 'admin']);
+        Role::firstOrCreate(['slug' => 'agency'], ['name' => 'agency']); // <-- ADDED
+        Role::firstOrCreate(['slug' => 'consultant'], ['name' => 'consultant']); // <-- ADDED
+        Role::firstOrCreate(['slug' => 'user'], ['name' => 'user']);
     }
 }

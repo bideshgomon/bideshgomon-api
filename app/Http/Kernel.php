@@ -16,11 +16,11 @@ class Kernel extends HttpKernel
     protected $middleware = [
         // \App\Http\Middleware\TrustHosts::class,
         \App\Http\Middleware\TrustProxies::class,
-        \Illuminate\Http\Middleware\HandleCors::class,
-        \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
-        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
-        \App\Http\Middleware\TrimStrings::class,
-        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        \Illuminate\Http\Middleware\HandleCors::class, // Handles Cross-Origin Resource Sharing
+        \App\Http\Middleware\PreventRequestsDuringMaintenance::class, // Shows maintenance page if down
+        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class, // Checks max post size
+        \App\Http\Middleware\TrimStrings::class, // Trims whitespace from input
+        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class, // Converts empty strings to null
     ];
 
     /**
@@ -30,25 +30,25 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
-            \App\Http\Middleware\EncryptCookies::class,
-            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-            \Illuminate\Session\Middleware\StartSession::class,
-            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            \App\Http\Middleware\VerifyCsrfToken::class,
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\EncryptCookies::class, // Encrypts/decrypts cookies
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class, // Adds queued cookies to response
+            \Illuminate\Session\Middleware\StartSession::class, // Starts session handling
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class, // Shares session errors with views
+            \App\Http\Middleware\VerifyCsrfToken::class, // Protects against CSRF attacks
+            \Illuminate\Routing\Middleware\SubstituteBindings::class, // Handles route model binding
 
-            // ✅ Ensure Inertia middleware is registered
+            // Inertia middleware (Added in bootstrap/app.php now, but keeping here doesn't hurt)
             \App\Http\Middleware\HandleInertiaRequests::class,
 
-            // ✅ Preload assets for better performance
+            // Preload assets for better performance (Added in bootstrap/app.php now)
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ],
 
         'api' => [
-            // ✅ For Laravel Sanctum SPA authentication
+            // For Laravel Sanctum SPA/stateful authentication
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            'throttle:api',
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            'throttle:api', // Rate limiting for API routes
+            \Illuminate\Routing\Middleware\SubstituteBindings::class, // Route model binding
         ],
     ];
 
@@ -60,18 +60,19 @@ class Kernel extends HttpKernel
      * @var array<string, class-string|string>
      */
     protected $middlewareAliases = [
-        'auth' => \App\Http\Middleware\Authenticate::class,
-        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
-        'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
-        'can' => \Illuminate\Auth\Middleware\Authorize::class,
-        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'precognitive' => \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
-        'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'auth' => \App\Http\Middleware\Authenticate::class, // Ensures user is authenticated
+        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class, // HTTP Basic Auth
+        'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class, // Session-based auth state persistence
+        'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class, // Sets cache headers
+        'can' => \Illuminate\Auth\Middleware\Authorize::class, // Authorization based on abilities/policies
+        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class, // Redirects logged-in users from guest routes
+        'precognitive' => \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class, // Handles frontend validation requests
+        'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class, // Validates signed URLs
+        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class, // Rate limiting
+        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class, // Ensures user email is verified
 
-        // ✅ Custom middleware alias for Role-Based Access Control
-        'role' => \App\Http\Middleware\CheckRole::class,
+        // *** CORRECTED ALIAS (MERGED) ***
+        // Custom middleware alias for Role-Based Access Control
+        'role' => \App\Http\Middleware\EnsureUserHasRole::class,
     ];
 }

@@ -11,60 +11,28 @@ class UserEducation extends Model
     use HasFactory;
 
     /**
-     * The table associated with the model.
-     *
-     * @var string
+     * Explicitly tell the model to use the 'user_educations' (plural) table.
      */
-    protected $table = 'user_educations'; // <-- ADD THIS LINE
+    protected $table = 'user_educations';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'user_id',
-        'degree_id',
-        'university_id',
-        'custom_degree',
-        'custom_university',
+        'institution_name',
+        'degree_name',
+        'field_of_study',
         'start_date',
         'end_date',
-        'is_current',
+        'grade',
+        'description'
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'start_date' => 'date',
-        'end_date' => 'date',
-        'is_current' => 'boolean',
+        'end_date' => 'date'
     ];
 
-    /**
-     * Get the user that owns the education record.
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    /**
-     * Get the degree for the education record.
-     */
-    public function degree(): BelongsTo
-    {
-        return $this->belongsTo(Degree::class);
-    }
-
-    /**
-     * Get the university for the education record.
-     */
-    public function university(): BelongsTo
-    {
-        return $this->belongsTo(University::class);
     }
 }

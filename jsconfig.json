@@ -1,10 +1,32 @@
 {
-    "compilerOptions": {
-        "baseUrl": ".",
-        "paths": {
-            "@/*": ["resources/js/*"],
-            "ziggy-js": ["./vendor/tightenco/ziggy"]
-        }
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["resources/js/*"],
+      // Verify this path points to the correct Ziggy entry point
+      // It might be something like "./vendor/tightenco/ziggy/dist/vue"
+      // or check node_modules if installed via npm
+      "ziggy-js": ["./vendor/tightenco/ziggy"]
     },
-    "exclude": ["node_modules", "public"]
+    // Optional: Add target if needed, e.g., "ES2017" or "ESNext"
+    // "target": "ESNext",
+    // Optional: Add module system if needed, e.g., "ESNext"
+    // "module": "ESNext",
+    // Optional: Explicitly allow JS files if mixing JS/TS
+    // "allowJs": true
+  },
+  "include": [
+    // Include all JS/TS/Vue files in resources/js (only if they exist)
+    "resources/js/**/*.js",
+    "resources/js/**/*.ts",
+    "resources/js/**/*.vue"
+    ],
+  "exclude": [
+    // Exclude standard build/dependency folders
+    "node_modules",
+    "public",
+    "vendor",
+    "storage",
+    "bootstrap"
+    ]
 }

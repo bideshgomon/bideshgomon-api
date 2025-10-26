@@ -7,9 +7,9 @@ return new class extends Migration {
     public function up(): void {
         Schema::table('users', function (Blueprint $table) {
             $table->unsignedBigInteger('role_id')->after('id');
-            $table->string('phone')->nullable()->after('email');
-            $table->string('avatar')->nullable()->after('phone');
-            $table->boolean('is_active')->default(true);
+            // REMOVED phone column
+            // REMOVED avatar column
+            $table->boolean('is_active')->default(true)->after('password'); // Positioned after password
             $table->softDeletes();
             $table->foreign('role_id')->references('id')->on('roles');
         });
@@ -17,7 +17,8 @@ return new class extends Migration {
     public function down(): void {
         Schema::table('users', function (Blueprint $table) {
             $table->dropForeign(['role_id']);
-            $table->dropColumn(['role_id', 'phone', 'avatar', 'is_active', 'deleted_at']);
+            // ADDED phone and avatar to dropColumn in case of rollback
+            $table->dropColumn(['role_id', 'is_active', 'deleted_at', 'phone', 'avatar']);
         });
     }
 };

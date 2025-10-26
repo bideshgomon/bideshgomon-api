@@ -8,16 +8,11 @@ return new class extends Migration {
         Schema::create('countries', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            // --- FIX: Change 'iso_code' to 'code' and make it nullable ---
+            // This 'code' (e.g., 'AF') matches your seeder
             $table->string('code', 10)->nullable()->unique();
-            
-            // --- FIX: Remove or make other non-seeded columns nullable ---
-            $table->string('iso_code_3', 3)->nullable()->unique(); // Make nullable
-            $table->string('country_code', 10)->nullable();
-            $table->string('continent')->nullable();
-            $table->string('nationality')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+            // Removed iso_code_3, country_code, continent, nationality
         });
     }
     public function down(): void {

@@ -16,8 +16,7 @@ use App\Http\Controllers\Admin\FlightPageController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\TouristVisaPageController;
-use App\Http\Controllers\PaymentController;
-
+use App\Http\Controllers\PaymentController; // For SSLCommerz
 
 // --- FACADES & MODELS ---
 use Illuminate\Support\Facades\Route;
@@ -45,7 +44,6 @@ Route::get('/travel-insurance', function () {
 
 // Travel Insurance Purchase Form Route (Requires Auth)
 Route::get('/travel-insurance/purchase', function (Request $request) {
-    // Basic validation of query parameters passed from Index page
     $validatedData = $request->validate([
         'quote_reference' => 'required|string',
         'package_id' => 'required',
@@ -57,10 +55,7 @@ Route::get('/travel-insurance/purchase', function (Request $request) {
         'total_premium' => 'required|numeric',
         'currency' => 'required|string',
     ]);
-
     $countries = Country::orderBy('name')->select('id', 'name', 'code')->get();
-
-    // Pass validated data and countries to the Vue component
     return Inertia::render('Public/TravelInsurance/PurchaseForm', array_merge($validatedData, [
         'countries' => $countries,
     ]));
@@ -68,29 +63,18 @@ Route::get('/travel-insurance/purchase', function (Request $request) {
 
 
 // --- PAYMENT GATEWAY BACKEND CALLBACK ROUTES (SSLCOMMERZ) ---
-Route::prefix('payment')->name('payment.')->group(function() {
-    // Example Routes (May remove later)
-    Route::get('/example1', [PaymentController::class, 'exampleEasyCheckout'])->name('example1');
-    Route::get('/example2', [PaymentController::class, 'exampleHostedCheckout'])->name('example2');
-
-    // Core Payment Initiation
-    Route::post('/pay', [PaymentController::class, 'index'])->name('pay');
-    Route::post('/pay-via-ajax', [PaymentController::class, 'payViaAjax'])->name('pay-ajax');
-
-    // Callbacks from SSLCommerz (POST requests from their server)
-    Route::post('/success', [PaymentController::class, 'success'])->name('success');
-    Route::post('/fail', [PaymentController::class, 'fail'])->name('fail');
-    Route::post('/cancel', [PaymentController::class, 'cancel'])->name('cancel');
-    Route::post('/ipn', [PaymentController::class, 'ipn'])->name('ipn'); // Instant Payment Notification
-});
+// *** THESE ARE THE CORRECTED ROUTES ***
+Route::post('/sslcommerz/success', [PaymentController::class, 'paymentSuccess'])->name('sslcommerz.success');
+Route::post('/sslcommerz/fail', [PaymentController::class, 'paymentFail'])->name('sslcommerz.fail');
+Route::post('/sslcommerz/cancel', [PaymentController::class, 'paymentCancel'])->name('sslcommerz.cancel');
+Route::post('/sslcommerz/ipn', [PaymentController::class, 'paymentIpn'])->name('sslcommerz.ipn');
 // --- END PAYMENT GATEWAY BACKEND ROUTES ---
 
-// *** NEW: PAYMENT GATEWAY FRONTEND REDIRECT ROUTES (MERGED) ***
-// These handle the GET requests when the user is redirected back from SSLCommerz
+// --- PAYMENT GATEWAY FRONTEND REDIRECT ROUTES ---
+// These are for showing messages to the user *after* the callback
 Route::get('/payment/success', fn (Request $request) => Inertia::render('Public/PaymentStatus/Success', ['query' => $request->query()]))->name('payment.frontend.success');
 Route::get('/payment/fail', fn (Request $request) => Inertia::render('Public/PaymentStatus/Fail', ['query' => $request->query()]))->name('payment.frontend.fail');
 Route::get('/payment/cancel', fn (Request $request) => Inertia::render('Public/PaymentStatus/Cancel', ['query' => $request->query()]))->name('payment.frontend.cancel');
-// *** END FRONTEND REDIRECT ROUTES ***
 
 
 // --- USER DASHBOARD & PROFILE ---
@@ -109,18 +93,41 @@ Route::middleware(['auth', 'verified', 'role:admin'])
         Route::get('/', fn() => Redirect::route('admin.dashboard'));
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
-        // Resource controllers
-        Route::resource('universities', UniversityPageController::class)->except(['show']);
-        Route::resource('courses', CoursePageController::class)->except(['show']);
-        Route::resource('job-categories', JobCategoryPageController::class)->except(['show']);
-        Route::resource('job-postings', JobPostingPageController::class)->except(['show']);
-        Route::resource('airlines', AirlinePageController::class)->except(['show']);
-        Route::resource('airports', AirportPageController::class)->except(['show']);
-        Route::resource('flights', FlightPageController::class)->except(['show']);
-        Route::resource('tourist-visas', TouristVisaPageController::class)->only(['index', 'show']);
-        Route::resource('users', UserController::class)->except(['create', 'store', 'show']);
+        // Page Controllers
+        Route::get('/universities', [UniversityPageController::class, 'index'])->name('universities.index');
+        Route::get('/universities/create', [UniversityPageController::class, 'create'])->name('universities.create');
+        Route::get('/universities/{university}/edit', [UniversityPageController::class, 'edit'])->name('universities.edit');
 
-        // Settings
+        Route::get('/courses', [CoursePageController::class, 'index'])->name('courses.index');
+        Route::get('/courses/create', [CoursePageController::class, 'create'])->name('courses.create');
+        Route::get('/courses/{course}/edit', [CoursePageController::class, 'edit'])->name('courses.edit');
+
+        Route::get('/job-categories', [JobCategoryPageController::class, 'index'])->name('job-categories.index');
+        Route::get('/job-categories/create', [JobCategoryPageController::class, 'create'])->name('job-categories.create');
+        Route::get('/job-categories/{jobCategory}/edit', [JobCategoryPageController::class, 'edit'])->name('job-categories.edit');
+
+        Route::get('/job-postings', [JobPostingPageController::class, 'index'])->name('job-postings.index');
+        Route::get('/job-postings/create', [JobPostingPageController::class, 'create'])->name('job-postings.create');
+        Route::get('/job-postings/{jobPosting}/edit', [JobPostingPageController::class, 'edit'])->name('job-postings.edit');
+
+        Route::get('/airlines', [AirlinePageController::class, 'index'])->name('airlines.index');
+        Route::get('/airlines/create', [AirlinePageController::class, 'create'])->name('airlines.create');
+        Route::get('/airlines/{airline}/edit', [AirlinePageController::class, 'edit'])->name('airlines.edit');
+
+        Route::get('/airports', [AirportPageController::class, 'index'])->name('airports.index');
+        Route::get('/airports/create', [AirportPageController::class, 'create'])->name('airports.create');
+        Route::get('/airports/{airport}/edit', [AirportPageController::class, 'edit'])->name('airports.edit');
+
+        Route::get('/flights', [FlightPageController::class, 'index'])->name('flights.index');
+        Route::get('/flights/create', [FlightPageController::class, 'create'])->name('flights.create');
+        Route::get('/flights/{flight}/edit', [FlightPageController::class, 'edit'])->name('flights.edit');
+
+        Route::get('/tourist-visas', [TouristVisaPageController::class, 'index'])->name('tourist-visas.index');
+        Route::get('/tourist-visas/{touristVisa}', [TouristVisaPageController::class, 'show'])->name('tourist-visas.show');
+
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+
         Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
         Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
     });
