@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use Illuminate\HttpRequest;
 use Illuminate\Support\Facades\Route;
 
 // --- CONTROLLER IMPORTS ---
@@ -24,6 +24,7 @@ use App\Http\Controllers\Api\Admin\JobPostingController;
 use App\Http\Controllers\Api\Admin\AirlineController;
 use App\Http\Controllers\Api\Admin\AirportController;
 use App\Http\Controllers\Api\Admin\FlightController;
+use App\Http\Controllers\Api\Admin\TouristVisaController;
 
 // User Profile Controllers
 use App\Http\Controllers\Api\UserProfile\UserEducationController;
@@ -35,6 +36,9 @@ use App\Http\Controllers\Api\UserProfile\UserLicenseController;
 use App\Http\Controllers\Api\UserProfile\UserLanguageController;
 use App\Http\Controllers\Api\UserProfile\UserTechnicalEducationController;
 use App\Http\Controllers\Api\UserProfile\UserMembershipController;
+
+// Travel Insurance API Controller
+use App\Http\Controllers\Api\TravelInsuranceController;
 
 
 /*
@@ -71,10 +75,11 @@ Route::get('/courses/{course}', [PublicSearchController::class, 'showCourseDetai
 Route::middleware('auth:sanctum')->group(function () {
     // --- CORE AUTH ACTIONS ---
     Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
-    Route::get('/user', [AuthController::class, 'user'])->name('api.user');
+    Route::get('/user', [AuthController::class, 'user'])->name('api.user'); // Changed from /me for consistency
 
     // --- SHARED AUTHENTICATED DATA ---
-    Route::get('/prebuilt-data', [PrebuiltDataController::class, 'getAll'])->name('api.prebuilt-data');
+    // *** MERGED: Commented out PrebuiltData route as requested ***
+    // Route::get('/prebuilt-data', [PrebuiltDataController::class, 'getAll'])->name('api.prebuilt-data');
     Route::get('/document-types', [DocumentTypeController::class, 'index'])->name('api.document-types.index');
 
     // --- USER PROFILE (CV) ROUTES ---
@@ -89,6 +94,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('memberships', UserMembershipController::class);
         Route::apiResource('portfolios', UserPortfolioController::class);
     });
+    
+    // --- USER-FACING SERVICES ---
+    
+    // Travel Insurance API Routes
+    Route::prefix('travel-insurance')->name('api.travel-insurance.')->group(function () {
+        Route::get('/packages', [TravelInsuranceController::class, 'getPackages'])->name('packages');
+        Route::post('/calculate-premium', [TravelInsuranceController::class, 'calculatePremium'])->name('calculate-premium');
+        Route::post('/issue-policy', [TravelInsuranceController::class, 'issuePolicy'])->name('issue-policy');
+        // Route::get('/my-policies', [TravelInsuranceController::class, 'getUserPolicies'])->name('my-policies');
+    });
+
+    // Add user-facing routes for Tourist Visas here when built
 });
 
 
@@ -113,8 +130,8 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->name('api.ad
     Route::apiResource('airlines', AirlineController::class);
     Route::apiResource('airports', AirportController::class);
     Route::apiResource('flights', FlightController::class);
+    
+    // Tourist Visa Management
+    Route::apiResource('tourist-visas', TouristVisaController::class)->except(['store', 'show']);
+    Route::patch('/tourist-visa-documents/{document}', [TouristVisaController::class, 'updateDocumentStatus'])->name('tourist-visa-documents.update');
 });
-
-// --- CRITICAL VULNERABILITY REMOVED ---
-// Ensure the /get-admin-token route (mentioned previously) remains removed.
-// ----------------------------------------

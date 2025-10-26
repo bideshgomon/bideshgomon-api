@@ -32,7 +32,7 @@ const adminLinks = computed(() => [
     },
     {
         name: 'Job Postings',
-        href: route('admin.job-postings.index'), // Correct route name
+        href: route('admin.job-postings.index'),
         current: currentRoute.startsWith('/admin/job-postings'),
     },
     // Air Ticketing
@@ -51,15 +51,21 @@ const adminLinks = computed(() => [
         href: route('admin.flights.index'),
         current: currentRoute.startsWith('/admin/flights'),
     },
+    // *** NEW: Tourist Visa ***
+    {
+        name: 'Tourist Visas',
+        href: route('admin.tourist-visas.index'), // <-- Added Link
+        current: currentRoute.startsWith('/admin/tourist-visas'), // <-- Added Current Check
+    },
     // Users & Settings
     {
         name: 'Manage Users',
-        href: route('admin.users.index'), // Correct route name
+        href: route('admin.users.index'),
         current: currentRoute.startsWith('/admin/users'),
     },
     {
         name: 'Settings',
-        href: route('admin.settings.index'), // Correct route name
+        href: route('admin.settings.index'),
         current: currentRoute.startsWith('/admin/settings'),
     },
 ]);
@@ -109,7 +115,7 @@ watch(
                                 :href="item.href"
                                 :class="[
                                     item.current
-                                        ? 'bg-gray-100 dark:bg-gray-700 text-brand-primary dark:text-white'
+                                        ? 'bg-gray-100 dark:bg-gray-700 text-brand-primary dark:text-white' // Use brand color for active text
                                         : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800',
                                     'group rounded-md px-3 py-2 flex items-center text-sm font-medium',
                                 ]"

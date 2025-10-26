@@ -1,67 +1,77 @@
 <?php
+// app/Http/Controllers/Admin/JobPostingPageController.php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\JobPosting;  // <-- CORRECT MODEL
-use App\Models\JobCategory;
-use App\Models\Country;
+use App\Models\JobPosting;
+use App\Models\JobCategory; // <-- Import
+use App\Models\Country; // <-- Import
+use App\Services\Admin\JobPostingService; // <-- Import the service
+use Illuminate\Http\Request; // <-- Import
+use Illuminate\Support\Facades\Redirect; // <-- Import
 use Inertia\Inertia;
-use Inertia\Response;
-use Illuminate\Http\Request; // <-- Add Request
 
 class JobPostingPageController extends Controller
 {
-    /**
-     * Display the list of job postings.
-     */
-    public function index(Request $request): Response // <-- Add Request
+    protected $jobPostingService;
+
+    // Inject the service
+    public function __construct(JobPostingService $jobPostingService)
     {
-        // Use the correct model: JobPosting
-        $query = JobPosting::with(['jobCategory', 'country']);
+        $this->jobPostingService = $jobPostingService;
+    }
 
-        // Optional: Add search logic if needed
-        if ($request->has('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
-        }
-        
-        $postings = $query->latest()->paginate(10);
-
+    public function index()
+    {
         return Inertia::render('Admin/JobPostings/Index', [
-            'postings' => $postings,
-            'filters' => $request->only(['search']), // Pass filters back
+            'jobPostings' => JobPosting::with('jobCategory', 'country')->paginate(10),
         ]);
     }
 
-    /**
-     * Show the form for creating a new job posting.
-     */
-    public function create(): Response
+    public function create()
     {
-        $categories = JobCategory::where('is_active', true)->orderBy('name')->get(['id', 'name']);
-        $countries = Country::orderBy('name')->get(['id', 'name']);
-
         return Inertia::render('Admin/JobPostings/Create', [
-            'categories' => $categories,
-            'countries' => $countries,
+            'jobCategories' => JobCategory::select('id', 'name')->get(),
+            'countries' => Country::select('id', 'name')->get(),
         ]);
     }
 
     /**
-     * Show the form for editing the specified job posting.
+     * NEW METHOD: Store a newly created job posting from Inertia.
      */
-    public function edit(JobPosting $jobPosting): Response // <-- Use correct model JobPosting
+    public function store(Request $request)
     {
-        $categories = JobCategory::orderBy('name')->get(['id', 'name']);
-        $countries = Country::orderBy('name')->get(['id', 'name']);
+        try {
+            // Use the same service to create the job
+            $this->jobPostingService->createJobPosting($request->all());
 
-        // Eager load relationships
-        $jobPosting->load(['jobCategory', 'country']);
+            // On success, redirect back to the index page
+            return Redirect::route('admin.job-postings.index')->with('success', 'Job posting created successfully.');
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // On validation error, redirect back to the form with errors
+            return Redirect::back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            // On other errors, redirect back with a general error
+            \Illuminate\Support\Facades\Log::error('Error creating job posting from PageController', [
+                'message' => $e->getMessage(),
+            ]);
+            return Redirect::back()->with('error', 'An unexpected error occurred. Please try again.');
+        }
+    }
+
+    public function edit(JobPosting $jobPosting)
+    {
         return Inertia::render('Admin/JobPostings/Edit', [
-            'posting' => $jobPosting, // 'posting' prop matches the Vue file
-            'categories' => $categories,
-            'countries' => $countries,
+            'jobPosting' => $jobPosting,
+            'jobCategories' => JobCategory::select('id', 'name')->get(),
+            'countries' => Country::select('id', 'name')->get(),
+            // You may need to pass states/cities here if the job has them
         ]);
     }
+
+    // You will also need to add update() and destroy() methods here
+    // to handle edit/delete from the Inertia frontend, following
+    // the same pattern as this store() method.
 }

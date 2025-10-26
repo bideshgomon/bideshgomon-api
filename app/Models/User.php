@@ -8,39 +8,67 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\SoftDeletes; // Keep SoftDeletes if used
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens; // Keep HasApiTokens for API authentication
+use Laravel\Sanctum\HasApiTokens;
+
+// Model Imports
+use App\Models\Role;
+use App\Models\UserProfile;
+use App\Models\UserEducation;
+use App\Models\UserExperience;
+use App\Models\Skill;
+use App\Models\UserDocument;
+use App\Models\UserPortfolio;
+use App\Models\ConsultantProfile;
+use App\Models\Appointment;
+use App\Models\FlightBooking;
+use App\Models\TouristVisa;
+use App\Models\TravelInsurance; // <-- ADDED for new relationship
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    // Combine traits from both versions, ensuring Sanctum is included
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
         'name',
         'email',
         'password',
         'role_id',
-        'phone', // From second version
-        'avatar', // From second version
+        'phone',
+        'avatar',
         'is_active',
-        'skills', // JSON column from second version
+        'skills', // JSON column
     ];
 
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
-            'skills' => 'array', // Cast JSON column to array from second version
+            'skills' => 'array', // Cast JSON column to array
         ];
     }
 
@@ -53,11 +81,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function hasRole(string $roleName): bool
     {
-        // Using nullsafe operator from second version is good practice
         return $this->role?->name === $roleName;
     }
 
-    // Renamed from userProfile() in first version to profile() in second
     public function profile(): HasOne
     {
         return $this->hasOne(UserProfile::class);
@@ -70,11 +96,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function experiences(): HasMany
     {
-        // Ensure this points to the correct Experience model if you consolidated
         return $this->hasMany(UserExperience::class);
     }
 
-    // Relationship for Many-to-Many skills (from second version)
     public function skillSet(): BelongsToMany
     {
         return $this->belongsToMany(Skill::class, 'user_skill');
@@ -90,13 +114,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(UserPortfolio::class);
     }
 
-    // Consultant specific relationship (from second version)
     public function consultantProfile(): HasOne
     {
         return $this->hasOne(ConsultantProfile::class);
     }
 
-    // Appointment relationships (from second version)
     public function appointmentsAsClient(): HasMany
     {
         return $this->hasMany(Appointment::class, 'user_id');
@@ -107,7 +129,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Appointment::class, 'consultant_id');
     }
 
-    // --- ADDED Relationship from first code block ---
     /**
      * Get the flight bookings associated with the user.
      */
@@ -115,12 +136,21 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(FlightBooking::class);
     }
-    // --- END ADDED Relationship ---
 
-    // --- Note: Removed relationships from first code block that were ---
-    // --- differently named or structured in the second, preferred version ---
-    // public function ownedAgency(): HasOne { ... } // Replaced by role logic?
-    // public function agenciesAsConsultant(): BelongsToMany { ... } // Replaced by role logic?
-    // public function clients(): BelongsToMany { ... } // Replaced by role logic/appointments?
-    // public function consultant(): BelongsToMany { ... } // Replaced by role logic/appointments?
+    /**
+     * Get the tourist visa applications for the user.
+     */
+    public function touristVisas(): HasMany
+    {
+        return $this->hasMany(TouristVisa::class);
+    }
+
+    /**
+     * Get the travel insurance policies for the user.
+     * (MERGED from new submission)
+     */
+    public function travelInsurances(): HasMany
+    {
+        return $this->hasMany(TravelInsurance::class);
+    }
 }
