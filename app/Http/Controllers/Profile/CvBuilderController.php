@@ -1,64 +1,61 @@
 <?php
 
-namespace App\Http\Controllers\Profile; // Assuming namespace based on context
+namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
-use Inertia\Inertia;
-use Inertia\Response;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Response as HttpResponse; // Use alias to avoid conflict
+use Barryvdh\DomPDF\Facade\Pdf; // <-- Import the PDF Facade
+use Illuminate\Support\Str; // <-- Import Str facade
 
 class CvBuilderController extends Controller
 {
     /**
-     * Display the CV builder preview page.
+     * Display the CV builder preview page (if you have one).
      */
-    public function show(Request $request): Response
+    public function show()
     {
-        $user = $request->user()->load([
-            'profile', 
-            'educations' => fn ($query) => $query->orderBy('start_date', 'desc'),
-            'experiences' => fn ($query) => $query->orderBy('is_current', 'desc')->orderBy('start_date', 'desc'),
-            'skills' => fn ($query) => $query->orderBy('name'), // <-- FIXED (was skillSet)
-            'portfolios' => fn ($query) => $query->orderBy('created_at', 'desc'),
-            'documents' => fn ($query) => $query->with('documentType')
-        ]);
-
-        return Inertia::render('Profile/CvBuilder', [
-            // Use 'userProfile' to be consistent with our other pages
-            'userProfile' => $user, 
-            'skills' => $user->skills, // Pass skills explicitly
-        ]);
+        // $user = Auth::user()->load(['profile', 'educations', 'experiences', 'skillSet', 'portfolios' /* , Add other needed relations */]);
+        // return inertia('Profile/CvBuilder/Show', ['user' => $user]); // Example if using Inertia
+        abort(501, 'Preview page not implemented yet.');
     }
 
     /**
      * Generate and download the user's CV as a PDF.
      */
-    public function download(Request $request): HttpResponse
+    public function download(Request $request)
     {
+        // 1. Get Authenticated User with all necessary profile data
         $user = Auth::user()->load([
-            'profile',
-            'educations' => fn ($query) => $query->orderBy('start_date', 'desc'),
-            'experiences' => fn ($query) => $query->orderBy('is_current', 'desc')->orderBy('start_date', 'desc'),
-            'skills' => fn ($query) => $query->orderBy('name'), // <-- FIXED (was skillSet)
-            'portfolios' => fn ($query) => $query->orderBy('created_at', 'desc'),
+            'profile', // Basic profile info
+            'educations' => fn($q) => $q->orderBy('start_date', 'desc'), // Load and order
+            'experiences' => fn($q) => $q->orderBy('start_date', 'desc'), // Load and order
+            'skillSet', // Load skills via pivot table
+            'portfolios',
+            // --- Eager load ALL other relations needed for the CV template ---
+            // 'languages.language', // Example: Load languages and the language name
+            // 'licenses.licenseType', // Example
+            // 'memberships',
+            // 'technicalEducations',
         ]);
 
-        // Pass data to the Blade view
-        $data = [
-            'user' => $user,
-            'skills' => $user->skills, // Pass skills explicitly
-        ]; 
-        
-        // Load the Blade view (we'll create this next)
-        $pdf = Pdf::loadView('pdf.cv_template', $data);
+        // 2. Prepare data for the view
+        $data = ['user' => $user];
 
-        $filename = Str::slug($user->name) . '-cv-' . date('Ymd') . '.pdf';
+        // 3. Load the Blade view with data and generate PDF
+        $pdf = Pdf::loadView('cv.template', $data);
 
-        // Return the PDF as a download
-        return $pdf->download($filename);
+        // (Optional) Customize PDF options
+        // $pdf->setPaper('a4', 'portrait');
+
+        // 4. Generate a filename
+        $filename = Str::slug($user->name . '-cv') . '.pdf';
+
+        // 5. Stream the PDF download to the browser
+        return $pdf->stream($filename);
+
+        // --- OR ---
+        // 5. Download the PDF directly
+        // return $pdf->download($filename);
     }
 }

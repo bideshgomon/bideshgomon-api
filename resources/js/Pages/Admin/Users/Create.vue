@@ -7,39 +7,37 @@ import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const props = defineProps({
-    user: Object, // Passed from UserPageController
     roles: Array, // Passed from UserPageController
 });
 
 const form = useForm({
-    _method: 'PUT', // Important for Laravel update routes
-    name: props.user.name,
-    email: props.user.email,
-    password: '', // Leave empty unless changing
+    name: '',
+    email: '',
+    password: '',
     password_confirmation: '',
-    role_id: props.user.role_id,
-    is_active: props.user.is_active,
+    role_id: props.roles.find(role => role.name === 'user')?.id || '', // Default to user role if possible
+    is_active: true,
 });
 
 const submit = () => {
-    form.post(route('api.admin.users.update', props.user.id), { // Use post for PUT/PATCH with _method
-        // preserveScroll: true, // Keep scroll position
+    form.post(route('api.admin.users.store'), { // Using API route name
+        onFinish: () => form.reset('password', 'password_confirmation'),
         onSuccess: () => {
-             form.reset('password', 'password_confirmation'); // Clear password fields
-             // Optionally redirect or show success message
+             form.reset();
+             // Optionally redirect to index or show success message
              // router.visit(route('admin.users.index'));
-        },
-        // Error handling is somewhat automatic
+        }
+        // Error handling is somewhat automatic with useForm, displaying errors
     });
 };
 </script>
 
 <template>
-    <Head :title="'Admin - Edit User: ' + user.name" />
+    <Head title="Admin - Add User" />
 
     <AdminLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Edit User: {{ user.name }}</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Add New User</h2>
         </template>
 
         <div class="py-12">
@@ -60,14 +58,14 @@ const submit = () => {
                             </div>
 
                             <div class="mt-4">
-                                <InputLabel for="password" value="New Password (leave blank to keep current)" />
-                                <TextInput id="password" type="password" class="mt-1 block w-full" v-model="form.password" autocomplete="new-password" />
+                                <InputLabel for="password" value="Password" />
+                                <TextInput id="password" type="password" class="mt-1 block w-full" v-model="form.password" required autocomplete="new-password" />
                                 <InputError class="mt-2" :message="form.errors.password" />
                             </div>
 
                             <div class="mt-4">
-                                <InputLabel for="password_confirmation" value="Confirm New Password" />
-                                <TextInput id="password_confirmation" type="password" class="mt-1 block w-full" v-model="form.password_confirmation" autocomplete="new-password" />
+                                <InputLabel for="password_confirmation" value="Confirm Password" />
+                                <TextInput id="password_confirmation" type="password" class="mt-1 block w-full" v-model="form.password_confirmation" required autocomplete="new-password" />
                                 <InputError class="mt-2" :message="form.errors.password_confirmation" />
                             </div>
 
@@ -84,11 +82,12 @@ const submit = () => {
 
                              <div class="block mt-4">
                                 <label class="flex items-center">
-                                    <input type="checkbox" v-model="form.is_active" :checked="form.is_active" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" />
+                                    <input type="checkbox" v-model="form.is_active" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" />
                                     <span class="ms-2 text-sm text-gray-600">Active</span>
                                 </label>
-                                <InputError class="mt-2" :message="form.errors.is_active" />
+                                 <InputError class="mt-2" :message="form.errors.is_active" />
                             </div>
+
 
                             <div class="flex items-center justify-end mt-4">
                                 <Link :href="route('admin.users.index')" class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -96,7 +95,7 @@ const submit = () => {
                                 </Link>
 
                                 <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                                    Update User
+                                    Create User
                                 </PrimaryButton>
                             </div>
                         </form>
