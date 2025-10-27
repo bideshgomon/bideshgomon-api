@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\Role; // ✅ [FIX] Import the Role model
+use App\Models\Role; // <-- [PATCH] Import Role model
+use App\Models\UserProfile; // <-- [PATCH] Import UserProfile model
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -37,11 +38,12 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // ✅ [FIX] Find the default 'user' role
-        $userRole = Role::where('name', 'user')->first();
+        // --- [PATCH START] ---
+        // Find the 'user' role
+        // We use slug 'user' as it's more reliable than the name 'user' which was in your RoleSeeder
+        $userRole = Role::where('slug', 'user')->first(); 
         if (!$userRole) {
-            // This is a fallback in case the seeder hasn't run
-            // In a real app, you might want to log this critical error
+            // This is a critical error if seeders haven't run
             throw new \Exception('Default user role not found. Please run database seeders.');
         }
 
@@ -49,8 +51,13 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role_id' => $userRole->id, // ✅ [FIX] Assign the role_id
+            'role_id' => $userRole->id, // Assign the role_id
+            'is_active' => true, // Default new web users to active
         ]);
+
+        // Create an empty profile for the new user
+        UserProfile::create(['user_id' => $user->id]);
+        // --- [PATCH END] ---
 
         event(new Registered($user));
 

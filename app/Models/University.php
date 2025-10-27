@@ -1,9 +1,60 @@
-<?php namespace App\Models;
-use Illuminate\Database\Eloquent\Factories\HasFactory; use Illuminate\Database\Eloquent\Model; use Illuminate\Database\Eloquent\Relations\BelongsTo; use Illuminate\Database\Eloquent\Relations\HasMany;
-class University extends Model {
+<?php 
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory; 
+use Illuminate\Database\Eloquent\Model; 
+use Illuminate\Database\Eloquent\Relations\BelongsTo; 
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class University extends Model 
+{
     use HasFactory;
-    protected $fillable = ['name', 'country_id', 'city', 'ranking', 'website_url', 'description', 'logo_path', 'intake_months'];
-    protected $casts = ['intake_months' => 'array'];
-    public function country(): BelongsTo { return $this->belongsTo(Country::class); }
-    public function courses(): HasMany { return $this->hasMany(Course::class); }
+
+    /**
+     * The table associated with the model.
+     * @var string
+     */
+    protected $table = 'universities'; // Explicitly defining table
+
+    /**
+     * The attributes that are mass assignable.
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'name', 
+        'country_id', 
+        'city', 
+        'ranking', 
+        'website_url', 
+        'description', 
+        'logo_path', 
+        'intake_months',
+        'is_active', // <-- [PATCH] ADDED MISSING PROPERTY
+    ];
+
+    /**
+     * The attributes that should be cast.
+     * @var array
+     */
+    protected $casts = [
+        'intake_months' => 'array',
+        'is_active' => 'boolean', // <-- [PATCH] ADDED CAST
+    ];
+
+    /**
+     * Get the country this university belongs to.
+     */
+    public function country(): BelongsTo 
+    { 
+        return $this->belongsTo(Country::class); 
+    }
+
+    /**
+     * Get all courses offered by this university.
+     */
+    public function courses(): HasMany 
+    { 
+        return $this->hasMany(Course::class); 
+    }
 }

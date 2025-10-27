@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\Role;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
+use Illuminate\Support\Str; // <-- This import is now used
 
 class RoleSeeder extends Seeder
 {
@@ -14,10 +14,24 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        // Use firstOrCreate to ensure roles are only created once
-        Role::firstOrCreate(['slug' => 'admin'], ['name' => 'admin']);
-        Role::firstOrCreate(['slug' => 'agency'], ['name' => 'agency']); // <-- ADDED
-        Role::firstOrCreate(['slug' => 'consultant'], ['name' => 'consultant']); // <-- ADDED
-        Role::firstOrCreate(['slug' => 'user'], ['name' => 'user']);
+        // --- [PATCH START] ---
+        // Define roles with proper names
+        $roles = [
+            ['name' => 'Admin'],
+            ['name' => 'Agency'],
+            ['name' => 'Consultant'],
+            ['name' => 'User'],
+        ];
+
+        foreach ($roles as $roleData) {
+            // Use firstOrCreate, checking by slug and creating with name
+            Role::firstOrCreate(
+                // Generate the slug from the name
+                ['slug' => Str::slug($roleData['name'])], 
+                // Set the name
+                ['name' => $roleData['name']]  
+            );
+        }
+        // --- [PATCH END] ---
     }
 }

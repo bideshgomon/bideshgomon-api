@@ -8,7 +8,15 @@ return new class extends Migration {
         Schema::create('universities', function (Blueprint $table) {
             $table->id();
             $table->foreignId('country_id')->constrained()->onDelete('cascade');
-            $table->string('name');
+            // --- [PATCH START] Remove ->after() ---
+            $table->string('city')->nullable(); // Define column without ->after()
+            // --- [PATCH END] ---
+            $table->string('name'); // Define name after city if desired order
+            $table->string('website_url')->nullable();
+            $table->text('description')->nullable();
+            $table->string('logo_path')->nullable();
+            $table->json('intake_months')->nullable();
+            $table->integer('ranking')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

@@ -71,8 +71,10 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class, // Rate limiting
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class, // Ensures user email is verified
 
-        // *** CORRECTED ALIAS (MERGED) ***
+        // --- [PATCH START] ---
         // Custom middleware alias for Role-Based Access Control
-        'role' => \App\Http\Middleware\EnsureUserHasRole::class,
+        // 'role' => \App\Http\Middleware\CheckRole::class, // <-- BUG: This is for WEB routes
+        'role' => \App\Http\Middleware\EnsureUserHasRole::class, // <-- FIX: Use API-safe middleware
+        // --- [PATCH END] ---
     ];
 }

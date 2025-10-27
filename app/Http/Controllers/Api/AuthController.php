@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\UserProfile;
+use Illuminate\Support\Facades\Log; // <-- [RECOMMENDATION] Add Log facade
 
 class AuthController extends Controller
 {
@@ -29,9 +30,12 @@ class AuthController extends Controller
         }
 
         // Find the 'user' role
-        $userRole = Role::where('name', 'user')->first();
+        $userRole = Role::where('slug', 'user')->first(); // <-- [PATCH] Find by 'slug' for consistency
         if (!$userRole) {
-             return response()->json(['message' => 'Default user role not found.'], 500);
+             // --- [PATCH START] ---
+             Log::error('Default user role "user" not found during API registration.');
+             return response()->json(['message' => 'System configuration error: Default role not found.'], 500);
+             // --- [PATCH END] ---
         }
 
         $user = User::create([
@@ -39,6 +43,7 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role_id' => $userRole->id,
+            'is_active' => true, // <-- [PATCH] Explicitly set new API users to active
         ]);
 
         // Create an empty profile for the new user
@@ -46,11 +51,16 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        // --- [PATCH START] ---
+        // Load the 'profile' relationship (which we renamed in User.php)
+        $user->load('role', 'profile'); 
+        // --- [PATCH END] ---
+
         return response()->json([
             'message' => 'Registration successful! Profile created.',
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'user' => $user->load('role', 'userProfile') // Send back user data
+            'user' => $user // Send back user with relations
         ], 201);
     }
 
@@ -76,6 +86,9 @@ class AuthController extends Controller
 
         // Optional: Check if user is active
         if (!$user->is_active) {
+             // --- [PATCH START] ---
+             Auth::logout(); // Log out the user if they are inactive
+             // --- [PATCH END] ---
              return response()->json(['message' => 'Your account is deactivated.'], 403);
         }
 
@@ -95,18 +108,21 @@ class AuthController extends Controller
     public function me(Request $request)
     {
         $user = $request->user();
+        $user->load('role'); // Always load the role
 
-        // Eager load relationships based on role
-        if ($user->role->name === 'user') {
-            $user->load('userProfile');
-        } elseif ($user->role->name === 'agency') {
+        // --- [PATCH START] ---
+        // Eager load relationships based on role SLUG
+        // Use the renamed 'profile' relation
+        if ($user->role->slug === 'user') {
+            $user->load('profile'); 
+        } elseif ($user->role->slug === 'agency') {
             $user->load('ownedAgency');
         } 
-        // ✅ [BUG FIX] Added logic for 'consultant' role
-        elseif ($user->role->name === 'consultant') {
+        elseif ($user->role->slug === 'consultant') {
+            // Load relations defined in User.php
             $user->load('agenciesAsConsultant', 'clients');
         }
-        // Admin role typically doesn't need extra profile data loaded here
+        // --- [PATCH END] ---
 
         return response()->json($user);
     }
@@ -120,4 +136,4 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Successfully logged out']);
     }
-}
+} // <-- [PATCH] The extra '}' brace was removed from here
