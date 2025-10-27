@@ -2,124 +2,144 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Models\User;
 
-// --- CONTROLLER IMPORTS ---
+// --- TEMPORARY TEST ROUTE ---
+Route::get('/get-admin-token', function () {
+    $user = User::where('email', 'admin@bideshgomon.com')->first();
+    if (!$user) {
+        return response()->json(['message' => 'Admin user not found. Please run: php artisan migrate:fresh --seed'], 404);
+    }
+    $user->tokens()->delete();
+    $token = $user->createToken('postman-test-token');
+    return response()->json([
+        'message' => 'Use this token in your "Authorization" header',
+        'token' => $token->plainTextToken,
+    ]);
+});
+// ------------------------------
+
+
+// --- IMPORT ALL CONTROLLERS ---
 
 // Auth + Shared
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PrebuiltDataController;
 use App\Http\Controllers\Api\DocumentTypeController;
-use App\Http\Controllers\Api\PublicSearchController; // Assuming exists for dynamic selects
 
-// Admin Controllers
+// 🧭 Public Search
+use App\Http\Controllers\Api\PublicSearchController;
+
+// 🏛️ Admin Controllers
 use App\Http\Controllers\Api\Admin\CountryController;
 use App\Http\Controllers\Api\Admin\StateController;
 use App\Http\Controllers\Api\Admin\CityController;
 use App\Http\Controllers\Api\Admin\UniversityController;
 use App\Http\Controllers\Api\Admin\CourseController;
-use App\Http\Controllers\Api\Admin\JobCategoryController; // Added based on context
-use App\Http\Controllers\Api\Admin\JobPostingController; // Added based on context
-use App\Http\Controllers\Api\Admin\AirlineController; // Added based on context
-use App\Http\Controllers\Api\Admin\AirportController; // Added based on context
-use App\Http\Controllers\Api\Admin\FlightController; // Added based on context
-use App\Http\Controllers\Api\Admin\TouristVisaController; // Added based on context
-use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
-use App\Http\Controllers\Api\Admin\WorkVisaApplicationController as AdminWorkVisaApiController;
-use App\Http\Controllers\Api\Admin\StudentVisaApplicationController as AdminStudentVisaApiController;
-use App\Http\Controllers\Api\Admin\ConsultationServiceController as AdminConsultationServiceApiController; // Added based on context
+use App\Http\Controllers\Api\Admin\JobCategoryController;
+use App\Http\Controllers\Api\Admin\JobPostingController;
+use App\Http\Controllers\Api\Admin\SkillController;
 
-// User Profile Controllers (Using corrected names and removing redundant ones)
+// 👤 User Profile Controllers
 use App\Http\Controllers\Api\UserProfile\UserEducationController;
-use App\Http\Controllers\Api\UserProfile\UserWorkExperienceController; // Corrected
-use App\Http\Controllers\Api\UserProfile\UserSkillController;          // Corrected
+use App\Http\Controllers\Api\UserProfile\UserExperienceController;
+use App\Http\Controllers\Api\UserProfile\UserSkillsController;
+use App\Http\Controllers\Api\UserProfile\UserPortfolioController;
 use App\Http\Controllers\Api\UserProfile\UserDocumentController;
-use App\Http\Controllers\Api\UserProfile\UserPortfolioController; // <-- ADDED import
+use App\Http\Controllers\Api\UserProfile\UserWorkExperienceController;
+use App\Http\Controllers\Api\UserProfile\UserSkillController;
 use App\Http\Controllers\Api\UserProfile\UserLicenseController;
 use App\Http\Controllers\Api\UserProfile\UserLanguageController;
 use App\Http\Controllers\Api\UserProfile\UserTechnicalEducationController;
 use App\Http\Controllers\Api\UserProfile\UserMembershipController;
 
-// User Service Controllers
-use App\Http\Controllers\Api\TravelInsuranceController; // Added based on context
-use App\Http\Controllers\Api\WorkVisaApplicationController; // User-facing
-use App\Http\Controllers\Api\StudentVisaApplicationController; // User-facing
-use App\Http\Controllers\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| PUBLIC SEARCH ROUTES
 |--------------------------------------------------------------------------
 */
 
-// --- Public Routes ---
-Route::get('/document-types', [DocumentTypeController::class, 'index'])->name('api.public.document-types');
-Route::prefix('public')->name('api.public.')->group(function() {
-    // API endpoints for dynamic selects (e.g., in Student Visa form)
-    Route::get('/universities', [PublicSearchController::class, 'searchUniversities'])->name('universities.search');
-    Route::get('/courses', [PublicSearchController::class, 'searchCourses'])->name('courses.search');
-    // Add other public search/lookup endpoints here
-});
-// Public details (assuming PublicSearchController handles these)
-Route::get('/universities/{university}', [PublicSearchController::class, 'showUniversityDetail'])->name('api.public.universities.show');
-Route::get('/courses/{course}', [PublicSearchController::class, 'showCourseDetail'])->name('api.public.courses.show');
+Route::get('/search/universities', [PublicSearchController::class, 'searchUniversities'])
+    ->name('api.public.search.universities');
+
+Route::get('/search/courses', [PublicSearchController::class, 'searchCourses'])
+    ->name('api.public.search.courses');
+
+Route::get('/universities/{university}', [PublicSearchController::class, 'showUniversityDetail'])
+    ->name('api.public.universities.show'); 
+    
+Route::get('/courses/{course}', [PublicSearchController::class, 'showCourseDetail'])
+    ->name('api.public.courses.show');
+
+// --- ADDED FROM MERGE ---
+Route::get('/search/jobs', [PublicSearchController::class, 'searchJobPostings'])->name('api.public.search.jobs');
 
 
-// --- Authentication Routes ---
-Route::post('/login', [AuthController::class, 'login'])->name('api.login');
-Route::post('/register', [AuthController::class, 'register'])->name('api.register');
+/*
+|--------------------------------------------------------------------------
+| AUTHENTICATED ROUTES
+|--------------------------------------------------------------------------
+*/
+
+// Default authenticated user route
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user()->load('role'); // Eager load role
+})->name('api.user');
 
 
-// --- Authenticated Routes ---
+// --- PUBLIC AUTH ROUTES ---
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+
+// --- PROTECTED ROUTES ---
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', [AuthController::class, 'me'])->name('api.user.me'); // Renamed from 'user' route in api.php to avoid conflict
-    Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
+    Route::get('/me', [AuthController::class, 'me']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/prebuilt-data', [PrebuiltDataController::class, 'getAll']);
 
-    // --- User Profile Specific Updates ---
-    Route::prefix('profile')->name('api.profile.')->group(function() { // Renamed from 'user-profile' for consistency
-        Route::apiResource('education', UserEducationController::class);
-        Route::apiResource('experience', UserWorkExperienceController::class); // Changed from UserExperienceController (Bug 9)
-        Route::apiResource('skills', UserSkillController::class)->only(['index', 'store', 'destroy']); // Use correct controller (Bug 10), add destroy per Bug 6 (method exists)
+    // 📄 Document Types
+    Route::get('/document-types', [DocumentTypeController::class, 'index'])
+        ->name('api.document-types.index');
+
+    // 🧑‍🎓 USER PROFILE (CV) ROUTES
+    Route::prefix('profile')->name('profile.')->group(function() {
+        Route::apiResource('education', UserEducationController::class)->except(['show']);
+        Route::apiResource('work-experience', UserWorkExperienceController::class)->except(['show']);
         Route::apiResource('documents', UserDocumentController::class)->only(['index', 'store', 'destroy']);
-        Route::apiResource('portfolios', UserPortfolioController::class); // <-- ADDED MISSING ROUTE (Bug 5)
-        Route::apiResource('licenses', UserLicenseController::class);
-        Route::apiResource('languages', UserLanguageController::class);
-        Route::apiResource('technical-educations', UserTechnicalEducationController::class);
-        Route::apiResource('memberships', UserMembershipController::class);
+        Route::apiResource('skills', UserSkillController::class)->only(['index', 'store', 'destroy']);
+        Route::apiResource('licenses', UserLicenseController::class)->except(['show']);
+        Route::apiResource('languages', UserLanguageController::class)->except(['show']);
+        Route::apiResource('technical-education', UserTechnicalEducationController::class)->except(['show']);
+        Route::apiResource('memberships', UserMembershipController::class)->except(['show']);
     });
-
-    // --- User Actions for their own Applications ---
-    Route::apiResource('work-visa-applications', WorkVisaApplicationController::class)
-          ->names('api.work-visa-applications');
-    Route::apiResource('student-visa-applications', StudentVisaApplicationController::class)
-          ->names('api.student-visa-applications');
-
-    // --- Payment Initiation ---
-    Route::post('/payment/initiate/travel-insurance', [PaymentController::class, 'initiateTravelInsurancePayment'])
-         ->name('api.payment.initiate.travel-insurance');
-    // Add other payment initiation routes here (e.g., for appointments)
 });
 
 
-// --- Admin API Routes ---
-Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->name('api.admin.')->group(function () {
-    // Lookups
+/*
+|--------------------------------------------------------------------------
+| ADMIN-ONLY PROTECTED ROUTES
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->name('api.admin.')->group(function () {
+    // Bulk upload routes
     Route::post('countries/bulk', [CountryController::class, 'bulkUpload'])->name('countries.bulk');
+    Route::post('states/bulk', [StateController::class, 'bulkUpload'])->name('states.bulk');
+    Route::post('cities/bulk', [CityController::class, 'bulkUpload'])->name('cities.bulk');
+    Route::post('skills/bulk', [SkillController::class, 'bulkUpload'])->name('skills.bulk');
+    // --- ADDED JOB CATEGORY BULK ROUTE ---
+    Route::post('job-categories/bulk', [JobCategoryController::class, 'bulkUpload'])->name('job-categories.bulk');
+    // --- END JOB CATEGORY BULK ROUTE ---
+
+    // CRUD routes
     Route::apiResource('countries', CountryController::class);
     Route::apiResource('states', StateController::class);
     Route::apiResource('cities', CityController::class);
-    // Management
+    Route::apiResource('skills', SkillController::class)->except(['show']);
     Route::apiResource('universities', UniversityController::class);
     Route::apiResource('courses', CourseController::class);
-    Route::apiResource('job-categories', JobCategoryController::class); // Added based on context
-    Route::apiResource('job-postings', JobPostingController::class); // Added based on context
-    Route::apiResource('airlines', AirlineController::class); // Added based on context
-    Route::apiResource('airports', AirportController::class); // Added based on context
-    Route::apiResource('flights', FlightController::class); // Added based on context
-    Route::apiResource('consultation-services', AdminConsultationServiceApiController::class); // Added based on context
-    Route::apiResource('tourist-visas', TouristVisaController::class)->except(['store', 'show']); // Added based on context
-    Route::patch('/tourist-visa-documents/{document}', [TouristVisaController::class, 'updateDocumentStatus'])->name('tourist-visa-documents.update'); // Added based on context
-    Route::apiResource('users', AdminUserController::class);
-    Route::apiResource('work-visa-applications', AdminWorkVisaApiController::class)
-        ->names('api.admin.work-visa-applications');
-    Route::apiResource('student-visa-applications', AdminStudentVisaApiController::class)
-        ->names('api.admin.student-visa-applications');
+    Route::apiResource('job-categories', JobCategoryController::class);
+    Route::apiResource('job-postings', JobPostingController::class);
 });

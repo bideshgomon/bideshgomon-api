@@ -1,8 +1,30 @@
-<?php namespace App\Models;
-use Illuminate\Database\Eloquent\Model; use Illuminate\Support\Str; use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany; // <-- ADD THIS
+
 class Skill extends Model
 {
-    protected $fillable = ['name', 'slug', 'category'];
-    protected static function booted(): void { static::saving(function ($skill) { $skill->slug = Str::slug($skill->name); }); }
-    public function users(): BelongsToMany { return $this->belongsToMany(User::class, 'user_skill'); }
+    // --- ADD THIS ---
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'name',
+        'slug',
+        'category',
+    ];
+
+    /**
+     * The users that possess this skill.
+     */
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_skill');
+    }
+    // --- END ADD ---
 }

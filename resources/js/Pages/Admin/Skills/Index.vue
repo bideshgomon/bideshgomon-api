@@ -8,16 +8,14 @@ import InputError from '@/Components/InputError.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
-import Checkbox from '@/Components/Checkbox.vue';
-import TextareaInput from '@/Components/TextareaInput.vue'; // <-- Import TextareaInput
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 import debounce from 'lodash/debounce';
 
 // --- PROPS ---
 const props = defineProps({
-    jobCategories: Object, // Renamed from 'categories', passed from JobCategoryPageController
-    filters: Object,       // Current filter values (search)
+    skills: Object, // Paginated data from SkillPageController
+    filters: Object,   // Current filter values (search)
 });
 
 // --- STATE & FORMS ---
@@ -27,13 +25,12 @@ const page = usePage();
 // Modal visibility
 const showCreateEditModal = ref(false);
 const showUploadModal = ref(false);
-const editingCategory = ref(null); // Holds the category being edited
+const editingSkill = ref(null); // Holds the skill being edited
 
 // Form for Create/Edit
 const form = useForm({
     name: '',
-    description: '',
-    is_active: true,
+    category: '', // Add category field
 });
 
 // Form for CSV Upload
@@ -44,7 +41,7 @@ const csvForm = useForm({
 // --- WATCHERS ---
 // Watch search bar and reload page
 watch(search, debounce((value) => {
-    router.get(route('admin.job-categories.index'), { // Use correct route name
+    router.get(route('admin.skills.index'), {
         search: value,
     }, {
         preserveState: true,
@@ -56,19 +53,17 @@ watch(search, debounce((value) => {
 
 // Open "Add New" modal
 const openAddModal = () => {
-    editingCategory.value = null;
-    form.reset(); // Clear form, keep default is_active=true
-    form.is_active = true;
+    editingSkill.value = null;
+    form.reset(); // Clear form
     showCreateEditModal.value = true;
 };
 
 // Open "Edit" modal
-const openEditModal = (category) => {
-    editingCategory.value = category;
-    // Set form data from the selected category
-    form.name = category.name;
-    form.description = category.description;
-    form.is_active = category.is_active;
+const openEditModal = (skill) => {
+    editingSkill.value = skill;
+    // Set form data from the selected skill
+    form.name = skill.name;
+    form.category = skill.category;
     form.errors = {}; // Clear previous errors
     showCreateEditModal.value = true;
 };
@@ -81,17 +76,15 @@ const closeModal = () => {
 
 // Handle Create/Edit form submission
 const submitForm = () => {
-    if (editingCategory.value) {
+    if (editingSkill.value) {
         // --- UPDATE ---
-        // Assumes API route 'api.admin.job-categories.update'
-        form.put(route('api.admin.job-categories.update', editingCategory.value.id), {
+        form.put(route('api.admin.skills.update', editingSkill.value.id), {
             preserveScroll: true,
             onSuccess: () => closeModal(),
         });
     } else {
         // --- CREATE ---
-        // Assumes API route 'api.admin.job-categories.store'
-        form.post(route('api.admin.job-categories.store'), {
+        form.post(route('api.admin.skills.store'), {
             preserveScroll: true,
             onSuccess: () => closeModal(),
         });
@@ -99,10 +92,9 @@ const submitForm = () => {
 };
 
 // Handle Delete
-const deleteCategory = (category) => {
-    if (confirm(`Are you sure you want to delete "${category.name}"?`)) {
-        // Assumes API route 'api.admin.job-categories.destroy'
-        router.delete(route('api.admin.job-categories.destroy', category.id), {
+const deleteSkill = (skill) => {
+    if (confirm(`Are you sure you want to delete "${skill.name}"?`)) {
+        router.delete(route('api.admin.skills.destroy', skill.id), {
             preserveScroll: true,
         });
     }
@@ -116,8 +108,7 @@ const openUploadModal = () => {
 
 // Handle CSV file submission
 const submitUpload = () => {
-    // Assumes API route 'api.admin.job-categories.bulk'
-    csvForm.post(route('api.admin.job-categories.bulk'), {
+    csvForm.post(route('api.admin.skills.bulk'), { // Assumes 'api.admin.skills.bulk' route
         preserveScroll: true,
         onSuccess: () => {
             showUploadModal.value = false;
@@ -129,12 +120,12 @@ const submitUpload = () => {
 </script>
 
 <template>
-    <Head title="Manage Job Categories" />
+    <Head title="Manage Skills" />
 
     <AuthenticatedLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                Manage Job Categories
+                Manage Skills
             </h2>
         </template>
 
@@ -148,11 +139,11 @@ const submitUpload = () => {
                                 type="text"
                                 class="block w-full md:w-96"
                                 v-model="search"
-                                placeholder="Search by name..."
+                                placeholder="Search by name or category..."
                             />
                             <div class="flex-shrink-0 flex gap-2 w-full md:w-auto">
                                 <SecondaryButton @click="openUploadModal" class="w-1/2 md:w-auto">Upload CSV</SecondaryButton>
-                                <PrimaryButton @click="openAddModal" class="w-1/2 md:w-auto">Add New Category</PrimaryButton>
+                                <PrimaryButton @click="openAddModal" class="w-1/2 md:w-auto">Add New Skill</PrimaryButton>
                             </div>
                         </div>
 
@@ -160,29 +151,23 @@ const submitUpload = () => {
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead class="bg-gray-50 dark:bg-gray-700">
                                     <tr>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Slug</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Skill Name</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Category</th>
                                         <th scope="col" class="relative px-6 py-3"><span class="sr-only">Actions</span></th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                    <tr v-if="jobCategories.data.length === 0">
-                                         <td colspan="4" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">No job categories found.</td>
+                                    <tr v-if="skills.data.length === 0">
+                                         <td colspan="3" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">No skills found.</td>
                                     </tr>
-                                    <tr v-else v-for="category in jobCategories.data" :key="category.id" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">{{ category.name }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ category.slug }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                             <span :class="category.is_active ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'" class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ring-opacity-20">
-                                                {{ category.is_active ? 'Active' : 'Inactive' }}
-                                            </span>
-                                        </td>
+                                    <tr v-else v-for="skill in skills.data" :key="skill.id" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition duration-150">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">{{ skill.name }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{{ skill.category || 'N/A' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <button @click="openEditModal(category)" class="text-brand-primary hover:text-opacity-80 dark:text-blue-400 dark:hover:text-blue-300">
+                                            <button @click="openEditModal(skill)" class="text-brand-primary hover:text-opacity-80 dark:text-blue-400 dark:hover:text-blue-300">
                                                 Edit
                                             </button>
-                                            <DangerButton @click="deleteCategory(category)" class="ml-3 text-xs px-2 py-1">
+                                            <DangerButton @click="deleteSkill(skill)" class="ml-3 text-xs px-2 py-1">
                                                 Delete
                                             </DangerButton>
                                         </td>
@@ -191,7 +176,7 @@ const submitUpload = () => {
                             </table>
                         </div>
 
-                        <Pagination class="mt-6" :links="jobCategories.links" />
+                        <Pagination class="mt-6" :links="skills.links" />
 
                     </div>
                 </div>
@@ -201,26 +186,19 @@ const submitUpload = () => {
         <Modal :show="showCreateEditModal" @close="closeModal">
             <form @submit.prevent="submitForm" class="p-6">
                 <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                    {{ editingCategory ? 'Edit Job Category' : 'Add New Job Category' }}
+                    {{ editingSkill ? 'Edit Skill' : 'Add New Skill' }}
                 </h2>
 
                 <div class="mt-6 space-y-4">
                     <div>
-                        <InputLabel for="cat_name" value="Category Name *" />
-                        <TextInput id="cat_name" type="text" v-model="form.name" class="mt-1 block w-full" required />
+                        <InputLabel for="name" value="Skill Name *" />
+                        <TextInput id="name" type="text" v-model="form.name" class="mt-1 block w-full" required />
                         <InputError class="mt-2" :message="form.errors.name" />
                     </div>
                      <div>
-                        <InputLabel for="cat_description" value="Description (Optional)" />
-                        <TextareaInput id="cat_description" class="mt-1 block w-full" v-model="form.description" rows="3" />
-                        <InputError class="mt-2" :message="form.errors.description" />
-                    </div>
-                     <div class="block">
-                        <label class="flex items-center">
-                            <Checkbox name="is_active_modal" v-model:checked="form.is_active" />
-                            <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">Active</span>
-                        </label>
-                        <InputError class="mt-2" :message="form.errors.is_active" />
+                        <InputLabel for="category" value="Category (Optional)" />
+                        <TextInput id="category" type="text" v-model="form.category" class="mt-1 block w-full" placeholder="e.g., Technical, Soft Skill, Language"/>
+                        <InputError class="mt-2" :message="form.errors.category" />
                     </div>
                 </div>
 
@@ -231,7 +209,7 @@ const submitUpload = () => {
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
                     >
-                        {{ form.processing ? 'Saving...' : 'Save Category' }}
+                        {{ form.processing ? 'Saving...' : 'Save Skill' }}
                     </PrimaryButton>
                 </div>
             </form>
@@ -240,16 +218,16 @@ const submitUpload = () => {
         <Modal :show="showUploadModal" @close="showUploadModal = false">
              <form @submit.prevent="submitUpload" class="p-6">
                 <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                    Upload Job Categories CSV
+                    Upload Skills CSV
                 </h2>
                 <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                    CSV must have columns: `name`, `description` (optional). `is_active` defaults to true.
+                    CSV must have columns: `name`, `category` (optional).
                 </p>
 
                 <div class="mt-6">
-                    <InputLabel for="csv_file_jobcat" value="CSV File *" />
+                    <InputLabel for="csv_file_skill" value="CSV File *" />
                     <input
-                        id="csv_file_jobcat"
+                        id="csv_file_skill"
                         type="file"
                         @input="csvForm.file = $event.target.files[0]"
                         class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-brand-primary/10 file:text-brand-primary hover:file:bg-brand-primary/20"
