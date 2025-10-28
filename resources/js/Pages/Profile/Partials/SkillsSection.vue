@@ -1,143 +1,157 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useForm } from '@inertiajs/vue3';
+import { ref, onMounted, computed } from 'vue';
+import { useForm, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
+
+// Import necessary components
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/vue/24/solid'; // <-- Collapsible icons
+import InputLabel from '@/Components/InputLabel.vue';
+import InputError from '@/Components/InputError.vue';
+import Checkbox from '@/Components/Checkbox.vue'; // Using checkboxes for selection
 
-// --- Collapsible Toggle Logic ---
-const isOpen = ref(false);
-const toggle = () => {
-    isOpen.value = !isOpen.value;
-};
+// --- State Management ---
+const allSkills = ref([]); // List of all available skills { id: 1, name: 'JavaScript' }
+const userSkills = ref([]); // List of user's current skills { id: 1, name: 'JavaScript' }
+const selectedSkillIds = ref(new Set()); // Use a Set for efficient add/remove/check
+const isLoading = ref(true);
+const isSaving = ref(false);
+const recentlySuccessful = ref(false);
+const successMessage = ref('');
+const errorMessage = ref(''); // For general errors
 
-// --- Script Logic ---
+// --- API Interaction ---
+const fetchData = async () => {
+    isLoading.value = true;
+    errorMessage.value = '';
+    try {
+        // Fetch all available skills (adjust endpoint if needed)
+        const allSkillsResponse = await axios.get(route('api.prebuilt-data')); // Assuming skills are in prebuilt-data
+        allSkills.value = allSkillsResponse.data.skills || []; // Adjust based on actual API response structure
 
-// 'skills' will hold the list of skills saved in the database
-const skills = ref([]);
+        // Fetch user's current skills
+        const userSkillsResponse = await axios.get(route('profile.skills.index')); // API route for user's skills
+        userSkills.value = userSkillsResponse.data.data || []; // Assuming API returns data wrapped in 'data'
 
-// 'form' will manage the state of our skills list for submission
-const form = useForm({
-    skills: [],
-});
+        // Initialize selectedSkillIds based on user's current skills
+        selectedSkillIds.value = new Set(userSkills.value.map(skill => skill.id));
 
-// 'newSkill' is a temporary variable for the input field
-const newSkill = ref('');
-
-// Function to fetch the user's current skills
-const getSkills = () => {
-    axios.get(route('api.user'))
-        .then(response => {
-            if (response.data.skills) {
-                skills.value = response.data.skills;
-                form.skills = [...response.data.skills];
-            }
-        })
-        .catch(error => console.error("Error fetching user skills:", error));
-};
-
-// Run getSkills when the component loads
-onMounted(() => {
-    getSkills();
-});
-
-// Function to add a new skill
-const addSkill = () => {
-    if (newSkill.value.trim() !== '' && !form.skills.includes(newSkill.value.trim())) {
-        form.skills.push(newSkill.value.trim());
-        newSkill.value = ''; // Clear input
+    } catch (error) {
+        console.error("Error fetching skills data:", error);
+        errorMessage.value = "Failed to load skills data. Please try again later.";
+    } finally {
+        isLoading.value = false;
     }
 };
 
-// Function to remove a skill
-const removeSkill = (skillToRemove) => {
-    form.skills = form.skills.filter(skill => skill !== skillToRemove);
+// --- Form Submission (Saving Skills) ---
+// We don't use Inertia's useForm here as we're just sending an array of IDs
+const saveSkills = async () => {
+    isSaving.value = true;
+    recentlySuccessful.value = false;
+    successMessage.value = '';
+    errorMessage.value = ''; // Clear previous errors
+
+    try {
+        // The UserSkillsController likely expects an array of skill IDs in the request body
+        const response = await axios.post(route('profile.skills.store'), {
+            skills: Array.from(selectedSkillIds.value) // Convert Set to Array
+        });
+
+        // Update local state and show success
+        userSkills.value = response.data.data || []; // Update userSkills with the saved list from response
+        selectedSkillIds.value = new Set(userSkills.value.map(skill => skill.id)); // Resync Set
+        successMessage.value = response.data.message || 'Skills updated successfully.';
+        recentlySuccessful.value = true;
+        setTimeout(() => recentlySuccessful.value = false, 2000);
+
+    } catch (error) {
+        console.error("Error saving skills:", error);
+         if (error.response && error.response.data && error.response.data.message) {
+             errorMessage.value = error.response.data.message;
+         } else {
+             errorMessage.value = 'An unexpected error occurred while saving skills.';
+         }
+    } finally {
+        isSaving.value = false;
+    }
 };
 
-// Function to submit the skills list
-const submitSkills = () => {
-    form.post(route('api.profile.skills.store'), {
-        preserveScroll: true,
-        onSuccess: () => {
-            skills.value = [...form.skills];
-        },
-        onError: () => {
-            console.error("Error submitting skills:", form.errors);
-        },
-    });
+// --- Helper for Checkbox ---
+const handleCheckboxChange = (skillId, isChecked) => {
+    if (isChecked) {
+        selectedSkillIds.value.add(skillId);
+    } else {
+        selectedSkillIds.value.delete(skillId);
+    }
 };
+
+// --- Computed property to check if skills have changed ---
+const skillsChanged = computed(() => {
+    const initialIds = new Set(userSkills.value.map(s => s.id));
+    if (selectedSkillIds.value.size !== initialIds.size) {
+        return true;
+    }
+    for (const id of selectedSkillIds.value) {
+        if (!initialIds.has(id)) {
+            return true;
+        }
+    }
+    return false;
+});
+
+
+// --- Lifecycle Hook ---
+onMounted(() => {
+    fetchData();
+});
 </script>
 
 <template>
-    <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-        <section>
-            <!-- Collapsible Header -->
-            <header @click="toggle" class="flex justify-between items-center cursor-pointer">
-                <div>
-                    <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Your Skills</h2>
-                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                        Add skills that you are proficient in. This will help match you with the right opportunities.
-                    </p>
-                </div>
-                <button>
-                    <ChevronUpIcon v-if="isOpen" class="h-6 w-6 text-gray-500" />
-                    <ChevronDownIcon v-else class="h-6 w-6 text-gray-500" />
-                </button>
-            </header>
+    <section class="space-y-6">
+        <header>
+            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Skills</h2>
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                Select the skills relevant to your profession and experience.
+            </p>
+        </header>
 
-            <!-- Collapsible Content -->
-            <div v-show="isOpen" class="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
-                <!-- Add Skill Input -->
-                <div class="flex gap-2">
-                    <input 
-                        type="text" 
-                        v-model="newSkill" 
-                        @keydown.enter.prevent="addSkill"
-                        class="flex-grow rounded-md shadow-sm border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
-                        placeholder="e.g., PHP, Laravel, Vue.js..."
-                    />
-                    <button 
-                        @click="addSkill" 
-                        type="button" 
-                        class="btn btn-secondary"
-                    >
-                        Add
-                    </button>
-                </div>
+        <div v-if="isLoading" class="text-sm text-gray-500 dark:text-gray-400">Loading skills...</div>
 
-                <!-- Display Added Skills -->
-                <div class="mt-4 flex flex-wrap gap-2 min-h-[40px]">
-                    <div v-if="form.skills.length === 0" class="text-sm text-gray-500 dark:text-gray-400 py-2">
-                        No skills added yet.
-                    </div>
-                    <span 
-                        v-for="skill in form.skills" 
-                        :key="skill"
-                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-                    >
-                        {{ skill }}
-                        <button 
-                            @click="removeSkill(skill)" 
-                            type="button" 
-                            class="ml-1.5 flex-shrink-0 inline-flex items-center justify-center h-4 w-4 rounded-full text-blue-600 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800"
-                        >
-                            <span class="sr-only">Remove skill</span>
-                            <svg class="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
-                                <path stroke-linecap="round" stroke-width="1.5" d="M1 1l6 6m0-6L1 7" />
-                            </svg>
-                        </button>
-                    </span>
-                </div>
+        <div v-else-if="errorMessage && !isLoading" class="text-sm text-red-600 dark:text-red-400">{{ errorMessage }}</div>
 
-                <!-- Save Skills Button -->
-                <form @submit.prevent="submitSkills" class="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
-                    <div class="flex items-center gap-4">
-                        <PrimaryButton :disabled="form.processing">
-                            {{ form.processing ? 'Saving...' : 'Save Skills' }}
-                        </PrimaryButton>
-                    </div>
-                </form>
+        <div v-else>
+            <div v-if="allSkills.length === 0" class="text-sm text-gray-500 dark:text-gray-400">
+                No skills available to select. Please contact support or check admin settings.
             </div>
-        </section>
-    </div>
+            <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-4 border dark:border-gray-700 p-4 rounded-md max-h-60 overflow-y-auto">
+                <div v-for="skill in allSkills" :key="skill.id" class="flex items-center">
+                    <Checkbox
+                        :id="'skill_' + skill.id"
+                        :value="skill.id"
+                        :checked="selectedSkillIds.has(skill.id)"
+                        @update:checked="handleCheckboxChange(skill.id, $event)"
+                    />
+                    <InputLabel :for="'skill_' + skill.id" :value="skill.name" class="ml-2 text-sm text-gray-700 dark:text-gray-300"/>
+                </div>
+            </div>
+
+             <div class="flex items-center gap-4 mt-6">
+                <PrimaryButton @click="saveSkills" :disabled="isSaving || !skillsChanged">
+                    {{ isSaving ? 'Saving...' : 'Save Skills' }}
+                </PrimaryButton>
+                <Transition
+                    enter-active-class="transition ease-in-out"
+                    enter-from-class="opacity-0"
+                    leave-active-class="transition ease-in-out"
+                    leave-to-class="opacity-0"
+                >
+                    <p v-if="recentlySuccessful" class="text-sm text-green-600 dark:text-green-400">
+                        {{ successMessage }}
+                    </p>
+                </Transition>
+                 <InputError :message="errorMessage" v-if="errorMessage && !isLoading" />
+            </div>
+        </div>
+
+    </section>
 </template>

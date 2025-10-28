@@ -1,10 +1,7 @@
 <?php
 
-// --- CORRECT NAMESPACE ---
-namespace App\Http\Controllers\Profile;
-// --- END CORRECTION ---
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller; // Import the base Controller
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
@@ -13,31 +10,23 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\UserProfile; // <-- 1. IMPORT UserProfile
 
-// Import models if needed (optional here, but good practice if used more)
-use App\Models\UserProfile;
-use App\Models\UserEducation;
-use App\Models\UserWorkExperience;
-use App\Models\UserDocument;
-use App\Models\Skill;
-
-class ProfileController extends Controller // Extend the base Controller
+class ProfileController extends Controller
 {
     /**
      * Display the user's profile form.
      */
     public function edit(Request $request): Response
     {
-        // Eager load the 'profile' relationship
-        $user = $request->user()->load([
-            'profile',
-            // Add other relationships needed by Edit.vue if not handled by partials
-        ]);
+        // 2. EAGER LOAD THE USER'S PROFILE RELATION
+        // This makes 'userProfile' available in the Vue page
+        $user = $request->user()->load('userProfile');
 
         return Inertia::render('Profile/Edit', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => session('status'),
-            // 'userData' => $user, // Pass if needed
+            'userProfile' => $user->userProfile, // <-- 3. PASS THE PROFILE DATA
         ]);
     }
 
@@ -46,7 +35,7 @@ class ProfileController extends Controller // Extend the base Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        // Update User model fields
+        // 4. UPDATE THE USER MODEL (Name, Email)
         $request->user()->fill($request->validated());
 
         if ($request->user()->isDirty('email')) {
@@ -55,21 +44,14 @@ class ProfileController extends Controller // Extend the base Controller
 
         $request->user()->save();
 
-        // Update UserProfile model fields
-        $profile = $request->user()->profile()->firstOrCreate(['user_id' => $request->user()->id]);
-
-        // Filter only the fields that exist in the request AND are fillable in UserProfile
-        $profileFillable = (new \App\Models\UserProfile)->getFillable(); // Get fillable fields
-        $profileDataToUpdate = array_filter(
-            $request->only($profileFillable), // Get only fillable fields from request
-            fn($key) => $request->has($key), // Ensure the key exists in the request
-            ARRAY_FILTER_USE_KEY
+        // 5. UPDATE OR CREATE THE USERPROFILE MODEL (All CV data)
+        // We use updateOrCreate to handle new users who don't have a profile row yet.
+        $userProfileData = $request->safe()->except(['name', 'email']);
+        
+        UserProfile::updateOrCreate(
+            ['user_id' => $request->user()->id],
+            $userProfileData
         );
-
-        if (!empty($profileDataToUpdate)) {
-            $profile->update($profileDataToUpdate);
-        }
-
 
         return Redirect::route('profile.edit')->with('success', 'Profile updated successfully.');
     }
@@ -94,27 +76,4 @@ class ProfileController extends Controller // Extend the base Controller
 
         return Redirect::to('/');
     }
-
-    // --- CV Builder Methods (If they belong here) ---
-    // Note: These might belong in a separate CvBuilderController
-
-    /**
-     * Display the CV builder page.
-     */
-    // public function showCvBuilder(Request $request): Response
-    // {
-    //     $user = $request->user()->load(['profile', 'educations', 'workExperiences', 'skills', 'languages']);
-    //     return Inertia::render('Profile/CvBuilder', ['userData' => $user]);
-    // }
-
-    /**
-     * Handle downloading the CV.
-     */
-    // public function downloadCv(Request $request)
-    // {
-    //     $user = $request->user()->load(['profile', 'educations', 'workExperiences', 'skills', 'languages']);
-    //     // PDF Generation Logic...
-    //     return response()->json(['message' => 'CV Download functionality not yet implemented.', 'userData' => $user]);
-    // }
-    // --- End CV Builder Methods ---
 }

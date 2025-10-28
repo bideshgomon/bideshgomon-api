@@ -4,140 +4,108 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 
-// --- TEMPORARY TEST ROUTE ---
-Route::get('/get-admin-token', function () {
-    $user = User::where('email', 'admin@bideshgomon.com')->first();
-    if (!$user) {
-        return response()->json(['message' => 'Admin user not found. Please run: php artisan migrate:fresh --seed'], 404);
-    }
-    $user->tokens()->delete();
-    $token = $user->createToken('postman-test-token');
-    return response()->json([
-        'message' => 'Use this token in your "Authorization" header',
-        'token' => $token->plainTextToken,
-    ]);
-});
-// ------------------------------
+/*
+|--------------------------------------------------------------------------
+| Controller Imports (API ONLY)
+|--------------------------------------------------------------------------
+*/
 
-
-// --- IMPORT ALL CONTROLLERS ---
-
-// Auth + Shared
+// --- Auth & Public ---
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PrebuiltDataController;
 use App\Http\Controllers\Api\DocumentTypeController;
-
-// 🧭 Public Search
 use App\Http\Controllers\Api\PublicSearchController;
 
-// 🏛️ Admin Controllers
+// --- Admin API ---
 use App\Http\Controllers\Api\Admin\CountryController;
 use App\Http\Controllers\Api\Admin\StateController;
 use App\Http\Controllers\Api\Admin\CityController;
 use App\Http\Controllers\Api\Admin\UniversityController;
 use App\Http\Controllers\Api\Admin\CourseController;
 
-// 👤 User Profile Controllers
+// --- User Profile API (CV Builder) ---
+use App\Http\Controllers\Api\UserProfileController; // For updating UserProfile details
 use App\Http\Controllers\Api\UserProfile\UserEducationController;
-// use App\Http\Controllers\Api\UserProfile\UserExperienceController; // <-- REMOVED (Redundant)
-use App\Http\Controllers\Api\UserProfile\UserSkillsController;     // <-- KEPT (Plural is correct)
+use App\Http\Controllers\Api\UserProfile\UserSkillsController;
 use App\Http\Controllers\Api\UserProfile\UserPortfolioController;
 use App\Http\Controllers\Api\UserProfile\UserDocumentController;
 use App\Http\Controllers\Api\UserProfile\UserWorkExperienceController;
-// use App\Http\Controllers\Api\UserProfile\UserSkillController;     // <-- REMOVED (Redundant)
 use App\Http\Controllers\Api\UserProfile\UserLicenseController;
 use App\Http\Controllers\Api\UserProfile\UserLanguageController;
 use App\Http\Controllers\Api\UserProfile\UserTechnicalEducationController;
 use App\Http\Controllers\Api\UserProfile\UserMembershipController;
-
-
-/*
-|--------------------------------------------------------------------------
-| PUBLIC SEARCH ROUTES
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/search/universities', [PublicSearchController::class, 'searchUniversities'])
-    ->name('api.public.search.universities');
-
-Route::get('/search/courses', [PublicSearchController::class, 'searchCourses'])
-    ->name('api.public.search.courses');
-
-// <-- ADDED FROM MERGE -->
-Route::get('/universities/{university}', [PublicSearchController::class, 'showUniversityDetail'])
-    ->name('api.public.universities.show'); 
-    
-Route::get('/courses/{course}', [PublicSearchController::class, 'showCourseDetail'])
-    ->name('api.public.courses.show');
-// <-- END MERGE -->
-
+use App\Http\Controllers\Api\UserProfile\UserTravelHistoryController; // <-- IMPORT ADDED
 
 /*
 |--------------------------------------------------------------------------
-| AUTHENTICATED ROUTES
+| API Routes
 |--------------------------------------------------------------------------
 */
 
-// Default authenticated user route
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user()->load('role'); // Eager load role
-})->name('api.user');
+// --- Test Route ---
+Route::get('/get-admin-token', function () {
+    $user = User::where('email', 'admin@bideshgomon.com')->first();
+    if (!$user) {
+        return response()->json(['message' => 'Admin user not found. Please run: php artisan migrate:fresh --seed'], 404);
+    }
+    $user->tokens()->delete();
+    $token = $user->createToken('api-token');
+    return response()->json(['token' => $token->plainTextToken]);
+});
 
 
-// --- PUBLIC AUTH ROUTES ---
+// --- PUBLIC SEARCH API ---
+Route::get('/search/universities', [PublicSearchController::class, 'searchUniversities']);
+Route::get('/search/courses', [PublicSearchController::class, 'searchCourses']);
+Route::get('/universities/{university}', [PublicSearchController::class, 'showUniversityDetail']);
+Route::get('/courses/{course}', [PublicSearchController::class, 'showCourseDetail']);
+
+
+// --- AUTH API ---
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-
-// --- PROTECTED ROUTES ---
+// --- PROTECTED API ROUTES ---
 Route::middleware('auth:sanctum')->group(function () {
+
+    // Auth & User
+    Route::get('/user', fn(Request $request) => $request->user()->load('role'));
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/prebuilt-data', [PrebuiltDataController::class, 'getAll']);
 
-    // 📄 Document Types
-    Route::get('/document-types', [DocumentTypeController::class, 'index'])
-        ->name('api.document-types.index');
+    // Prebuilt Data (for forms)
+    Route::get('/prebuilt-data', [PrebuiltDataController::class, 'getAll'])->name('api.prebuilt-data'); // Added name for SkillsSection
+    Route::get('/document-types', [DocumentTypeController::class, 'index'])->name('api.document-types.index'); // Keep name
 
-    // 🧑‍🎓 USER PROFILE (CV) ROUTES
-    // This apiResource group is cleaner and replaces the individual routes
+    // Route for updating UserProfile details (Personal Info section)
+    Route::put('/profile/details', [UserProfileController::class, 'update'])->name('profile.details.update');
+
+    // 🧑‍🎓 USER PROFILE (CV) API Sections
     Route::prefix('profile')->name('profile.')->group(function() {
         Route::apiResource('education', UserEducationController::class)->except(['show']);
         Route::apiResource('work-experience', UserWorkExperienceController::class)->except(['show']);
         Route::apiResource('documents', UserDocumentController::class)->only(['index', 'store', 'destroy']);
-        
-        // --- THIS IS THE FIX ---
-        // Changed UserSkillController (singular) to UserSkillsController (plural)
-        Route::apiResource('skills', UserSkillsController::class)->only(['index', 'store', 'destroy']);
-        // -------------------------
-
+        Route::apiResource('skills', UserSkillsController::class)->only(['index', 'store']); // Store handles replacing all skills
         Route::apiResource('licenses', UserLicenseController::class)->except(['show']);
         Route::apiResource('languages', UserLanguageController::class)->except(['show']);
         Route::apiResource('technical-education', UserTechnicalEducationController::class)->except(['show']);
         Route::apiResource('memberships', UserMembershipController::class)->except(['show']);
-        
-        // NOTE: The 'UserExperienceController' and 'UserSkillController' 
-        // are the duplicates we are removing.
+        Route::apiResource('travel-history', UserTravelHistoryController::class)->except(['show']); // <-- ROUTE ADDED
+        // Note: Removed redundant/incorrect UserSkillController routes from previous file version
     });
 });
 
 
-/*
-|--------------------------------------------------------------------------
-| ADMIN-ONLY PROTECTED ROUTES
-|--------------------------------------------------------------------------
-*/
-
+// --- ADMIN-ONLY PROTECTED API ROUTES ---
 Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->name('admin.')->group(function () {
-    // Bulk upload for countries
+
     Route::post('countries/bulk', [CountryController::class, 'bulkUpload'])->name('countries.bulk');
 
-    // CRUD routes
+    // CRUD API routes
     Route::apiResource('countries', CountryController::class);
     Route::apiResource('states', StateController::class);
     Route::apiResource('cities', CityController::class);
-
-    // ✅ NEW ADMIN ENDPOINTS
     Route::apiResource('universities', UniversityController::class);
     Route::apiResource('courses', CourseController::class);
+    // Add other Admin API resources here if needed (e.g., Skills, Languages)
 });

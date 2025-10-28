@@ -19,7 +19,16 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:5173')],
+    /*
+    |--------------------------------------------------------------------------
+    | Allowed Origins
+    |--------------------------------------------------------------------------
+    |
+    | We will read this from the `SANCTUM_STATEFUL_DOMAINS` variable in your
+    | .env file to keep things consistent. This is the main fix.
+    |
+    */
+    'allowed_origins' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', 'http://localhost:5173,http://127.0.0.1:5173')),
 
     'allowed_origins_patterns' => [],
 
@@ -29,6 +38,6 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => true, // <-- SET THIS TO TRUE
+    'supports_credentials' => true, // <-- This must be true
 
 ];

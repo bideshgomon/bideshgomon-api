@@ -1,36 +1,23 @@
 <script setup>
 import { ref } from 'vue';
-import { Link, usePage } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
+import { Link, usePage } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
-
-// Get user and auth status
 const user = usePage().props.auth.user;
-const isAdmin = usePage().props.auth.isAdmin;
 
-// --- Main Navigation Links ---
-// Simplified main navigation
-const mainNavigation = [
-    { name: 'Dashboard', href: route('dashboard'), current: route().current('dashboard') },
-    { name: 'My Profile', href: route('profile.edit'), current: route().current('profile.edit') },
-    { name: 'CV Builder', href: route('profile.cv.show'), current: route().current('profile.cv.show') },
-    // Public links
-    { name: 'Find Jobs', href: route('jobs.index'), current: route().current('jobs.index') },
-    { name: 'Find Universities', href: route('universities.index'), current: route().current('universities.index') },
-];
-
-// Admin Dashboard Link (only shown if user is admin)
-const adminDashboardLink = {
-    name: 'Admin Panel',
-    href: route('admin.dashboard'),
-    current: route().current().startsWith('admin.'),
-};
-
+// Flash message handling
+const flash = usePage().props.flash;
+const showFlash = ref(true);
+if (flash.success || flash.error) {
+    setTimeout(() => {
+        showFlash.value = false;
+    }, 3000); // Hide after 3 seconds
+}
 </script>
 
 <template>
@@ -49,22 +36,12 @@ const adminDashboardLink = {
                             </div>
 
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink
-                                    v-for="item in mainNavigation"
-                                    :key="item.name"
-                                    :href="item.href"
-                                    :active="item.current"
-                                >
-                                    {{ item.name }}
+                                <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                                    Dashboard
                                 </NavLink>
-                                
-                                <NavLink
-                                    v-if="isAdmin"
-                                    :href="adminDashboardLink.href"
-                                    :active="adminDashboardLink.current"
-                                >
-                                    {{ adminDashboardLink.name }}
-                                </NavLink>
+                                <NavLink :href="route('profile.edit')" :active="route().current('profile.edit')">
+                                    My Profile / CV
+                                </NavLink> 
                             </div>
                         </div>
 
@@ -96,7 +73,7 @@ const adminDashboardLink = {
                                     </template>
 
                                     <template #content>
-                                        <DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
+                                        <DropdownLink :href="route('profile.edit')"> Profile Settings </DropdownLink>
                                         <DropdownLink :href="route('logout')" method="post" as="button">
                                             Log Out
                                         </DropdownLink>
@@ -142,22 +119,12 @@ const adminDashboardLink = {
                     class="sm:hidden"
                 >
                     <div class="pt-2 pb-3 space-y-1">
-                         <ResponsiveNavLink
-                            v-for="item in mainNavigation"
-                            :key="item.name"
-                            :href="item.href"
-                            :active="item.current"
-                        >
-                            {{ item.name }}
+                        <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                            Dashboard
                         </ResponsiveNavLink>
-                        
-                        <ResponsiveNavLink
-                            v-if="isAdmin"
-                            :href="adminDashboardLink.href"
-                            :active="adminDashboardLink.current"
-                        >
-                            {{ adminDashboardLink.name }}
-                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('profile.edit')" :active="route().current('profile.edit')">
+                            My Profile / CV
+                        </ResponsiveNavLink> 
                     </div>
 
                     <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
@@ -169,7 +136,7 @@ const adminDashboardLink = {
                         </div>
 
                         <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')"> Profile </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('profile.edit')"> Profile Settings </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('logout')" method="post" as="button">
                                 Log Out
                             </ResponsiveNavLink>
@@ -178,10 +145,20 @@ const adminDashboardLink = {
                 </div>
             </nav>
 
-            <header class="bg-white dark:bg-gray-800 shadow" v-if="$slots.header"> <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <header class="bg-white dark:bg-gray-800 shadow" v-if="$slots.header">
+                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     <slot name="header" />
                 </div>
             </header>
+
+            <div v-if="showFlash && (flash.success || flash.error)" class="max-w-7xl mx-auto py-4 sm:px-6 lg:px-8">
+                <div v-if="flash.success" class="p-4 bg-green-100 dark:bg-green-800 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-200 rounded-lg">
+                    {{ flash.success }}
+                </div>
+                <div v-if="flash.error" class="p-4 bg-red-100 dark:bg-red-800 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-200 rounded-lg">
+                    {{ flash.error }}
+                </div>
+            </div>
 
             <main>
                 <slot />

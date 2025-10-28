@@ -1,66 +1,80 @@
 <script setup>
-import ProfileLayout from '@/Layouts/ProfileLayout.vue';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import DeleteUserForm from './Partials/DeleteUserForm.vue';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
-import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
-import { Head, usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
-
-// Import custom profile sections
 import PersonalInformationSection from './Partials/PersonalInformationSection.vue';
 import EducationSection from './Partials/EducationSection.vue';
 import ExperienceSection from './Partials/ExperienceSection.vue';
-import DocumentUploadSection from './Partials/DocumentUploadSection.vue';
 import SkillsSection from './Partials/SkillsSection.vue';
-import PortfolioSection from './Partials/PortfolioSection.vue';
-// Import the Data Access Request Section
-import DataAccessRequestSection from './Partials/DataAccessRequestSection.vue';
+import LanguagesSection from './Partials/LanguagesSection.vue';
+import DocumentUploadSection from './Partials/DocumentUploadSection.vue';
+import LicensesSection from './Partials/LicensesSection.vue';
+import MembershipsSection from './Partials/MembershipsSection.vue';
+import TechnicalEducationSection from './Partials/TechnicalEducationSection.vue';
+import TravelHistorySection from './Partials/TravelHistorySection.vue'; // <-- 1. IMPORT
+import { Head, usePage } from '@inertiajs/vue3';
 
-defineProps({
-    mustVerifyEmail: {
-        type: Boolean,
-    },
-    status: {
-        type: String,
-    },
+const props = defineProps({
+    mustVerifyEmail: Boolean,
+    status: String,
+    userProfile: Object,
 });
 
-const isUserRole = computed(() => usePage().props.auth.user?.role?.slug === 'user');
+const user = usePage().props.auth.user;
 
 </script>
 
 <template>
-    <Head title="Profile Settings" />
+    <Head title="Profile" />
 
-    <ProfileLayout>
-        <div class="space-y-6">
+    <AuthenticatedLayout>
+        <template #header>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Edit Profile & CV</h2>
+        </template>
 
-            <div v-if="isUserRole">
-                <DataAccessRequestSection />
-            </div>
+        <div class="py-12">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+                 {/* ... Sections 1-9 ... */}
+                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    <PersonalInformationSection :user="user" :userProfile="userProfile" class="max-w-xl"/>
+                </div>
+                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    <EducationSection />
+                </div>
+                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    <ExperienceSection />
+                </div>
+                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    <SkillsSection />
+                </div>
+                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    <LanguagesSection />
+                </div>
+                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    <DocumentUploadSection />
+                </div>
+                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    <LicensesSection />
+                </div>
+                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    <MembershipsSection />
+                </div>
+                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    <TechnicalEducationSection />
+                </div>
 
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <UpdateProfileInformationForm
-                    :must-verify-email="mustVerifyEmail"
-                    :status="status"
-                    class="max-w-xl"
-                />
-            </div>
+                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    <TravelHistorySection /> {/* <-- 2. INCLUDE */}
+                </div>
 
-            <PersonalInformationSection v-if="isUserRole" />
-            <EducationSection v-if="isUserRole" />
-            <ExperienceSection v-if="isUserRole" />
-            <DocumentUploadSection v-if="isUserRole" />
-            <SkillsSection v-if="isUserRole" />
-            <PortfolioSection v-if="isUserRole" />
-
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <UpdatePasswordForm class="max-w-xl" />
-            </div>
-
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <DeleteUserForm class="max-w-xl" />
+                {/* ... Password, Delete Account ... */}
+                 <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    <UpdatePasswordForm class="max-w-xl" />
+                </div>
+                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                    <DeleteUserForm class="max-w-xl" />
+                </div>
             </div>
         </div>
-    </ProfileLayout>
+    </AuthenticatedLayout>
 </template>

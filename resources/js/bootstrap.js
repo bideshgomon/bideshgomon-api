@@ -10,14 +10,26 @@ window.axios = axios;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 /**
- * The following two lines are crucial for Laravel Sanctum's cookie-based
+ * The following lines are crucial for Laravel Sanctum's cookie-based
  * authentication to work with your frontend. They ensure that Axios
  * sends session cookies (for authentication) and the XSRF-TOKEN header
  * (for CSRF protection) with every request.
  */
 window.axios.defaults.withCredentials = true;
-window.axios.defaults.withXSRFToken = true;
+// window.axios.defaults.withXSRFToken = true; // withCredentials handles this with default cookie name
 
+/**
+ * Next we will register the CSRF Token as a common header with Axios so that
+ * all outgoing HTTP requests automatically have it attached. This is just
+ * a simple convenience so we don't have to attach every token manually.
+ */
+let token = document.head.querySelector('meta[name="csrf-token"]');
+
+if (token) {
+    window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+} else {
+    console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token. Make sure your app.blade.php has the meta tag.');
+}
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening

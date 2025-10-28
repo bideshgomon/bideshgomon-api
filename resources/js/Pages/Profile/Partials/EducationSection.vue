@@ -1,194 +1,223 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useForm } from '@inertiajs/vue3';
-import axios from 'axios';
+import axios from 'axios'; // For making API requests
+
+// Import necessary components
+import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/vue/24/solid';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
+import InputError from '@/Components/InputError.vue';
+import Checkbox from '@/Components/Checkbox.vue';
 
-// --- Collapsible Section State ---
-const isOpen = ref(false);
-const toggle = () => {
-    isOpen.value = !isOpen.value;
-};
+// --- State Management ---
+const educationList = ref([]); // Holds the user's education records
+const isLoading = ref(true);
+const showModal = ref(false);
+const isEditMode = ref(false);
+const currentEducationId = ref(null);
 
-// --- Education Form Logic ---
-const educationList = ref([]);
-
+// --- Form Definition ---
 const form = useForm({
-    custom_degree: '',
-    custom_university: '',
+    institute: '',
+    degree: '',
+    field_of_study: '',
     start_date: '',
     end_date: '',
-    is_current: false,
+    currently_studying: false,
+    country: '',
+    city: '',
 });
 
-const getEducation = () => {
-    axios.get(route('api.profile.education.index'))
-        .then(response => {
-            educationList.value = response.data;
-        })
-        .catch(error => {
-            console.error("Error fetching education:", error);
-        });
+// --- API Interaction ---
+const fetchEducation = async () => {
+    isLoading.value = true;
+    try {
+        const response = await axios.get(route('profile.education.index')); // API route
+        educationList.value = response.data.data; // Assuming API returns data wrapped in 'data'
+    } catch (error) {
+        console.error("Error fetching education:", error);
+        // Handle error display if needed
+    } finally {
+        isLoading.value = false;
+    }
 };
 
-const submitEducation = () => {
-    form.post(route('api.profile.education.store'), {
+// --- Modal Controls ---
+const openAddModal = () => {
+    form.reset();
+    isEditMode.value = false;
+    currentEducationId.value = null;
+    showModal.value = true;
+};
+
+const openEditModal = (education) => {
+    form.institute = education.institute;
+    form.degree = education.degree;
+    form.field_of_study = education.field_of_study;
+    form.start_date = education.start_date; // Assuming YYYY-MM-DD format from API
+    form.end_date = education.end_date;
+    form.currently_studying = education.currently_studying;
+    form.country = education.country;
+    form.city = education.city;
+
+    isEditMode.value = true;
+    currentEducationId.value = education.id;
+    showModal.value = true;
+};
+
+const closeModal = () => {
+    showModal.value = false;
+    form.reset();
+};
+
+// --- Form Submission ---
+const submit = () => {
+    // Clear end_date if currently studying
+    if (form.currently_studying) {
+        form.end_date = null;
+    }
+
+    const options = {
         preserveScroll: true,
         onSuccess: () => {
-            form.reset();
-            getEducation();
+            closeModal();
+            fetchEducation(); // Re-fetch list after successful save/update
         },
         onError: () => {
-            console.error("Error submitting form:", form.errors);
-        },
-    });
+            // Handle specific errors if needed, e.g., scroll to error
+        }
+    };
+
+    if (isEditMode.value) {
+        form.put(route('profile.education.update', currentEducationId.value), options);
+    } else {
+        form.post(route('profile.education.store'), options);
+    }
 };
 
+// --- Delete ---
+const deleteForm = useForm({});
+const confirmDelete = (education) => {
+    if (window.confirm(`Are you sure you want to delete your education at "${education.institute}"?`)) {
+        deleteForm.delete(route('profile.education.destroy', education.id), {
+            preserveScroll: true,
+            onSuccess: () => fetchEducation(), // Re-fetch list after delete
+            onError: () => {
+                // Handle delete error if needed
+            },
+        });
+    }
+};
+
+// --- Lifecycle Hook ---
 onMounted(() => {
-    getEducation();
+    fetchEducation();
 });
 </script>
 
 <template>
-    <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-        <section>
-            <!-- Header (collapsible) -->
-            <header @click="toggle" class="flex justify-between items-center cursor-pointer">
+    <section class="space-y-6">
+        <header>
+            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Education History</h2>
+            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                Add or update your educational qualifications.
+            </p>
+        </header>
+
+        <div v-if="isLoading" class="text-sm text-gray-500 dark:text-gray-400">Loading education history...</div>
+
+        <div v-else-if="educationList.length === 0" class="text-sm text-gray-500 dark:text-gray-400">
+            No education history added yet.
+        </div>
+
+        <ul v-else class="space-y-4">
+            <li v-for="edu in educationList" :key="edu.id" class="p-4 border border-gray-200 dark:border-gray-700 rounded-md flex justify-between items-start">
                 <div>
-                    <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Education History</h2>
-                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                        Add or update your education history.
+                    <h3 class="font-semibold text-gray-900 dark:text-gray-100">{{ edu.degree }}</h3>
+                    <p class="text-sm text-gray-700 dark:text-gray-300">{{ edu.institute }} - {{ edu.field_of_study }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                        {{ edu.start_date }} - {{ edu.currently_studying ? 'Present' : edu.end_date }}
+                        <span v-if="edu.city || edu.country"> | {{ [edu.city, edu.country].filter(Boolean).join(', ') }}</span>
                     </p>
                 </div>
-                <button>
-                    <ChevronUpIcon v-if="isOpen" class="h-6 w-6 text-gray-500" />
-                    <ChevronDownIcon v-else class="h-6 w-6 text-gray-500" />
-                </button>
-            </header>
-
-            <!-- Collapsible content -->
-            <div v-show="isOpen" class="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
-                <div class="space-y-4">
-                    <div v-if="educationList.length === 0" class="text-sm text-gray-500 dark:text-gray-400">
-                        No education records found. Add one using the form below.
-                    </div>
-
-                    <div
-                        v-for="edu in educationList"
-                        :key="edu.id"
-                        class="p-4 border rounded-lg dark:border-gray-700"
-                    >
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <h3 class="text-md font-semibold text-gray-900 dark:text-gray-100">
-                                    {{ edu.custom_degree }}
-                                </h3>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">
-                                    {{ edu.custom_university }}
-                                </p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                    {{ edu.start_date }} – {{ edu.is_current ? 'Present' : edu.end_date }}
-                                </p>
-                            </div>
-                            <div>
-                                <button class="text-sm text-red-600 dark:text-red-400">Delete</button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="flex-shrink-0 space-x-2">
+                    <SecondaryButton @click="openEditModal(edu)">Edit</SecondaryButton>
+                    <DangerButton @click="confirmDelete(edu)">Delete</DangerButton>
                 </div>
+            </li>
+        </ul>
 
-                <!-- Add New Education Form -->
-                <form 
-                    @submit.prevent="submitEducation" 
-                    class="mt-6 space-y-6 border-t border-gray-200 dark:border-gray-700 pt-6"
-                >
-                    <h3 class="text-md font-medium text-gray-900 dark:text-gray-100">Add New Education</h3>
+        <PrimaryButton @click="openAddModal">Add Education</PrimaryButton>
 
+        <Modal :show="showModal" @close="closeModal">
+            <div class="p-6 bg-white dark:bg-gray-800">
+                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                    {{ isEditMode ? 'Edit Education Record' : 'Add New Education Record' }}
+                </h2>
+
+                <form @submit.prevent="submit" class="mt-6 space-y-6">
                     <div>
-                        <label for="custom_degree" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Degree
-                        </label>
-                        <input 
-                            type="text" 
-                            id="custom_degree"
-                            v-model="form.custom_degree"
-                            class="mt-1 block w-full"
-                            placeholder="e.g., B.Sc. in Computer Science"
-                        />
-                        <p v-if="form.errors.custom_degree" class="text-sm text-red-600 mt-1">
-                            {{ form.errors.custom_degree }}
-                        </p>
+                        <InputLabel for="institute" value="Institute / University" />
+                        <TextInput id="institute" type="text" class="mt-1 block w-full" v-model="form.institute" required />
+                        <InputError class="mt-2" :message="form.errors.institute" />
                     </div>
 
                     <div>
-                        <label for="custom_university" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            University / Institution
-                        </label>
-                        <input 
-                            type="text"
-                            id="custom_university"
-                            v-model="form.custom_university"
-                            class="mt-1 block w-full"
-                            placeholder="e.g., Dhaka University"
-                        />
-                        <p v-if="form.errors.custom_university" class="text-sm text-red-600 mt-1">
-                            {{ form.errors.custom_university }}
-                        </p>
+                        <InputLabel for="degree" value="Degree / Qualification" />
+                        <TextInput id="degree" type="text" class="mt-1 block w-full" v-model="form.degree" required />
+                        <InputError class="mt-2" :message="form.errors.degree" />
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <InputLabel for="field_of_study" value="Field of Study" />
+                        <TextInput id="field_of_study" type="text" class="mt-1 block w-full" v-model="form.field_of_study" />
+                        <InputError class="mt-2" :message="form.errors.field_of_study" />
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div>
-                            <label for="start_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Start Date
-                            </label>
-                            <input 
-                                type="date"
-                                id="start_date"
-                                v-model="form.start_date"
-                                class="mt-1 block w-full"
-                            />
-                            <p v-if="form.errors.start_date" class="text-sm text-red-600 mt-1">
-                                {{ form.errors.start_date }}
-                            </p>
+                            <InputLabel for="start_date" value="Start Date" />
+                            <TextInput id="start_date" type="date" class="mt-1 block w-full" v-model="form.start_date" required />
+                            <InputError class="mt-2" :message="form.errors.start_date" />
                         </div>
-
                         <div>
-                            <label for="end_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                End Date
-                            </label>
-                            <input 
-                                type="date"
-                                id="end_date"
-                                v-model="form.end_date"
-                                :disabled="form.is_current"
-                                class="mt-1 block w-full"
-                            />
-                            <p v-if="form.errors.end_date" class="text-sm text-red-600 mt-1">
-                                {{ form.errors.end_date }}
-                            </p>
+                            <InputLabel for="end_date" value="End Date" />
+                            <TextInput id="end_date" type="date" class="mt-1 block w-full" v-model="form.end_date" :disabled="form.currently_studying" />
+                            <InputError class="mt-2" :message="form.errors.end_date" />
                         </div>
                     </div>
 
                     <div class="flex items-center">
-                        <input 
-                            type="checkbox"
-                            id="is_current"
-                            v-model="form.is_current"
-                            class="rounded border-gray-300 text-brand-primary focus:ring-brand-primary"
-                        />
-                        <label for="is_current" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">
-                            I am currently studying here
-                        </label>
+                         <Checkbox id="currently_studying" v-model="form.currently_studying" :checked="form.currently_studying" />
+                         <InputLabel for="currently_studying" value="I am currently studying here" class="ml-2" />
                     </div>
 
-                    <div class="flex items-center gap-4">
+                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <InputLabel for="city" value="City" />
+                            <TextInput id="city" type="text" class="mt-1 block w-full" v-model="form.city" />
+                            <InputError class="mt-2" :message="form.errors.city" />
+                        </div>
+                        <div>
+                            <InputLabel for="country" value="Country" />
+                            <TextInput id="country" type="text" class="mt-1 block w-full" v-model="form.country" />
+                            <InputError class="mt-2" :message="form.errors.country" />
+                        </div>
+                    </div>
+
+
+                    <div class="flex justify-end gap-4">
+                        <SecondaryButton @click="closeModal"> Cancel </SecondaryButton>
                         <PrimaryButton :disabled="form.processing">
-                            {{ form.processing ? 'Saving...' : 'Save Education' }}
+                            {{ isEditMode ? 'Update Record' : 'Save Record' }}
                         </PrimaryButton>
                     </div>
                 </form>
             </div>
-        </section>
-    </div>
+        </Modal>
+    </section>
 </template>
