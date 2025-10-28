@@ -46,7 +46,9 @@ use App\Http\Controllers\Api\Admin\CityController;
 use App\Http\Controllers\Api\Admin\UniversityController;
 use App\Http\Controllers\Api\Admin\CourseController;
 use App\Http\Controllers\Api\Admin\JobCategoryController;
+use App\Http\Controllers\Api\Admin\CountryController;
 use App\Http\Controllers\Api\Admin\JobPostingController;
+
 
 // --- USER PROFILE CONTROLLERS ---
 use App\Http\Controllers\Api\UserProfile\UserEducationController;
@@ -129,7 +131,7 @@ Route::prefix('admin')
     ->group(function () {
 
         // --- UNIVERSITIES & COURSES ---
-        Route::apiResource('universities', UniversityController::class);
+       // Route::apiResource('universities', UniversityController::class);
         Route::apiResource('courses', CourseController::class);
 
         // --- JOBS & CATEGORIES ---
@@ -137,6 +139,7 @@ Route::prefix('admin')
         Route::apiResource('job-postings', JobPostingController::class);
 
         // --- GEOGRAPHICAL DATA ---
+        Route::apiResource('countries', CountryController::class)->except(['create', 'edit']);
         Route::apiResource('states', StateController::class)->except(['create', 'edit']);
         Route::get('cities/get-states', [CityController::class, 'getStatesForCountry'])
             ->name('cities.getStates');

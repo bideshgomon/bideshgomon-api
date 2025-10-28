@@ -7,7 +7,8 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('degree_levels', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // e.g., 'Bachelor', 'Master', 'Diploma'
+            $table->string('name')->unique();
+            $table->boolean('is_active')->default(true); // <-- Ensure this line is present
             $table->timestamps();
         });
     }

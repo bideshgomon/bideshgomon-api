@@ -155,12 +155,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::resource('states', AdminStateController::class)->except(['show']);
             Route::get('cities/get-states', [AdminCityController::class, 'getStatesForCountry'])->name('cities.getStates');
             Route::resource('cities', AdminCityController::class)->except(['show']);
+            Route::get('geography/get-cities-for-state', [AdminUniversityController::class, 'getCitiesForState'])->name('geography.getCitiesForState'); // <-- ADD THIS
+            Route::get('geography/get-cities-for-country', [AdminUniversityController::class, 'getCitiesForCountry'])->name('geography.getCitiesForCountry'); // <-- ADD THIS
 
             // --- PRE-BUILT DATA MODULE ---
             Route::resource('degree-levels', AdminDegreeLevelController::class)->except(['show']); 
             Route::resource('fields-of-study', AdminFieldOfStudyController::class)->except(['show']); 
             Route::resource('languages', AdminLanguageController::class)->except(['show']);
             Route::resource('skills', AdminSkillController::class)->except(['show']);
+            Route::resource('universities', AdminUniversityController::class)->except(['show']); // Uses new controller methods
             // Add future pre-built datasets here (fields-of-study, skills, etc.)
 
             // --- SKILLS & USERS ---
