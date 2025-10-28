@@ -1,6 +1,6 @@
 <script setup>
 // This component is nearly identical to DegreeLevels/Index.vue
-// Just replace 'DegreeLevel'/'degreeLevel' with 'Skill'/'skill'
+// Just replace 'DegreeLevel'/'degreeLevel' with 'FieldOfStudy'/'fieldOfStudy'
 import { ref, watch, computed } from 'vue';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import debounce from 'lodash/debounce';
@@ -17,9 +17,9 @@ import Checkbox from '@/Components/Checkbox.vue';
 import Modal from '@/Components/Modal.vue';
 
 const props = defineProps({
-    skills: Object, // <-- Changed prop name
+    fieldsOfStudy: Object, // <-- Changed prop name
     filters: Object,
-    skillToEdit: Object, // <-- Changed prop name
+    fieldOfStudyToEdit: Object, // <-- Changed prop name
 });
 
 // --- State ---
@@ -39,7 +39,7 @@ const isEditMode = computed(() => form.id !== null);
 // --- Search ---
 const search = ref(props.filters.search || '');
 watch(search, debounce((value) => {
-    router.get(route('admin.skills.index'), { search: value }, { // <-- Changed route name
+    router.get(route('admin.fields-of-study.index'), { search: value }, { // <-- Changed route name
         preserveState: true,
         replace: true,
     });
@@ -48,7 +48,7 @@ watch(search, debounce((value) => {
 // --- Modals ---
 const openModal = (itemToEdit = null) => {
     if (itemToEdit) {
-        router.get(route('admin.skills.index'), { edit_id: itemToEdit.id }, { // <-- Changed route name
+        router.get(route('admin.fields-of-study.index'), { edit_id: itemToEdit.id }, { // <-- Changed route name
             preserveState: true,
             preserveScroll: true,
             replace: true,
@@ -69,8 +69,8 @@ const closeModal = () => {
     showDeleteModal.value = false;
     itemToDelete.value = null;
 
-    if (props.skillToEdit) { // <-- Changed prop name
-         router.get(route('admin.skills.index'), { search: search.value }, { // <-- Changed route name
+    if (props.fieldOfStudyToEdit) { // <-- Changed prop name
+         router.get(route('admin.fields-of-study.index'), { search: search.value }, { // <-- Changed route name
             preserveState: true,
             preserveScroll: true,
             replace: true,
@@ -79,7 +79,7 @@ const closeModal = () => {
 };
 
 // --- Watcher for Edit Data ---
-watch(() => props.skillToEdit, (newItem) => { // <-- Changed prop name
+watch(() => props.fieldOfStudyToEdit, (newItem) => { // <-- Changed prop name
     if (newItem) {
         form.id = newItem.id;
         form.name = newItem.name;
@@ -91,12 +91,12 @@ watch(() => props.skillToEdit, (newItem) => { // <-- Changed prop name
 // --- Actions ---
 const submitForm = () => {
     if (isEditMode.value) {
-        form.put(route('admin.skills.update', form.id), { // <-- Changed route name
+        form.put(route('admin.fields-of-study.update', form.id), { // <-- Changed route name
             preserveScroll: true,
             onSuccess: () => closeModal(),
         });
     } else {
-        form.post(route('admin.skills.store'), { // <-- Changed route name
+        form.post(route('admin.fields-of-study.store'), { // <-- Changed route name
             preserveScroll: true,
             onSuccess: () => closeModal(),
         });
@@ -105,7 +105,7 @@ const submitForm = () => {
 
 const deleteItem = () => {
     if (itemToDelete.value) {
-        router.delete(route('admin.skills.destroy', itemToDelete.value.id), { // <-- Changed route name
+        router.delete(route('admin.fields-of-study.destroy', itemToDelete.value.id), { // <-- Changed route name
             preserveScroll: true,
             onSuccess: () => closeModal(),
         });
@@ -115,7 +115,7 @@ const deleteItem = () => {
 </script>
 
 <template>
-    <Head title="Manage Skills" />
+    <Head title="Manage Fields of Study" />
 
     <AdminLayout>
         <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
@@ -123,10 +123,10 @@ const deleteItem = () => {
                 <header class="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
                     <div>
                         <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                            Skills
+                            Fields of Study
                         </h2>
                         <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                            Manage skills for user profiles and job postings.
+                            Manage academic fields or disciplines (e.g., Engineering, Arts).
                         </p>
                     </div>
                     <div class="flex flex-col sm:flex-row sm:items-center gap-3 w-full sm:w-auto">
@@ -138,7 +138,7 @@ const deleteItem = () => {
                             placeholder="Search by name..."
                          />
                          <PrimaryButton @click="openModal()" class="w-full sm:w-auto justify-center">
-                            Add Skill
+                            Add Field of Study
                          </PrimaryButton>
                     </div>
                 </header>
@@ -155,17 +155,17 @@ const deleteItem = () => {
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
-                                    <tr v-if="skills.data.length === 0"> <td colspan="3" class="py-4 text-center text-sm text-gray-500 dark:text-gray-400">No skills found.</td>
+                                    <tr v-if="fieldsOfStudy.data.length === 0"> <td colspan="3" class="py-4 text-center text-sm text-gray-500 dark:text-gray-400">No fields of study found.</td>
                                     </tr>
-                                    <tr v-for="skill in skills.data" :key="skill.id"> <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-0">{{ skill.name }}</td>
+                                    <tr v-for="field in fieldsOfStudy.data" :key="field.id"> <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-0">{{ field.name }}</td>
                                         <td class="px-3 py-4 text-sm">
-                                             <span :class="skill.is_active ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'" class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ring-opacity-20">
-                                                {{ skill.is_active ? 'Active' : 'Inactive' }}
+                                             <span :class="field.is_active ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'" class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ring-opacity-20">
+                                                {{ field.is_active ? 'Active' : 'Inactive' }}
                                             </span>
                                         </td>
                                         <td class="relative py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0 space-x-3 whitespace-nowrap">
-                                            <button @click="openModal(skill)" class="text-brand-primary hover:text-opacity-80">Edit</button>
-                                            <button @click="openDeleteModal(skill)" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">Delete</button>
+                                            <button @click="openModal(field)" class="text-brand-primary hover:text-opacity-80">Edit</button>
+                                            <button @click="openDeleteModal(field)" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">Delete</button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -174,16 +174,16 @@ const deleteItem = () => {
                     </div>
                 </div>
 
-                <Pagination class="mt-6" :links="skills.links" /> </section>
+                <Pagination class="mt-6" :links="fieldsOfStudy.links" /> </section>
         </div>
 
         <Modal :show="showCreateEditModal" @close="closeModal">
              <div class="p-6 bg-white dark:bg-gray-800">
                 <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                    {{ isEditMode ? 'Edit Skill' : 'Add New Skill' }}
+                    {{ isEditMode ? 'Edit Field of Study' : 'Add New Field of Study' }}
                 </h2>
                  <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                     Enter the name for the skill.
+                     Enter the name for the field of study.
                 </p>
 
                 <form @submit.prevent="submitForm" class="mt-6 space-y-6">
@@ -212,7 +212,7 @@ const deleteItem = () => {
         <Modal :show="showDeleteModal" @close="closeModal">
              <div class="p-6 bg-white dark:bg-gray-800">
                 <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                    Delete Skill
+                    Delete Field of Study
                 </h2>
                 <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
                     Are you sure you want to delete <strong>{{ itemToDelete?.name }}</strong>? This action cannot be undone.

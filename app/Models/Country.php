@@ -17,8 +17,15 @@ class Country extends Model
      */
     protected $fillable = [
         'name',
-        'code',
-        'is_active',
+        'iso_code', // Changed from iso2
+        'iso_code_3', // Changed from iso3
+        'country_code', // Changed from phone_code
+        'capital',
+        'currency',
+        'continent', // Changed from region
+        'subregion',
+        'nationality', // Added
+        'is_active', // Added
     ];
 
     /**
@@ -31,20 +38,18 @@ class Country extends Model
     ];
 
     /**
-     * Get the states associated with the country.
-     */
-    public function states(): HasMany
-    {
-        return $this->hasMany(State::class);
-    }
-
-    /**
-     * Get the universities associated with the country.
+     * Get the universities located in this country.
      */
     public function universities(): HasMany
     {
         return $this->hasMany(University::class);
     }
 
-    // Add other relationships if needed (e.g., airports, user_profiles for nationality, etc.)
+    /**
+     * Get the states for the country.
+     */
+    public function states(): HasMany
+    {
+        return $this->hasMany(State::class);
+    }
 }

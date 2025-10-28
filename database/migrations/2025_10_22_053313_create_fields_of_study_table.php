@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // CHANGE 'field_of_study' to 'field_of_studies'
-        Schema::create('field_of_studies', function (Blueprint $table) {
+        // Correct table name is 'fields_of_study'
+        Schema::create('fields_of_study', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // e.g., 'Computer Science', 'Mechanical Engineering', 'Business'
+            $table->string('name')->unique(); // Added unique constraint
+            $table->boolean('is_active')->default(true); // Added is_active column
             $table->timestamps();
         });
     }
@@ -24,7 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // CHANGE 'field_of_study' to 'field_of_studies'
-        Schema::dropIfExists('field_of_studies');
+        Schema::dropIfExists('fields_of_study'); // Correct table name
     }
 };

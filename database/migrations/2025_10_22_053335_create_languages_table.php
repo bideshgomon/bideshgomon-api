@@ -7,7 +7,9 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('languages', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // 'English', 'German', 'Japanese'
+            $table->string('name')->unique();
+            $table->string('code', 10)->unique(); // Added code column
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
