@@ -1,96 +1,140 @@
 <script setup>
-import GuestLayout from '@/Layouts/GuestLayout.vue'; // <-- Use GuestLayout
 import { Head, Link } from '@inertiajs/vue3';
-import { AcademicCapIcon, BriefcaseIcon, CpuChipIcon } from '@heroicons/vue/24/outline';
+import GuestLayout from '@/Layouts/GuestLayout.vue';
+import { ArrowRightIcon } from '@heroicons/vue/24/solid'; // Example icon for buttons
 
 defineProps({
-    canLogin: Boolean,
-    canRegister: Boolean,
+    canLogin: {
+        type: Boolean,
+    },
+    canRegister: {
+        type: Boolean,
+    },
 });
 
 const features = [
     {
-        name: 'Student Visa Guidance',
-        description: 'Navigate the complexities of studying abroad. Find universities, prepare documents, and apply confidently with AI assistance.',
-        icon: AcademicCapIcon,
-        href: route('public.courses.search'), // Link to course search
+        name: 'AI-Powered Guidance',
+        description: 'Our advanced AI analyzes your documents and profile to provide personalized advice for your university applications.',
+        icon: '🤖', // Using emoji for simplicity, could be replaced with SVG icons
     },
     {
-        name: 'Work Visa Opportunities',
-        description: 'Explore international job markets. Build your CV, find relevant job postings, and connect with potential employers.',
-        icon: BriefcaseIcon,
-        href: route('public.jobs.search'), // Link to job search
+        name: 'Comprehensive Search',
+        description: 'Search thousands of universities and courses from around the world to find your perfect match.',
+        icon: '🔍',
     },
     {
-        name: 'AI-Powered Profile Analysis',
-        description: 'Get personalized insights. Our AI analyzes your profile to suggest suitable paths and improve your application success rate.',
-        icon: CpuChipIcon,
-        href: route('register'), // Encourage registration
+        name: 'Data Privacy Control',
+        description: 'You control your data. Grant access to consultants only when you are ready, ensuring your privacy.',
+        icon: '🔒',
+    },
+    {
+        name: 'Streamlined Application',
+        description: 'Manage all your applications, documents, and profile details in one secure, easy-to-use dashboard.',
+        icon: '✨',
     },
 ];
-
 </script>
 
 <template>
-    <Head title="Welcome" />
-
+    <Head title="Welcome to BideshGomon" />
     <GuestLayout>
-        <section class="relative bg-gradient-to-br from-white via-brand-light to-red-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden pt-16">
+        <div class="relative bg-gradient-to-br from-brand-50 via-white to-brand-100 dark:from-gray-900 dark:via-gray-800 dark:to-brand-900 overflow-hidden">
+            <div class="max-w-7xl mx-auto">
+                <div class="relative z-10 pb-8 sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
+                    <svg class="hidden lg:block absolute right-0 inset-y-0 h-full w-48 text-white dark:text-gray-800 transform translate-x-1/2"
+                         fill="currentColor" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                        <polygon points="50,0 100,0 50,100 0,100" />
+                    </svg>
+
+                    <main class="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28">
+                        <div class="sm:text-center lg:text-left">
+                            <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white sm:text-5xl md:text-6xl">
+                                <span class="block xl:inline">Your Journey</span>
+                                <span class="block text-brand-600 dark:text-brand-400 xl:inline"> Abroad Starts Here</span>
+                            </h1>
+                            <p class="mt-3 text-base text-gray-600 dark:text-gray-300 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
+                                Bidesh Gomon is your all-in-one platform for studying abroad. Find top universities, get AI-powered document analysis, and manage your applications with confidence and complete data privacy.
+                            </p>
+                            <div class="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start space-y-3 sm:space-y-0 sm:space-x-3">
+                                <Link
+                                    :href="route('register')"
+                                    class="inline-flex items-center justify-center w-full sm:w-auto px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-brand-600 hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition duration-150 ease-in-out shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                                >
+                                    Get started
+                                    <ArrowRightIcon class="ml-2 -mr-1 h-5 w-5" aria-hidden="true" />
+                                </Link>
+                                <Link
+                                    :href="route('public.universities.search')"
+                                    class="inline-flex items-center justify-center w-full sm:w-auto px-8 py-3 border border-brand-300 dark:border-brand-600 text-base font-medium rounded-md text-brand-700 dark:text-brand-300 bg-white dark:bg-gray-800 hover:bg-brand-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 transition duration-150 ease-in-out"
+                                >
+                                    Browse Universities
+                                </Link>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            </div>
+            <div class="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
+                <img
+                    class="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full opacity-90 dark:opacity-70"
+                    src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
+                    alt="International students smiling"
+                />
+            </div>
+        </div>
+
+        <div class="py-16 bg-white dark:bg-gray-800">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="py-24 lg:py-32 text-center">
-                    <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 dark:text-gray-100 sm:text-5xl md:text-6xl">
-                        <span class="block xl:inline">Your Trusted Partner</span>
-                        <span class="block text-brand-primary xl:inline"> for Going Abroad</span>
-                    </h1>
-                    <p class="mt-3 max-w-md mx-auto text-base text-gray-600 dark:text-gray-400 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-                        A one-stop solution for visas, universities, and job applications. Simplify your international journey with AI-driven guidance and expert advice.
+                <div class="text-center">
+                    <h2 class="text-base font-semibold text-brand-600 dark:text-brand-400 tracking-wide uppercase">Why Choose Us?</h2>
+                    <p class="mt-2 text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl">
+                        A Smarter Way to Study Abroad
                     </p>
-                    <div class="mt-8 max-w-md mx-auto sm:flex sm:justify-center md:mt-10 gap-4">
-                        <Link :href="route('register')" class="btn btn-primary text-base md:text-lg w-full sm:w-auto">
-                            Get Started
-                        </Link>
-                        <Link :href="route('public.courses.search')" class="btn btn-secondary text-base md:text-lg w-full sm:w-auto mt-3 sm:mt-0">
-                            Explore Services
+                    <p class="mt-4 max-w-2xl text-xl text-gray-500 dark:text-gray-400 lg:mx-auto">
+                        Leverage cutting-edge technology and unparalleled support for your international education goals.
+                    </p>
+                </div>
+
+                <div class="mt-12">
+                    <dl class="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-12">
+                        <div v-for="feature in features" :key="feature.name" class="relative group p-6 bg-gray-50 dark:bg-gray-900 rounded-lg transition duration-300 ease-in-out hover:shadow-lg hover:bg-white dark:hover:bg-gray-800 border border-transparent hover:border-brand-200 dark:hover:border-brand-700">
+                            <dt>
+                                <div class="absolute flex items-center justify-center h-12 w-12 rounded-md bg-gradient-to-br from-brand-500 to-brand-600 text-white text-2xl shadow-md group-hover:scale-110 transition-transform duration-300">
+                                    {{ feature.icon }}
+                                 </div>
+                                <p class="ms-16 text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                                    {{ feature.name }}
+                                </p>
+                            </dt>
+                            <dd class="mt-2 ms-16 text-base text-gray-600 dark:text-gray-400">
+                                {{ feature.description }}
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-brand-700 dark:bg-brand-800">
+            <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center lg:justify-between">
+                <h2 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+                    <span class="block">Ready to take the next step?</span>
+                    <span class="block text-brand-200">Create your free profile today.</span>
+                </h2>
+                <div class="mt-8 flex lg:mt-0 lg:shrink-0">
+                    <div class="inline-flex rounded-md shadow">
+                        <Link
+                            :href="route('register')"
+                            class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-brand-600 bg-white hover:bg-brand-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-brand-700 focus:ring-white transition duration-150 ease-in-out hover:shadow-md transform hover:-translate-y-0.5"
+                        >
+                            Register Now
+                            <ArrowRightIcon class="ml-2 -mr-1 h-5 w-5" aria-hidden="true" />
                         </Link>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <section class="py-16 bg-white dark:bg-gray-800">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-12">
-                    <h2 class="text-base font-semibold tracking-wide uppercase text-brand-primary">Our Core Features</h2>
-                    <p class="mt-2 text-3xl font-extrabold text-gray-900 dark:text-gray-100 sm:text-4xl">
-                        Everything You Need in One Platform
-                    </p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div v-for="feature in features" :key="feature.name" class="card text-center p-6 hover:shadow-xl transition-shadow">
-                         <div class="flex items-center justify-center h-12 w-12 rounded-md bg-brand-primary/10 text-brand-primary mx-auto mb-4">
-                            <component :is="feature.icon" class="h-6 w-6" aria-hidden="true" />
-                        </div>
-                        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100">{{ feature.name }}</h3>
-                        <p class="mt-2 text-base text-gray-600 dark:text-gray-400">
-                            {{ feature.description }}
-                        </p>
-                        <div class="mt-4">
-                            <Link :href="feature.href" class="text-sm font-medium text-brand-primary hover:text-brand-primary/80">
-                                Learn More <span aria-hidden="true">&rarr;</span>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        </GuestLayout>
+    </GuestLayout>
 </template>
-
-<style scoped>
-/* Scoped styles specific to Welcome page if needed */
-.btn-lg { /* Example size adjustment */
-    padding: 0.8rem 2rem;
-}
-</style>

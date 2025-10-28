@@ -2,118 +2,81 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Country;
-use App\Models\University;
 use App\Models\Course;
-use App\Models\JobCategory;
-use App\Models\JobPosting;
+use App\Models\University;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Inertia\Response;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Route; // <-- Add this
+use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Application;
 
 class PublicPageController extends Controller
 {
     /**
-     * 🚀 Display the public welcome/home page.
-     * THIS IS THE MISSING METHOD.
+     * Display the welcome page.
      */
-    public function welcome(): Response
+    public function welcome(Request $request)
     {
         return Inertia::render('Welcome', [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
+            // Removed Laravel/PHP versions as they are not used in the new design
         ]);
     }
 
     /**
-     * 🏛 Display the public university search page.
+     * Display the public university search page.
      */
-    public function universities(): Response // Renamed from showUniversitySearch
+    public function searchUniversities(Request $request)
     {
-        // Fetch countries for filter dropdown
-        $countries = Country::orderBy('name')->get(['id', 'name']);
+        // Fetch initial set of universities for page load
+        $universities = University::with(['country', 'city']) // Eager load relationships
+            ->orderBy('name', 'asc')
+            ->paginate(12); // Paginate results (e.g., 12 per page)
 
-        // Render the public-facing University Search page
         return Inertia::render('Public/Universities', [
-            'countries' => $countries,
+            'initialUniversities' => $universities,
+            // We can add filters like countries later if needed
+            // 'countries' => \App\Models\Country::orderBy('name')->get(['id', 'name']),
         ]);
     }
 
     /**
-     * 🎓 Display the public course search page.
+     * Display the public course search page.
      */
-    public function courses(): Response // Renamed from showCourseSearch
+    public function searchCourses(Request $request)
     {
-        // Fetch all universities for filters
-        $universities = University::orderBy('name')->get(['id', 'name']);
+         // Fetch initial set of courses for page load
+         $courses = Course::with(['university.country', 'degreeLevel']) // Eager load relationships
+            ->orderBy('name', 'asc')
+            ->paginate(12);
 
-        // Get distinct filter options for degree levels & fields
-        $degreeLevels = Course::distinct()->pluck('degree_level')->filter()->sort()->values();
-        $fieldsOfStudy = Course::distinct()->pluck('field_of_study')->filter()->sort()->values();
-
-        // Render the public-facing Course Search page
         return Inertia::render('Public/Courses', [
-            'universities' => $universities,
-            'degreeLevels' => $degreeLevels,
-            'fieldsOfStudy' => $fieldsOfStudy,
+             'initialCourses' => $courses,
+             // Add filters later
         ]);
     }
 
     /**
-     * 🏫 Display details for a specific university.
+     * Display university details (Example - needs more work)
      */
-    public function universityDetail(University $university): Response // Renamed from showUniversityDetail
+    public function showUniversity(University $university)
     {
-        // Load related data for full details
-        $universityData = $university->load('country', 'courses');
-
-        // Render the University Detail page
+        $university->load(['country', 'city', 'courses.degreeLevel']); // Load necessary data
+        // Render a detail view component (we'll create this later)
         return Inertia::render('Public/UniversityDetail', [
-            'university' => $universityData,
+            'university' => $university,
         ]);
     }
 
-    /**
-     * 📘 Display details for a specific course.
+     /**
+     * Display course details (Example - needs more work)
      */
-    public function courseDetail(Course $course): Response // Renamed from showCourseDetail
+    public function showCourse(Course $course)
     {
-        // Load related university and its country
-        $courseData = $course->load('university.country');
-
-        // Render the Course Detail page
+        $course->load(['university.country', 'degreeLevel']); // Load necessary data
+        // Render a detail view component (we'll create this later)
         return Inertia::render('Public/CourseDetail', [
-            'course' => $courseData,
-        ]);
-    }
-
-    /**
-     * 💼 Display the public job search page.
-     */
-    public function jobs(): Response // Renamed from showJobSearch
-    {
-        // Fetch data needed for search filters
-        $categories = JobCategory::where('is_active', true)->orderBy('name')->get(['id', 'name']);
-        $countries = Country::orderBy('name')->get(['id', 'name']);
-
-        return Inertia::render('Public/Jobs', [
-            'categories' => $categories,
-            'countries' => $countries,
-        ]);
-    }
-    
-    /**
-     * 💼 Display details for a specific job posting.
-     * (Assuming you have a JobPosting model and a 'Public/JobDetail' Vue page)
-     */
-    public function jobDetail(JobPosting $jobPosting): Response
-    {
-        $jobPosting->load(['jobCategory', 'country']);
-
-        return Inertia::render('Public/JobDetail', [
-            'job' => $jobPosting,
+            'course' => $course,
         ]);
     }
 }

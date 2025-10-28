@@ -1,195 +1,107 @@
 <script setup>
-import PublicLayout from '@/Layouts/PublicLayout.vue'; // PATCH: Changed layout
+import { ref, watch } from 'vue';
+import { Head, Link, router } from '@inertiajs/vue3';
+import GuestLayout from '@/Layouts/GuestLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, Link } from '@inertiajs/vue3';
-import { ref, watch, onMounted } from 'vue';
-import axios from 'axios';
+import { MagnifyingGlassIcon, MapPinIcon, AcademicCapIcon } from '@heroicons/vue/24/solid';
 import debounce from 'lodash/debounce';
 
-// Props from the controller (for filter options)
 const props = defineProps({
-    universities: Array,
-    degreeLevels: Array, // Assuming these are passed, e.g., ['Bachelor', 'Master', 'PhD']
-    fieldsOfStudy: Array, // Assuming these are passed, e.g., ['Engineering', 'Arts', 'Science']
+    initialCourses: Object,
 });
 
-// Reactive state for search filters
+const courses = ref(props.initialCourses);
 const searchTerm = ref('');
-const selectedUniversity = ref('');
-const selectedLevel = ref('');
-const selectedField = ref('');
 
-// Reactive state for results and loading
-const courses = ref({ data: [], links: [] }); // Match pagination structure
-const isLoading = ref(true); // PATCH: Set true for initial load
-const firstLoadComplete = ref(false);
+const searchCourses = debounce(() => {
+    router.get(route('public.courses.search'), { search: searchTerm.value }, {
+        preserveState: true,
+        replace: true,
+        onSuccess: (page) => {
+            courses.value = page.props.initialCourses;
+        }
+    });
+}, 300);
 
-// Function to fetch courses from the API
-const fetchCourses = async () => {
-    isLoading.value = true;
-    try {
-        const response = await axios.get(route('api.public.search.courses'), {
-            params: {
-                search: searchTerm.value || undefined, // Send undefined if empty
-                university_id: selectedUniversity.value || undefined,
-                degree_level: selectedLevel.value || undefined, // Pass names directly if API expects strings
-                field_of_study: selectedField.value || undefined, // Pass names directly if API expects strings
-                // Add page param if needed for pagination via API
-            }
-        });
-        courses.value = response.data;
-    } catch (error) {
-        console.error("Error fetching courses:", error);
-        // Maybe set an error state here to show a message
-    } finally {
-        isLoading.value = false;
-        firstLoadComplete.value = true;
-    }
-};
-
-// Debounce watcher for filters
-watch([searchTerm, selectedUniversity, selectedLevel, selectedField], debounce(fetchCourses, 300));
-
-// Fetch initial data on mount
-onMounted(fetchCourses);
-
-// Helper function to format currency (optional)
-const formatCurrency = (value) => {
-    if (value === null || value === undefined) return 'N/A';
-    // Basic formatting, improve as needed
-    return `$${Number(value).toLocaleString()}`;
-};
+watch(searchTerm, searchCourses);
 
 </script>
 
 <template>
-    <Head title="Find a Course" />
+    <Head title="Find Courses" />
+    <GuestLayout>
+        <div class="bg-gray-100 dark:bg-gray-900 py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12">
+                    <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl">
+                        Discover Your Ideal Course
+                    </h1>
+                    <p class="mt-4 text-xl text-gray-600 dark:text-gray-400">
+                        Search through countless programs offered by universities worldwide.
+                    </p>
+                </div>
 
-    <PublicLayout>
-
-        <div class="hero" style="padding-top: 4rem; padding-bottom: 4rem; background-color: #fff; border-bottom: 1px solid var(--brand-border);">
-            <div class="container">
-                <h1 style="font-size: 2.5rem;">Find Your Course</h1>
-                <p class="mt-2" style="font-size: 1.1rem; color: #555;">Explore academic programs from universities around the globe.</p>
-            </div>
-        </div>
-
-        <div class="container py-8 md:py-12">
-
-            <div class="p-4 bg-white rounded-lg shadow-sm border border-gray-200 mb-8">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="form-group" style="margin-bottom: 0;">
-                        <label for="search" class="font-semibold text-sm">Search Course Name</label>
+                <div class="mb-8 max-w-2xl mx-auto">
+                    <div class="relative flex items-center">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+                            <MagnifyingGlassIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
+                        </div>
                         <TextInput
-                            id="search"
                             type="text"
-                            class="mt-1 block w-full text-sm"
                             v-model="searchTerm"
-                            placeholder="e.g., 'Computer Science'"
+                            placeholder="Search by course name, university, or country..."
+                            class="w-full pl-10 pr-4 py-2 border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 rounded-md shadow-sm focus:border-brand-500 focus:ring-brand-500"
                         />
                     </div>
-                    <div class="form-group" style="margin-bottom: 0;">
-                        <label for="university" class="font-semibold text-sm">University</label>
-                        <select id="university" class="mt-1 block w-full text-sm" v-model="selectedUniversity">
-                            <option value="">All Universities</option>
-                            <option v-for="uni in universities" :key="uni.id" :value="uni.id">{{ uni.name }}</option>
-                        </select>
-                    </div>
-                     <div class="form-group" style="margin-bottom: 0;">
-                        <label for="level" class="font-semibold text-sm">Degree Level</label>
-                        <select id="level" class="mt-1 block w-full text-sm" v-model="selectedLevel">
-                            <option value="">All Levels</option>
-                            <option v-for="level in degreeLevels" :key="level" :value="level">{{ level }}</option>
-                        </select>
-                    </div>
-                     <div class="form-group" style="margin-bottom: 0;">
-                        <label for="field" class="font-semibold text-sm">Field of Study</label>
-                        <select id="field" class="mt-1 block w-full text-sm" v-model="selectedField">
-                            <option value="">All Fields</option>
-                             <option v-for="field in fieldsOfStudy" :key="field" :value="field">{{ field }}</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
+                     </div>
 
-            <div v-if="isLoading && !firstLoadComplete" class="space-y-4">
-                 <div v-for="n in 5" :key="n" class="card animate-pulse flex gap-4 items-center">
-                    <div class="w-16 h-16 bg-gray-200 rounded flex-shrink-0"></div>
-                    <div class="flex-grow space-y-2">
-                        <div class="h-5 bg-gray-200 rounded w-3/4"></div>
-                        <div class="h-4 bg-gray-200 rounded w-1/2"></div>
-                        <div class="h-4 bg-gray-200 rounded w-1/3"></div>
-                    </div>
-                </div>
-            </div>
-
-             <div v-else>
-                <div v-if="courses.data.length > 0" class="space-y-4">
-                    <Link
-                        v-for="course in courses.data"
-                        :key="course.id"
-                        :href="route('public.courses.show', course.id)"
-                        class="card block hover:shadow-md transition duration-150 ease-in-out no-underline"
-                    >
-                        <div class="flex flex-col sm:flex-row gap-4">
-                            <div class="flex-shrink-0 w-16 h-16">
-                                <img
-                                    v-if="course.university.logo_path"
-                                    :src="`/storage/${course.university.logo_path}`"
-                                    :alt="`${course.university.name} Logo`"
-                                    class="w-full h-full object-contain rounded border p-1"
-                                />
-                                <div v-else class="w-full h-full bg-gray-200 rounded flex items-center justify-center text-gray-400 font-bold text-xl">
-                                    {{ course.university.name.charAt(0) }}
+                <div v-if="courses.data.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div v-for="course in courses.data" :key="course.id"
+                         class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-xl flex flex-col">
+                        <Link :href="route('public.courses.show', course.id)" class="block flex flex-col flex-grow">
+                             <div class="p-6 flex-grow">
+                                <div class="flex items-center text-sm text-brand-600 dark:text-brand-400 mb-1">
+                                    <AcademicCapIcon class="h-4 w-4 mr-1 flex-shrink-0" />
+                                    <span>{{ course.degree_level?.name || 'N/A' }}</span>
                                 </div>
-                            </div>
-                            <div class="flex-grow">
-                                <h3 class="font-semibold text-lg" style="color: var(--brand-primary);">{{ course.name }}</h3>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">
-                                    {{ course.university.name }} - {{ course.university.city }}, {{ course.university.country.name }}
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2 truncate" :title="course.name">
+                                    {{ course.name }}
+                                </h3>
+                                <p class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 truncate" :title="course.university?.name">
+                                    {{ course.university?.name || 'University N/A' }}
                                 </p>
-                                <div class="mt-2 text-sm text-gray-800 dark:text-gray-300 flex flex-wrap gap-x-4 gap-y-1">
-                                    <span><strong>Level:</strong> {{ course.degree_level || 'N/A' }}</span>
-                                    <span><strong>Field:</strong> {{ course.field_of_study || 'N/A' }}</span>
-                                    <span v-if="course.duration_years"><strong>Duration:</strong> {{ course.duration_years }} years</span>
-                                    <span v-if="course.tuition_fee"><strong>Tuition:</strong> {{ formatCurrency(course.tuition_fee) }}/year</span>
-                                    <span v-if="course.application_deadline" class="text-red-600"><strong>Apply by:</strong> {{ course.application_deadline }}</span>
+                                <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                    <MapPinIcon class="h-4 w-4 mr-1 flex-shrink-0" />
+                                    <span>{{ course.university?.city?.name || 'City N/A' }}, {{ course.university?.country?.name || 'Country N/A' }}</span>
                                 </div>
-                                </div>
-                            <div class="flex-shrink-0 flex items-center justify-end mt-2 sm:mt-0">
-                                <span class="text-brand-primary font-semibold text-sm">
-                                    Details <span aria-hidden="true">&rarr;</span>
-                                </span>
-                            </div>
-                        </div>
-                    </Link>
+                                <p v-if="course.description" class="mt-3 text-sm text-gray-600 dark:text-gray-300 line-clamp-3 flex-grow">
+                                    {{ course.description }}
+                                </p>
+                             </div>
+                             <div class="bg-gray-50 dark:bg-gray-700 px-6 py-3 mt-auto">
+                                 <span class="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Duration: {{ course.duration_years || 'N/A' }} {{ course.duration_years ? 'Years' : '' }}</span>
+                             </div>
+                        </Link>
+                    </div>
+                </div>
+                <div v-else class="text-center py-16">
+                    <p class="text-xl text-gray-500 dark:text-gray-400">No courses found matching your criteria.</p>
                 </div>
 
-                 <div v-else class="text-center py-12">
-                    <h3 class="text-xl font-semibold text-gray-700">No Courses Found</h3>
-                    <p class="text-gray-500 mt-2">Try adjusting your search filters.</p>
+                <div v-if="courses.links.length > 3" class="mt-12">
+                    <Pagination :links="courses.links" />
                 </div>
-
-                <Pagination class="mt-8" :links="courses.links" />
             </div>
         </div>
-    </PublicLayout>
+    </GuestLayout>
 </template>
 
 <style scoped>
-/* Scoped styles can be added if needed */
-.no-underline {
-    text-decoration: none !important;
-}
-.line-clamp-2 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  /* Fallback for non-webkit */
-  max-height: 3.2em; /* Adjust based on line-height */
-  line-height: 1.6em; /* Adjust based on line-height */
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 </style>
