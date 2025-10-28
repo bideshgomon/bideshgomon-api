@@ -29,7 +29,7 @@ const itemToDelete = ref(null);
 const form = useForm({
     id: null,
     name: '',
-    is_active: true,
+    is_active: true, // Default to active for new entries
 });
 
 const isEditMode = computed(() => form.id !== null);
@@ -53,7 +53,12 @@ const openModal = (itemToEdit = null) => {
             replace: true,
         });
     } else {
-        form.reset();
+        // Explicitly reset the form to its default create state
+        form.reset({
+            id: null,
+            name: '',
+            is_active: true // Ensure reset goes back to active
+        });
         showCreateEditModal.value = true;
     }
 };

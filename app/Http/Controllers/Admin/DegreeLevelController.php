@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\DegreeLevel; // <-- Import DegreeLevel
+use App\Models\DegreeLevel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
@@ -48,6 +48,7 @@ class DegreeLevelController extends Controller
             'is_active' => 'required|boolean',
         ]);
 
+        // Debug line removed
         DegreeLevel::create($validated);
 
         return Redirect::route('admin.degree-levels.index')->with('success', 'Degree Level created successfully.');
@@ -74,7 +75,8 @@ class DegreeLevelController extends Controller
     public function destroy(DegreeLevel $degreeLevel)
     {
         // Optional: Check if the degree level is in use before deleting
-        // if ($degreeLevel->degrees()->exists() || $degreeLevel->courses()->exists()) {
+        // Consider adding checks for relationships like courses or user education
+        // if ($degreeLevel->courses()->exists() || $degreeLevel->userEducations()->exists()) {
         //     return Redirect::back()->with('error', 'Cannot delete Degree Level as it is currently in use.');
         // }
         $degreeLevel->delete();
