@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Role;
-use App\Models\UserProfile; // <-- [PATCH] IMPORT UserProfile MODEL
+use App\Models\UserProfile;
 
 class UserSeeder extends Seeder
 {
@@ -16,11 +16,13 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Find roles by slug for consistency with new RoleSeeder
+        // Find roles by slug (ensure RoleSeeder ran first)
         $adminRole = Role::where('slug', 'admin')->first();
+        $agencyRole = Role::where('slug', 'agency')->first();
+        $consultantRole = Role::where('slug', 'consultant')->first();
         $userRole = Role::where('slug', 'user')->first();
 
-        // 4. Create Admin User (only if the role was found)
+        // Create Admin User
         if ($adminRole) {
             User::firstOrCreate(
                 ['email' => 'admin@bideshgomon.com'],
@@ -29,29 +31,54 @@ class UserSeeder extends Seeder
                     'password' => Hash::make('password'),
                     'role_id' => $adminRole->id,
                     'email_verified_at' => now(),
-                    'is_active' => true, // <-- [RECOMMENDATION] Set default active status
+                    // 'is_active' => true, // Assuming default is true or handled elsewhere
                 ]
             );
-            // Note: Admin user might also need a profile, but bug was specific to test user.
         }
 
-        // 5. Create a Test User (only if the role was found)
+        // Create Agency User
+        if ($agencyRole) {
+           $agencyUser = User::firstOrCreate(
+                ['email' => 'agency@bideshgomon.com'],
+                [
+                    'name' => 'Agency User',
+                    'password' => Hash::make('password'),
+                    'role_id' => $agencyRole->id,
+                    'email_verified_at' => now(),
+                ]
+            );
+            // Create profile if Agency needs one
+            UserProfile::firstOrCreate(['user_id' => $agencyUser->id]);
+        }
+
+        // Create Consultant User
+        if ($consultantRole) {
+            $consultantUser = User::firstOrCreate(
+                ['email' => 'consultant@bideshgomon.com'],
+                [
+                    'name' => 'Consultant User',
+                    'password' => Hash::make('password'),
+                    'role_id' => $consultantRole->id,
+                    'email_verified_at' => now(),
+                ]
+            );
+             // Create profile if Consultant needs one
+            UserProfile::firstOrCreate(['user_id' => $consultantUser->id]);
+        }
+
+        // Create Regular User
         if ($userRole) {
-            $testUser = User::firstOrCreate( // <-- [PATCH] Assign to $testUser variable
+            $testUser = User::firstOrCreate(
                 ['email' => 'user@bideshgomon.com'],
                 [
                     'name' => 'Test User',
                     'password' => Hash::make('password'),
                     'role_id' => $userRole->id,
                     'email_verified_at' => now(),
-                    'is_active' => true, // <-- [RECOMMENDATION] Set default active status
                 ]
             );
-
-            // --- [PATCH START] ---
-            // Create a corresponding profile for the test user
+            // Create profile for the user
             UserProfile::firstOrCreate(['user_id' => $testUser->id]);
-            // --- [PATCH END] ---
         }
     }
 }

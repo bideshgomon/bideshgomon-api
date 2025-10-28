@@ -9,18 +9,21 @@ class Kernel extends HttpKernel
     /**
      * The application's global HTTP middleware stack.
      *
-     * These middleware run during every request to your application.
+     * These middleware are run during every request to your application.
      *
      * @var array<int, class-string|string>
      */
     protected $middleware = [
-        // \App\Http\Middleware\TrustHosts::class,
+        // \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class, // Original Laravel < 10
+        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
+        \App\Http\Middleware\TrimStrings::class,
+        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\TrustProxies::class,
-        \Illuminate\Http\Middleware\HandleCors::class, // Handles Cross-Origin Resource Sharing
-        \App\Http\Middleware\PreventRequestsDuringMaintenance::class, // Shows maintenance page if down
-        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class, // Checks max post size
-        \App\Http\Middleware\TrimStrings::class, // Trims whitespace from input
-        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class, // Converts empty strings to null
+        // Global CORS handling is important
+        \Illuminate\Http\Middleware\HandleCors::class,
+         \Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance::class, // Laravel 10+ location
+         \Illuminate\Http\Middleware\ValidatePathEncoding::class, // Added for safety
+         \Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks::class, // Added for safety
     ];
 
     /**
@@ -30,51 +33,46 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
-            \App\Http\Middleware\EncryptCookies::class, // Encrypts/decrypts cookies
-            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class, // Adds queued cookies to response
-            \Illuminate\Session\Middleware\StartSession::class, // Starts session handling
-            \Illuminate\View\Middleware\ShareErrorsFromSession::class, // Shares session errors with views
-            \App\Http\Middleware\VerifyCsrfToken::class, // Protects against CSRF attacks
-            \Illuminate\Routing\Middleware\SubstituteBindings::class, // Handles route model binding
-
-            // Inertia middleware (Added in bootstrap/app.php now, but keeping here doesn't hurt)
+            \App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            // \Illuminate\Session\Middleware\AuthenticateSession::class, // Typically not needed with Inertia/Sanctum SPA
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            // Inertia specific middleware
             \App\Http\Middleware\HandleInertiaRequests::class,
-
-            // Preload assets for better performance (Added in bootstrap/app.php now)
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ],
 
         'api' => [
-            // For Laravel Sanctum SPA/stateful authentication
+            // --- THIS LINE IS NOW UNCOMMENTED ---
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            'throttle:api', // Rate limiting for API routes
-            \Illuminate\Routing\Middleware\SubstituteBindings::class, // Route model binding
+           
+            'throttle:api', // Example API rate limiting
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
 
     /**
-     * The application's route middleware aliases.
-     *
-     * Aliases can be used instead of full class names in routes.
+     * The application's middleware aliases.
+     * Aliases may be used instead of class names to conveniently assign middleware to routes and groups.
+     * Renamed from $routeMiddleware for Laravel 10+
      *
      * @var array<string, class-string|string>
      */
     protected $middlewareAliases = [
-        'auth' => \App\Http\Middleware\Authenticate::class, // Ensures user is authenticated
-        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class, // HTTP Basic Auth
-        'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class, // Session-based auth state persistence
-        'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class, // Sets cache headers
-        'can' => \Illuminate\Auth\Middleware\Authorize::class, // Authorization based on abilities/policies
-        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class, // Redirects logged-in users from guest routes
-        'precognitive' => \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class, // Handles frontend validation requests
-        'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class, // Validates signed URLs
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class, // Rate limiting
-        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class, // Ensures user email is verified
-
-        // --- [PATCH START] ---
-        // Custom middleware alias for Role-Based Access Control
-        // 'role' => \App\Http\Middleware\CheckRole::class, // <-- BUG: This is for WEB routes
-        'role' => \App\Http\Middleware\EnsureUserHasRole::class, // <-- FIX: Use API-safe middleware
-        // --- [PATCH END] ---
+        'auth' => \App\Http\Middleware\Authenticate::class,
+        'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class,
+        'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
+        'can' => \Illuminate\Auth\Middleware\Authorize::class,
+        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'precognitive' => \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
+        'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
+        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        // --- CUSTOM MIDDLEWARE ALIASES ---
+        'role' => \App\Http\Middleware\EnsureUserHasRole::class, // Your existing role check
+        'check.data.access' => \App\Http\Middleware\CheckDataAccess::class, // The one we added earlier
     ];
 }

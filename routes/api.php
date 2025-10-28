@@ -108,11 +108,12 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 
-    // --- NEW: Data Access Request Management ---
+    // --- Data Access Request Management ---
     Route::prefix('data-access')->name('data-access.')->group(function () {
         // Consultant requests access to a user's data
+        // *** THIS ROUTE CORRECTLY USES POST ***
         Route::post('/request/{user}', [DataAccessRequestController::class, 'store'])
-            // ->middleware('role:consultant') // Apply role middleware later if needed, ensure it works first
+            // ->middleware('role:consultant') // Apply role middleware later if needed
             ->name('request');
 
         // User views their pending requests

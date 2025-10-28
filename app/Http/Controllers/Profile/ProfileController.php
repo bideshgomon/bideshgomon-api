@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Profile; // Assuming this is the correct namespace based on stack trace
+// --- CORRECT NAMESPACE ---
+namespace App\Http\Controllers\Profile;
+// --- END CORRECTION ---
 
-use App\Http\Controllers\Controller; // Assuming base controller
+use App\Http\Controllers\Controller; // Import the base Controller
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
@@ -12,26 +14,30 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
-// Make sure UserProfile model is imported if used directly
+// Import models if needed (optional here, but good practice if used more)
 use App\Models\UserProfile;
+use App\Models\UserEducation;
+use App\Models\UserWorkExperience;
+use App\Models\UserDocument;
+use App\Models\Skill;
 
-class ProfileController extends Controller
+class ProfileController extends Controller // Extend the base Controller
 {
     /**
      * Display the user's profile form.
      */
     public function edit(Request $request): Response
     {
-        // ✅ [FIX] Use the correct relationship name 'userProfile'
-        // Pre-load the userProfile relationship if needed by the Inertia page
-        $user = $request->user()->load('userProfile');
+        // Eager load the 'profile' relationship
+        $user = $request->user()->load([
+            'profile',
+            // Add other relationships needed by Edit.vue if not handled by partials
+        ]);
 
         return Inertia::render('Profile/Edit', [
-            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
+            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
-             // Pass the profile data if your Vue component expects it directly
-             // Make sure the User model correctly loads 'userProfile'
-            'userProfile' => $user->userProfile,
+            // 'userData' => $user, // Pass if needed
         ]);
     }
 
@@ -40,6 +46,7 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        // Update User model fields
         $request->user()->fill($request->validated());
 
         if ($request->user()->isDirty('email')) {
@@ -48,36 +55,24 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit');
-    }
+        // Update UserProfile model fields
+        $profile = $request->user()->profile()->firstOrCreate(['user_id' => $request->user()->id]);
 
-     /**
-     * Update the user's profile details (from UserProfile model).
-     * Assuming you have a separate route/method for this based on web.php
-     */
-    public function updateDetails(Request $request): RedirectResponse
-    {
-        // ✅ [FIX] Use the correct relationship name 'userProfile'
-        $user = $request->user();
-        $userProfile = $user->userProfile; // Get the related profile model
+        // Filter only the fields that exist in the request AND are fillable in UserProfile
+        $profileFillable = (new \App\Models\UserProfile)->getFillable(); // Get fillable fields
+        $profileDataToUpdate = array_filter(
+            $request->only($profileFillable), // Get only fillable fields from request
+            fn($key) => $request->has($key), // Ensure the key exists in the request
+            ARRAY_FILTER_USE_KEY
+        );
 
-        if (!$userProfile) {
-             // Handle case where profile doesn't exist, maybe create it
-             $userProfile = UserProfile::create(['user_id' => $user->id]);
+        if (!empty($profileDataToUpdate)) {
+            $profile->update($profileDataToUpdate);
         }
 
-        $validated = $request->validate([
-            'bio' => 'nullable|string|max:1000',
-            'address' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:20',
-            // Add other UserProfile fields here
-        ]);
 
-        $userProfile->update($validated);
-
-        return Redirect::route('profile.edit')->with('status', 'profile-details-updated');
+        return Redirect::route('profile.edit')->with('success', 'Profile updated successfully.');
     }
-
 
     /**
      * Delete the user's account.
@@ -99,4 +94,27 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    // --- CV Builder Methods (If they belong here) ---
+    // Note: These might belong in a separate CvBuilderController
+
+    /**
+     * Display the CV builder page.
+     */
+    // public function showCvBuilder(Request $request): Response
+    // {
+    //     $user = $request->user()->load(['profile', 'educations', 'workExperiences', 'skills', 'languages']);
+    //     return Inertia::render('Profile/CvBuilder', ['userData' => $user]);
+    // }
+
+    /**
+     * Handle downloading the CV.
+     */
+    // public function downloadCv(Request $request)
+    // {
+    //     $user = $request->user()->load(['profile', 'educations', 'workExperiences', 'skills', 'languages']);
+    //     // PDF Generation Logic...
+    //     return response()->json(['message' => 'CV Download functionality not yet implemented.', 'userData' => $user]);
+    // }
+    // --- End CV Builder Methods ---
 }

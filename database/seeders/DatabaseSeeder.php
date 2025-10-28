@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,28 +12,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Call RoleSeeder first (it should already be here)
-        $this->call(RoleSeeder::class);
-
-        // --- ADD CALLS TO NEW SEEDERS ---
         $this->call([
-            CountrySeeder::class,
-            SkillSeeder::class,
-            DocumentTypeSeeder::class,
-            // Add other seeders here if needed
-        ]);
-        // ---------------------------------
-
-        // Create the Admin User (it should already be here)
-        // Adjust details if necessary
-        User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@bideshgomon.com',
-            'role_id' => \App\Models\Role::where('name', 'admin')->first()->id,
-            // Add other default admin fields if needed
+            RoleSeeder::class,
+            UserSeeder::class, // <-- ADDED THIS CALL
+            // DocumentTypeSeeder::class, // Call this if it exists and is needed now
+            // Add other essential seeders like CountrySeeder later when created
         ]);
 
-        // Optional: Create factory data for testing
-        // User::factory(10)->create();
+        // Removed the User::factory() call for admin here,
+        // as UserSeeder now handles creating all default users using firstOrCreate.
     }
 }
