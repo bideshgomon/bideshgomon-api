@@ -2,208 +2,262 @@
 import { ref, onMounted } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import axios from 'axios';
-
-// Import components
-import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
-import TextareaInput from '@/Components/TextareaInput.vue';
-import InputError from '@/Components/InputError.vue';
 import Checkbox from '@/Components/Checkbox.vue';
+import InputError from '@/Components/InputError.vue';
+import { ChevronUpIcon, ChevronDownIcon, PlusIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/solid';
 
-// --- State Management ---
-const techEduList = ref([]);
-const isLoading = ref(true);
-const showModal = ref(false);
-const isEditMode = ref(false);
-const currentTechEduId = ref(null);
+// Collapsible state
+const isOpen = ref(true);
+const toggle = () => {
+    isOpen.value = !isOpen.value;
+};
 
-// --- Form Definition ---
+// State
+const educationList = ref([]);
+const editingEducationId = ref(null);
+
 const form = useForm({
-    institution_name: '',
     course_name: '',
-    field_of_study: '', // Optional, but good to have
+    institution: '',
     start_date: '',
-    completion_date: '', // Nullable
-    is_ongoing: false,
-    description: '', // Optional
+    end_date: '',
+    is_current: false,
 });
 
-// --- API Interaction ---
-const fetchTechEdu = async () => {
-    isLoading.value = true;
-    try {
-        const response = await axios.get(route('profile.technical-education.index')); // API route
-        techEduList.value = response.data.data || [];
-    } catch (error) {
-        console.error("Error fetching technical education:", error);
-    } finally {
-        isLoading.value = false;
-    }
+// Fetch data
+const getEducation = () => {
+    axios.get(route('api.profile.technical-education.index'))
+        .then(response => {
+            educationList.value = response.data;
+        })
+        .catch(error => console.error("Error fetching technical education:", error));
 };
 
-// --- Modal Controls ---
-const openAddModal = () => {
-    form.reset();
-    isEditMode.value = false;
-    currentTechEduId.value = null;
-    showModal.value = true;
-};
-
-const openEditModal = (techEdu) => {
-    form.institution_name = techEdu.institution_name;
-    form.course_name = techEdu.course_name;
-    form.field_of_study = techEdu.field_of_study;
-    form.start_date = techEdu.start_date; // Assuming YYYY-MM-DD
-    form.completion_date = techEdu.completion_date;
-    form.is_ongoing = techEdu.is_ongoing;
-    form.description = techEdu.description;
-
-    isEditMode.value = true;
-    currentTechEduId.value = techEdu.id;
-    showModal.value = true;
-};
-
-const closeModal = () => {
-    showModal.value = false;
-    form.reset();
-};
-
-// --- Form Submission ---
-const submit = () => {
-    // Clear completion_date if ongoing
-    if (form.is_ongoing) {
-        form.completion_date = null;
+// Submit form
+const submitEducation = () => {
+    if (form.is_current) {
+        form.end_date = ''; // Clear end date if currently studying
     }
 
-    const options = {
-        preserveScroll: true,
-        onSuccess: () => {
-            closeModal();
-            fetchTechEdu(); // Re-fetch list
-        },
-        onError: () => {}
-    };
+    const url = editingEducationId.value
+        ? route('api.profile.technical-education.update', editingEducationId.value)
+        : route('api.profile.technical-education.store');
+    
+    const method = editingEducationId.value ? 'put' : 'post';
 
-    if (isEditMode.value) {
-        form.put(route('profile.technical-education.update', currentTechEduId.value), options);
-    } else {
-        form.post(route('profile.technical-education.store'), options);
-    }
-};
-
-// --- Delete ---
-const deleteForm = useForm({});
-const confirmDelete = (techEdu) => {
-    if (window.confirm(`Are you sure you want to delete the record for "${techEdu.course_name}" at "${techEdu.institution_name}"?`)) {
-        deleteForm.delete(route('profile.technical-education.destroy', techEdu.id), {
-            preserveScroll: true,
-            onSuccess: () => fetchTechEdu(), // Re-fetch list
-            onError: () => {},
+    axios[method](url, form.data())
+        .then(() => {
+            form.reset();
+            form.clearErrors();
+            editingEducationId.value = null;
+            getEducation(); // Refresh list
+            form.recentlySuccessful = true;
+            setTimeout(() => form.recentlySuccessful = false, 2000);
+        })
+        .catch(error => {
+            if (error.response && error.response.status === 422) {
+                form.setError(error.response.data.errors);
+            } else {
+                console.error("Error submitting form:", error);
+            }
         });
+};
+
+// Start editing
+const editEducation = (edu) => {
+    editingEducationId.value = edu.id;
+    form.course_name = edu.course_name;
+    form.institution = edu.institution;
+    form.start_date = edu.start_date ? edu.start_date.substring(0, 10) : '';
+    form.end_date = edu.end_date ? edu.end_date.substring(0, 10) : '';
+    form.is_current = edu.is_current;
+    form.clearErrors();
+};
+
+// Cancel editing
+const cancelEdit = () => {
+    editingEducationId.value = null;
+    form.reset();
+    form.clearErrors();
+};
+
+// Delete item
+const deleteEducation = (educationId) => {
+    if (!confirm("Are you sure you want to delete this education record?")) return;
+
+    axios.delete(route('api.profile.technical-education.destroy', educationId))
+        .then(() => {
+            getEducation(); // Refresh list
+            if (editingEducationId.value === educationId) {
+                cancelEdit();
+            }
+        })
+        .catch(error => {
+            console.error("Error deleting technical education:", error);
+            alert("Failed to delete record.");
+        });
+};
+
+// Load data on mount
+onMounted(() => {
+    getEducation();
+});
+
+// Helper to format date
+const formatDate = (dateString) => {
+    if (!dateString) return 'Present';
+    try {
+        const date = new Date(dateString + 'T00:00:00Z'); // Assume UTC
+        return date.toLocaleDateString(undefined, { timeZone: 'UTC', year: 'numeric', month: 'short' });
+    } catch (e) {
+        return 'Invalid Date';
     }
 };
 
-// --- Lifecycle Hook ---
-onMounted(() => {
-    fetchTechEdu();
-});
 </script>
 
 <template>
-    <section class="space-y-6">
-        <header>
-            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Technical Education & Training</h2>
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                List any vocational training, certifications, bootcamps, or other technical courses.
-            </p>
-        </header>
-
-        <div v-if="isLoading" class="text-sm text-gray-500 dark:text-gray-400">Loading technical education...</div>
-
-        <div v-else-if="techEduList.length === 0" class="text-sm text-gray-500 dark:text-gray-400">
-            No technical education or training added yet.
-        </div>
-
-        <ul v-else class="space-y-4">
-            <li v-for="te in techEduList" :key="te.id" class="p-4 border border-gray-200 dark:border-gray-700 rounded-md flex justify-between items-start">
+    <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+        <section>
+            <header @click="toggle" class="flex justify-between items-center cursor-pointer">
                 <div>
-                    <h3 class="font-semibold text-gray-900 dark:text-gray-100">{{ te.course_name }}</h3>
-                    <p class="text-sm text-gray-700 dark:text-gray-300">{{ te.institution_name }} <span v-if="te.field_of_study"> - {{ te.field_of_study }}</span></p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                        {{ te.start_date }} - {{ te.is_ongoing ? 'Ongoing' : (te.completion_date || 'N/A') }}
+                    <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Technical Education
+                    </h2>
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                        Add vocational training, bootcamps, or other technical courses.
                     </p>
-                     <p v-if="te.description" class="mt-2 text-sm text-gray-600 dark:text-gray-400 whitespace-pre-line">{{ te.description }}</p>
                 </div>
-                <div class="flex-shrink-0 space-x-2">
-                    <SecondaryButton @click="openEditModal(te)">Edit</SecondaryButton>
-                    <DangerButton @click="confirmDelete(te)">Delete</DangerButton>
+                <div>
+                    <ChevronUpIcon v-if="isOpen" class="w-6 h-6 text-gray-500" />
+                    <ChevronDownIcon v-else class="w-6 h-6 text-gray-500" />
                 </div>
-            </li>
-        </ul>
+            </header>
 
-        <PrimaryButton @click="openAddModal" :disabled="isLoading">Add Technical Education</PrimaryButton>
+            <div v-show="isOpen" class="mt-6 space-y-6">
+                
+                <form @submit.prevent="submitEducation" class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg space-y-4">
+                    <h3 class="text-md font-medium text-gray-900 dark:text-gray-100">
+                        {{ editingEducationId ? 'Update Education' : 'Add New Education' }}
+                    </h3>
 
-        <Modal :show="showModal" @close="closeModal">
-            <div class="p-6 bg-white dark:bg-gray-800">
-                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                    {{ isEditMode ? 'Edit Technical Education Record' : 'Add New Technical Education Record' }}
-                </h2>
-
-                <form @submit.prevent="submit" class="mt-6 space-y-6">
-                    <div>
-                        <InputLabel for="institution_name" value="Institution / Provider Name" />
-                        <TextInput id="institution_name" type="text" class="mt-1 block w-full" v-model="form.institution_name" required />
-                        <InputError class="mt-2" :message="form.errors.institution_name" />
-                    </div>
-
-                    <div>
-                        <InputLabel for="course_name" value="Course / Program Name" />
-                        <TextInput id="course_name" type="text" class="mt-1 block w-full" v-model="form.course_name" required />
-                        <InputError class="mt-2" :message="form.errors.course_name" />
-                    </div>
-
-                     <div>
-                        <InputLabel for="tech_field_of_study" value="Field of Study (Optional)" />
-                        <TextInput id="tech_field_of_study" type="text" class="mt-1 block w-full" v-model="form.field_of_study" />
-                        <InputError class="mt-2" :message="form.errors.field_of_study" />
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <InputLabel for="tech_start_date" value="Start Date" />
-                            <TextInput id="tech_start_date" type="date" class="mt-1 block w-full" v-model="form.start_date" required />
-                            <InputError class="mt-2" :message="form.errors.start_date" />
+                            <InputLabel for="te_course_name" value="Course/Program Name" />
+                            <TextInput
+                                id="te_course_name"
+                                v-model="form.course_name"
+                                type="text"
+                                class="mt-1 block w-full"
+                                placeholder="e.g., Full Stack Web Development"
+                                required
+                            />
+                            <InputError :message="form.errors.course_name" class="mt-2" />
                         </div>
                         <div>
-                            <InputLabel for="completion_date" value="Completion Date" />
-                            <TextInput id="completion_date" type="date" class="mt-1 block w-full" v-model="form.completion_date" :disabled="form.is_ongoing"/>
-                            <InputError class="mt-2" :message="form.errors.completion_date" />
+                            <InputLabel for="te_institution" value="Institution" />
+                            <TextInput
+                                id="te_institution"
+                                v-model="form.institution"
+                                type="text"
+                                class="mt-1 block w-full"
+                                placeholder="e.g., Programming Hero, BITM"
+                                required
+                            />
+                            <InputError :message="form.errors.institution" class="mt-2" />
                         </div>
                     </div>
-
-                     <div class="flex items-center">
-                         <Checkbox id="is_ongoing" v-model="form.is_ongoing" :checked="form.is_ongoing" />
-                         <InputLabel for="is_ongoing" value="This program is currently ongoing" class="ml-2" />
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                         <div>
+                            <InputLabel for="te_start_date" value="Start Date" />
+                            <TextInput
+                                id="te_start_date"
+                                v-model="form.start_date"
+                                type="date"
+                                class="mt-1 block w-full"
+                                required
+                            />
+                            <InputError :message="form.errors.start_date" class="mt-2" />
+                        </div>
+                        <div>
+                            <InputLabel for="te_end_date" value="End Date" />
+                            <TextInput
+                                id="te_end_date"
+                                v-model="form.end_date"
+                                type="date"
+                                class="mt-1 block w-full"
+                                :disabled="form.is_current"
+                                :class="{ 'bg-gray-100 dark:bg-gray-800': form.is_current }"
+                            />
+                            <InputError :message="form.errors.end_date" class="mt-2" />
+                        </div>
+                    </div>
+                    
+                    <div class="block mt-4">
+                        <label class="flex items-center">
+                            <Checkbox v-model:checked="form.is_current" name="te_is_current" />
+                            <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">I am currently attending this program</span>
+                        </label>
                     </div>
 
-                    <div>
-                        <InputLabel for="tech_description" value="Description (Optional)" />
-                        <TextareaInput id="tech_description" class="mt-1 block w-full" v-model="form.description" rows="3" />
-                        <InputError class="mt-2" :message="form.errors.description" />
-                    </div>
-
-                    <div class="flex justify-end gap-4">
-                        <SecondaryButton @click="closeModal"> Cancel </SecondaryButton>
+                    <div class="flex items-center gap-4">
                         <PrimaryButton :disabled="form.processing">
-                            {{ isEditMode ? 'Update Record' : 'Save Record' }}
+                            <PlusIcon v-if="!editingEducationId" class="w-4 h-4 mr-2" />
+                            {{ editingEducationId ? 'Update Education' : 'Save Education' }}
                         </PrimaryButton>
+                        <SecondaryButton v-if="editingEducationId" type="button" @click="cancelEdit">
+                            Cancel
+                        </SecondaryButton>
+                        <Transition
+                            enter-active-class="transition ease-in-out"
+                            enter-from-class="opacity-0"
+                            leave-active-class="transition ease-in-out"
+                            leave-to-class="opacity-0"
+                        >
+                            <p v-if="form.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">Saved.</p>
+                        </Transition>
                     </div>
                 </form>
+
+                <div class="mt-6 space-y-4">
+                    <h3 class="text-md font-medium text-gray-900 dark:text-gray-100">
+                        Your Technical Education
+                    </h3>
+                    <div v-if="educationList.length === 0" class="text-center text-gray-500 dark:text-gray-400 p-4 border-dashed border-2 border-gray-300 dark:border-gray-700 rounded-lg">
+                        No technical education added yet.
+                    </div>
+                    
+                    <ul v-else class="divide-y divide-gray-200 dark:divide-gray-700">
+                        <li v-for="edu in educationList" :key="edu.id" class="py-4 flex justify-between items-center">
+                            <div class="flex-1">
+                                <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                                    {{ edu.course_name }}
+                                </h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">
+                                    {{ edu.institution }}
+                                </p>
+                                <p class="text-sm text-gray-500 dark:text-gray-500">
+                                    {{ formatDate(edu.start_date) }} - {{ formatDate(edu.end_date) }}
+                                </p>
+                            </div>
+                            <div class="flex-shrink-0 flex gap-2">
+                                <SecondaryButton @click="editEducation(edu)" class="!px-3 !py-2">
+                                    <PencilIcon class="w-4 h-4" />
+                                </SecondaryButton>
+                                <DangerButton @click="deleteEducation(edu.id)" class="!px-3 !py-2">
+                                    <TrashIcon class="w-4 h-4" />
+                                </DangerButton>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </Modal>
-    </section>
+        </section>
+    </div>
 </template>

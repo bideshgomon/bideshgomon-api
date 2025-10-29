@@ -2,188 +2,261 @@
 import { ref, onMounted } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import axios from 'axios';
-
-// Import components
-import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
-import TextareaInput from '@/Components/TextareaInput.vue';
+import Checkbox from '@/Components/Checkbox.vue';
 import InputError from '@/Components/InputError.vue';
+import { ChevronUpIcon, ChevronDownIcon, PlusIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/solid';
 
-// --- State Management ---
+// Collapsible state
+const isOpen = ref(true);
+const toggle = () => {
+    isOpen.value = !isOpen.value;
+};
+
+// State
 const membershipList = ref([]);
-const isLoading = ref(true);
-const showModal = ref(false);
-const isEditMode = ref(false);
-const currentMembershipId = ref(null);
+const editingMembershipId = ref(null);
 
-// --- Form Definition ---
 const form = useForm({
     organization_name: '',
-    position_held: '', // e.g., 'Member', 'Committee Chair'
+    role: '',
     start_date: '',
-    end_date: '', // Nullable
-    description: '', // Optional details
+    end_date: '',
+    is_current: false,
 });
 
-// --- API Interaction ---
-const fetchMemberships = async () => {
-    isLoading.value = true;
-    try {
-        const response = await axios.get(route('profile.memberships.index')); // API route
-        membershipList.value = response.data.data || [];
-    } catch (error) {
-        console.error("Error fetching memberships:", error);
-    } finally {
-        isLoading.value = false;
+// Fetch data
+const getMemberships = () => {
+    axios.get(route('api.profile.memberships.index'))
+        .then(response => {
+            membershipList.value = response.data;
+        })
+        .catch(error => console.error("Error fetching memberships:", error));
+};
+
+// Submit form
+const submitMembership = () => {
+    if (form.is_current) {
+        form.end_date = ''; // Clear end date
     }
-};
 
-// --- Modal Controls ---
-const openAddModal = () => {
-    form.reset();
-    isEditMode.value = false;
-    currentMembershipId.value = null;
-    showModal.value = true;
-};
+    const url = editingMembershipId.value
+        ? route('api.profile.memberships.update', editingMembershipId.value)
+        : route('api.profile.memberships.store');
+    
+    const method = editingMembershipId.value ? 'put' : 'post';
 
-const openEditModal = (membership) => {
-    form.organization_name = membership.organization_name;
-    form.position_held = membership.position_held;
-    form.start_date = membership.start_date; // Assuming YYYY-MM-DD
-    form.end_date = membership.end_date;
-    form.description = membership.description;
-
-    isEditMode.value = true;
-    currentMembershipId.value = membership.id;
-    showModal.value = true;
-};
-
-const closeModal = () => {
-    showModal.value = false;
-    form.reset();
-};
-
-// --- Form Submission ---
-const submit = () => {
-    const options = {
-        preserveScroll: true,
-        onSuccess: () => {
-            closeModal();
-            fetchMemberships(); // Re-fetch list
-        },
-        onError: () => {}
-    };
-
-    if (isEditMode.value) {
-        form.put(route('profile.memberships.update', currentMembershipId.value), options);
-    } else {
-        form.post(route('profile.memberships.store'), options);
-    }
-};
-
-// --- Delete ---
-const deleteForm = useForm({});
-const confirmDelete = (membership) => {
-    if (window.confirm(`Are you sure you want to delete the membership for "${membership.organization_name}"?`)) {
-        deleteForm.delete(route('profile.memberships.destroy', membership.id), {
-            preserveScroll: true,
-            onSuccess: () => fetchMemberships(), // Re-fetch list
-            onError: () => {},
+    axios[method](url, form.data())
+        .then(() => {
+            form.reset();
+            form.clearErrors();
+            editingMembershipId.value = null;
+            getMemberships(); // Refresh list
+            form.recentlySuccessful = true;
+            setTimeout(() => form.recentlySuccessful = false, 2000);
+        })
+        .catch(error => {
+            if (error.response && error.response.status === 422) {
+                form.setError(error.response.data.errors);
+            } else {
+                console.error("Error submitting form:", error);
+            }
         });
+};
+
+// Start editing
+const editMembership = (mem) => {
+    editingMembershipId.value = mem.id;
+    form.organization_name = mem.organization_name;
+    form.role = mem.role;
+    form.start_date = mem.start_date ? mem.start_date.substring(0, 10) : '';
+    form.end_date = mem.end_date ? mem.end_date.substring(0, 10) : '';
+    form.is_current = mem.is_current;
+    form.clearErrors();
+};
+
+// Cancel editing
+const cancelEdit = () => {
+    editingMembershipId.value = null;
+    form.reset();
+    form.clearErrors();
+};
+
+// Delete item
+const deleteMembership = (membershipId) => {
+    if (!confirm("Are you sure you want to delete this membership?")) return;
+
+    axios.delete(route('api.profile.memberships.destroy', membershipId))
+        .then(() => {
+            getMemberships();
+            if (editingMembershipId.value === membershipId) {
+                cancelEdit();
+            }
+        })
+        .catch(error => {
+            console.error("Error deleting membership:", error);
+            alert("Failed to delete record.");
+        });
+};
+
+onMounted(() => {
+    getMemberships();
+});
+
+// Helper to format date
+const formatDate = (dateString) => {
+    if (!dateString) return 'Present';
+    try {
+        const date = new Date(dateString + 'T00:00:00Z'); // Assume UTC
+        return date.toLocaleDateString(undefined, { timeZone: 'UTC', year: 'numeric', month: 'short' });
+    } catch (e) {
+        return 'Invalid Date';
     }
 };
 
-// --- Lifecycle Hook ---
-onMounted(() => {
-    fetchMemberships();
-});
 </script>
 
 <template>
-    <section class="space-y-6">
-        <header>
-            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Professional Memberships</h2>
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                List any professional organizations or associations you are a part of.
-            </p>
-        </header>
-
-        <div v-if="isLoading" class="text-sm text-gray-500 dark:text-gray-400">Loading memberships...</div>
-
-        <div v-else-if="membershipList.length === 0" class="text-sm text-gray-500 dark:text-gray-400">
-            No memberships added yet.
-        </div>
-
-        <ul v-else class="space-y-4">
-            <li v-for="mem in membershipList" :key="mem.id" class="p-4 border border-gray-200 dark:border-gray-700 rounded-md flex justify-between items-start">
+    <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+        <section>
+            <header @click="toggle" class="flex justify-between items-center cursor-pointer">
                 <div>
-                    <h3 class="font-semibold text-gray-900 dark:text-gray-100">{{ mem.organization_name }}</h3>
-                    <p class="text-sm text-gray-700 dark:text-gray-300">{{ mem.position_held }}</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                        {{ mem.start_date }} - {{ mem.end_date ? mem.end_date : 'Present' }}
+                    <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Professional Memberships
+                    </h2>
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                        List your memberships in professional organizations.
                     </p>
-                    <p v-if="mem.description" class="mt-2 text-sm text-gray-600 dark:text-gray-400 whitespace-pre-line">{{ mem.description }}</p>
                 </div>
-                <div class="flex-shrink-0 space-x-2">
-                    <SecondaryButton @click="openEditModal(mem)">Edit</SecondaryButton>
-                    <DangerButton @click="confirmDelete(mem)">Delete</DangerButton>
+                <div>
+                    <ChevronUpIcon v-if="isOpen" class="w-6 h-6 text-gray-500" />
+                    <ChevronDownIcon v-else class="w-6 h-6 text-gray-500" />
                 </div>
-            </li>
-        </ul>
+            </header>
 
-        <PrimaryButton @click="openAddModal" :disabled="isLoading">Add Membership</PrimaryButton>
+            <div v-show="isOpen" class="mt-6 space-y-6">
+                
+                <form @submit.prevent="submitMembership" class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg space-y-4">
+                    <h3 class="text-md font-medium text-gray-900 dark:text-gray-100">
+                        {{ editingMembershipId ? 'Update Membership' : 'Add New Membership' }}
+                    </h3>
 
-        <Modal :show="showModal" @close="closeModal">
-            <div class="p-6 bg-white dark:bg-gray-800">
-                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                    {{ isEditMode ? 'Edit Membership' : 'Add New Membership' }}
-                </h2>
-
-                <form @submit.prevent="submit" class="mt-6 space-y-6">
-                    <div>
-                        <InputLabel for="organization_name" value="Organization Name" />
-                        <TextInput id="organization_name" type="text" class="mt-1 block w-full" v-model="form.organization_name" required />
-                        <InputError class="mt-2" :message="form.errors.organization_name" />
-                    </div>
-
-                    <div>
-                        <InputLabel for="position_held" value="Position Held (e.g., Member)" />
-                        <TextInput id="position_held" type="text" class="mt-1 block w-full" v-model="form.position_held" />
-                        <InputError class="mt-2" :message="form.errors.position_held" />
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
+                            <InputLabel for="mem_org" value="Organization Name" />
+                            <TextInput
+                                id="mem_org"
+                                v-model="form.organization_name"
+                                type="text"
+                                class="mt-1 block w-full"
+                                placeholder="e.g., IEEE, BASIS"
+                                required
+                            />
+                            <InputError :message="form.errors.organization_name" class="mt-2" />
+                        </div>
+                        <div>
+                            <InputLabel for="mem_role" value="Your Role/Title" />
+                            <TextInput
+                                id="mem_role"
+                                v-model="form.role"
+                                type="text"
+                                class="mt-1 block w-full"
+                                placeholder="e.g., Member, Fellow"
+                                required
+                            />
+                            <InputError :message="form.errors.role" class="mt-2" />
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                         <div>
                             <InputLabel for="mem_start_date" value="Start Date" />
-                            <TextInput id="mem_start_date" type="date" class="mt-1 block w-full" v-model="form.start_date" required />
-                            <InputError class="mt-2" :message="form.errors.start_date" />
+                            <TextInput
+                                id="mem_start_date"
+                                v-model="form.start_date"
+                                type="date"
+                                class="mt-1 block w-full"
+                                required
+                            />
+                            <InputError :message="form.errors.start_date" class="mt-2" />
                         </div>
                         <div>
-                            <InputLabel for="mem_end_date" value="End Date (Leave blank if current)" />
-                            <TextInput id="mem_end_date" type="date" class="mt-1 block w-full" v-model="form.end_date" />
-                            <InputError class="mt-2" :message="form.errors.end_date" />
+                            <InputLabel for="mem_end_date" value="End Date" />
+                            <TextInput
+                                id="mem_end_date"
+                                v-model="form.end_date"
+                                type="date"
+                                class="mt-1 block w-full"
+                                :disabled="form.is_current"
+                                :class="{ 'bg-gray-100 dark:bg-gray-800': form.is_current }"
+                            />
+                            <InputError :message="form.errors.end_date" class="mt-2" />
                         </div>
                     </div>
-
-                    <div>
-                        <InputLabel for="mem_description" value="Description (Optional)" />
-                        <TextareaInput id="mem_description" class="mt-1 block w-full" v-model="form.description" rows="3" />
-                        <InputError class="mt-2" :message="form.errors.description" />
+                    
+                    <div class="block mt-4">
+                        <label class="flex items-center">
+                            <Checkbox v-model:checked="form.is_current" name="mem_is_current" />
+                            <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">I am currently a member</span>
+                        </label>
                     </div>
 
-
-                    <div class="flex justify-end gap-4">
-                        <SecondaryButton @click="closeModal"> Cancel </SecondaryButton>
+                    <div class="flex items-center gap-4">
                         <PrimaryButton :disabled="form.processing">
-                            {{ isEditMode ? 'Update Record' : 'Save Record' }}
+                            <PlusIcon v-if="!editingMembershipId" class="w-4 h-4 mr-2" />
+                            {{ editingMembershipId ? 'Update Membership' : 'Save Membership' }}
                         </PrimaryButton>
+                        <SecondaryButton v-if="editingMembershipId" type="button" @click="cancelEdit">
+                            Cancel
+                        </SecondaryButton>
+                        <Transition
+                            enter-active-class="transition ease-in-out"
+                            enter-from-class="opacity-0"
+                            leave-active-class="transition ease-in-out"
+                            leave-to-class="opacity-0"
+                        >
+                            <p v-if="form.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">Saved.</p>
+                        </Transition>
                     </div>
                 </form>
+
+                <div class="mt-6 space-y-4">
+                    <h3 class="text-md font-medium text-gray-900 dark:text-gray-100">
+                        Your Memberships
+                    </h3>
+                    <div v-if="membershipList.length === 0" class="text-center text-gray-500 dark:text-gray-400 p-4 border-dashed border-2 border-gray-300 dark:border-gray-700 rounded-lg">
+                        No memberships added yet.
+                    </div>
+                    
+                    <ul v-else class="divide-y divide-gray-200 dark:divide-gray-700">
+                        <li v-for="mem in membershipList" :key="mem.id" class="py-4 flex justify-between items-center">
+                            <div class="flex-1">
+                                <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                                    {{ mem.organization_name }}
+                                </h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">
+                                    {{ mem.role }}
+                                </p>
+                                <p class="text-sm text-gray-500 dark:text-gray-500">
+                                    {{ formatDate(mem.start_date) }} - {{ formatDate(mem.end_date) }}
+                                </p>
+                            </div>
+                            <div class="flex-shrink-0 flex gap-2">
+                                <SecondaryButton @click="editMembership(mem)" class="!px-3 !py-2">
+                                    <PencilIcon class="w-4 h-4" />
+                                </SecondaryButton>
+                                <DangerButton @click="deleteMembership(mem.id)" class="!px-3 !py-2">
+                                    <TrashIcon class="w-4 h-4" />
+                                </DangerButton>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </Modal>
-    </section>
+        </section>
+    </div>
 </template>

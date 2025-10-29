@@ -1,19 +1,39 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link, usePage, router } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import PublicFooter from '@/Components/PublicFooter.vue';
-import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'; // Icons for mobile menu
+import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline';
+import TextInput from '@/Components/TextInput.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 const showingMobileMenu = ref(false);
 
+// For the search input
+const searchTerm = ref('');
+
+/**
+ * Submits the search form, redirecting using the correct API route.
+ */
+const submitSearch = () => {
+    if (searchTerm.value.trim()) {
+        router.get(
+            route('api.public.search.universities'), // Correct API route for search action
+            { query: searchTerm.value },
+            { preserveState: true }
+        );
+    }
+};
+
+// --- CORRECTED navLinks using web route names ---
 const navLinks = [
-    { name: 'Universities', href: route('public.universities.search'), current: route().current('public.universities.search') },
-    { name: 'Courses', href: route('public.courses.search'), current: route().current('public.courses.search') },
-    { name: 'Jobs', href: '#', current: false, disabled: true }, // Disabled state
+    { name: 'Universities', href: route('universities.index'), current: route().current('universities.index') },
+    { name: 'Courses', href: route('courses.index'), current: route().current('courses.index') },
+    { name: 'Jobs', href: route('jobs.index'), current: route().current('jobs.index'), disabled: false }, // Use the web route 'jobs.index'
 ];
+// --- END CORRECTION ---
 </script>
 
 <template>
@@ -49,7 +69,16 @@ const navLinks = [
                     </div>
 
                     <div class="hidden sm:flex sm:items-center sm:ms-6">
-                         <template v-if="user">
+                        <form @submit.prevent="submitSearch" class="flex items-center mr-6">
+                            <TextInput
+                                v-model="searchTerm"
+                                type="search"
+                                placeholder="Search universities..."
+                                class="w-48 h-8 text-sm"
+                            />
+                            <PrimaryButton type="submit" class="ms-2 h-8 text-xs py-0">Search</PrimaryButton>
+                        </form>
+                        <template v-if="user">
                             <Link :href="route('dashboard')" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-brand-primary dark:hover:text-brand-primary transition duration-150 ease-in-out">
                                 Dashboard
                             </Link>
@@ -89,9 +118,9 @@ const navLinks = [
                                 : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 focus:outline-none focus:text-gray-800 dark:focus:text-gray-200 focus:bg-gray-50 dark:focus:bg-gray-700 focus:border-gray-300 dark:focus:border-gray-600',
                             link.disabled ? 'text-gray-400 dark:text-gray-600 cursor-not-allowed line-through' : ''
                         ]"
-                         :aria-disabled="link.disabled"
-                         :tabindex="link.disabled ? -1 : undefined"
-                         @click="showingMobileMenu = false"
+                        :aria-disabled="link.disabled"
+                        :tabindex="link.disabled ? -1 : undefined"
+                        @click="showingMobileMenu = false"
                     >
                         {{ link.name }}
                     </Link>
@@ -104,8 +133,8 @@ const navLinks = [
                             <div class="font-medium text-sm text-gray-500">{{ user.email }}</div>
                          </div>
                          <div class="space-y-1">
-                             <Link :href="route('dashboard')" class="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600" @click="showingMobileMenu = false">Dashboard</Link>
-                             <Link :href="route('logout')" method="post" as="button" class="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600" @click="showingMobileMenu = false">Log Out</Link>
+                              <Link :href="route('dashboard')" class="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600" @click="showingMobileMenu = false">Dashboard</Link>
+                              <Link :href="route('logout')" method="post" as="button" class="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600" @click="showingMobileMenu = false">Log Out</Link>
                          </div>
                     </template>
                     <template v-else>

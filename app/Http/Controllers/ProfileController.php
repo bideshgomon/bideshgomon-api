@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Country; // <-- Required
+use App\Models\DocumentType; // <-- Required
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
-use Inertia\Response; // <-- ADD THIS LINE
+use Inertia\Response;
 
 class ProfileController extends Controller
 {
@@ -18,9 +20,18 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        // --- THIS IS THE UPDATED SECTION ---
+        // Fetch data needed for profile dropdowns, etc.
+        $prebuiltData = [
+            'countries' => Country::select('id', 'name')->orderBy('name')->get(),
+            'documentTypes' => DocumentType::select('id', 'name')->orderBy('name')->get(),
+            // Add any other required prebuilt data here (e.g., skills)
+        ];
+        
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
+            'prebuiltData' => $prebuiltData, // <-- Pass the data to the view
         ]);
     }
 
@@ -34,6 +45,20 @@ class ProfileController extends Controller
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
+        
+        // --- This section updates the UserProfile model ---
+        $profileData = $request->only([
+            'bio', 'address', 'date_of_birth', 'nationality_country_id' 
+            // Add any other UserProfile fields from the request
+        ]);
+
+        if (!empty($profileData)) {
+            $request->user()->profile()->updateOrCreate(
+                ['user_id' => $request->user()->id],
+                $profileData
+            );
+        }
+        // --- END ---
 
         $request->user()->save();
 
@@ -59,18 +84,5 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
-    }
-
-    /**
-     * Display the CV Builder page.
-     * --- THIS IS THE NEW METHOD ---
-     */
-    public function cvShow(Request $request): Response
-    {
-        // We will create this Vue file in the next step
-        return Inertia::render('Profile/CVBuilder', [
-            'user' => $request->user(),
-            // You can pass more CV-related data here later
-        ]);
     }
 }

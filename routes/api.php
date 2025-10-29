@@ -44,14 +44,14 @@ use App\Http\Controllers\Api\UserProfile\UserEducationController;
 use App\Http\Controllers\Api\UserProfile\UserExperienceController;
 use App\Http\Controllers\Api\UserProfile\UserSkillsController;
 use App\Http\Controllers\Api\UserProfile\UserPortfolioController;
-use App\Http\Controllers\Api\UserProfile\UserDocumentController;
+use App\Http\Controllers\Controllers\Api\UserProfile\UserDocumentController;
 use App\Http\Controllers\Api\UserProfile\UserWorkExperienceController;
 use App\Http\Controllers\Api\UserProfile\UserSkillController;
 use App\Http\Controllers\Api\UserProfile\UserLicenseController;
 use App\Http\Controllers\Api\UserProfile\UserLanguageController;
 use App\Http\Controllers\Api\UserProfile\UserTechnicalEducationController;
 use App\Http\Controllers\Api\UserProfile\UserMembershipController;
-use App\Http\Controllers\Api\UserProfile\UserTravelHistoryController; // <-- ADDED THIS
+use App\Http\Controllers\Api\UserProfile\UserTravelHistoryController;
 
 
 /*
@@ -60,6 +60,7 @@ use App\Http\Controllers\Api\UserProfile\UserTravelHistoryController; // <-- ADD
 |--------------------------------------------------------------------------
 */
 
+// Public search endpoints
 Route::get('/search/universities', [PublicSearchController::class, 'searchUniversities'])
     ->name('api.public.search.universities');
 
@@ -72,7 +73,6 @@ Route::get('/universities/{university}', [PublicSearchController::class, 'showUn
 Route::get('/courses/{course}', [PublicSearchController::class, 'showCourseDetail'])
     ->name('api.public.courses.show');
 
-// --- ADDED FROM MERGE ---
 Route::get('/search/jobs', [PublicSearchController::class, 'searchJobPostings'])->name('api.public.search.jobs');
 
 
@@ -104,7 +104,7 @@ Route::middleware('auth:sanctum')->group(function () {
         ->name('api.document-types.index');
 
     // 🧑‍🎓 USER PROFILE (CV) ROUTES
-    // --- FIXED: Changed name from 'profile.' to 'api.profile.' ---
+    // All apiResource routes now exclude 'show' unless explicitly needed
     Route::prefix('profile')->name('api.profile.')->group(function() {
         Route::apiResource('education', UserEducationController::class)->except(['show']);
         Route::apiResource('work-experience', UserWorkExperienceController::class)->except(['show']);
@@ -114,7 +114,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('languages', UserLanguageController::class)->except(['show']);
         Route::apiResource('technical-education', UserTechnicalEducationController::class)->except(['show']);
         Route::apiResource('memberships', UserMembershipController::class)->except(['show']);
-        Route::apiResource('travel-histories', UserTravelHistoryController::class)->except(['show']); // <-- ADDED THIS
+        Route::apiResource('travel-histories', UserTravelHistoryController::class)->except(['show']);
     });
 });
 

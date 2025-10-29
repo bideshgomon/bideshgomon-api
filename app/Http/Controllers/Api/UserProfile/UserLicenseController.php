@@ -1,44 +1,74 @@
 <?php
+
 namespace App\Http\Controllers\Api\UserProfile;
+
 use App\Http\Controllers\Controller;
 use App\Models\UserLicense;
-use App\Models\LicenseType;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 
 class UserLicenseController extends Controller
 {
-    public function index(Request $request): JsonResponse {
-        $licenses = $request->user()->licenses()->with('licenseType')->latest()->get();
-        $licenseTypes = LicenseType::orderBy('name')->get(['id', 'name']);
-        return response()->json(['licenses' => $licenses, 'licenseTypes' => $licenseTypes]);
+    /**
+     * Display a listing of the user's licenses.
+     */
+    public function index(Request $request)
+    {
+        return $request->user()->licenses()->orderBy('issue_date', 'desc')->get();
     }
-    public function store(Request $request): JsonResponse {
+
+    /**
+     * Store a newly created license in storage.
+     */
+    public function store(Request $request)
+    {
         $validated = $request->validate([
-            'license_type_id' => 'required|exists:license_types,id',
-            'license_number' => 'required|string|max:255',
-            'issuing_authority' => 'required|string|max:255',
-            'issue_date' => 'nullable|date',
+            'name' => 'required|string|max:255',
+            'issuing_organization' => 'required|string|max:255',
+            'issue_date' => 'required|date',
             'expiry_date' => 'nullable|date|after_or_equal:issue_date',
+            'credential_id' => 'nullable|string|max:255',
         ]);
+
         $license = $request->user()->licenses()->create($validated);
-        return response()->json($license->load('licenseType'), 201);
+
+        return response()->json($license, 201);
     }
-    public function update(Request $request, UserLicense $license): JsonResponse {
-        if ($license->user_id !== $request->user()->id) { abort(403); }
+
+    /**
+     * Update the specified license in storage.
+     */
+    public function update(Request $request, UserLicense $license)
+    {
+        // Authorize
+        if ($request->user()->id !== $license->user_id) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
         $validated = $request->validate([
-            'license_type_id' => 'required|exists:license_types,id',
-            'license_number' => 'required|string|max:255',
-            'issuing_authority' => 'required|string|max:255',
-            'issue_date' => 'nullable|date',
+            'name' => 'required|string|max:255',
+            'issuing_organization' => 'required|string|max:255',
+            'issue_date' => 'required|date',
             'expiry_date' => 'nullable|date|after_or_equal:issue_date',
+            'credential_id' => 'nullable|string|max:255',
         ]);
+
         $license->update($validated);
-        return response()->json($license->load('licenseType'));
+
+        return response()->json($license);
     }
-    public function destroy(Request $request, UserLicense $license): JsonResponse {
-        if ($license->user_id !== $request->user()->id) { abort(403); }
+
+    /**
+     * Remove the specified license from storage.
+     */
+    public function destroy(Request $request, UserLicense $license)
+    {
+        // Authorize
+        if ($request->user()->id !== $license->user_id) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
         $license->delete();
+
         return response()->json(null, 204);
     }
 }

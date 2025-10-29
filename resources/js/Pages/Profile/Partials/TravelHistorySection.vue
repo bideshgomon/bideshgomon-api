@@ -1,220 +1,277 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted }from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import axios from 'axios';
-
-// Import components
-import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
+import TextareaInput from '@/Components/TextareaInput.vue';
 import InputError from '@/Components/InputError.vue';
+import { ChevronUpIcon, ChevronDownIcon, PlusIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/solid';
 
-// --- State Management ---
-const travelList = ref([]);
-const isLoading = ref(true);
-const showModal = ref(false);
-const isEditMode = ref(false);
-const currentTravelId = ref(null);
+// Props
+const props = defineProps({
+    countries: Array, // Passed down from Edit.vue
+});
 
-// --- Form Definition ---
+// Collapsible state
+const isOpen = ref(true); // Default to open
+const toggle = () => {
+    isOpen.value = !isOpen.value;
+};
+
+// State
+const travelHistoryList = ref([]);
+const editingHistoryId = ref(null); // Holds the ID of the item being edited
+
 const form = useForm({
-    country: '',
-    city: '', // Nullable
-    start_date: '',
-    end_date: '', // Nullable
-    purpose_of_visit: '', // e.g., 'Tourism', 'Work', 'Study'
+    country_id: '',
+    entry_date: '',
+    exit_date: '',
+    purpose: '',
+    notes: '',
 });
 
-// --- API Interaction ---
-// We need API endpoints for travel history CRUD. Let's assume they follow the pattern:
-// profile.travel-history.index, .store, .update, .destroy
-
-const fetchTravelHistory = async () => {
-    isLoading.value = true;
-    try {
-        // **IMPORTANT:** Replace with your actual API route if different
-        const response = await axios.get(route('profile.travel-history.index'));
-        travelList.value = response.data.data || [];
-    } catch (error) {
-        // Handle cases where the route might not exist yet
-        if (error.response && error.response.status === 404) {
-             console.warn("Travel History API endpoint not found. Please create it.");
-             // Optionally set an error message for the user
-        } else {
-            console.error("Error fetching travel history:", error);
-        }
-        travelList.value = []; // Ensure list is empty on error
-    } finally {
-        isLoading.value = false;
-    }
+// Fetch data
+const getTravelHistory = () => {
+    axios.get(route('api.profile.travel-histories.index'))
+        .then(response => {
+            travelHistoryList.value = response.data;
+        })
+        .catch(error => console.error("Error fetching travel history:", error));
 };
 
-// --- Modal Controls ---
-const openAddModal = () => {
+// Submit form (Create or Update)
+const submitTravelHistory = () => {
+    const url = editingHistoryId.value
+        ? route('api.profile.travel-histories.update', editingHistoryId.value)
+        : route('api.profile.travel-histories.store');
+    
+    const method = editingHistoryId.value ? 'put' : 'post';
+
+    // We use axios for API routes, not form.submit
+    axios[method](url, form.data())
+        .then(response => {
+            form.reset();
+            form.clearErrors();
+            editingHistoryId.value = null;
+            getTravelHistory(); // Refresh the list
+            form.recentlySuccessful = true;
+            setTimeout(() => form.recentlySuccessful = false, 2000);
+        })
+        .catch(error => {
+            if (error.response && error.response.status === 422) {
+                form.setError(error.response.data.errors);
+            } else {
+                console.error("Error submitting form:", error);
+            }
+        });
+};
+
+// Start editing an item
+const editHistory = (history) => {
+    editingHistoryId.value = history.id;
+    form.country_id = history.country_id;
+    form.entry_date = history.entry_date ? history.entry_date.substring(0, 10) : '';
+    form.exit_date = history.exit_date ? history.exit_date.substring(0, 10) : '';
+    form.purpose = history.purpose;
+    form.notes = history.notes || '';
+    form.clearErrors();
+};
+
+// Cancel editing
+const cancelEdit = () => {
+    editingHistoryId.value = null;
     form.reset();
-    isEditMode.value = false;
-    currentTravelId.value = null;
-    showModal.value = true;
+    form.clearErrors();
 };
 
-const openEditModal = (travel) => {
-    form.country = travel.country;
-    form.city = travel.city;
-    form.start_date = travel.start_date; // Assuming YYYY-MM-DD
-    form.end_date = travel.end_date;
-    form.purpose_of_visit = travel.purpose_of_visit;
+// Delete item
+const deleteHistory = (historyId) => {
+    if (!confirm("Are you sure you want to delete this travel record?")) return;
 
-    isEditMode.value = true;
-    currentTravelId.value = travel.id;
-    showModal.value = true;
+    axios.delete(route('api.profile.travel-histories.destroy', historyId))
+        .then(() => {
+            getTravelHistory(); // Refresh the list
+            if (editingHistoryId.value === historyId) {
+                cancelEdit();
+            }
+        })
+        .catch(error => {
+            console.error("Error deleting travel history:", error);
+            alert("Failed to delete record.");
+        });
 };
 
-const closeModal = () => {
-    showModal.value = false;
-    form.reset();
-};
-
-// --- Form Submission ---
-const submit = () => {
-    const options = {
-        preserveScroll: true,
-        onSuccess: () => {
-            closeModal();
-            fetchTravelHistory(); // Re-fetch list
-        },
-        onError: (errors) => {
-            // Log errors for debugging if the API isn't ready
-             console.error("Error saving travel history:", errors);
-        }
-    };
-
-    try {
-        if (isEditMode.value) {
-            // **IMPORTANT:** Replace with your actual API route if different
-            form.put(route('profile.travel-history.update', currentTravelId.value), options);
-        } else {
-             // **IMPORTANT:** Replace with your actual API route if different
-            form.post(route('profile.travel-history.store'), options);
-        }
-    } catch (e) {
-         // Catch errors if routes don't exist
-         console.error("Route likely missing for travel history:", e);
-         // Display a user-friendly message in the modal if desired
-         form.setError('general', 'Could not save travel history. Feature might be unavailable.');
-    }
-};
-
-// --- Delete ---
-const deleteForm = useForm({});
-const confirmDelete = (travel) => {
-    if (window.confirm(`Are you sure you want to delete the travel record for "${travel.country}"?`)) {
-         try {
-             // **IMPORTANT:** Replace with your actual API route if different
-            deleteForm.delete(route('profile.travel-history.destroy', travel.id), {
-                preserveScroll: true,
-                onSuccess: () => fetchTravelHistory(), // Re-fetch list
-                onError: (errors) => {
-                     console.error("Error deleting travel history:", errors);
-                     alert('Failed to delete travel history. Please try again.');
-                },
-            });
-         } catch(e) {
-             console.error("Route likely missing for travel history delete:", e);
-             alert('Could not delete travel history. Feature might be unavailable.');
-         }
-    }
-};
-
-// --- Lifecycle Hook ---
+// Load data on mount
 onMounted(() => {
-    fetchTravelHistory();
+    getTravelHistory();
 });
+
+// Helper to format date
+const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    try {
+        // Use UTC date constructor to avoid timezone issues
+        const date = new Date(dateString + 'T00:00:00Z');
+        return date.toLocaleDateString(undefined, { timeZone: 'UTC', year: 'numeric', month: 'short', day: 'numeric' });
+    } catch (e) {
+        console.error("Error formatting date:", dateString, e);
+        return 'Invalid Date';
+    }
+};
+
 </script>
 
 <template>
-    <section class="space-y-6">
-        <header>
-            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Travel History</h2>
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                List countries you have previously visited (optional but helpful).
-            </p>
-        </header>
-
-        <div v-if="isLoading" class="text-sm text-gray-500 dark:text-gray-400">Loading travel history...</div>
-
-        <div v-else-if="travelList.length === 0" class="text-sm text-gray-500 dark:text-gray-400">
-            No travel history added yet.
-        </div>
-
-        <ul v-else class="space-y-4">
-            <li v-for="tvl in travelList" :key="tvl.id" class="p-4 border border-gray-200 dark:border-gray-700 rounded-md flex justify-between items-start">
+    <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+        <section>
+            <header @click="toggle" class="flex justify-between items-center cursor-pointer">
                 <div>
-                    <h3 class="font-semibold text-gray-900 dark:text-gray-100">{{ tvl.country }} <span v-if="tvl.city"> ({{ tvl.city }})</span></h3>
-                    <p class="text-sm text-gray-700 dark:text-gray-300">Purpose: {{ tvl.purpose_of_visit }}</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                        {{ tvl.start_date }} - {{ tvl.end_date ? tvl.end_date : 'N/A' }}
+                    <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Travel History
+                    </h2>
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                        Add countries you have visited for work, study, or tourism.
                     </p>
                 </div>
-                <div class="flex-shrink-0 space-x-2">
-                    <SecondaryButton @click="openEditModal(tvl)">Edit</SecondaryButton>
-                    <DangerButton @click="confirmDelete(tvl)">Delete</DangerButton>
+                <div>
+                    <ChevronUpIcon v-if="isOpen" class="w-6 h-6 text-gray-500" />
+                    <ChevronDownIcon v-else class="w-6 h-6 text-gray-500" />
                 </div>
-            </li>
-        </ul>
+            </header>
 
-        <PrimaryButton @click="openAddModal" :disabled="isLoading">Add Travel Record</PrimaryButton>
+            <div v-show="isOpen" class="mt-6 space-y-6">
+                
+                <form @submit.prevent="submitTravelHistory" class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg space-y-4">
+                    <h3 class="text-md font-medium text-gray-900 dark:text-gray-100">
+                        {{ editingHistoryId ? 'Update Travel Record' : 'Add New Travel Record' }}
+                    </h3>
 
-        <Modal :show="showModal" @close="closeModal">
-            <div class="p-6 bg-white dark:bg-gray-800">
-                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                    {{ isEditMode ? 'Edit Travel Record' : 'Add New Travel Record' }}
-                </h2>
-
-                <form @submit.prevent="submit" class="mt-6 space-y-6">
-                    <div>
-                        <InputLabel for="travel_country" value="Country Visited" />
-                        <TextInput id="travel_country" type="text" class="mt-1 block w-full" v-model="form.country" required />
-                        <InputError class="mt-2" :message="form.errors.country" />
-                    </div>
-
-                    <div>
-                        <InputLabel for="travel_city" value="City (Optional)" />
-                        <TextInput id="travel_city" type="text" class="mt-1 block w-full" v-model="form.city" />
-                        <InputError class="mt-2" :message="form.errors.city" />
-                    </div>
-
-                     <div>
-                        <InputLabel for="purpose_of_visit" value="Purpose of Visit" />
-                        <TextInput id="purpose_of_visit" type="text" class="mt-1 block w-full" v-model="form.purpose_of_visit" placeholder="e.g., Tourism, Work, Study" required />
-                        <InputError class="mt-2" :message="form.errors.purpose_of_visit" />
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <InputLabel for="travel_start_date" value="Start Date of Visit" />
-                            <TextInput id="travel_start_date" type="date" class="mt-1 block w-full" v-model="form.start_date" required />
-                            <InputError class="mt-2" :message="form.errors.start_date" />
+                            <InputLabel for="th_country" value="Country" />
+                            <select
+                                id="th_country"
+                                v-model="form.country_id"
+                                class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                required
+                            >
+                                <option value="" disabled>Select a country</option>
+                                <option v-for="country in props.countries" :key="country.id" :value="country.id">
+                                    {{ country.name }}
+                                </option>
+                            </select>
+                            <InputError :message="form.errors.country_id" class="mt-2" />
                         </div>
+
                         <div>
-                            <InputLabel for="travel_end_date" value="End Date of Visit (Optional)" />
-                            <TextInput id="travel_end_date" type="date" class="mt-1 block w-full" v-model="form.end_date" />
-                            <InputError class="mt-2" :message="form.errors.end_date" />
+                            <InputLabel for="th_purpose" value="Purpose of Visit" />
+                            <TextInput
+                                id="th_purpose"
+                                v-model="form.purpose"
+                                type="text"
+                                class="mt-1 block w-full"
+                                placeholder="e.g., Tourism, Work, Study"
+                                required
+                            />
+                            <InputError :message="form.errors.purpose" class="mt-2" />
                         </div>
                     </div>
 
-                     <InputError class="mt-2" :message="form.errors.general" />
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                         <div>
+                            <InputLabel for="th_entry_date" value="Entry Date" />
+                            <TextInput
+                                id="th_entry_date"
+                                v-model="form.entry_date"
+                                type="date"
+                                class="mt-1 block w-full"
+                                required
+                            />
+                            <InputError :message="form.errors.entry_date" class="mt-2" />
+                        </div>
+                        <div>
+                            <InputLabel for="th_exit_date" value="Exit Date (Optional)" />
+                            <TextInput
+                                id="th_exit_date"
+                                v-model="form.exit_date"
+                                type="date"
+                                class="mt-1 block w-full"
+                            />
+                            <InputError :message="form.errors.exit_date" class="mt-2" />
+                        </div>
+                    </div>
 
-                    <div class="flex justify-end gap-4">
-                        <SecondaryButton @click="closeModal"> Cancel </SecondaryButton>
+                    <div>
+                        <InputLabel for="th_notes" value="Notes (Optional)" />
+                        <TextareaInput
+                            id="th_notes"
+                            v-model="form.notes"
+                            class="mt-1 block w-full"
+                            rows="3"
+                            placeholder="Add any relevant notes about this trip..."
+                        />
+                        <InputError :message="form.errors.notes" class="mt-2" />
+                    </div>
+
+                    <div class="flex items-center gap-4">
                         <PrimaryButton :disabled="form.processing">
-                            {{ isEditMode ? 'Update Record' : 'Save Record' }}
+                            <PlusIcon v-if="!editingHistoryId" class="w-4 h-4 mr-2" />
+                            {{ editingHistoryId ? 'Update Record' : 'Save Record' }}
                         </PrimaryButton>
+                        <SecondaryButton v-if="editingHistoryId" type="button" @click="cancelEdit">
+                            Cancel
+                        </SecondaryButton>
+                        <Transition
+                            enter-active-class="transition ease-in-out"
+                            enter-from-class="opacity-0"
+                            leave-active-class="transition ease-in-out"
+                            leave-to-class="opacity-0"
+                        >
+                            <p v-if="form.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">Saved.</p>
+                        </Transition>
                     </div>
                 </form>
+
+                <div class="mt-6 space-y-4">
+                    <h3 class="text-md font-medium text-gray-900 dark:text-gray-100">
+                        Saved Travel History
+                    </h3>
+                    <div v-if="travelHistoryList.length === 0" class="text-center text-gray-500 dark:text-gray-400 p-4 border-dashed border-2 border-gray-300 dark:border-gray-700 rounded-lg">
+                        No travel history added yet.
+                    </div>
+                    
+                    <ul v-else class="divide-y divide-gray-200 dark:divide-gray-700">
+                        <li v-for="history in travelHistoryList" :key="history.id" class="py-4 flex flex-col md:flex-row justify-between md:items-center">
+                            <div class="flex-1 mb-2 md:mb-0">
+                                <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                                    {{ history.country ? history.country.name : 'Unknown Country' }}
+                                </h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">
+                                    {{ history.purpose }}
+                                </p>
+                                <p class="text-sm text-gray-500 dark:text-gray-500">
+                                    {{ formatDate(history.entry_date) }} - {{ formatDate(history.exit_date) }}
+                                </p>
+                                <p v-if="history.notes" class="text-sm text-gray-700 dark:text-gray-300 mt-2 italic">
+                                    "{{ history.notes }}"
+                                </p>
+                            </div>
+                            <div class="flex-shrink-0 flex gap-2">
+                                <SecondaryButton @click="editHistory(history)" class="!px-3 !py-2">
+                                    <PencilIcon class="w-4 h-4" />
+                                </SecondaryButton>
+                                <DangerButton @click="deleteHistory(history.id)" class="!px-3 !py-2">
+                                    <TrashIcon class="w-4 h-4" />
+                                </DangerButton>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </Modal>
-    </section>
+        </section>
+    </div>
 </template>

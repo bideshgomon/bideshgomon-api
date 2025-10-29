@@ -19,18 +19,18 @@ class GuidanceController extends Controller
         // Eager load all profile relationships in one query
         $user->load(
             'educations', 
-            'workExperiences', // <-- THE FIX: Changed from 'experiences'
+            'experiences', 
             'portfolios', 
             'documents',
-            'skills' // <-- ADDED: Load skills for completeness check
+            'skills' // <-- **FIX 1: ADDED 'skills' TO THE LOAD LIST**
         );
 
         // Define the "completeness" criteria
         $completeness = [
             'personal_info' => $user->name && $user->email,
             'education' => $user->educations->isNotEmpty(),
-            'experience' => $user->workExperiences->isNotEmpty(), // <-- THE FIX: Changed from 'experiences'
-            'skills' => $user->skills->isNotEmpty(), // <-- THE FIX: Changed logic
+            'experience' => $user->experiences->isNotEmpty(),
+            'skills' => $user->skills->isNotEmpty(), // <-- **FIX 2: CHANGED CHECK TO isNotEmpty()**
             'documents' => $user->documents->isNotEmpty(),
             'passport' => $user->documents->contains(
                 fn($doc) => $doc->document_type_id === 1 // Assuming 'Passport' is ID 1

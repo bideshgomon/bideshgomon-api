@@ -1,198 +1,222 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import axios from 'axios';
-
-// Import components
-import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import DangerButton from '@/Components/DangerButton.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import SelectInput from '@/Components/SelectInput.vue'; // Assuming you have or create this
+import TextInput from '@/Components/TextInput.vue';
 import InputError from '@/Components/InputError.vue';
+import { ChevronUpIcon, ChevronDownIcon, PlusIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/solid';
 
-// --- State Management ---
-const languageList = ref([]); // User's added languages [{ id: user_lang_id, language: { id: lang_id, name: 'English' }, proficiency: 'Fluent' }]
-const allLanguages = ref([]); // All available languages [{ id: 1, name: 'English' }]
-const proficiencyLevels = ref([ // Define proficiency levels
-    { id: 'Beginner', name: 'Beginner' },
-    { id: 'Conversational', name: 'Conversational' },
-    { id: 'Fluent', name: 'Fluent' },
-    { id: 'Native', name: 'Native / Bilingual' },
-]);
-const isLoading = ref(true);
-const showModal = ref(false);
-const isEditMode = ref(false);
-const currentLanguageEntryId = ref(null); // ID of the user_languages entry being edited
+// Collapsible state
+const isOpen = ref(true);
+const toggle = () => {
+    isOpen.value = !isOpen.value;
+};
 
-// --- Form Definition ---
+// State
+const languageList = ref([]);
+const editingLanguageId = ref(null);
+
 const form = useForm({
-    language_id: null, // ID of the selected language from the `languages` table
-    proficiency: null, // Selected proficiency level (e.g., 'Fluent')
+    language: '',
+    proficiency: 'conversational', // Default value
 });
 
-// --- API Interaction ---
-const fetchData = async () => {
-    isLoading.value = true;
-    try {
-        // Fetch all available languages
-        const prebuiltData = await axios.get(route('api.prebuilt-data'));
-        allLanguages.value = prebuiltData.data.languages || [];
+// Proficiency options
+const proficiencyLevels = [
+    { value: 'basic', name: 'Basic' },
+    { value: 'conversational', name: 'Conversational' },
+    { value: 'fluent', name: 'Fluent' },
+    { value: 'native', name: 'Native' },
+];
 
-        // Fetch user's current languages
-        const userLangResponse = await axios.get(route('profile.languages.index'));
-        // The API returns UserLanguage models, often nested with the Language model
-        languageList.value = userLangResponse.data.data || [];
-
-    } catch (error) {
-        console.error("Error fetching languages data:", error);
-    } finally {
-        isLoading.value = false;
-    }
+// Fetch data
+const getLanguages = () => {
+    axios.get(route('api.profile.languages.index'))
+        .then(response => {
+            languageList.value = response.data;
+        })
+        .catch(error => console.error("Error fetching languages:", error));
 };
 
-// --- Modal Controls ---
-const openAddModal = () => {
-    form.reset();
-    isEditMode.value = false;
-    currentLanguageEntryId.value = null;
-    showModal.value = true;
-};
+// Submit form (Create or Update)
+const submitLanguage = () => {
+    const url = editingLanguageId.value
+        ? route('api.profile.languages.update', editingLanguageId.value)
+        : route('api.profile.languages.store');
+    
+    const method = editingLanguageId.value ? 'put' : 'post';
 
-const openEditModal = (langEntry) => {
-    form.language_id = langEntry.language_id; // Set the ID of the language
-    form.proficiency = langEntry.proficiency; // Set the proficiency
-    isEditMode.value = true;
-    currentLanguageEntryId.value = langEntry.id; // This is the ID of the row in user_languages table
-    showModal.value = true;
-};
-
-const closeModal = () => {
-    showModal.value = false;
-    form.reset();
-};
-
-// --- Form Submission ---
-const submit = () => {
-    const options = {
-        preserveScroll: true,
-        onSuccess: () => {
-            closeModal();
-            fetchData(); // Re-fetch list
-        },
-        onError: () => {}
-    };
-
-    if (isEditMode.value) {
-        form.put(route('profile.languages.update', currentLanguageEntryId.value), options);
-    } else {
-        form.post(route('profile.languages.store'), options);
-    }
-};
-
-// --- Delete ---
-const deleteForm = useForm({});
-const confirmDelete = (langEntry) => {
-    if (window.confirm(`Are you sure you want to remove ${langEntry.language?.name}?`)) {
-        deleteForm.delete(route('profile.languages.destroy', langEntry.id), {
-            preserveScroll: true,
-            onSuccess: () => fetchData(), // Re-fetch list
-            onError: () => {},
+    axios[method](url, form.data())
+        .then(() => {
+            form.reset();
+            form.clearErrors();
+            editingLanguageId.value = null;
+            getLanguages(); // Refresh list
+            form.recentlySuccessful = true;
+            setTimeout(() => form.recentlySuccessful = false, 2000);
+        })
+        .catch(error => {
+            if (error.response && error.response.status === 422) {
+                form.setError(error.response.data.errors);
+            } else {
+                console.error("Error submitting form:", error);
+            }
         });
-    }
 };
 
-// --- Computed property for available languages in dropdown (excluding already added ones in Add mode) ---
-const availableLanguagesToAdd = computed(() => {
-    if (isEditMode.value) return allLanguages.value; // Show all when editing
+// Start editing
+const editLanguage = (lang) => {
+    editingLanguageId.value = lang.id;
+    form.language = lang.language;
+    form.proficiency = lang.proficiency;
+    form.clearErrors();
+};
 
-    const addedLanguageIds = new Set(languageList.value.map(l => l.language_id));
-    return allLanguages.value.filter(lang => !addedLanguageIds.has(lang.id));
-});
+// Cancel editing
+const cancelEdit = () => {
+    editingLanguageId.value = null;
+    form.reset();
+    form.clearErrors();
+};
 
+// Delete item
+const deleteLanguage = (languageId) => {
+    if (!confirm("Are you sure you want to delete this language?")) return;
 
-// --- Lifecycle Hook ---
+    axios.delete(route('api.profile.languages.destroy', languageId))
+        .then(() => {
+            getLanguages(); // Refresh list
+            if (editingLanguageId.value === languageId) {
+                cancelEdit();
+            }
+        })
+        .catch(error => {
+            console.error("Error deleting language:", error);
+            alert("Failed to delete record.");
+        });
+};
+
+// Load data on mount
 onMounted(() => {
-    fetchData();
+    getLanguages();
 });
+
+// Helper to format proficiency
+const formatProficiency = (value) => {
+    const level = proficiencyLevels.find(l => l.value === value);
+    return level ? level.name : value.charAt(0).toUpperCase() + value.slice(1);
+};
+
 </script>
 
 <template>
-    <section class="space-y-6">
-        <header>
-            <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">Languages</h2>
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                Add languages you speak and your proficiency level.
-            </p>
-        </header>
-
-        <div v-if="isLoading" class="text-sm text-gray-500 dark:text-gray-400">Loading languages...</div>
-
-        <div v-else-if="languageList.length === 0" class="text-sm text-gray-500 dark:text-gray-400">
-            No languages added yet.
-        </div>
-
-        <ul v-else class="space-y-4">
-            <li v-for="lang in languageList" :key="lang.id" class="p-4 border border-gray-200 dark:border-gray-700 rounded-md flex justify-between items-start">
+    <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+        <section>
+            <header @click="toggle" class="flex justify-between items-center cursor-pointer">
                 <div>
-                    <h3 class="font-semibold text-gray-900 dark:text-gray-100">{{ lang.language?.name }}</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ lang.proficiency }}</p>
+                    <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Languages
+                    </h2>
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                        Add languages you speak and your proficiency level.
+                    </p>
                 </div>
-                <div class="flex-shrink-0 space-x-2">
-                    <SecondaryButton @click="openEditModal(lang)">Edit</SecondaryButton>
-                    <DangerButton @click="confirmDelete(lang)">Delete</DangerButton>
+                <div>
+                    <ChevronUpIcon v-if="isOpen" class="w-6 h-6 text-gray-500" />
+                    <ChevronDownIcon v-else class="w-6 h-6 text-gray-500" />
                 </div>
-            </li>
-        </ul>
+            </header>
 
-        <PrimaryButton @click="openAddModal" :disabled="isLoading">Add Language</PrimaryButton>
+            <div v-show="isOpen" class="mt-6 space-y-6">
+                
+                <form @submit.prevent="submitLanguage" class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg space-y-4">
+                    <h3 class="text-md font-medium text-gray-900 dark:text-gray-100">
+                        {{ editingLanguageId ? 'Update Language' : 'Add New Language' }}
+                    </h3>
 
-        <Modal :show="showModal" @close="closeModal">
-            <div class="p-6 bg-white dark:bg-gray-800">
-                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                    {{ isEditMode ? 'Edit Language' : 'Add New Language' }}
-                </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <InputLabel for="lang_name" value="Language" />
+                            <TextInput
+                                id="lang_name"
+                                v-model="form.language"
+                                type="text"
+                                class="mt-1 block w-full"
+                                placeholder="e.g., English, Bengali, French"
+                                required
+                            />
+                            <InputError :message="form.errors.language" class="mt-2" />
+                        </div>
 
-                <form @submit.prevent="submit" class="mt-6 space-y-6">
-                    <div>
-                        <InputLabel for="language_id" value="Language" />
-                        <SelectInput
-                            id="language_id"
-                            class="mt-1 block w-full"
-                            v-model="form.language_id"
-                            :options="availableLanguagesToAdd"
-                            option-value="id"
-                            option-label="name"
-                            required
-                            :disabled="isEditMode"
-                        />
-                         <InputError class="mt-2" :message="form.errors.language_id" />
+                        <div>
+                            <InputLabel for="lang_proficiency" value="Proficiency" />
+                            <select
+                                id="lang_proficiency"
+                                v-model="form.proficiency"
+                                class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                                required
+                            >
+                                <option v-for="level in proficiencyLevels" :key="level.value" :value="level.value">
+                                    {{ level.name }}
+                                </option>
+                            </select>
+                            <InputError :message="form.errors.proficiency" class="mt-2" />
+                        </div>
                     </div>
 
-                    <div>
-                        <InputLabel for="proficiency" value="Proficiency Level" />
-                        <SelectInput
-                            id="proficiency"
-                            class="mt-1 block w-full"
-                            v-model="form.proficiency"
-                            :options="proficiencyLevels"
-                            option-value="id"
-                            option-label="name"
-                            required
-                        />
-                        <InputError class="mt-2" :message="form.errors.proficiency" />
-                    </div>
-
-
-                    <div class="flex justify-end gap-4">
-                        <SecondaryButton @click="closeModal"> Cancel </SecondaryButton>
+                    <div class="flex items-center gap-4">
                         <PrimaryButton :disabled="form.processing">
-                            {{ isEditMode ? 'Update Language' : 'Save Language' }}
+                            <PlusIcon v-if="!editingLanguageId" class="w-4 h-4 mr-2" />
+                            {{ editingLanguageId ? 'Update Language' : 'Save Language' }}
                         </PrimaryButton>
+                        <SecondaryButton v-if="editingLanguageId" type="button" @click="cancelEdit">
+                            Cancel
+                        </SecondaryButton>
+                        <Transition
+                            enter-active-class="transition ease-in-out"
+                            enter-from-class="opacity-0"
+                            leave-active-class="transition ease-in-out"
+                            leave-to-class="opacity-0"
+                        >
+                            <p v-if="form.recentlySuccessful" class="text-sm text-gray-600 dark:text-gray-400">Saved.</p>
+                        </Transition>
                     </div>
                 </form>
+
+                <div class="mt-6 space-y-4">
+                    <h3 class="text-md font-medium text-gray-900 dark:text-gray-100">
+                        Your Languages
+                    </h3>
+                    <div v-if="languageList.length === 0" class="text-center text-gray-500 dark:text-gray-400 p-4 border-dashed border-2 border-gray-300 dark:border-gray-700 rounded-lg">
+                        No languages added yet.
+                    </div>
+                    
+                    <ul v-else class="divide-y divide-gray-200 dark:divide-gray-700">
+                        <li v-for="lang in languageList" :key="lang.id" class="py-4 flex justify-between items-center">
+                            <div class="flex-1">
+                                <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                                    {{ lang.language }}
+                                </h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">
+                                    {{ formatProficiency(lang.proficiency) }}
+                                </p>
+                            </div>
+                            <div class="flex-shrink-0 flex gap-2">
+                                <SecondaryButton @click="editLanguage(lang)" class="!px-3 !py-2">
+                                    <PencilIcon class="w-4 h-4" />
+                                </SecondaryButton>
+                                <DangerButton @click="deleteLanguage(lang.id)" class="!px-3 !py-2">
+                                    <TrashIcon class="w-4 h-4" />
+                                </DangerButton>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </Modal>
-    </section>
+        </section>
+    </div>
 </template>

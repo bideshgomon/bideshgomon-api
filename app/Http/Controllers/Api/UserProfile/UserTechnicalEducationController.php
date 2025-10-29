@@ -1,44 +1,84 @@
 <?php
+
 namespace App\Http\Controllers\Api\UserProfile;
+
 use App\Http\Controllers\Controller;
 use App\Models\UserTechnicalEducation;
-use App\Models\TechnicalEducationType;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 
 class UserTechnicalEducationController extends Controller
 {
-    public function index(Request $request): JsonResponse {
-        $educations = $request->user()->technicalEducations()->with('educationType')->latest()->get();
-        $educationTypes = TechnicalEducationType::orderBy('name')->get(['id', 'name']);
-        return response()->json(['educations' => $educations, 'educationTypes' => $educationTypes]);
+    /**
+     * Display a listing of the user's technical education.
+     */
+    public function index(Request $request)
+    {
+        return $request->user()->technicalEducations()->orderBy('start_date', 'desc')->get();
     }
-    public function store(Request $request): JsonResponse {
+
+    /**
+     * Store a newly created technical education record.
+     */
+    public function store(Request $request)
+    {
         $validated = $request->validate([
-            'education_type_id' => 'required|exists:technical_education_types,id',
-            'institution_name' => 'required|string|max:255',
-            'certification_name' => 'required|string|max:255',
-            'completion_date' => 'nullable|date',
-            'description' => 'nullable|string',
+            'course_name' => 'required|string|max:255',
+            'institution' => 'required|string|max:255',
+            'start_date' => 'required|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'is_current' => 'required|boolean',
         ]);
+
+        // Unset end_date if currently studying
+        if ($validated['is_current']) {
+            $validated['end_date'] = null;
+        }
+
         $education = $request->user()->technicalEducations()->create($validated);
-        return response()->json($education->load('educationType'), 201);
+
+        return response()->json($education, 201);
     }
-    public function update(Request $request, UserTechnicalEducation $technicalEducation): JsonResponse {
-        if ($technicalEducation->user_id !== $request->user()->id) { abort(403); }
+
+    /**
+     * Update the specified technical education record.
+     */
+    public function update(Request $request, UserTechnicalEducation $technicalEducation)
+    {
+        // Authorize
+        if ($request->user()->id !== $technicalEducation->user_id) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
         $validated = $request->validate([
-            'education_type_id' => 'required|exists:technical_education_types,id',
-            'institution_name' => 'required|string|max:255',
-            'certification_name' => 'required|string|max:255',
-            'completion_date' => 'nullable|date',
-            'description' => 'nullable|string',
+            'course_name' => 'required|string|max:255',
+            'institution' => 'required|string|max:255',
+            'start_date' => 'required|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'is_current' => 'required|boolean',
         ]);
+
+        // Unset end_date if currently studying
+        if ($validated['is_current']) {
+            $validated['end_date'] = null;
+        }
+
         $technicalEducation->update($validated);
-        return response()->json($technicalEducation->load('educationType'));
+
+        return response()->json($technicalEducation);
     }
-    public function destroy(Request $request, UserTechnicalEducation $technicalEducation): JsonResponse {
-        if ($technicalEducation->user_id !== $request->user()->id) { abort(403); }
+
+    /**
+     * Remove the specified technical education record.
+     */
+    public function destroy(Request $request, UserTechnicalEducation $technicalEducation)
+    {
+        // Authorize
+        if ($request->user()->id !== $technicalEducation->user_id) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
         $technicalEducation->delete();
+
         return response()->json(null, 204);
     }
 }
