@@ -68,10 +68,6 @@ const submit = async () => {
         recentlySuccessful.value = true;
         setTimeout(() => recentlySuccessful.value = false, 2000); // Show success message briefly
 
-        // Optional: Update the 'userProfile' prop if the API returns updated data
-        // This requires emitting an event up to Profile/Edit.vue or using a store
-        // console.log('Updated profile:', response.data.profile);
-
     } catch (error) {
         // Handle validation errors (422)
         if (error.response && error.response.status === 422) {
@@ -98,7 +94,7 @@ const submit = async () => {
 
         <form @submit.prevent="submit" class="mt-6 space-y-6">
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div v-if="props.user" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                  <div>
                     <InputLabel value="Full Name (Account)" />
                     <p class="mt-1 block w-full text-sm text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-700 dark:bg-gray-900 rounded-md shadow-sm p-2.5 bg-gray-100 cursor-not-allowed">

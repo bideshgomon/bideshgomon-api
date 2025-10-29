@@ -4,47 +4,59 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
-use Tighten\Ziggy\Ziggy;
-
+use Tighten\Ziggy\Ziggy; // YOUR CORRECT NAMESPACE
+use App\Models\User;
 
 class HandleInertiaRequests extends Middleware
 {
-    /**
-     * The root template that is loaded on the first page visit.
-     * @var string
-     */
-    protected $rootView = 'app'; // Make sure this matches resources/views/app.blade.php
+    protected $rootView = 'app';
 
-    /**
-     * Determine the current asset version.
-     */
-    public function version(Request $request): string|null
+    public function version(Request $request): ?string
     {
         return parent::version($request);
     }
 
-    /**
-     * Define the props that are shared by default.
-     * @return array<string, mixed>
-     */
     public function share(Request $request): array
     {
-        return [
-            ...parent::share($request),
+        return array_merge(parent::share($request), [
+            // 1. Authenticated user data
             'auth' => [
-                // Load user WITH role if logged in
-                'user' => $request->user() ? $request->user()->load('role') : null,
+                'user' => $request->user() ? $this->transformUser($request->user()) : null,
             ],
-            // Share Ziggy routes
+
+            // 2. Ziggy route helper
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
+                'query' => $request->query(),
             ],
-             // Share flash messages
-            'flash' => [
-                'success' => fn () => $request->session()->get('success'),
-                'error' => fn () => $request->session()->get('error'),
-            ],
+        ]);
+    }
+
+    /**
+     * Ensure the user model includes the 'role' relationship and sanitize output.
+     * This is the FINAL FIX.
+     */
+    protected function transformUser(User $user): ?array
+    {
+        if (!$user->relationLoaded('role')) {
+            $user->loadMissing('role');
+        }
+
+        // **THE FINAL FIX IS HERE**
+        // We now check if the role is null.
+        // If it is, we create a "fake" guest role object.
+        // This prevents the frontend from ever crashing when trying to read 'role.name'.
+        $role = $user->role ? [
+            'id' => $user->role->id,
+            'name' => $user->role->name,
+        ] : (object)['id' => null, 'name' => 'guest']; // Send a guest object instead of null
+
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $role, // Pass the safe role object
         ];
     }
 }

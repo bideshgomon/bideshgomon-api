@@ -10,18 +10,6 @@
       0 => 'Barryvdh\\Debugbar\\ServiceProvider',
     ),
   ),
-  'barryvdh/laravel-dompdf' => 
-  array (
-    'aliases' => 
-    array (
-      'PDF' => 'Barryvdh\\DomPDF\\Facade\\Pdf',
-      'Pdf' => 'Barryvdh\\DomPDF\\Facade\\Pdf',
-    ),
-    'providers' => 
-    array (
-      0 => 'Barryvdh\\DomPDF\\ServiceProvider',
-    ),
-  ),
   'inertiajs/inertia-laravel' => 
   array (
     'providers' => 
@@ -29,25 +17,11 @@
       0 => 'Inertia\\ServiceProvider',
     ),
   ),
-  'larabug/larabug' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'LaraBug\\ServiceProvider',
-    ),
-  ),
   'laravel/breeze' => 
   array (
     'providers' => 
     array (
       0 => 'Laravel\\Breeze\\BreezeServiceProvider',
-    ),
-  ),
-  'laravel/pail' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Laravel\\Pail\\PailServiceProvider',
     ),
   ),
   'laravel/sail' => 
@@ -90,6 +64,13 @@
     'providers' => 
     array (
       0 => 'Termwind\\Laravel\\TermwindServiceProvider',
+    ),
+  ),
+  'pestphp/pest-plugin-laravel' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Pest\\Laravel\\PestServiceProvider',
     ),
   ),
   'tightenco/ziggy' => 

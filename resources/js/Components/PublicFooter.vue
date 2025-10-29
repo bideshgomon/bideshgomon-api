@@ -10,10 +10,12 @@ const footerLinks = {
         { name: 'Press', href: '#' },
     ],
     services: [
-        { name: 'Universities', href: route('public.universities.search') },
-        { name: 'Courses', href: route('public.courses.search') },
-        { name: 'Jobs', href: '#', disabled: true }, // Mark disabled
-        { name: 'Consultancy', href: '#' },
+        // --- CORRECTED Route Names ---
+        { name: 'Universities', href: route('universities.index') },
+        { name: 'Courses', href: route('courses.index') },
+        { name: 'Jobs', href: route('jobs.index'), disabled: false }, // Use web route
+        // --- END CORRECTION ---
+        { name: 'Consultancy', href: '#' }, // Assuming this stays '#' for now
     ],
     legal: [
         { name: 'Privacy Policy', href: '#' },
@@ -88,5 +90,5 @@ const footerLinks = {
 </template>
 
 <style scoped>
-/* Add specific styles if needed, e.g., for social icons */
+/* Add specific styles if needed */
 </style>
