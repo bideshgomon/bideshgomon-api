@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue';
 import { Link, usePage, router } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import PublicFooter from '@/Components/PublicFooter.vue';
+import PublicFooter from '@/Components/PublicFooter.vue'; // Assuming this exists
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline';
 import TextInput from '@/Components/TextInput.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -15,23 +15,26 @@ const showingMobileMenu = ref(false);
 const searchTerm = ref('');
 
 /**
- * Submits the search form, redirecting using the correct API route.
+ * Submits the search form, redirecting to the public university search page.
  */
 const submitSearch = () => {
-    if (searchTerm.value.trim()) {
-        router.get(
-            route('api.public.search.universities'), // Correct API route for search action
-            { query: searchTerm.value },
-            { preserveState: true }
-        );
-    }
+    // Navigate to the public university search page with the search term
+    // THIS IS THE CORRECT WEB ROUTE NAME
+    router.get(
+        route('public.universities.search'), 
+        { search: searchTerm.value }, 
+        { preserveState: true } 
+    );
 };
 
 // --- CORRECTED navLinks using web route names ---
 const navLinks = [
-    { name: 'Universities', href: route('universities.index'), current: route().current('universities.index') },
-    { name: 'Courses', href: route('courses.index'), current: route().current('courses.index') },
-    { name: 'Jobs', href: route('jobs.index'), current: route().current('jobs.index'), disabled: false }, // Use the web route 'jobs.index'
+    // Corrected the href to use the public search route name
+    { name: 'Universities', href: route('public.universities.search'), current: route().current('public.universities.search') },
+    // Corrected the href to use the public search route name
+    { name: 'Courses', href: route('public.courses.search'), current: route().current('public.courses.search') },
+    // Jobs route does not exist in web.php, disabling for now.
+    { name: 'Jobs', href: '#', current: false, disabled: true },
 ];
 // --- END CORRECTION ---
 </script>
@@ -148,9 +151,9 @@ const navLinks = [
         </nav>
 
         <main class="flex-grow">
-            <slot />
+            <slot /> 
         </main>
 
-        <PublicFooter />
+        <PublicFooter /> 
     </div>
 </template>

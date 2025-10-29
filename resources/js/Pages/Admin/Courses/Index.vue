@@ -1,103 +1,258 @@
 <script setup>
+import { ref, computed } from 'vue';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import Modal from '@/Components/Modal.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import DangerButton from '@/Components/DangerButton.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
+import TextareaInput from '@/Components/TextareaInput.vue';
+import InputError from '@/Components/InputError.vue';
 import Pagination from '@/Components/Pagination.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { PencilIcon, TrashIcon, PlusIcon } from '@heroicons/vue/24/outline';
 
-defineProps({
-    courses: Object, // Paginated data from controller
+// Set layout
+defineOptions({
+    layout: AdminLayout
 });
+
+// Props received from CoursePageController
+const props = defineProps({
+    courses: Object,
+    universities: Array,
+    degrees: Array,
+    fieldsOfStudy: Array,
+});
+
+// Modal state
+const showingModal = ref(false);
+const modalMode = ref('create'); // 'create' or 'edit'
+
+// Form state
+const form = useForm({
+    id: null,
+    name: '',
+    description: '',
+    university_id: null,
+    degree_id: null,
+    field_of_study_id: null,
+    duration: '',
+    tuition_fee: '',
+    application_deadline: '',
+    intake_semesters: '', // Using text input for JSON field for simplicity
+    entry_requirements: '',
+    course_website: '',
+});
+
+// Functions
+const openCreateModal = () => {
+    form.reset();
+    modalMode.value = 'create';
+    showingModal.value = true;
+};
+
+const openEditModal = (course) => {
+    form.id = course.id;
+    form.name = course.name;
+    form.description = course.description;
+    form.university_id = course.university_id;
+    form.degree_id = course.degree_id;
+    form.field_of_study_id = course.field_of_study_id;
+    form.duration = course.duration;
+    form.tuition_fee = course.tuition_fee;
+    form.application_deadline = course.application_deadline;
+    form.intake_semesters = Array.isArray(course.intake_semesters) ? course.intake_semesters.join(', ') : course.intake_semesters;
+    form.entry_requirements = course.entry_requirements;
+    form.course_website = course.course_website;
+    
+    modalMode.value = 'edit';
+    showingModal.value = true;
+};
+
+const closeModal = () => {
+    showingModal.value = false;
+    form.reset();
+    form.clearErrors();
+};
+
+const submitForm = () => {
+    if (modalMode.value === 'create') {
+        // Use API route to store
+        form.post(route('api.admin.courses.store'), {
+            preserveScroll: true,
+            onSuccess: () => closeModal(),
+            onError: () => console.log('Error creating course'),
+        });
+    } else {
+        // Use API route to update
+        form.put(route('api.admin.courses.update', form.id), {
+            preserveScroll: true,
+            onSuccess: () => closeModal(),
+            onError: () => console.log('Error updating course'),
+        });
+    }
+};
+
+const deleteCourse = (id) => {
+    if (confirm('Are you sure you want to delete this course?')) {
+        useForm({}).delete(route('api.admin.courses.destroy', id), {
+            preserveScroll: true,
+            onSuccess: () => console.log('Course deleted'),
+        });
+    }
+};
 </script>
 
 <template>
     <Head title="Manage Courses" />
 
-    <AdminLayout>
-        <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-            <section>
-                <!-- Header -->
-                <header class="flex justify-between items-center">
-                    <div>
-                        <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                            Courses
-                        </h2>
-                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                            Manage all courses offered by universities.
-                        </p>
-                    </div>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-semibold text-gray-800 dark:text-white">Manage Courses</h1>
+                <PrimaryButton @click="openCreateModal">
+                    <PlusIcon class="h-5 w-5 mr-2" />
+                    Create Course
+                </PrimaryButton>
+            </div>
 
-                    <div>
-                        <Link
-                            :href="route('admin.courses.create')"
-                            class="inline-flex items-center justify-center px-4 py-2 bg-brand-primary border border-transparent rounded-lg font-semibold text-sm text-white tracking-widest hover:bg-opacity-90 focus:bg-opacity-90 active:bg-opacity-95 transition ease-in-out duration-150"
-                        >
-                            Add New Course
-                        </Link>
-                    </div>
-                </header>
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Course Name</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">University</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Degree</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            <tr v-if="courses.data.length === 0">
+                                <td colspan="4" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 text-center">
+                                    No courses found.
+                                </td>
+                            </tr>
+                            <tr v-for="course in courses.data" :key="course.id">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ course.name }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                    {{ course.university?.name }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                    {{ course.degree?.name }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                                    <button @click="openEditModal(course)" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300" title="Edit">
+                                        <PencilIcon class="h-5 w-5" />
+                                    </button>
+                                    <button @click="deleteCourse(course.id)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300" title="Delete">
+                                        <TrashIcon class="h-5 w-5" />
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-                <!-- Table -->
-                <div class="mt-6 flow-root">
-                    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                            <table class="min-w-full divide-y divide-gray-300 dark:divide-gray-700">
-                                <thead>
-                                    <tr>
-                                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 sm:pl-0">
-                                            Course Name
-                                        </th>
-                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
-                                            University
-                                        </th>
-                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
-                                            Degree Level
-                                        </th>
-                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-gray-100">
-                                            Field
-                                        </th>
-                                        <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
-                                            <span class="sr-only">Edit</span>
-                                        </th>
-                                    </tr>
-                                </thead>
+            <Pagination :links="courses.links" class="mt-6" />
+        </div>
+    </div>
 
-                                <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
-                                    <tr v-if="courses.data.length === 0">
-                                        <td colspan="5" class="py-4 text-center text-sm text-gray-500 dark:text-gray-400">
-                                            No courses found. Add universities first, then add courses.
-                                        </td>
-                                    </tr>
+    <Modal :show="showingModal" @close="closeModal">
+        <div class="p-6">
+            <h2 class="text-lg font-medium text-gray-900 dark:text-white">
+                {{ modalMode === 'create' ? 'Create New Course' : 'Edit Course' }}
+            </h2>
 
-                                    <tr v-for="course in courses.data" :key="course.id">
-                                        <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-gray-100 sm:pl-0">
-                                            {{ course.name }}
-                                        </td>
-                                        <td class="px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                            {{ course.university?.name || '—' }}
-                                        </td>
-                                        <td class="px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                            {{ course.degree_level || '—' }}
-                                        </td>
-                                        <td class="px-3 py-4 text-sm text-gray-500 dark:text-gray-400">
-                                            {{ course.field_of_study || '—' }}
-                                        </td>
-                                        <td class="relative py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                                            <Link
-                                                :href="route('admin.courses.edit', course.id)"
-                                                class="text-brand-primary hover:text-opacity-80"
-                                            >
-                                                Edit
-                                            </Link>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+            <form @submit.prevent="submitForm" class="mt-6 space-y-4">
+                <div>
+                    <InputLabel for="name" value="Course Name" />
+                    <TextInput id="name" v-model="form.name" type="text" class="mt-1 block w-full" required />
+                    <InputError :message="form.errors.name" class="mt-2" />
                 </div>
 
-                <!-- Pagination -->
-                <Pagination class="mt-6" :links="courses.links" />
-            </section>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                     <div>
+                        <InputLabel for="university_id" value="University" />
+                        <select id="university_id" v-model="form.university_id" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                            <option :value="null">Select a university</option>
+                            <option v-for="uni in universities" :key="uni.id" :value="uni.id">{{ uni.name }}</option>
+                        </select>
+                        <InputError :message="form.errors.university_id" class="mt-2" />
+                    </div>
+                    <div>
+                        <InputLabel for="degree_id" value="Degree" />
+                        <select id="degree_id" v-model="form.degree_id" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                            <option :value="null">Select a degree</option>
+                            <option v-for="degree in degrees" :key="degree.id" :value="degree.id">{{ degree.name }}</option>
+                        </select>
+                        <InputError :message="form.errors.degree_id" class="mt-2" />
+                    </div>
+                    <div>
+                        <InputLabel for="field_of_study_id" value="Field of Study" />
+                        <select id="field_of_study_id" v-model="form.field_of_study_id" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                            <option :value="null">Select a field</option>
+                            <option v-for="field in fieldsOfStudy" :key="field.id" :value="field.id">{{ field.name }}</option>
+                        </select>
+                        <InputError :message="form.errors.field_of_study_id" class="mt-2" />
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <InputLabel for="duration" value="Duration (e.g., 2 Years)" />
+                        <TextInput id="duration" v-model="form.duration" type="text" class="mt-1 block w-full" />
+                        <InputError :message="form.errors.duration" class="mt-2" />
+                    </div>
+                    <div>
+                        <InputLabel for="tuition_fee" value="Tuition Fee (e.g., $10,000/year)" />
+                        <TextInput id="tuition_fee" v-model="form.tuition_fee" type="text" class="mt-1 block w-full" />
+                        <InputError :message="form.errors.tuition_fee" class="mt-2" />
+                    </div>
+                    <div>
+                        <InputLabel for="application_deadline" value="Application Deadline" />
+                        <TextInput id="application_deadline" v-model="form.application_deadline" type="date" class="mt-1 block w-full" />
+                        <InputError :message="form.errors.application_deadline" class="mt-2" />
+                    </div>
+                </div>
+                
+                <div>
+                    <InputLabel for="intake_semesters" value="Intake Semesters (comma-separated)" />
+                    <TextInput id="intake_semesters" v-model="form.intake_semesters" type="text" class="mt-1 block w-full" placeholder="e.g., Fall, Spring" />
+                    <InputError :message="form.errors.intake_semesters" class="mt-2" />
+                </div>
+
+                <div>
+                    <InputLabel for="entry_requirements" value="Entry Requirements" />
+                    <TextareaInput id="entry_requirements" v-model="form.entry_requirements" class="mt-1 block w-full" rows="3" />
+                    <InputError :message="form.errors.entry_requirements" class="mt-2" />
+                </div>
+
+                <div>
+                    <InputLabel for="description" value="Description" />
+                    <TextareaInput id="description" v-model="form.description" class="mt-1 block w-full" rows="3" />
+                    <InputError :message="form.errors.description" class="mt-2" />
+                </div>
+
+                <div>
+                    <InputLabel for="course_website" value="Course Website URL" />
+                    <TextInput id="course_website" v-model="form.course_website" type="url" class="mt-1 block w-full" placeholder="https://university.com/course" />
+                    <InputError :message="form.errors.course_website" class="mt-2" />
+                </div>
+
+
+                <div class="flex justify-end pt-4 space-x-3">
+                    <SecondaryButton @click="closeModal">Cancel</SecondaryButton>
+                    <PrimaryButton :disabled="form.processing">
+                        {{ form.processing ? 'Saving...' : (modalMode === 'create' ? 'Create' : 'Save Changes') }}
+                    </PrimaryButton>
+                </div>
+            </form>
         </div>
-    </AdminLayout>
+    </Modal>
 </template>
