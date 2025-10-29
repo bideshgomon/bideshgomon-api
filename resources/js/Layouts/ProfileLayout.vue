@@ -2,39 +2,31 @@
 import { computed } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { 
-    UserCircleIcon, 
-    DocumentTextIcon, 
-    BriefcaseIcon, 
-    AcademicCapIcon, 
-    SparklesIcon, 
-    CogIcon, 
-    RectangleStackIcon 
+import {
+    UserCircleIcon,
+    RectangleStackIcon, // For CV Builder
+    // Add other icons if needed later
 } from '@heroicons/vue/24/outline';
 
-// Get the page object from Inertia
 const page = usePage();
+const currentUrl = computed(() => page.url);
 
-// The navigation array
-// We make it a computed property so it updates when the page changes
 const navigation = computed(() => [
-    { 
-        name: 'Profile Settings', 
-        href: route('profile.edit'), 
-        icon: UserCircleIcon, 
-        // This is the correct way to check the current route
-        // page.url contains the path, e.g., "/profile"
-        current: page.url === '/profile' 
+    {
+        name: 'Profile Settings',
+        href: route('profile.edit'),
+        icon: UserCircleIcon,
+        // Check if the current URL is exactly '/profile'
+        current: currentUrl.value === '/profile'
     },
-    { 
-        name: 'CV Builder', 
-        href: route('profile.cv.show'), 
-        icon: RectangleStackIcon, 
-        // Check for the CV builder path
-        current: page.url === '/profile/cv-builder' 
+    {
+        name: 'CV Builder',
+        href: route('profile.cv.show'), // Ensure this route exists
+        icon: RectangleStackIcon,
+        // Check if the current URL starts with '/profile/cv' (adjust if route is different)
+        current: currentUrl.value.startsWith('/profile/cv') // Example check
     },
-    // You can add more links here later, e.g.,
-    // { name: 'My Appointments', href: '#', icon: CogIcon, current: page.url === '/profile/appointments' },
+    // Add more profile sections here as needed
 ]);
 
 </script>
@@ -42,40 +34,48 @@ const navigation = computed(() => [
 <template>
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Your Profile</h2>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                My Profile & CV
+            </h2>
         </template>
 
-        <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-            <div class="lg:grid lg:grid-cols-12 lg:gap-x-5">
-                <aside class="py-6 px-2 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">
-                    <nav class="space-y-1">
-                        <Link
-                            v-for="item in navigation"
-                            :key="item.name"
-                            :href="item.href"
-                            :class="[
-                                item.current
-                                    ? 'bg-gray-100 text-blue-600 border-blue-600'
-                                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 border-transparent',
-                                'group border-l-4 py-2 px-3 flex items-center text-sm font-medium',
-                            ]"
-                            :aria-current="item.current ? 'page' : undefined"
-                        >
-                            <component
-                                :is="item.icon"
-                                :class="[
-                                    item.current ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500',
-                                    'flex-shrink-0 -ml-1 mr-3 h-6 w-6',
-                                ]"
-                                aria-hidden="true"
-                            />
-                            <span class="truncate">{{ item.name }}</span>
-                        </Link>
-                    </nav>
-                </aside>
+        <div class="py-12">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                 <div class="lg:grid lg:grid-cols-12 lg:gap-8"> {/* Increased gap */}
 
-                <div class="space-y-6 sm:px-6 lg:px-0 lg:col-span-9">
-                    <slot />
+                    {/* Sidebar Navigation */}
+                    <aside class="lg:col-span-3 xl:col-span-2 mb-6 lg:mb-0"> {/* Adjusted cols */}
+                        <nav class="space-y-1 bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm"> {/* Added styles */}
+                            <Link
+                                v-for="item in navigation"
+                                :key="item.name"
+                                :href="item.href"
+                                :class="[
+                                     'group flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-150 ease-in-out',
+                                    item.current
+                                        ? 'bg-gray-100 dark:bg-gray-700 text-brand-primary dark:text-white'
+                                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white',
+                                ]"
+                                :aria-current="item.current ? 'page' : undefined"
+                            >
+                                <component
+                                    :is="item.icon"
+                                    :class="[
+                                         'mr-3 flex-shrink-0 h-5 w-5', // Smaller icon
+                                        item.current ? 'text-brand-primary dark:text-white' : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-500 dark:group-hover:text-gray-300'
+                                    ]"
+                                    aria-hidden="true"
+                                />
+                                <span class="truncate">{{ item.name }}</span>
+                            </Link>
+                        </nav>
+                    </aside>
+
+                    {/* Main Content Slot */}
+                    <div class="lg:col-span-9 xl:col-span-10"> {/* Adjusted cols */}
+                         {/* Content sections usually have their own bg/padding */}
+                        <slot />
+                    </div>
                 </div>
             </div>
         </div>

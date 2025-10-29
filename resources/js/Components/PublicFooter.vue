@@ -1,59 +1,92 @@
+<script setup>
+import { Link } from '@inertiajs/vue3';
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+
+// Define footer links structured for easier management
+const footerLinks = {
+    company: [
+        { name: 'About Us', href: '#' },
+        { name: 'Careers', href: '#' },
+        { name: 'Press', href: '#' },
+    ],
+    services: [
+        { name: 'Universities', href: route('public.universities.search') },
+        { name: 'Courses', href: route('public.courses.search') },
+        { name: 'Jobs', href: '#', disabled: true }, // Mark disabled
+        { name: 'Consultancy', href: '#' },
+    ],
+    legal: [
+        { name: 'Privacy Policy', href: '#' },
+        { name: 'Terms of Service', href: '#' },
+    ],
+};
+</script>
+
 <template>
-    <footer class="border-t" style="background-color: var(--brand-light); border-color: var(--brand-border);">
-        <div class="container mx-auto py-12 px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-
-                <div class="footer-section col-span-2 md:col-span-1">
-                    <h4 class="font-bold text-gray-900 mb-4">BideshGomon</h4>
-                    <p class="text-sm text-gray-600">Simplifying your journey to study, work, and live abroad. Your trusted partner in global migration.</p>
-                    <div class="mt-4 footer-socials flex space-x-3">
-                        <a href="#" class="text-gray-500 hover:text-gray-700">FB</a>
-                        <a href="#" class="text-gray-500 hover:text-gray-700">LI</a>
-                        <a href="#" class="text-gray-500 hover:text-gray-700">TW</a>
-                    </div>
+    <footer class="bg-gray-800 dark:bg-black text-gray-300 dark:text-gray-400 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
+                <div class="col-span-2 md:col-span-4 lg:col-span-1">
+                     <Link href="/" class="mb-4 inline-block">
+                        <ApplicationLogo class="block h-10 w-auto" :use-white-logo="true" />
+                    </Link>
+                    <p class="text-sm">
+                        Connecting you to global opportunities in education, career, and beyond.
+                    </p>
                 </div>
 
-                <div class="footer-section">
-                    <h4 class="font-bold text-gray-900 mb-4">Our Services</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><Link :href="route('public.universities')" class="text-gray-600 hover:text-gray-900">Student Visa</Link></li>
-                        <li><Link :href="route('public.courses')" class="text-gray-600 hover:text-gray-900">Courses</Link></li>
-                        <li><Link :href="route('public.jobs')" class="text-gray-600 hover:text-gray-900">Jobs</Link></li>
-                        </ul>
-                </div>
-
-                <div class="footer-section">
-                    <h4 class="font-bold text-gray-900 mb-4">Company</h4>
-                     <ul class="space-y-2 text-sm">
-                        <li><Link href="#" class="text-gray-600 hover:text-gray-900">About Us</Link></li>
-                        <li><Link href="#" class="text-gray-600 hover:text-gray-900">Contact Us</Link></li>
-                        <li><Link href="#" class="text-gray-600 hover:text-gray-900">Blog</Link></li>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-100 dark:text-white tracking-wider uppercase mb-4">Company</h3>
+                    <ul class="space-y-2">
+                        <li v-for="link in footerLinks.company" :key="link.name">
+                            <Link :href="link.href" class="text-sm hover:text-white transition duration-150">{{ link.name }}</Link>
+                        </li>
                     </ul>
                 </div>
 
-                <div class="footer-section">
-                    <h4 class="font-bold text-gray-900 mb-4">Legal</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><Link href="#" class="text-gray-600 hover:text-gray-900">Privacy Policy</Link></li>
-                        <li><Link href="#" class="text-gray-600 hover:text-gray-900">Terms & Conditions</Link></li>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-100 dark:text-white tracking-wider uppercase mb-4">Services</h3>
+                    <ul class="space-y-2">
+                        <li v-for="link in footerLinks.services" :key="link.name">
+                            <Link
+                                :href="link.disabled ? '#' : link.href"
+                                :class="['text-sm hover:text-white transition duration-150', link.disabled ? 'text-gray-500 cursor-not-allowed line-through' : '']"
+                                :aria-disabled="link.disabled"
+                                :tabindex="link.disabled ? -1 : undefined"
+                            >
+                                {{ link.name }}
+                            </Link>
+                        </li>
                     </ul>
                 </div>
 
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-100 dark:text-white tracking-wider uppercase mb-4">Legal</h3>
+                    <ul class="space-y-2">
+                        <li v-for="link in footerLinks.legal" :key="link.name">
+                            <Link :href="link.href" class="text-sm hover:text-white transition duration-150">{{ link.name }}</Link>
+                        </li>
+                    </ul>
+                </div>
+
+                 <div>
+                    <h3 class="text-sm font-semibold text-gray-100 dark:text-white tracking-wider uppercase mb-4">Contact</h3>
+                     <ul class="space-y-2">
+                         <li class="text-sm">Dhaka, Bangladesh</li>
+                         <li class="text-sm">info@bideshgomon.com</li>
+                     </ul>
+                </div>
             </div>
-            <div class="footer-bottom mt-8 pt-8 text-center text-sm text-gray-600 border-t border-gray-200">
-                <p>&copy; {{ new Date().getFullYear() }} BideshGomon. All rights reserved.</p>
+
+            <div class="mt-12 border-t border-gray-700 dark:border-gray-800 pt-8 text-center">
+                <p class="text-sm">
+                    &copy; {{ new Date().getFullYear() }} Bidesh Gomon Project. All rights reserved.
+                </p>
             </div>
         </div>
     </footer>
 </template>
 
-<script setup>
-import { Link } from '@inertiajs/vue3';
-</script>
-
 <style scoped>
-/* Using styles from public/css/custom-style.css potentially */
-.footer-section ul li a {
-    transition: color 0.2s ease-in-out;
-}
+/* Add specific styles if needed, e.g., for social icons */
 </style>

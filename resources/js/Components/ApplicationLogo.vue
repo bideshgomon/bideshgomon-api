@@ -1,3 +1,21 @@
+<script setup>
+defineProps({
+    useWhiteLogo: {
+        type: Boolean,
+        default: false,
+    },
+});
+</script>
+
 <template>
-    <img src="/images/bideshgomonlogo.png" alt="BideshGomon Logo" />
+    <img
+        v-if="useWhiteLogo"
+        src="/images/bideshgomonlogowhite.png"
+        alt="Bidesh Gomon"
+    />
+    <img
+        v-else
+        src="/images/bideshgomonlogo.png"
+        alt="Bidesh Gomon"
+    />
 </template>

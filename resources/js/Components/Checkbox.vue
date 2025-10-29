@@ -1,28 +1,26 @@
 <script setup>
 import { computed } from 'vue';
 
-// Using defineModel for simpler v-model binding
-const model = defineModel('checked', {
-    type: [Array, Boolean], // Allows boolean for single checkbox
-    required: false, // Make it optional
-    default: false, // Default to unchecked
-});
+const emit = defineEmits(['update:checked']);
 
-// Props for value attribute (used when checked is an array)
 const props = defineProps({
+    checked: {
+        type: [Array, Boolean],
+        required: true,
+    },
     value: {
         default: null,
     },
 });
 
-// Proxy computed for handling array vs boolean modelValue
 const proxyChecked = computed({
     get() {
-        return model.value;
+        return props.checked;
     },
+
     set(val) {
-        model.value = val;
-    }
+        emit('update:checked', val);
+    },
 });
 </script>
 
@@ -31,6 +29,6 @@ const proxyChecked = computed({
         type="checkbox"
         :value="value"
         v-model="proxyChecked"
-        class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800"
+        class="rounded border-gray-300 dark:border-gray-700 text-brand-primary shadow-sm focus:ring-brand-primary dark:focus:ring-brand-primary dark:focus:ring-offset-gray-800 dark:bg-gray-900"
     />
 </template>

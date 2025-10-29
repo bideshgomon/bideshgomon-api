@@ -1,96 +1,68 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3';
-import { ref, watch } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { computed } from 'vue'; // Import computed
 import {
-    HomeIcon, GlobeAltIcon, MapIcon, MapPinIcon, BuildingOffice2Icon, AcademicCapIcon, BriefcaseIcon, TagIcon, UsersIcon, BeakerIcon, LanguageIcon, WrenchScrewdriverIcon // <-- CORRECTED IMPORT
+    HomeIcon, GlobeAltIcon, MapIcon, MapPinIcon, BuildingOffice2Icon, AcademicCapIcon, BriefcaseIcon, TagIcon, UsersIcon, BeakerIcon, LanguageIcon, WrenchScrewdriverIcon
 } from '@heroicons/vue/24/outline';
 
-// --- Active link logic ---
-const currentRoute = usePage().url;
+const page = usePage(); // Use page consistently
+const currentUrl = computed(() => page.url); // Use computed for reactivity
 
-// --- Sidebar links with icons ---
-const adminLinks = [
-    { name: 'Dashboard', href: route('admin.dashboard'), icon: HomeIcon, current: currentRoute === '/admin' || currentRoute.startsWith('/admin/dashboard') },
+// Sidebar links for admin - Use computed for reactivity
+const adminLinks = computed(() => [
+    { name: 'Dashboard', href: '#', icon: HomeIcon, current: currentUrl.value.startsWith('/admin/dashboard') || currentUrl.value === '/admin' }, // Handle base '/admin' if it's the dashboard
+    { name: 'Countries', href: route('admin.countries.index'), icon: GlobeAltIcon, current: currentUrl.value.startsWith('/admin/countries') },
+    { name: 'States', href: route('admin.states.index'), icon: MapIcon, current: currentUrl.value.startsWith('/admin/states') },
+    { name: 'Cities', href: route('admin.cities.index'), icon: MapPinIcon, current: currentUrl.value.startsWith('/admin/cities') },
+    { name: 'Universities', href: route('admin.universities.index'), icon: BuildingOffice2Icon, current: currentUrl.value.startsWith('/admin/universities') },
+    { name: 'Courses', href: route('admin.courses.index'), icon: AcademicCapIcon, current: currentUrl.value.startsWith('/admin/courses') },
+    { name: 'Degree Levels', href: '#', icon: AcademicCapIcon, current: currentUrl.value.startsWith('/admin/degree-levels'), disabled: true }, // Placeholder/disabled
+    { name: 'Fields of Study', href: '#', icon: BeakerIcon, current: currentUrl.value.startsWith('/admin/fields-of-study'), disabled: true }, // Placeholder/disabled
+    { name: 'Languages', href: '#', icon: LanguageIcon, current: currentUrl.value.startsWith('/admin/languages'), disabled: true }, // Placeholder/disabled
+    { name: 'Skills', href: '#', icon: WrenchScrewdriverIcon, current: currentUrl.value.startsWith('/admin/skills'), disabled: true }, // Placeholder/disabled
+    { name: 'Job Categories', href: '#', icon: TagIcon, current: currentUrl.value.startsWith('/admin/job-categories'), disabled: true }, // Placeholder/disabled
+    { name: 'Job Postings', href: '#', icon: BriefcaseIcon, current: currentUrl.value.startsWith('/admin/jobs'), disabled: true }, // Placeholder/disabled
+    { name: 'Manage Users', href: '#', icon: UsersIcon, current: currentUrl.value.startsWith('/admin/users'), disabled: true }, // Placeholder/disabled
+]);
 
-    // --- GEOGRAPHY ---
-    { name: 'Countries', href: route('admin.countries.index'), icon: GlobeAltIcon, current: currentRoute.startsWith('/admin/countries') },
-    { name: 'States', href: route('admin.states.index'), icon: MapIcon, current: currentRoute.startsWith('/admin/states') },
-    { name: 'Cities', href: route('admin.cities.index'), icon: MapPinIcon, current: currentRoute.startsWith('/admin/cities') },
-
-    // --- ACADEMICS & PRE-BUILT ---
-    { name: 'Universities', href: route('admin.universities.index'), icon: BuildingOffice2Icon, current: currentRoute.startsWith('/admin/universities') },
-    { name: 'Courses', href: route('admin.courses.index'), icon: AcademicCapIcon, current: currentRoute.startsWith('/admin/courses') },
-    { name: 'Degree Levels', href: route('admin.degree-levels.index'), icon: AcademicCapIcon, current: currentRoute.startsWith('/admin/degree-levels') },
-    { name: 'Fields of Study', href: route('admin.fields-of-study.index'), icon: BeakerIcon, current: currentRoute.startsWith('/admin/fields-of-study') },
-    { name: 'Languages', href: route('admin.languages.index'), icon: LanguageIcon, current: currentRoute.startsWith('/admin/languages') },
-    { name: 'Skills', href: route('admin.skills.index'), icon: WrenchScrewdriverIcon, current: currentRoute.startsWith('/admin/skills') }, // Uses WrenchScrewdriverIcon
-
-    // --- JOBS ---
-    { name: 'Job Categories', href: route('admin.job-categories.index'), icon: TagIcon, current: currentRoute.startsWith('/admin/job-categories') },
-    { name: 'Job Postings', href: route('admin.jobs.index'), icon: BriefcaseIcon, current: currentRoute.startsWith('/admin/jobs') },
-
-    // --- USER MANAGEMENT ---
-    { name: 'Manage Users', href: '#', icon: UsersIcon, current: false }, // Placeholder
-];
-
-// --- Flash message logic ---
-const flash = ref(usePage().props.flash);
-const showFlash = ref(false);
-
-watch(
-    () => usePage().props.flash,
-    (newFlash) => {
-        flash.value = newFlash;
-        if (newFlash && (newFlash.success || newFlash.error)) {
-            showFlash.value = true;
-            setTimeout(() => (showFlash.value = false), 3000);
-        }
-    },
-    { deep: true }
-);
 </script>
 
 <template>
     <AuthenticatedLayout>
-        <div
-            v-if="showFlash && flash.success"
-            class="fixed top-20 right-5 z-50 p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 shadow"
-            role="alert"
-        >
-            <span class="font-medium">Success!</span> {{ flash.success }}
-        </div>
-        <div
-            v-if="showFlash && flash.error"
-            class="fixed top-20 right-5 z-50 p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 shadow"
-            role="alert"
-        >
-            <span class="font-medium">Error!</span> {{ flash.error }}
-        </div>
+         <template #header>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                Admin Panel
+            </h2>
+        </template>
 
         <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-                <div class="lg:grid lg:grid-cols-12 lg:gap-x-5">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="lg:grid lg:grid-cols-12 lg:gap-8"> {/* Increased gap */}
 
-                    <aside class="py-6 px-2 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">
-                        <nav class="space-y-1">
+                    {/* Sidebar */}
+                    <aside class="lg:col-span-3 xl:col-span-2 mb-6 lg:mb-0"> {/* Adjusted col span */}
+                        <nav class="space-y-1 bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm"> {/* Added bg, padding, rounded, shadow */}
                             <Link
                                 v-for="item in adminLinks"
                                 :key="item.name"
-                                :href="item.href"
+                                :href="item.disabled ? '#' : item.href"
                                 :class="[
+                                    'group flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-150 ease-in-out',
                                     item.current
                                         ? 'bg-gray-100 dark:bg-gray-700 text-brand-primary dark:text-white'
-                                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white',
-                                    'group rounded-md px-3 py-2 flex items-center text-sm font-medium transition-colors duration-150',
+                                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white',
+                                    item.disabled ? 'text-gray-400 dark:text-gray-600 cursor-not-allowed opacity-60' : ''
                                 ]"
                                 :aria-current="item.current ? 'page' : undefined"
+                                :aria-disabled="item.disabled"
+                                :tabindex="item.disabled ? -1 : undefined"
                             >
                                 <component
                                     :is="item.icon"
                                     :class="[
-                                        item.current ? 'text-brand-primary dark:text-white' : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-500 dark:group-hover:text-gray-300',
-                                        'mr-3 flex-shrink-0 h-6 w-6 transition-colors duration-150',
+                                        'mr-3 flex-shrink-0 h-5 w-5', // Slightly smaller icon
+                                        item.current ? 'text-brand-primary dark:text-white' : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-500 dark:group-hover:text-gray-300'
                                     ]"
                                     aria-hidden="true"
                                 />
@@ -98,10 +70,13 @@ watch(
                             </Link>
                         </nav>
                     </aside>
-                    <div class="space-y-6 sm:px-6 lg:px-0 lg:col-span-9">
+
+                    {/* Main content slot */}
+                    <div class="lg:col-span-9 xl:col-span-10"> {/* Adjusted col span */}
+                        {/* The content (e.g., table) will often have its own bg/padding */}
                         <slot />
                     </div>
-                    </div>
+                </div>
             </div>
         </div>
     </AuthenticatedLayout>
