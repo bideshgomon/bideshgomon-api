@@ -1,18 +1,15 @@
-import './bootstrap'; // <-- MUST BE FIRST
+// FIXED: This line must be first to configure Axios
+import './bootstrap'; 
+
 import '../css/app.css';
-import '../css/custom-style.css';
+import '../css/custom-style.css'; // Added your custom styles
 
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
-// 1. Import the Vue plugin (THIS IS THE CORRECTED PATH)
-import { ZiggyVue } from 'ziggy-js'; 
-
-// 2. Import the generated routes file (This was already correct)
-import { Ziggy } from './ziggy.js';
-
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'BideshGomon';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
@@ -20,8 +17,7 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         return createApp({ render: () => h(App, props) })
             .use(plugin)
-            // 3. Use the plugin AND pass the routes to it
-            .use(ZiggyVue, Ziggy) 
+            .use(ZiggyVue) // Changed from .use(ZiggyVue, Ziggy) to just ZiggyVue
             .mount(el);
     },
     progress: {
