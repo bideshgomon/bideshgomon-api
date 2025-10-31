@@ -1,83 +1,92 @@
 <script setup>
 import { computed } from 'vue';
-import { Link, usePage } from '@inertiajs/vue3';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import {
     UserCircleIcon,
-    RectangleStackIcon, // For CV Builder
-    // Add other icons if needed later
+    DocumentTextIcon,
+    CogIcon,
+    BriefcaseIcon,
+    ArrowLeftIcon
 } from '@heroicons/vue/24/outline';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 const page = usePage();
-const currentUrl = computed(() => page.url);
+const user = computed(() => page.props.auth.user);
 
-const navigation = computed(() => [
-    {
-        name: 'Profile Settings',
-        href: route('profile.edit'),
-        icon: UserCircleIcon,
-        // Check if the current URL is exactly '/profile'
-        current: currentUrl.value === '/profile'
-    },
-    {
-        name: 'CV Builder',
-        href: route('profile.cv.show'), // Ensure this route exists
-        icon: RectangleStackIcon,
-        // Check if the current URL starts with '/profile/cv' (adjust if route is different)
-        current: currentUrl.value.startsWith('/profile/cv') // Example check
-    },
-    // Add more profile sections here as needed
+// Define the layout for this page
+defineOptions({
+    layout: AuthenticatedLayout
+});
+
+// Navigation for the profile sidebar
+const profileNavigation = computed(() => [
+    { name: 'Profile Dashboard', href: route('profile.edit'), icon: UserCircleIcon, current: route().current('profile.edit') },
+    
+    // --- THIS IS THE FIX ---
+    // The 'profile.cv.show' route does not exist yet (Task CV-003).
+    // We must comment this out or disable it to prevent a crash.
+    // { name: 'View My CV', href: route('profile.cv.show', { user: page.props.auth.user.id }), icon: DocumentTextIcon, current: route().current('profile.cv.show') },
+    // --- END FIX ---
+
+    { name: 'Account Settings', href: '#', icon: CogIcon, current: false, disabled: true },
+    { name: 'My Applications', href: '#', icon: BriefcaseIcon, current: false, disabled: true },
 ]);
 
 </script>
 
 <template>
-    <AuthenticatedLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                My Profile & CV
-            </h2>
-        </template>
+    <Head title="My Profile" />
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                 <div class="lg:grid lg:grid-cols-12 lg:gap-8"> {/* Increased gap */}
-
-                    {/* Sidebar Navigation */}
-                    <aside class="lg:col-span-3 xl:col-span-2 mb-6 lg:mb-0"> {/* Adjusted cols */}
-                        <nav class="space-y-1 bg-white dark:bg-gray-800 p-3 rounded-lg shadow-sm"> {/* Added styles */}
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                
+                <div class="md:col-span-1">
+                    <div class="p-4 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
+                        <div class="flex items-center mb-4">
+                             <div class="flex-shrink-0 h-12 w-12 rounded-full bg-brand-primary text-white flex items-center justify-center text-xl font-bold">
+                                {{ user.name.charAt(0) }}
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ user.name }}</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ user.email }}</p>
+                            </div>
+                        </div>
+                        
+                        <nav class="space-y-1">
                             <Link
-                                v-for="item in navigation"
+                                v-for="item in profileNavigation"
                                 :key="item.name"
-                                :href="item.href"
+                                :href="item.disabled ? '#' : item.href"
                                 :class="[
-                                     'group flex items-center px-3 py-2 text-sm font-medium rounded-md transition duration-150 ease-in-out',
                                     item.current
-                                        ? 'bg-gray-100 dark:bg-gray-700 text-brand-primary dark:text-white'
-                                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white',
+                                        ? 'bg-gray-100 dark:bg-gray-900 text-brand-primary'
+                                        : 'text-gray-700 dark:text-gray-300 hover:text-brand-primary hover:bg-gray-50 dark:hover:bg-gray-700',
+                                    'group flex items-center px-2 py-2 text-sm font-medium rounded-md',
+                                    item.disabled ? 'text-gray-400 dark:text-gray-600 cursor-not-allowed opacity-50' : ''
                                 ]"
-                                :aria-current="item.current ? 'page' : undefined"
+                                :aria-disabled="item.disabled"
+                                :tabindex="item.disabled ? -1 : undefined"
                             >
-                                <component
-                                    :is="item.icon"
-                                    :class="[
-                                         'mr-3 flex-shrink-0 h-5 w-5', // Smaller icon
-                                        item.current ? 'text-brand-primary dark:text-white' : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-500 dark:group-hover:text-gray-300'
-                                    ]"
-                                    aria-hidden="true"
-                                />
-                                <span class="truncate">{{ item.name }}</span>
+                                <component :is="item.icon" class="mr-3 h-6 w-6 shrink-0" aria-hidden="true" />
+                                {{ item.name }}
+                            </Link>
+
+                             <Link
+                                :href="route('dashboard')"
+                                class="text-gray-700 dark:text-gray-300 hover:text-brand-primary hover:bg-gray-50 dark:hover:bg-gray-700 group flex items-center px-2 py-2 text-sm font-medium rounded-md mt-4 border-t border-gray-200 dark:border-gray-700 pt-4"
+                            >
+                                <ArrowLeftIcon class="mr-3 h-6 w-6 shrink-0" aria-hidden="true" />
+                                Back to Dashboard
                             </Link>
                         </nav>
-                    </aside>
-
-                    {/* Main Content Slot */}
-                    <div class="lg:col-span-9 xl:col-span-10"> {/* Adjusted cols */}
-                         {/* Content sections usually have their own bg/padding */}
-                        <slot />
                     </div>
+                </div>
+
+                <div class="md:col-span-3">
+                    <slot />
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </div>
 </template>
