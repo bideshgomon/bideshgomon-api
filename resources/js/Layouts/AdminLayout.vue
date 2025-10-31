@@ -11,8 +11,8 @@ import {
     XMarkIcon,
     BuildingOfficeIcon,
     AcademicCapIcon,
-    GlobeAltIcon, // <-- IMPORT NEW ICON
-    MapIcon,
+    GlobeAltIcon, 
+    MapIcon, // <-- Icon is already imported
     MapPinIcon
 } from '@heroicons/vue/24/outline';
 
@@ -35,21 +35,21 @@ const navigation = [
         icon: AcademicCapIcon, 
         current: route().current('admin.courses.index') 
     },
-    // --- NEW LINK ADDED ---
     { 
         name: 'Countries', 
         href: route('admin.countries.index'), 
         icon: GlobeAltIcon, 
         current: route().current('admin.countries.index') 
     },
-    // --- END NEW LINK ---
+    // --- LINK UPDATED ---
     { 
         name: 'States', 
-        href: '#', // route('admin.states.index')
+        href: route('admin.states.index'), // <-- Set href
         icon: MapIcon, 
-        current: false, // route().current('admin.states.index') 
-        disabled: true // Add this to disable link until ready
+        current: route().current('admin.states.index'), // <-- Set current
+        disabled: false // <-- Enable link
     },
+    // --- END LINK UPDATE ---
     { 
         name: 'Cities', 
         href: '#', // route('admin.cities.index')

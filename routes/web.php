@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\Admin\CountryPageController; // <-- IMPORT NEW CONTROLLER
+use App\Http\Controllers\Admin\CountryPageController;
 use App\Http\Controllers\Admin\CoursePageController;
+use App\Http\Controllers\Admin\StatePageController; // <-- IMPORT NEW CONTROLLER
 use App\Http\Controllers\Admin\UniversityPageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicPageController;
@@ -50,9 +51,12 @@ Route::middleware(['auth', 'role:admin'])->name('admin.')->prefix('admin')->grou
     // Course CRUD (Single-Page)
     Route::get('/courses', [CoursePageController::class, 'index'])->name('courses.index');
 
-    // --- NEW ROUTE ---
     // Country CRUD (Single-Page)
     Route::get('/countries', [CountryPageController::class, 'index'])->name('countries.index');
+
+    // --- NEW ROUTE ---
+    // State CRUD (Single-Page)
+    Route::get('/states', [StatePageController::class, 'index'])->name('states.index');
     // --- END NEW ROUTE ---
 
 });
