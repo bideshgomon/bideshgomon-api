@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\City;
-use App\Models\Country;
-use App\Models\State;
+use App\Models\City; // 1. Import the City model
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -17,17 +15,10 @@ class CityPageController extends Controller
      */
     public function index()
     {
+        // 2. Fetch paginated cities and pass them to the new Vue page
+        // Eager-load the state and country relationships from your City model
         return Inertia::render('Admin/Cities/Index', [
-            // Pass the paginated list of cities, including their parent state and country
-            'cities' => City::with('state', 'country')
-                ->latest()
-                ->paginate(10),
-            
-            // Pass all countries for the first dropdown
-            'countries' => Country::orderBy('name')->get(['id', 'name']),
-
-            // Pass all states for the second (dynamic) dropdown
-            'states' => State::orderBy('name')->get(['id', 'name', 'country_id']),
+            'cities' => City::with('state.country')->latest()->paginate(10)
         ]);
     }
 }
