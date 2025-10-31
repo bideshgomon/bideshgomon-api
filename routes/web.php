@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\Admin\CourseController;
-use App\Http\Controllers\Admin\UniversityController;
+use App\Http\Controllers\Admin\CountryPageController; // <-- IMPORT NEW CONTROLLER
+use App\Http\Controllers\Admin\CoursePageController;
+use App\Http\Controllers\Admin\UniversityPageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicPageController;
 use Illuminate\Foundation\Application;
@@ -44,12 +45,15 @@ Route::middleware(['auth', 'role:admin'])->name('admin.')->prefix('admin')->grou
     })->name('dashboard');
 
     // University CRUD (Single-Page)
-    Route::get('/universities', [UniversityController::class, 'index'])->name('universities.index');
+    Route::get('/universities', [UniversityPageController::class, 'index'])->name('universities.index');
 
-    // --- STRATEGY UPDATE ---
-    // Only the index route is needed for Courses. Create/Edit will be modals.
-    Route::get('/courses', [CourseController::class, 'index'])->name('courses.index');
-    // --- END UPDATE ---
+    // Course CRUD (Single-Page)
+    Route::get('/courses', [CoursePageController::class, 'index'])->name('courses.index');
+
+    // --- NEW ROUTE ---
+    // Country CRUD (Single-Page)
+    Route::get('/countries', [CountryPageController::class, 'index'])->name('countries.index');
+    // --- END NEW ROUTE ---
 
 });
 
