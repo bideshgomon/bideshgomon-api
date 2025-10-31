@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\CityPageController; // <-- IMPORT NEW CONTROLLER
 use App\Http\Controllers\Admin\CountryPageController;
 use App\Http\Controllers\Admin\CoursePageController;
-use App\Http\Controllers\Admin\StatePageController; // <-- IMPORT NEW CONTROLLER
+use App\Http\Controllers\Admin\StatePageController; 
 use App\Http\Controllers\Admin\UniversityPageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicPageController;
@@ -54,9 +55,12 @@ Route::middleware(['auth', 'role:admin'])->name('admin.')->prefix('admin')->grou
     // Country CRUD (Single-Page)
     Route::get('/countries', [CountryPageController::class, 'index'])->name('countries.index');
 
-    // --- NEW ROUTE ---
     // State CRUD (Single-Page)
     Route::get('/states', [StatePageController::class, 'index'])->name('states.index');
+
+    // --- NEW ROUTE ---
+    // City CRUD (Single-Page)
+    Route::get('/cities', [CityPageController::class, 'index'])->name('cities.index');
     // --- END NEW ROUTE ---
 
 });

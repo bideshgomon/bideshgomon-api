@@ -18,32 +18,22 @@ class City extends Model
     protected $fillable = [
         'name',
         'state_id',
-        'country_id', // <-- ADD THIS
-        'is_active',
+        'country_id',
     ];
 
     /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
+     * Get the country that the city belongs to.
      */
-    protected $casts = [
-        'is_active' => 'boolean',
-    ];
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class);
+    }
 
     /**
      * Get the state that the city belongs to (optional).
      */
     public function state(): BelongsTo
     {
-        return $this->belongsTo(State::class);
-    }
-
-    /**
-     * Get the country that the city belongs to directly (optional).
-     */
-    public function country(): BelongsTo
-    {
-        return $this->belongsTo(Country::class);
+        return $this->belongsTo(State::class)->withDefault();
     }
 }

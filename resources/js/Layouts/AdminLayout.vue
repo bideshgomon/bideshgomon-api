@@ -12,8 +12,8 @@ import {
     BuildingOfficeIcon,
     AcademicCapIcon,
     GlobeAltIcon, 
-    MapIcon, // <-- Icon is already imported
-    MapPinIcon
+    MapIcon, 
+    MapPinIcon // <-- Icon is already imported
 } from '@heroicons/vue/24/outline';
 
 const showingNavigationDropdown = ref(false);
@@ -41,22 +41,22 @@ const navigation = [
         icon: GlobeAltIcon, 
         current: route().current('admin.countries.index') 
     },
-    // --- LINK UPDATED ---
     { 
         name: 'States', 
-        href: route('admin.states.index'), // <-- Set href
+        href: route('admin.states.index'),
         icon: MapIcon, 
-        current: route().current('admin.states.index'), // <-- Set current
+        current: route().current('admin.states.index'),
+        disabled: false
+    },
+    // --- LINK UPDATED ---
+    { 
+        name: 'Cities', 
+        href: route('admin.cities.index'), // <-- Set href
+        icon: MapPinIcon, 
+        current: route().current('admin.cities.index'), // <-- Set current
         disabled: false // <-- Enable link
     },
     // --- END LINK UPDATE ---
-    { 
-        name: 'Cities', 
-        href: '#', // route('admin.cities.index')
-        icon: MapPinIcon, 
-        current: false, // route().current('admin.cities.index') 
-        disabled: true // Add this to disable link until ready
-    },
 ];
 // --- END UPDATED NAVIGATION ---
 </script>
