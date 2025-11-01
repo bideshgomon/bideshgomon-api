@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\WorkVisaApplication;
-use App\Models\User;
-use App\Models\Country;
 use App\Models\Agency;
-use Illuminate\Http\Request;
+use App\Models\Country;
+use App\Models\User;
+use App\Models\WorkVisaApplication;
 use Inertia\Inertia;
 
 class WorkVisaApplicationPageController extends Controller

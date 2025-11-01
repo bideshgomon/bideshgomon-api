@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Api\Admin; // <-- Corrected Namespace for API
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\Role;
+use App\Models\User;
 use App\Models\UserProfile; // <-- Import UserProfile
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse; // <-- Use JsonResponse for API
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request; // <-- Use JsonResponse for API
 use Illuminate\Support\Facades\Hash; // <-- Import Hash facade
 use Illuminate\Support\Facades\Log; // <-- Import Log facade
-use Illuminate\Validation\Rules; // <-- Import Validation Rules
-use Illuminate\Validation\Rule; // <-- Import Rule for unique constraint
+use Illuminate\Validation\Rule; // <-- Import Validation Rules
+use Illuminate\Validation\Rules; // <-- Import Rule for unique constraint
 
 class UserController extends Controller // <-- Renamed class from UserPageController if needed, or keep separate
 {
@@ -27,7 +27,7 @@ class UserController extends Controller // <-- Renamed class from UserPageContro
             $searchTerm = $request->input('search');
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('name', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('email', 'LIKE', "%{$searchTerm}%");
+                    ->orWhere('email', 'LIKE', "%{$searchTerm}%");
             });
         }
 
@@ -70,21 +70,19 @@ class UserController extends Controller // <-- Renamed class from UserPageContro
         // Create an empty profile for the new user
         UserProfile::create(['user_id' => $user->id]);
 
-
         // Return the created user with role, status 201
         return response()->json($user->load('role'), 201);
     }
-
 
     /**
      * Update the specified user in storage. (UPDATE)
      */
     public function update(Request $request, User $user): JsonResponse // <-- Added Method
     {
-         $validated = $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             // Ignore unique rule for the current user's email
-            'email' => ['required','string','lowercase','email','max:255', Rule::unique(User::class)->ignore($user->id)],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
             'phone' => 'nullable|string|max:20',
             // Password update is optional
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
@@ -102,7 +100,7 @@ class UserController extends Controller // <-- Renamed class from UserPageContro
         ];
 
         // If a new password was entered, hash and include it
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $updateData['password'] = Hash::make($validated['password']);
             // Optionally: Force email re-verification if password changes?
             // $updateData['email_verified_at'] = null;
@@ -132,10 +130,12 @@ class UserController extends Controller // <-- Renamed class from UserPageContro
         try {
             // Soft delete is handled automatically if SoftDeletes trait is used
             $user->delete();
+
             return response()->json(['message' => 'User deleted successfully.'], 200); // Or 204 No Content
         } catch (\Exception $e) {
             // Log the error
             Log::error('Error deleting user: '.$user->id, ['error' => $e->getMessage()]);
+
             return response()->json(['message' => 'Failed to delete user.'], 500);
         }
     }

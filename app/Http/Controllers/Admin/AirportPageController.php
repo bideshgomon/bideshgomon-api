@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Airport;
 use App\Models\Country; // For fetching cities grouped by country/state
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
 
 class AirportPageController extends Controller
 {
@@ -21,10 +21,10 @@ class AirportPageController extends Controller
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where('name', 'like', "%{$search}%")
-                  ->orWhere('iata_code', 'like', "%{$search}%")
+                ->orWhere('iata_code', 'like', "%{$search}%")
                   // Search by related city or country name
-                  ->orWhereHas('city.state.country', fn($q) => $q->where('name', 'like', "%{$search}%"))
-                  ->orWhereHas('city', fn($q) => $q->where('name', 'like', "%{$search}%"));
+                ->orWhereHas('city.state.country', fn ($q) => $q->where('name', 'like', "%{$search}%"))
+                ->orWhereHas('city', fn ($q) => $q->where('name', 'like', "%{$search}%"));
         }
 
         $airports = $query->orderBy('name')->paginate(10)->withQueryString();
@@ -41,11 +41,11 @@ class AirportPageController extends Controller
     public function create()
     {
         // Get Cities grouped by Country and State for the dropdown
-        $countries = Country::with(['states.cities' => fn($q) => $q->select('id', 'name', 'state_id')->orderBy('name')])
-                            ->select('id', 'name') // Select only necessary country columns
-                            ->whereHas('states.cities') // Only include countries that have cities
-                            ->orderBy('name')
-                            ->get();
+        $countries = Country::with(['states.cities' => fn ($q) => $q->select('id', 'name', 'state_id')->orderBy('name')])
+            ->select('id', 'name') // Select only necessary country columns
+            ->whereHas('states.cities') // Only include countries that have cities
+            ->orderBy('name')
+            ->get();
 
         return Inertia::render('Admin/Airports/Create', [
             'countries' => $countries, // Pass the nested structure
@@ -73,11 +73,11 @@ class AirportPageController extends Controller
      */
     public function edit(Airport $airport)
     {
-         $countries = Country::with(['states.cities' => fn($q) => $q->select('id', 'name', 'state_id')->orderBy('name')])
-                            ->select('id', 'name')
-                            ->whereHas('states.cities')
-                            ->orderBy('name')
-                            ->get();
+        $countries = Country::with(['states.cities' => fn ($q) => $q->select('id', 'name', 'state_id')->orderBy('name')])
+            ->select('id', 'name')
+            ->whereHas('states.cities')
+            ->orderBy('name')
+            ->get();
 
         return Inertia::render('Admin/Airports/Edit', [
             'airport' => $airport, // Loads existing data
@@ -92,7 +92,7 @@ class AirportPageController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'iata_code' => ['required', 'string', 'size:3', Rule::unique('airports','iata_code')->ignore($airport->id)],
+            'iata_code' => ['required', 'string', 'size:3', Rule::unique('airports', 'iata_code')->ignore($airport->id)],
             'city_id' => ['required', 'exists:cities,id'],
         ]);
 

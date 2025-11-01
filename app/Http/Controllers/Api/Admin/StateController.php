@@ -25,12 +25,13 @@ class StateController extends Controller
         $validated = $request->validate([
             'name' => [
                 'required', 'string', 'max:255',
-                Rule::unique('states')->where(fn ($query) => $query->where('country_id', $request->country_id))
+                Rule::unique('states')->where(fn ($query) => $query->where('country_id', $request->country_id)),
             ],
             'country_id' => 'required|exists:countries,id',
         ]);
 
         $state = State::create($validated);
+
         return response()->json($state->load('country'), 201);
     }
 
@@ -50,12 +51,13 @@ class StateController extends Controller
         $validated = $request->validate([
             'name' => [
                 'required', 'string', 'max:255',
-                Rule::unique('states')->where(fn ($query) => $query->where('country_id', $request->country_id))->ignore($state->id)
+                Rule::unique('states')->where(fn ($query) => $query->where('country_id', $request->country_id))->ignore($state->id),
             ],
             'country_id' => 'required|exists:countries,id',
         ]);
 
         $state->update($validated);
+
         return response()->json($state->load('country'));
     }
 
@@ -65,6 +67,7 @@ class StateController extends Controller
     public function destroy(State $state)
     {
         $state->delete();
+
         return response()->json(null, 204);
     }
 }

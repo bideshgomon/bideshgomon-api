@@ -4,15 +4,16 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\JobCategory;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse; // <-- Import JsonResponse
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request; // <-- Import JsonResponse
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log; // <-- Import Str facade
+use Illuminate\Support\Str; // <-- For CSV reading
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Str; // <-- Import Str facade
-use League\Csv\Reader; // <-- For CSV reading
-use League\Csv\Statement;
-use Illuminate\Support\Facades\DB; // <-- For database transactions
-use Illuminate\Support\Facades\Log; // <-- For logging errors
-use Illuminate\Support\Facades\Validator; // <-- For manual validation in bulk
+use League\Csv\Reader; // <-- For database transactions
+use League\Csv\Statement; // <-- For logging errors
+
+// <-- For manual validation in bulk
 
 class JobCategoryController extends Controller
 {
@@ -66,7 +67,7 @@ class JobCategoryController extends Controller
     public function update(Request $request, JobCategory $jobCategory): JsonResponse // <-- Return JsonResponse
     {
         $validated = $request->validate([
-            'name' => ['required','string','max:255', Rule::unique('job_categories')->ignore($jobCategory->id)],
+            'name' => ['required', 'string', 'max:255', Rule::unique('job_categories')->ignore($jobCategory->id)],
             'description' => 'nullable|string',
             'is_active' => 'required|boolean',
         ]);
@@ -88,14 +89,16 @@ class JobCategoryController extends Controller
     {
         // Check if category is in use by job postings
         if ($jobCategory->jobPostings()->exists()) {
-             return response()->json(['message' => 'Cannot delete category. It is in use by job postings.'], 409); // 409 Conflict
+            return response()->json(['message' => 'Cannot delete category. It is in use by job postings.'], 409); // 409 Conflict
         }
 
         try {
             $jobCategory->delete();
+
             return response()->json(null, 204); // 204 No Content
         } catch (\Exception $e) {
             Log::error('Error deleting job category: '.$jobCategory->id, ['error' => $e->getMessage()]);
+
             return response()->json(['message' => 'Failed to delete job category.'], 500);
         }
     }
@@ -120,8 +123,8 @@ class JobCategoryController extends Controller
             $optionalHeaders = ['description'];
             $actualHeaders = array_map('strtolower', array_map('trim', $csv->getHeader()));
 
-            if (!in_array('name', $actualHeaders)) {
-                 return response()->json(['message' => 'CSV file is missing required column: name'], 422);
+            if (! in_array('name', $actualHeaders)) {
+                return response()->json(['message' => 'CSV file is missing required column: name'], 422);
             }
 
             $records = Statement::create()->process($csv);
@@ -131,28 +134,29 @@ class JobCategoryController extends Controller
             DB::beginTransaction();
 
             foreach ($records as $index => $record) {
-                 // Normalize keys
-                 $normalizedRecord = [];
-                 foreach ($record as $key => $value) {
-                     $normalizedRecord[strtolower(trim($key))] = trim($value);
-                 }
+                // Normalize keys
+                $normalizedRecord = [];
+                foreach ($record as $key => $value) {
+                    $normalizedRecord[strtolower(trim($key))] = trim($value);
+                }
 
-                 $name = $normalizedRecord['name'] ?? null;
-                 $description = $normalizedRecord['description'] ?? null;
+                $name = $normalizedRecord['name'] ?? null;
+                $description = $normalizedRecord['description'] ?? null;
 
-                 if (empty($name)) {
-                     $errors[] = "Row ".($index + 1).": 'name' column is empty.";
-                     continue;
-                 }
+                if (empty($name)) {
+                    $errors[] = 'Row '.($index + 1).": 'name' column is empty.";
 
-                 $slug = $this->generateUniqueSlug($name);
+                    continue;
+                }
 
-                 // Use updateOrCreate: Find category by name (case-insensitive)
-                 JobCategory::updateOrCreate(
+                $slug = $this->generateUniqueSlug($name);
+
+                // Use updateOrCreate: Find category by name (case-insensitive)
+                JobCategory::updateOrCreate(
                     [
                         // Use a case-insensitive check if your DB supports it, or normalize before check
                         // 'name' => $name // Simple check
-                         DB::raw('LOWER(name)') => strtolower($name) // Case-insensitive check (example for MySQL/PostgreSQL)
+                        DB::raw('LOWER(name)') => strtolower($name), // Case-insensitive check (example for MySQL/PostgreSQL)
                     ],
                     [
                         'name' => $name, // Store original case
@@ -164,14 +168,15 @@ class JobCategoryController extends Controller
                 $successCount++;
             }
 
-            if (!empty($errors)) {
-                 DB::rollBack();
-                 return response()->json([
-                     'message' => 'Upload failed due to errors in some rows.',
-                     'errors' => $errors,
-                     'processed_count' => $successCount + count($errors),
-                     'success_count' => $successCount,
-                 ], 422);
+            if (! empty($errors)) {
+                DB::rollBack();
+
+                return response()->json([
+                    'message' => 'Upload failed due to errors in some rows.',
+                    'errors' => $errors,
+                    'processed_count' => $successCount + count($errors),
+                    'success_count' => $successCount,
+                ], 422);
             }
 
             DB::commit();
@@ -182,19 +187,21 @@ class JobCategoryController extends Controller
             ]);
 
         } catch (\League\Csv\Exception $e) {
-            Log::error('Job Category CSV Error: ' . $e->getMessage());
+            Log::error('Job Category CSV Error: '.$e->getMessage());
+
             return response()->json(['message' => 'Error reading CSV file. Ensure it is correctly formatted.'], 422);
         } catch (\Exception $e) {
-             DB::rollBack();
-             Log::error('Job Category Bulk Upload Error: ' . $e->getMessage());
-             return response()->json(['message' => 'An unexpected error occurred during bulk upload.'], 500);
+            DB::rollBack();
+            Log::error('Job Category Bulk Upload Error: '.$e->getMessage());
+
+            return response()->json(['message' => 'An unexpected error occurred during bulk upload.'], 500);
         }
     }
 
     /**
      * Helper function to generate a unique slug.
      */
-    private function generateUniqueSlug(string $name, int $ignoreId = null): string
+    private function generateUniqueSlug(string $name, ?int $ignoreId = null): string
     {
         $slug = Str::slug($name);
         $originalSlug = $slug;
@@ -210,10 +217,10 @@ class JobCategoryController extends Controller
 
         // Check if slug exists
         while ($query->exists()) {
-            $slug = $originalSlug . '-' . $counter++;
+            $slug = $originalSlug.'-'.$counter++;
             // Re-build query for the next check
             $query = JobCategory::where('slug', $slug);
-             if ($ignoreId !== null) {
+            if ($ignoreId !== null) {
                 $query->where('id', '!=', $ignoreId);
             }
         }

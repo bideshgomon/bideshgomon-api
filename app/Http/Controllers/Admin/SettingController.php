@@ -4,14 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting; // <-- Ensure this model exists
-use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Inertia\Response;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 // --- REMOVED unused UpdateSettingsRequest for now ---
 // use App\Http\Requests\Admin\UpdateSettingsRequest;
-use Illuminate\Support\Facades\Cache; // Import Cache facade
-use Illuminate\Support\Facades\Log; // Import Log facade
+use Inertia\Inertia; // Import Cache facade
+use Inertia\Response; // Import Log facade
 
 class SettingController extends Controller
 {
@@ -25,11 +25,12 @@ class SettingController extends Controller
         // We define a default structure in case settings are missing
         $settingsFromDb = Cache::rememberForever('app_settings', function () {
             // Ensure Setting model exists and uses 'key' as primary key or has 'key' column
-             try {
+            try {
                 return Setting::all()->keyBy('key');
             } catch (\Exception $e) {
                 // Log error if table/model doesn't exist
-                Log::error("Error fetching settings: " . $e->getMessage());
+                Log::error('Error fetching settings: '.$e->getMessage());
+
                 return collect(); // Return empty collection on error
             }
         });
@@ -47,13 +48,13 @@ class SettingController extends Controller
                 'label' => 'Contact Email',
                 'value' => $settingsFromDb->get('contact_email')?->value ?? '',
                 'type' => 'email',
-                 'validation' => 'nullable|email|max:100',
+                'validation' => 'nullable|email|max:100',
             ],
             'contact_phone' => [
                 'label' => 'Contact Phone',
                 'value' => $settingsFromDb->get('contact_phone')?->value ?? '',
                 'type' => 'text',
-                 'validation' => 'nullable|string|max:50',
+                'validation' => 'nullable|string|max:50',
             ],
             // Example boolean setting (uncomment and adjust key if needed)
             // 'maintenance_mode' => [
@@ -89,18 +90,19 @@ class SettingController extends Controller
         $validatedData = $request->validate($rules)['settings'];
 
         foreach ($validatedData as $key => $data) {
-             // Ensure Setting model exists and uses 'key' as primary key or has 'key' column
-             try {
+            // Ensure Setting model exists and uses 'key' as primary key or has 'key' column
+            try {
                 Setting::updateOrCreate(
                     ['key' => $key],
                     // Only update the 'value'. Handle boolean correctly.
                     ['value' => is_bool($data['value']) ? ($data['value'] ? '1' : '0') : $data['value']]
                 );
             } catch (\Exception $e) {
-                 // Log error and redirect back with error
-                 Log::error("Error updating setting '{$key}': " . $e->getMessage());
-                 return redirect()->route('admin.settings.index')
-                                  ->with('error', 'Failed to update settings. Please check the logs.');
+                // Log error and redirect back with error
+                Log::error("Error updating setting '{$key}': ".$e->getMessage());
+
+                return redirect()->route('admin.settings.index')
+                    ->with('error', 'Failed to update settings. Please check the logs.');
             }
         }
 
@@ -109,6 +111,6 @@ class SettingController extends Controller
 
         // --- Use Inertia flash message ---
         return redirect()->route('admin.settings.index')
-                         ->with('success', 'Settings updated successfully.'); // Use Inertia's built-in flash messaging
+            ->with('success', 'Settings updated successfully.'); // Use Inertia's built-in flash messaging
     }
 }

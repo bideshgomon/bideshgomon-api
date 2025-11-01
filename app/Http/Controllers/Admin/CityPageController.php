@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\City; // 1. Import the City model
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class CityPageController extends Controller
@@ -18,7 +17,7 @@ class CityPageController extends Controller
         // 2. Fetch paginated cities and pass them to the new Vue page
         // Eager-load the state and country relationships from your City model
         return Inertia::render('Admin/Cities/Index', [
-            'cities' => City::with('state.country')->latest()->paginate(10)
+            'cities' => City::with('state.country')->latest()->paginate(10),
         ]);
     }
 }

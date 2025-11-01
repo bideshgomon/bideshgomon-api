@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Airline;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Validation\Rule;
+use Inertia\Inertia;
 
 class AirlinePageController extends Controller
 {
@@ -21,7 +21,7 @@ class AirlinePageController extends Controller
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where('name', 'like', "%{$search}%")
-                  ->orWhere('iata_code', 'like', "%{$search}%");
+                ->orWhere('iata_code', 'like', "%{$search}%");
         }
 
         // Paginate results
@@ -62,7 +62,7 @@ class AirlinePageController extends Controller
     public function edit(Airline $airline)
     {
         return Inertia::render('Admin/Airlines/Edit', [
-            'airline' => $airline
+            'airline' => $airline,
         ]);
     }
 

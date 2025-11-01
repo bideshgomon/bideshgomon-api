@@ -18,9 +18,9 @@ class GuidanceController extends Controller
 
         // Eager load all profile relationships in one query
         $user->load(
-            'educations', 
-            'experiences', 
-            'portfolios', 
+            'educations',
+            'experiences',
+            'portfolios',
             'documents',
             'skills' // <-- **FIX 1: ADDED 'skills' TO THE LOAD LIST**
         );
@@ -33,7 +33,7 @@ class GuidanceController extends Controller
             'skills' => $user->skills->isNotEmpty(), // <-- **FIX 2: CHANGED CHECK TO isNotEmpty()**
             'documents' => $user->documents->isNotEmpty(),
             'passport' => $user->documents->contains(
-                fn($doc) => $doc->document_type_id === 1 // Assuming 'Passport' is ID 1
+                fn ($doc) => $doc->document_type_id === 1 // Assuming 'Passport' is ID 1
             ),
         ];
 

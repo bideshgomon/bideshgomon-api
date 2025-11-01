@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\ConsultationService;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Inertia\Response;
-use Illuminate\Http\RedirectResponse;
-// Import our new Form Requests
 use App\Http\Requests\Admin\StoreConsultationServiceRequest;
 use App\Http\Requests\Admin\UpdateConsultationServiceRequest;
+use App\Models\ConsultationService;
+use Illuminate\Http\RedirectResponse;
+// Import our new Form Requests
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ConsultationServiceController extends Controller
 {
@@ -42,7 +41,7 @@ class ConsultationServiceController extends Controller
         ConsultationService::create($request->validated());
 
         return redirect()->route('admin.consultation-services.index')
-                         ->with('success', 'Consultation service created.');
+            ->with('success', 'Consultation service created.');
     }
 
     /**
@@ -63,7 +62,7 @@ class ConsultationServiceController extends Controller
         $consultationService->update($request->validated());
 
         return redirect()->route('admin.consultation-services.index')
-                         ->with('success', 'Consultation service updated.');
+            ->with('success', 'Consultation service updated.');
     }
 
     /**
@@ -74,6 +73,6 @@ class ConsultationServiceController extends Controller
         $consultationService->delete();
 
         return redirect()->route('admin.consultation-services.index')
-                         ->with('success', 'Consultation service deleted.');
+            ->with('success', 'Consultation service deleted.');
     }
 }

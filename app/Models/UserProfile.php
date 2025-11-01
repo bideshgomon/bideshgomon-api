@@ -24,7 +24,7 @@ class UserProfile extends Model
         'nationality',
         'passport_number',
         'ai_analysis_results',
-        
+
         // --- NEWLY ADDED ---
         'gender',
         'marital_status',

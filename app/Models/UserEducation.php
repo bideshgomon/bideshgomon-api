@@ -23,12 +23,12 @@ class UserEducation extends Model
         'start_date',
         'end_date',
         'grade',
-        'description'
+        'description',
     ];
 
     protected $casts = [
         'start_date' => 'date',
-        'end_date' => 'date'
+        'end_date' => 'date',
     ];
 
     public function user(): BelongsTo

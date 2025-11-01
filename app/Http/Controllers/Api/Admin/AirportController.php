@@ -45,7 +45,7 @@ class AirportController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'code' => 'required|string|max:10|unique:airports,code,' . $airport->id,
+            'code' => 'required|string|max:10|unique:airports,code,'.$airport->id,
             'country_id' => 'required|exists:countries,id',
             // 'city_id' => 'nullable|exists:cities,id',
         ]);

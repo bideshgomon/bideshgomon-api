@@ -4,15 +4,14 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Skill;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Validation\Rule;
-use League\Csv\Reader;
-use League\Csv\Statement;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str; // Import Str facade
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use League\Csv\Reader;
+use League\Csv\Statement; // Import Str facade
 
 class SkillController extends Controller
 {
@@ -27,7 +26,7 @@ class SkillController extends Controller
             $searchTerm = $request->input('search');
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('name', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('category', 'LIKE', "%{$searchTerm}%");
+                    ->orWhere('category', 'LIKE', "%{$searchTerm}%");
             });
         }
 
@@ -51,7 +50,7 @@ class SkillController extends Controller
 
         // Check if slug is unique, if not, append a hash
         if (Skill::where('slug', $validated['slug'])->exists()) {
-            $validated['slug'] = $validated['slug'] . '-' . strtolower(Str::random(4));
+            $validated['slug'] = $validated['slug'].'-'.strtolower(Str::random(4));
         }
 
         $skill = Skill::create($validated);
@@ -73,10 +72,10 @@ class SkillController extends Controller
         if ($skill->name !== $validated['name']) {
             $validated['slug'] = Str::slug($validated['name']);
             if (Skill::where('slug', $validated['slug'])->where('id', '!=', $skill->id)->exists()) {
-                $validated['slug'] = $validated['slug'] . '-' . strtolower(Str::random(4));
+                $validated['slug'] = $validated['slug'].'-'.strtolower(Str::random(4));
             }
         }
-        
+
         $skill->update($validated);
 
         return response()->json($skill);
@@ -88,15 +87,17 @@ class SkillController extends Controller
     public function destroy(Skill $skill): JsonResponse
     {
         // Add check: Prevent deletion if related records exist (e.g., user_skill pivot)
-         if ($skill->users()->exists()) {
-             return response()->json(['message' => 'Cannot delete skill. It is currently in use by one or more users.'], 409); // 409 Conflict
-         }
+        if ($skill->users()->exists()) {
+            return response()->json(['message' => 'Cannot delete skill. It is currently in use by one or more users.'], 409); // 409 Conflict
+        }
 
         try {
             $skill->delete();
+
             return response()->json(null, 204);
         } catch (\Exception $e) {
             Log::error('Error deleting skill: '.$skill->id, ['error' => $e->getMessage()]);
+
             return response()->json(['message' => 'Failed to delete skill.'], 500);
         }
     }
@@ -121,8 +122,8 @@ class SkillController extends Controller
             $optionalHeaders = ['category'];
             $actualHeaders = array_map('strtolower', array_map('trim', $csv->getHeader()));
 
-            if (!in_array('name', $actualHeaders)) {
-                 return response()->json(['message' => 'CSV file is missing required column: name'], 422);
+            if (! in_array('name', $actualHeaders)) {
+                return response()->json(['message' => 'CSV file is missing required column: name'], 422);
             }
 
             $records = Statement::create()->process($csv);
@@ -132,33 +133,34 @@ class SkillController extends Controller
             DB::beginTransaction();
 
             foreach ($records as $index => $record) {
-                 // Normalize keys
-                 $normalizedRecord = [];
-                 foreach ($record as $key => $value) {
-                     $normalizedRecord[strtolower(trim($key))] = trim($value);
-                 }
+                // Normalize keys
+                $normalizedRecord = [];
+                foreach ($record as $key => $value) {
+                    $normalizedRecord[strtolower(trim($key))] = trim($value);
+                }
 
-                 $name = $normalizedRecord['name'] ?? null;
-                 $category = $normalizedRecord['category'] ?? null;
+                $name = $normalizedRecord['name'] ?? null;
+                $category = $normalizedRecord['category'] ?? null;
 
-                 if (empty($name)) {
-                     $errors[] = "Row ".($index + 1).": 'name' column is empty.";
-                     continue;
-                 }
-                 
-                 $slug = Str::slug($name);
-                 $originalSlug = $slug;
-                 $counter = 1;
+                if (empty($name)) {
+                    $errors[] = 'Row '.($index + 1).": 'name' column is empty.";
 
-                 // Ensure slug is unique
-                 while (Skill::where('slug', $slug)->exists()) {
-                     $slug = $originalSlug . '-' . $counter++;
-                 }
+                    continue;
+                }
 
-                 // Use updateOrCreate: Find skill by name (case-insensitive)
-                 Skill::updateOrCreate(
+                $slug = Str::slug($name);
+                $originalSlug = $slug;
+                $counter = 1;
+
+                // Ensure slug is unique
+                while (Skill::where('slug', $slug)->exists()) {
+                    $slug = $originalSlug.'-'.$counter++;
+                }
+
+                // Use updateOrCreate: Find skill by name (case-insensitive)
+                Skill::updateOrCreate(
                     [
-                        'name' => $name
+                        'name' => $name,
                     ],
                     [
                         'slug' => $slug, // Set the generated unique slug
@@ -168,14 +170,15 @@ class SkillController extends Controller
                 $successCount++;
             }
 
-            if (!empty($errors)) {
-                 DB::rollBack();
-                 return response()->json([
-                     'message' => 'Upload failed due to errors in some rows.',
-                     'errors' => $errors,
-                     'processed_count' => $successCount + count($errors),
-                     'success_count' => $successCount,
-                 ], 422);
+            if (! empty($errors)) {
+                DB::rollBack();
+
+                return response()->json([
+                    'message' => 'Upload failed due to errors in some rows.',
+                    'errors' => $errors,
+                    'processed_count' => $successCount + count($errors),
+                    'success_count' => $successCount,
+                ], 422);
             }
 
             DB::commit();
@@ -186,12 +189,14 @@ class SkillController extends Controller
             ]);
 
         } catch (\League\Csv\Exception $e) {
-            Log::error('Skill CSV Processing Error: ' . $e->getMessage());
+            Log::error('Skill CSV Processing Error: '.$e->getMessage());
+
             return response()->json(['message' => 'Error reading CSV file. Ensure it is correctly formatted.'], 422);
         } catch (\Exception $e) {
-             DB::rollBack();
-             Log::error('Skill Bulk Upload Error: ' . $e->getMessage());
-             return response()->json(['message' => 'An unexpected error occurred during bulk upload.'], 500);
+            DB::rollBack();
+            Log::error('Skill Bulk Upload Error: '.$e->getMessage());
+
+            return response()->json(['message' => 'An unexpected error occurred during bulk upload.'], 500);
         }
     }
 }

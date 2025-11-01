@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
-use App\Models\WorkVisaApplication;
 use App\Models\Country;
 use App\Models\JobCategory;
+use App\Models\WorkVisaApplication;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class WorkVisaApplicationPageController extends Controller
@@ -40,8 +39,8 @@ class WorkVisaApplicationPageController extends Controller
      */
     public function show(Request $request, WorkVisaApplication $workVisaApplication)
     {
-         // Basic authorization: Ensure the user owns this application
-         // This check might be better handled by route model binding policies later
+        // Basic authorization: Ensure the user owns this application
+        // This check might be better handled by route model binding policies later
         if ($request->user()->id !== $workVisaApplication->user_id) {
             abort(403);
         }

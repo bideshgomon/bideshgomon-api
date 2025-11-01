@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Country;
 use App\Models\State;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class StatePageController extends Controller
@@ -21,7 +20,7 @@ class StatePageController extends Controller
             'states' => State::with('country')
                 ->latest()
                 ->paginate(10),
-            
+
             // Pass all countries for the modal's <select> dropdown
             'countries' => Country::orderBy('name')->get(['id', 'name']),
         ]);

@@ -21,7 +21,7 @@ class UserLicense extends Model
         'issuing_authority',
         'file_path',
     ];
-    
+
     protected $casts = [
         'issue_date' => 'date',
         'expiry_date' => 'date',

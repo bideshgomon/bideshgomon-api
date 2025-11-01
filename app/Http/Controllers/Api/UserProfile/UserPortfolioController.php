@@ -15,6 +15,7 @@ class UserPortfolioController extends Controller
     public function index()
     {
         $portfolios = Auth::user()->portfolios()->orderBy('created_at', 'desc')->get();
+
         return response()->json($portfolios);
     }
 
@@ -44,7 +45,7 @@ class UserPortfolioController extends Controller
         if ($portfolio->user_id !== Auth::id()) {
             return response()->json(['message' => 'Forbidden'], 403);
         }
-        
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',

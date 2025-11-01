@@ -12,7 +12,6 @@ class StudentVisaApplicationController extends Controller
     /**
      * Display a listing of the resource (Admin view with filtering).
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
@@ -22,7 +21,7 @@ class StudentVisaApplicationController extends Controller
             'destinationCountry:id,name',
             'university:id,name',
             'course:id,name',
-            'agency:id,name'
+            'agency:id,name',
         ])->latest(); // Order by newest first
 
         // --- Filtering Logic ---
@@ -30,11 +29,11 @@ class StudentVisaApplicationController extends Controller
         if ($request->filled('search')) {
             $searchTerm = $request->input('search');
             $query->where(function ($q) use ($searchTerm) {
-                $q->whereHas('user', function($uq) use ($searchTerm) {
+                $q->whereHas('user', function ($uq) use ($searchTerm) {
                     $uq->where('name', 'like', "%{$searchTerm}%")
-                       ->orWhere('email', 'like', "%{$searchTerm}%");
+                        ->orWhere('email', 'like', "%{$searchTerm}%");
                 })
-                ->orWhere('application_reference', 'like', "%{$searchTerm}%");
+                    ->orWhere('application_reference', 'like', "%{$searchTerm}%");
             });
         }
 
@@ -78,20 +77,18 @@ class StudentVisaApplicationController extends Controller
      * Store a newly created resource in storage.
      * (Admins typically don't create applications FOR users, this is likely unused).
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
-         // If needed, implement creation logic specific to admin actions.
-         // Usually, users initiate applications.
-         abort(501, 'Not Implemented'); // Or return a 403 Forbidden
+        // If needed, implement creation logic specific to admin actions.
+        // Usually, users initiate applications.
+        abort(501, 'Not Implemented'); // Or return a 403 Forbidden
     }
 
     /**
      * Display the specified resource (Admin view).
      *
-     * @param  \App\Models\StudentVisaApplication  $studentVisaApplication
      * @return \Illuminate\Http\JsonResponse
      */
     public function show(StudentVisaApplication $studentVisaApplication)
@@ -103,7 +100,7 @@ class StudentVisaApplicationController extends Controller
                 'destinationCountry:id,name',
                 'university:id,name',
                 'course:id,name', // Load course details
-                'agency:id,name'
+                'agency:id,name',
                 // Add documents relation later if needed
             ])
         );
@@ -112,8 +109,6 @@ class StudentVisaApplicationController extends Controller
     /**
      * Update the specified resource in storage (Admin actions).
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\StudentVisaApplication  $studentVisaApplication
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, StudentVisaApplication $studentVisaApplication)
@@ -129,7 +124,7 @@ class StudentVisaApplicationController extends Controller
         ]);
 
         // Prevent accidental update of user notes or other user-managed fields via this admin endpoint
-        unset($validated['user_notes'], $validated['user_id'], $validated['destination_country_id'], /* ... other user fields ... */);
+        unset($validated['user_notes'], $validated['user_id'], $validated['destination_country_id']/* ... other user fields ... */);
 
         $studentVisaApplication->update($validated);
 
@@ -144,7 +139,7 @@ class StudentVisaApplicationController extends Controller
                 'destinationCountry:id,name',
                 'university:id,name',
                 'course:id,name',
-                'agency:id,name'
+                'agency:id,name',
             ])
         );
     }
@@ -152,7 +147,6 @@ class StudentVisaApplicationController extends Controller
     /**
      * Remove the specified resource from storage (Admin action).
      *
-     * @param  \App\Models\StudentVisaApplication  $studentVisaApplication
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(StudentVisaApplication $studentVisaApplication)

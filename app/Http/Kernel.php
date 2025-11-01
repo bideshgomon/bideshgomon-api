@@ -21,9 +21,9 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrustProxies::class,
         // Global CORS handling is important
         \Illuminate\Http\Middleware\HandleCors::class,
-         \Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance::class, // Laravel 10+ location
-         \Illuminate\Http\Middleware\ValidatePathEncoding::class, // Added for safety
-         \Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks::class, // Added for safety
+        \Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance::class, // Laravel 10+ location
+        \Illuminate\Http\Middleware\ValidatePathEncoding::class, // Added for safety
+        \Illuminate\Foundation\Http\Middleware\InvokeDeferredCallbacks::class, // Added for safety
     ];
 
     /**
@@ -48,7 +48,7 @@ class Kernel extends HttpKernel
         'api' => [
             // --- THIS LINE IS NOW UNCOMMENTED ---
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-           
+
             'throttle:api', // Example API rate limiting
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],

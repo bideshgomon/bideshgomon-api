@@ -26,9 +26,9 @@ class WorkVisaApplicationController extends Controller
             $query->where(function ($q) use ($searchTerm) {
                 $q->whereHas('user', function ($uq) use ($searchTerm) {
                     $uq->where('name', 'like', "%{$searchTerm}%")
-                       ->orWhere('email', 'like', "%{$searchTerm}%");
+                        ->orWhere('email', 'like', "%{$searchTerm}%");
                 })
-                ->orWhere('application_reference', 'like', "%{$searchTerm}%");
+                    ->orWhere('application_reference', 'like', "%{$searchTerm}%");
             });
         }
 
@@ -86,7 +86,7 @@ class WorkVisaApplicationController extends Controller
                 'destinationCountry:id,name',
                 'jobCategory:id,name',
                 'jobPosting:id,title',
-                'agency:id,name'
+                'agency:id,name',
                 // Add documents relation later if needed
             ])
         );
@@ -118,7 +118,7 @@ class WorkVisaApplicationController extends Controller
             $workVisaApplication->load([
                 'user:id,name,email',
                 'destinationCountry:id,name',
-                'agency:id,name'
+                'agency:id,name',
             ])
         );
     }

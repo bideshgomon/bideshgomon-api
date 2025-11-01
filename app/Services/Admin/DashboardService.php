@@ -1,10 +1,11 @@
 <?php
+
 // app/Services/Admin/DashboardService.php
 
 namespace App\Services\Admin;
 
-use App\Models\User;
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -13,8 +14,6 @@ class DashboardService
     /**
      * Get the aggregated statistics for the admin dashboard.
      * Caches the result for 10 minutes.
-     *
-     * @return array
      */
     public function getDashboardStats(): array
     {

@@ -27,7 +27,7 @@ class ProfileController extends Controller
             'documentTypes' => DocumentType::select('id', 'name')->orderBy('name')->get(),
             // Add any other required prebuilt data here (e.g., skills)
         ];
-        
+
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
@@ -45,14 +45,14 @@ class ProfileController extends Controller
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
-        
+
         // --- This section updates the UserProfile model ---
         $profileData = $request->only([
-            'bio', 'address', 'date_of_birth', 'nationality_country_id' 
+            'bio', 'address', 'date_of_birth', 'nationality_country_id',
             // Add any other UserProfile fields from the request
         ]);
 
-        if (!empty($profileData)) {
+        if (! empty($profileData)) {
             $request->user()->profile()->updateOrCreate(
                 ['user_id' => $request->user()->id],
                 $profileData

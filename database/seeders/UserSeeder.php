@@ -2,12 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Role;
+use App\Models\User;
+use App\Models\UserProfile;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
-use App\Models\Role;
-use App\Models\UserProfile;
 
 class UserSeeder extends Seeder
 {
@@ -38,7 +37,7 @@ class UserSeeder extends Seeder
 
         // Create Agency User
         if ($agencyRole) {
-           $agencyUser = User::firstOrCreate(
+            $agencyUser = User::firstOrCreate(
                 ['email' => 'agency@bideshgomon.com'],
                 [
                     'name' => 'Agency User',
@@ -62,7 +61,7 @@ class UserSeeder extends Seeder
                     'email_verified_at' => now(),
                 ]
             );
-             // Create profile if Consultant needs one
+            // Create profile if Consultant needs one
             UserProfile::firstOrCreate(['user_id' => $consultantUser->id]);
         }
 

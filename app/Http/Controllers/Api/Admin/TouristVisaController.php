@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\TouristVisa;
 use App\Models\TouristVisaDocument; // Import document model
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class TouristVisaController extends Controller
 {
@@ -16,21 +16,20 @@ class TouristVisaController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = TouristVisa::with(['user:id,name', 'destinationCountry:id,name'])
-                            ->latest(); // Order by most recent
+            ->latest(); // Order by most recent
 
         // Basic Search (Example: by user name or country name)
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
-                $q->whereHas('user', fn($subQ) => $subQ->where('name', 'like', "%{$search}%"))
-                  ->orWhereHas('destinationCountry', fn($subQ) => $subQ->where('name', 'like', "%{$search}%"));
+                $q->whereHas('user', fn ($subQ) => $subQ->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('destinationCountry', fn ($subQ) => $subQ->where('name', 'like', "%{$search}%"));
             });
         }
 
         // Filter by status
         if ($status = $request->input('status')) {
-             $query->where('status', $status);
+            $query->where('status', $status);
         }
-
 
         $visas = $query->paginate(15)->withQueryString();
 
@@ -42,7 +41,6 @@ class TouristVisaController extends Controller
      * We might not need a separate API endpoint just for showing details initially.
      */
     // public function show(TouristVisa $touristVisa) { ... }
-
 
     /**
      * Update the status or notes of the specified tourist visa application.
@@ -57,10 +55,10 @@ class TouristVisaController extends Controller
         $touristVisa->update($validated);
 
         return response()->json($touristVisa->fresh([ // Return fresh data
-             'user:id,name,email',
-             'destinationCountry:id,name',
-             'documents.documentType:id,name',
-             'documents.userDocument:id,file_path,file_name'
+            'user:id,name,email',
+            'destinationCountry:id,name',
+            'documents.documentType:id,name',
+            'documents.userDocument:id,file_path,file_name',
         ]));
     }
 
@@ -69,7 +67,7 @@ class TouristVisaController extends Controller
      */
     public function updateDocumentStatus(Request $request, TouristVisaDocument $document): JsonResponse
     {
-         $validated = $request->validate([
+        $validated = $request->validate([
             'status' => 'required|string|in:pending,submitted,verified,rejected', // Example statuses
             'admin_notes' => 'nullable|string',
         ]);
@@ -79,7 +77,6 @@ class TouristVisaController extends Controller
         // Return the updated document with its type
         return response()->json($document->load('documentType:id,name'));
     }
-
 
     /**
      * Remove the specified tourist visa application from storage.

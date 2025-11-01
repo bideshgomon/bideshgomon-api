@@ -24,21 +24,21 @@ class UniversityController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->input('search');
-             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('description', 'like', '%' . $search . '%')
-                  ->orWhereHas('city', function($cityQuery) use ($search) {
-                      $cityQuery->where('name', 'like', '%' . $search . '%');
-                  })
-                  ->orWhereHas('city.state', function($stateQuery) use ($search) {
-                      $stateQuery->where('name', 'like', '%' . $search . '%');
-                  })
-                  ->orWhereHas('city.state.country', function($countryQuery) use ($search) {
-                       $countryQuery->where('name', 'like', '%' . $search . '%');
-                  })
-                  ->orWhereHas('city.country', function($countryQuery) use ($search) {
-                       $countryQuery->where('name', 'like', '%' . $search . '%');
-                  });
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('description', 'like', '%'.$search.'%')
+                    ->orWhereHas('city', function ($cityQuery) use ($search) {
+                        $cityQuery->where('name', 'like', '%'.$search.'%');
+                    })
+                    ->orWhereHas('city.state', function ($stateQuery) use ($search) {
+                        $stateQuery->where('name', 'like', '%'.$search.'%');
+                    })
+                    ->orWhereHas('city.state.country', function ($countryQuery) use ($search) {
+                        $countryQuery->where('name', 'like', '%'.$search.'%');
+                    })
+                    ->orWhereHas('city.country', function ($countryQuery) use ($search) {
+                        $countryQuery->where('name', 'like', '%'.$search.'%');
+                    });
             });
         }
 
@@ -68,7 +68,7 @@ class UniversityController extends Controller
      */
     public function create(): Response
     {
-         return $this->index(new Request()); // Redirect to index
+        return $this->index(new Request); // Redirect to index
     }
 
     /**
@@ -94,7 +94,7 @@ class UniversityController extends Controller
      */
     public function edit(University $university): Response
     {
-         return $this->index(new Request()); // Redirect to index
+        return $this->index(new Request); // Redirect to index
     }
 
     /**
@@ -136,13 +136,14 @@ class UniversityController extends Controller
     {
         $request->validate(['state_id' => 'required|exists:states,id']);
         $cities = City::where('state_id', $request->state_id)
-                       ->where('is_active', true)
-                       ->orderBy('name')
-                       ->get(['id', 'name']);
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
         return response()->json($cities);
     }
 
-     /**
+    /**
      * Get cities directly linked to a country ID (for AJAX calls from Vue modal).
      */
     public function getCitiesForCountry(Request $request)
@@ -150,10 +151,11 @@ class UniversityController extends Controller
         $request->validate(['country_id' => 'required|exists:countries,id']);
         // Fetch cities linked directly to the country (state_id is null)
         $cities = City::where('country_id', $request->country_id)
-                       ->whereNull('state_id') // Important condition
-                       ->where('is_active', true)
-                       ->orderBy('name')
-                       ->get(['id', 'name']);
+            ->whereNull('state_id') // Important condition
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
         return response()->json($cities);
     }
 }

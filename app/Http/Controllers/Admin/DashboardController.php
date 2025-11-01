@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -20,7 +21,7 @@ class DashboardController extends Controller
             'total_universities' => University::count(),
             'total_courses' => Course::count(),
         ];
-        
+
         // Fetch recent users (e.g., last 5)
         $recentUsers = User::where('role_id', '!=', 1)
             ->with('profile') // Eager load profile if it exists

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Country;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB; // <-- Add this
+// <-- Add this
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator; // <-- Add this
 use Illuminate\Validation\Rule;
@@ -24,10 +24,10 @@ class CountryController extends Controller
 
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('iso_code', 'like', '%' . $search . '%')
-                  ->orWhere('iso_code_3', 'like', '%' . $search . '%');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('iso_code', 'like', '%'.$search.'%')
+                    ->orWhere('iso_code_3', 'like', '%'.$search.'%');
             });
         }
 
@@ -55,7 +55,7 @@ class CountryController extends Controller
     public function create(): Response
     {
         // We now use a modal on the index page
-        return $this->index(new Request());
+        return $this->index(new Request);
     }
 
     /**
@@ -89,8 +89,8 @@ class CountryController extends Controller
      */
     public function edit(Country $country): Response
     {
-         // We now use a modal on the index page
-        return $this->index(new Request());
+        // We now use a modal on the index page
+        return $this->index(new Request);
     }
 
     /**
@@ -153,8 +153,8 @@ class CountryController extends Controller
         // Define expected headers
         $requiredHeaders = ['name', 'iso_code', 'iso_code_3'];
         foreach ($requiredHeaders as $requiredHeader) {
-            if (!in_array($requiredHeader, $header)) {
-                 return Redirect::route('admin.countries.index')
+            if (! in_array($requiredHeader, $header)) {
+                return Redirect::route('admin.countries.index')
                     ->with('error', "CSV file is missing required header: $requiredHeader");
             }
         }
@@ -191,7 +191,7 @@ class CountryController extends Controller
             ]);
 
             if ($validator->fails()) {
-                $validationErrors[] = "Row $rowNumber: " . implode(', ', $validator->errors()->all());
+                $validationErrors[] = "Row $rowNumber: ".implode(', ', $validator->errors()->all());
             } else {
                 $countriesToInsert[] = $validator->validated();
             }
@@ -214,15 +214,15 @@ class CountryController extends Controller
                     ['iso_code'], // Unique identifier(s)
                     [ // Columns to update if duplicate is found
                         'name', 'iso_code_3', 'country_code', 'capital',
-                        'currency', 'continent', 'subregion', 'nationality', 'is_active'
+                        'currency', 'continent', 'subregion', 'nationality', 'is_active',
                     ]
                 );
 
                 return Redirect::route('admin.countries.index')
-                    ->with('success', count($countriesToInsert) . ' countries imported successfully.');
+                    ->with('success', count($countriesToInsert).' countries imported successfully.');
             } catch (\Exception $e) {
                 return Redirect::route('admin.countries.index')
-                    ->with('error', 'An error occurred during import: ' . $e->getMessage());
+                    ->with('error', 'An error occurred during import: '.$e->getMessage());
             }
         }
 

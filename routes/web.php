@@ -1,23 +1,23 @@
 <?php
 
 // --- Use statements with namespaces ---
+use App\Http\Controllers\Admin\CityPageController;
+use App\Http\Controllers\Admin\CountryPageController;
+use App\Http\Controllers\Admin\CourseController as AdminCourseController;
+use App\Http\Controllers\Admin\JobCategoryController as AdminJobCategoryController;
+use App\Http\Controllers\Admin\JobController as AdminJobController;
+use App\Http\Controllers\Admin\StatePageController;
+use App\Http\Controllers\Admin\UniversityController as AdminUniversityController;
 use App\Http\Controllers\Profile\CvBuilderController;
 use App\Http\Controllers\Profile\DashboardController;
 use App\Http\Controllers\Profile\EducationController;
 use App\Http\Controllers\Profile\ExperienceController;
 use App\Http\Controllers\Profile\PortfolioController;
-use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\Profile\SkillController;
 use App\Http\Controllers\Profile\UserDocumentController;
-use App\Http\Controllers\PublicPageController;
-use App\Http\Controllers\Admin\CourseController as AdminCourseController;
-use App\Http\Controllers\Admin\JobCategoryController as AdminJobCategoryController;
-use App\Http\Controllers\Admin\JobController as AdminJobController;
-use App\Http\Controllers\Admin\UniversityController as AdminUniversityController;
-use App\Http\Controllers\Admin\CountryPageController; 
-use App\Http\Controllers\Admin\StatePageController;
+use App\Http\Controllers\ProfileController;
 // --- FIXED: Import the new CityPageController ---
-use App\Http\Controllers\Admin\CityPageController;
+use App\Http\Controllers\PublicPageController;
 // --- Framework classes ---
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -46,10 +46,9 @@ Route::get('/universities/{university}', [PublicPageController::class, 'showUniv
 Route::get('/courses', [PublicPageController::class, 'showCourseSearch'])->name('courses.index');
 Route::get('/courses/{course}', [PublicPageController::class, 'showCourseDetail'])->name('courses.show');
 
-
 // --- Authenticated User Routes ---
 Route::middleware(['auth', 'verified'])->group(function () {
-    
+
     // --- Role-Specific Dashboards ---
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->middleware('role:user')
@@ -57,22 +56,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/agency/dashboard', function () {
         return Inertia::render('Agency/Dashboard');
     })->middleware('role:agency')
-      ->name('agency.dashboard');
+        ->name('agency.dashboard');
     Route::get('/consultant/dashboard', function () {
         return Inertia::render('Consultant/Dashboard');
     })->middleware('role:consultant')
-      ->name('consultant.dashboard');
-    
+        ->name('consultant.dashboard');
+
     // Profile Management
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update'); 
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy'); 
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::patch('/profile/details', [ProfileController::class, 'updateDetails'])->name('profile.updateDetails');
-    
+
     // CV Builder
     Route::get('/profile/cv-builder', [CvBuilderController::class, 'show'])->name('profile.cv.show');
     Route::get('/profile/cv-builder/download', [CvBuilderController::class, 'download'])->name('profile.cv.download');
-    
+
     // Profile API Resources
     Route::prefix('api')->name('api.profile.')->group(function () {
         Route::apiResource('profile/educations', EducationController::class);
@@ -96,7 +95,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Page-Rendering Routes
         Route::get('countries', [CountryPageController::class, 'index'])->name('countries.index');
         Route::get('states', [StatePageController::class, 'index'])->name('states.index');
-        
+
         // --- FIXED: Add the 'cities' route to fix the Ziggy error ---
         Route::get('cities', [CityPageController::class, 'index'])->name('cities.index');
         // --- End of Fix ---

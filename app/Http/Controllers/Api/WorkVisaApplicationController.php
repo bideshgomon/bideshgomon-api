@@ -4,11 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\WorkVisaApplication;
-use App\Models\Country; // For dropdowns
-use App\Models\JobCategory; // For dropdowns
+// For dropdowns
+// For dropdowns
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
 class WorkVisaApplicationController extends Controller
 {
@@ -68,7 +66,7 @@ class WorkVisaApplicationController extends Controller
      */
     public function update(Request $request, WorkVisaApplication $workVisaApplication)
     {
-         // Basic authorization: Ensure the user owns this application
+        // Basic authorization: Ensure the user owns this application
         if ($request->user()->id !== $workVisaApplication->user_id) {
             abort(403, 'Unauthorized access.');
         }

@@ -24,23 +24,23 @@ class UniversityController extends Controller
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('description', 'like', '%' . $search . '%')
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('description', 'like', '%'.$search.'%')
                   // Search by City name
-                  ->orWhereHas('city', function($cityQuery) use ($search) {
-                      $cityQuery->where('name', 'like', '%' . $search . '%');
-                  })
+                    ->orWhereHas('city', function ($cityQuery) use ($search) {
+                        $cityQuery->where('name', 'like', '%'.$search.'%');
+                    })
                    // Search by State name
-                  ->orWhereHas('city.state', function($stateQuery) use ($search) {
-                      $stateQuery->where('name', 'like', '%' . $search . '%');
-                  })
+                    ->orWhereHas('city.state', function ($stateQuery) use ($search) {
+                        $stateQuery->where('name', 'like', '%'.$search.'%');
+                    })
                    // Search by Country name (via state OR direct city link)
-                  ->orWhereHas('city.state.country', function($countryQuery) use ($search) {
-                       $countryQuery->where('name', 'like', '%' . $search . '%');
-                  })
-                  ->orWhereHas('city.country', function($countryQuery) use ($search) {
-                       $countryQuery->where('name', 'like', '%' . $search . '%');
-                  });
+                    ->orWhereHas('city.state.country', function ($countryQuery) use ($search) {
+                        $countryQuery->where('name', 'like', '%'.$search.'%');
+                    })
+                    ->orWhereHas('city.country', function ($countryQuery) use ($search) {
+                        $countryQuery->where('name', 'like', '%'.$search.'%');
+                    });
             });
         }
 
@@ -61,13 +61,13 @@ class UniversityController extends Controller
     public function show(University $university): Response
     {
         // You would load more details here for the single university page later
-         $university->load(['city.state.country', 'city.country', 'courses']); // Load courses too
+        $university->load(['city.state.country', 'city.country', 'courses']); // Load courses too
 
         // For now, redirect back or render a placeholder
         // return Redirect::route('universities.index'); // Or create a Detail view
 
-         return Inertia::render('Public/Universities/Show', [ // Adjusted view path
-             'university' => $university,
-         ]);
+        return Inertia::render('Public/Universities/Show', [ // Adjusted view path
+            'university' => $university,
+        ]);
     }
 }

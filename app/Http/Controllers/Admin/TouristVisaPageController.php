@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\TouristVisa; // Import the model
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -29,11 +28,11 @@ class TouristVisaPageController extends Controller
             'user:id,name,email', // Load basic user info
             'destinationCountry:id,name', // Load destination country
             'documents.documentType:id,name', // Load documents and their types
-            'documents.userDocument:id,file_path,file_name' // Load linked uploaded document info
+            'documents.userDocument:id,file_path,file_name', // Load linked uploaded document info
         ]);
 
         return Inertia::render('Admin/TouristVisas/Show', [
-            'visaApplication' => $touristVisa
+            'visaApplication' => $touristVisa,
         ]);
     }
 

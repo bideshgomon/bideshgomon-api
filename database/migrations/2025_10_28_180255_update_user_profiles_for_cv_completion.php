@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('user_profiles', function (Blueprint $table) {
-            
+
             // --- Deprecate Old Address Fields ---
             $table->string('address_line_1')->nullable()->change();
             $table->string('address_line_2')->nullable()->change();
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('marital_status')->nullable()->after('gender');
             $table->string('current_occupation')->nullable()->after('marital_status');
             // 'bio' column is already created in the original migration, so we skip it here.
-            
+
             // --- Present Address ---
             $table->string('present_address_line')->nullable()->after('bio');
             $table->string('present_city')->nullable()->after('present_address_line');
@@ -42,7 +42,7 @@ return new class extends Migration
             $table->string('social_linkedin')->nullable()->after('permanent_postal_code');
             $table->string('social_github')->nullable()->after('social_linkedin');
             $table->string('social_website')->nullable()->after('social_github');
-            $table->string('portfolio_link')->nullable()->after('social_website'); 
+            $table->string('portfolio_link')->nullable()->after('social_website');
 
             // --- Bidesh Gomon Analysis Fields ---
             $table->string('travel_purpose')->nullable()->after('portfolio_link');
@@ -75,7 +75,7 @@ return new class extends Migration
                 'permanent_country', 'permanent_postal_code',
                 'social_linkedin', 'social_github', 'social_website', 'portfolio_link',
                 'travel_purpose', 'funding_source', 'estimated_funds',
-                'preferred_countries', 'intended_intake', 'has_dependents', 'dependents_count'
+                'preferred_countries', 'intended_intake', 'has_dependents', 'dependents_count',
             ]);
         });
     }

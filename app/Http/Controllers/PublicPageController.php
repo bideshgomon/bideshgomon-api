@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\University;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Application;
+use Inertia\Inertia;
 
 class PublicPageController extends Controller
 {
@@ -45,14 +44,14 @@ class PublicPageController extends Controller
      */
     public function searchCourses(Request $request)
     {
-         // Fetch initial set of courses for page load
-         $courses = Course::with(['university.country', 'degreeLevel']) // Eager load relationships
+        // Fetch initial set of courses for page load
+        $courses = Course::with(['university.country', 'degreeLevel']) // Eager load relationships
             ->orderBy('name', 'asc')
             ->paginate(12);
 
         return Inertia::render('Public/Courses', [
-             'initialCourses' => $courses,
-             // Add filters later
+            'initialCourses' => $courses,
+            // Add filters later
         ]);
     }
 
@@ -62,18 +61,20 @@ class PublicPageController extends Controller
     public function showUniversity(University $university)
     {
         $university->load(['country', 'city', 'courses.degreeLevel']); // Load necessary data
+
         // Render a detail view component (we'll create this later)
         return Inertia::render('Public/UniversityDetail', [
             'university' => $university,
         ]);
     }
 
-     /**
+    /**
      * Display course details (Example - needs more work)
      */
     public function showCourse(Course $course)
     {
         $course->load(['university.country', 'degreeLevel']); // Load necessary data
+
         // Render a detail view component (we'll create this later)
         return Inertia::render('Public/CourseDetail', [
             'course' => $course,

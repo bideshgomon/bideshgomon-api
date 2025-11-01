@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use App\Models\Skill; // Import the Skill model
+use App\Models\Skill;
+use Illuminate\Database\Seeder; // Import the Skill model
 use Illuminate\Support\Str; // Import the String helper
 
 class SkillSeeder extends Seeder
@@ -108,7 +108,7 @@ class SkillSeeder extends Seeder
             'Mall Cleaner', 'Hospital Attendant', 'Laundry Attendant',
             'Pressing Worker', 'Ironing Worker', 'Trolley Pusher',
             'Logistics Driver', 'Delivery Helper', 'Parcel Sorter',
-            'Container Loader', 'Shipping Clerk', 'Port Laborer'
+            'Container Loader', 'Shipping Clerk', 'Port Laborer',
         ];
 
         // --- Insert or update each skill safely ---

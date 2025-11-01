@@ -1,4 +1,5 @@
 <?php
+
 // app/Providers/DomainServiceProvider.php
 
 namespace App\Providers;
@@ -19,7 +20,7 @@ class DomainServiceProvider extends ServiceProvider
         $this->app->singleton(DashboardService::class);
         $this->app->singleton(JobPostingService::class);
 
-        // When we eventually create UniversityService, 
+        // When we eventually create UniversityService,
         // we will add it here.
         // $this->app->singleton(UniversityService::class);
     }

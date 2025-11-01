@@ -21,8 +21,8 @@ class LanguageController extends Controller
 
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('code', 'like', '%' . $search . '%'); // Allow searching by code (e.g., 'en')
+            $query->where('name', 'like', '%'.$search.'%')
+                ->orWhere('code', 'like', '%'.$search.'%'); // Allow searching by code (e.g., 'en')
         }
 
         $languageToEdit = null;

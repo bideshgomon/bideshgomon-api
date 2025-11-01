@@ -15,7 +15,7 @@ return [
         'web', // <-- This is the line we added. It scans routes/web.php
         'api', // We should also add API routes
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Exclude Filters

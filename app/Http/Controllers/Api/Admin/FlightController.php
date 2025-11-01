@@ -53,7 +53,7 @@ class FlightController extends Controller
             'airline_id' => 'required|exists:airlines,id',
             'origin_airport_id' => 'required|exists:airports,id',
             'destination_airport_id' => 'required|exists:airports,id|different:origin_airport_id',
-            'flight_number' => 'required|string|max:255|unique:flights,flight_number,' . $flight->id,
+            'flight_number' => 'required|string|max:255|unique:flights,flight_number,'.$flight->id,
             'departure_at' => 'required|date',
             'arrival_at' => 'required|date|after:departure_at',
             'price' => 'required|numeric|min:0',

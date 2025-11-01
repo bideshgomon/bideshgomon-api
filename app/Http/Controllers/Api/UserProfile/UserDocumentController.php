@@ -40,7 +40,7 @@ class UserDocumentController extends Controller
 
         // Store the file in 'storage/app/public/documents/user_{id}'
         // The 'public' disk is automatically linked to 'public/storage'
-        $path = $file->store('documents/user_' . $user->id, 'public');
+        $path = $file->store('documents/user_'.$user->id, 'public');
 
         // Create the database record
         $document = $user->documents()->create([
@@ -65,7 +65,7 @@ class UserDocumentController extends Controller
         // Check if the authenticated user owns this document
         // Using Laravel's authorization (Policies are recommended for more complex cases)
         if ($request->user()->cannot('delete', $document)) {
-             // Or check directly: if ($request->user()->id !== $document->user_id)
+            // Or check directly: if ($request->user()->id !== $document->user_id)
             return response()->json(['message' => 'Forbidden'], 403);
         }
 

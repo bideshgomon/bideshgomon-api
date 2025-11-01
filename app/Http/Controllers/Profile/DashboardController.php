@@ -11,16 +11,13 @@ class DashboardController extends Controller
 {
     /**
      * Display the user's profile dashboard.
-     *
-     * @param Request $request
-     * @return Response
      */
     public function index(Request $request): Response
     {
         // We can pass any necessary data to the dashboard component here.
         // For now, we will just render the page.
         // The 'Dashboard.vue' component is located in 'resources/js/Pages/'
-        
+
         return Inertia::render('Dashboard');
     }
 }

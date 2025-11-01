@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Skill;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Inertia\Response;
-use App\Models\Skill; // Import Skill model
+use Inertia\Response; // Import Skill model
 
 class SkillPageController extends Controller
 {
@@ -23,7 +23,7 @@ class SkillPageController extends Controller
             $searchTerm = $request->input('search');
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('name', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('category', 'LIKE', "%{$searchTerm}%"); // Allow searching category too
+                    ->orWhere('category', 'LIKE', "%{$searchTerm}%"); // Allow searching category too
             });
         }
 
@@ -32,8 +32,8 @@ class SkillPageController extends Controller
 
         // Pass data to the Inertia view
         return Inertia::render('Admin/Skills/Index', [
-             'skills' => $skills,
-             'filters' => $request->only(['search']), // Current filters
+            'skills' => $skills,
+            'filters' => $request->only(['search']), // Current filters
         ]);
     }
 }

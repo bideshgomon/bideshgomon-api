@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\UserTravelHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
 class UserTravelHistoryController extends Controller
 {
@@ -18,7 +17,7 @@ class UserTravelHistoryController extends Controller
         $travelHistories = UserTravelHistory::where('user_id', Auth::id())
             ->orderBy('start_date', 'desc')
             ->get();
-            
+
         return response()->json($travelHistories);
     }
 
@@ -50,7 +49,7 @@ class UserTravelHistoryController extends Controller
         if ($userTravelHistory->user_id !== Auth::id()) {
             return response()->json(['message' => 'Forbidden'], 403);
         }
-        
+
         return response()->json($userTravelHistory);
     }
 
@@ -63,7 +62,7 @@ class UserTravelHistoryController extends Controller
         if ($userTravelHistory->user_id !== Auth::id()) {
             return response()->json(['message' => 'Forbidden'], 403);
         }
-        
+
         $validated = $request->validate([
             'country' => 'required|string|max:255',
             'city' => 'nullable|string|max:255',

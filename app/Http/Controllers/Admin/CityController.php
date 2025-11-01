@@ -7,11 +7,11 @@ use App\Models\City;
 use App\Models\Country;
 use App\Models\State;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
-use Inertia\Response;
-use Illuminate\Support\Facades\DB; // If using DB::statement for complex queries if needed
+use Inertia\Response; // If using DB::statement for complex queries if needed
 
 class CityController extends Controller
 {
@@ -25,21 +25,21 @@ class CityController extends Controller
 
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 // Search city name
-                $q->where('name', 'like', '%' . $search . '%')
+                $q->where('name', 'like', '%'.$search.'%')
                   // Search related state name
-                  ->orWhereHas('state', function($stateQuery) use ($search) {
-                      $stateQuery->where('name', 'like', '%' . $search . '%');
-                  })
+                    ->orWhereHas('state', function ($stateQuery) use ($search) {
+                        $stateQuery->where('name', 'like', '%'.$search.'%');
+                    })
                   // Search related country name (via state)
-                  ->orWhereHas('state.country', function($countryQuery) use ($search) {
-                       $countryQuery->where('name', 'like', '%' . $search . '%');
-                  })
+                    ->orWhereHas('state.country', function ($countryQuery) use ($search) {
+                        $countryQuery->where('name', 'like', '%'.$search.'%');
+                    })
                   // Search related country name (direct link)
-                  ->orWhereHas('country', function($countryQuery) use ($search) {
-                       $countryQuery->where('name', 'like', '%' . $search . '%');
-                  });
+                    ->orWhereHas('country', function ($countryQuery) use ($search) {
+                        $countryQuery->where('name', 'like', '%'.$search.'%');
+                    });
             });
         }
 
@@ -76,27 +76,26 @@ class CityController extends Controller
                 'required',
                 'string',
                 'max:255',
-                 // Unique check needs refinement: unique within state OR unique within country if no state
-                 // Simple approach: Unique within the parent (state or country)
-                 // Advanced: Rule::unique('cities')->where(...) checking both state_id and country_id conditions.
-                 // Let's stick to a simpler unique check for now, you might refine later if needed.
-                 // This basic unique check might allow duplicate city names if one is under a state and another directly under country.
-                 'unique:cities,name',
+                // Unique check needs refinement: unique within state OR unique within country if no state
+                // Simple approach: Unique within the parent (state or country)
+                // Advanced: Rule::unique('cities')->where(...) checking both state_id and country_id conditions.
+                // Let's stick to a simpler unique check for now, you might refine later if needed.
+                // This basic unique check might allow duplicate city names if one is under a state and another directly under country.
+                'unique:cities,name',
             ],
             'state_id' => 'nullable|exists:states,id',
             'country_id' => 'nullable|required_without:state_id|exists:countries,id', // Must have state OR country
             'is_active' => 'required|boolean',
         ], [
-            'country_id.required_without' => 'Either State or Country must be selected.' // Custom error message
+            'country_id.required_without' => 'Either State or Country must be selected.', // Custom error message
         ]);
 
         // Ensure only state_id OR country_id is set
-        if (!empty($validated['state_id'])) {
+        if (! empty($validated['state_id'])) {
             $validated['country_id'] = null; // Prefer state link if provided
         } else {
-             $validated['state_id'] = null; // Ensure state_id is null if country_id is set
+            $validated['state_id'] = null; // Ensure state_id is null if country_id is set
         }
-
 
         City::create($validated);
 
@@ -108,8 +107,8 @@ class CityController extends Controller
      */
     public function update(Request $request, City $city)
     {
-         $validated = $request->validate([
-             'name' => [
+        $validated = $request->validate([
+            'name' => [
                 'required',
                 'string',
                 'max:255',
@@ -120,14 +119,14 @@ class CityController extends Controller
             'country_id' => 'nullable|required_without:state_id|exists:countries,id',
             'is_active' => 'required|boolean',
         ], [
-            'country_id.required_without' => 'Either State or Country must be selected.'
+            'country_id.required_without' => 'Either State or Country must be selected.',
         ]);
 
         // Ensure only state_id OR country_id is set
-        if (!empty($validated['state_id'])) {
+        if (! empty($validated['state_id'])) {
             $validated['country_id'] = null; // Prefer state link if provided
         } else {
-             $validated['state_id'] = null; // Ensure state_id is null if country_id is set
+            $validated['state_id'] = null; // Ensure state_id is null if country_id is set
         }
 
         $city->update($validated);
@@ -154,9 +153,10 @@ class CityController extends Controller
     {
         $request->validate(['country_id' => 'required|exists:countries,id']);
         $states = State::where('country_id', $request->country_id)
-                       ->where('is_active', true) // Only fetch active states
-                       ->orderBy('name')
-                       ->get(['id', 'name']);
+            ->where('is_active', true) // Only fetch active states
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
         // Return an empty array if no states found, Vue component will handle this
         return response()->json($states);
     }

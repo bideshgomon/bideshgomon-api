@@ -21,7 +21,7 @@ class DegreeLevelController extends Controller
 
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where('name', 'like', '%' . $search . '%');
+            $query->where('name', 'like', '%'.$search.'%');
         }
 
         $degreeLevelToEdit = null;

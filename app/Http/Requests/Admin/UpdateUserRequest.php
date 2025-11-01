@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
-use App\Models\User; // Import User model
+use Illuminate\Validation\Rule; // Import User model
 
 class UpdateUserRequest extends FormRequest
 {

@@ -2,16 +2,16 @@
 
 namespace App\Jobs;
 
+use App\Models\Country;
+use App\Models\TravelInsurance;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use App\Models\TravelInsurance;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use App\Models\User; // To get user details if needed directly
-use App\Models\Country; // To get country code if needed directly
+use Illuminate\Support\Facades\Http; // To get user details if needed directly
+use Illuminate\Support\Facades\Log; // To get country code if needed directly
 
 class IssueTravelInsurancePolicy implements ShouldQueue
 {
@@ -21,6 +21,7 @@ class IssueTravelInsurancePolicy implements ShouldQueue
 
     // Optional: Define job properties like retries, timeout
     public int $tries = 3; // Retry 3 times if it fails
+
     public int $timeout = 120; // Allow 2 minutes for the job to run
 
     /**
@@ -47,8 +48,9 @@ class IssueTravelInsurancePolicy implements ShouldQueue
         if ($this->insurance->status !== 'processing') {
             Log::warning('IssueTravelInsurancePolicy job skipped: Insurance status is not processing.', [
                 'insurance_id' => $this->insurance->id,
-                'status' => $this->insurance->status
+                'status' => $this->insurance->status,
             ]);
+
             return; // Don't proceed if payment wasn't confirmed or already processed
         }
 
@@ -93,16 +95,16 @@ class IssueTravelInsurancePolicy implements ShouldQueue
             // 'bank_transaction_id' => $this->insurance->admin_notes contains bank ID? Check IPN data.
         ];
 
-         // Remove null values if Bimafy API is sensitive to them
-         $payload = array_filter($payload, fn($value) => $value !== null && (!is_array($value) || !empty($value)));
-         // Ensure travelers array isn't empty after filtering
-         if (empty($payload['travelers'])) {
-             // Handle error - traveler data missing
-             Log::error('Bimafy issue-policy: Traveler data missing.', ['insurance_id' => $this->insurance->id]);
-              $this->fail(new \Exception('Traveler data missing for policy issuance.')); // Mark job as failed
-             return;
-         }
+        // Remove null values if Bimafy API is sensitive to them
+        $payload = array_filter($payload, fn ($value) => $value !== null && (! is_array($value) || ! empty($value)));
+        // Ensure travelers array isn't empty after filtering
+        if (empty($payload['travelers'])) {
+            // Handle error - traveler data missing
+            Log::error('Bimafy issue-policy: Traveler data missing.', ['insurance_id' => $this->insurance->id]);
+            $this->fail(new \Exception('Traveler data missing for policy issuance.')); // Mark job as failed
 
+            return;
+        }
 
         // --- Make API Call to Bimafy ---
         try {
@@ -111,7 +113,7 @@ class IssueTravelInsurancePolicy implements ShouldQueue
             $apiSecret = config('bimafy.api_secret'); // Secret might be needed
 
             if (empty($apiKey)) {
-                 throw new \Exception('Bimafy API Key is not configured.');
+                throw new \Exception('Bimafy API Key is not configured.');
             }
 
             // **ADJUST HEADERS/AUTH BASED ON BIMAFY DOCS**
@@ -122,19 +124,19 @@ class IssueTravelInsurancePolicy implements ShouldQueue
             ];
 
             // **ADJUST ENDPOINT IF DIFFERENT**
-            $url = rtrim($baseUrl, '/') . '/issue-policy';
+            $url = rtrim($baseUrl, '/').'/issue-policy';
 
             Log::info('Calling Bimafy issue-policy API', ['url' => $url, 'payload_keys' => array_keys($payload)]); // Avoid logging sensitive payload details
 
             $response = Http::withHeaders($headers)
-                            ->timeout(60) // Allow 1 minute
-                            ->post($url, $payload);
+                ->timeout(60) // Allow 1 minute
+                ->post($url, $payload);
 
             if ($response->failed()) {
                 Log::error('Bimafy issue-policy API request failed', [
                     'insurance_id' => $this->insurance->id,
                     'status' => $response->status(),
-                    'response' => $response->body() // Log the error response from Bimafy
+                    'response' => $response->body(), // Log the error response from Bimafy
                 ]);
                 // Throw exception to potentially retry the job
                 $response->throw();
@@ -147,16 +149,16 @@ class IssueTravelInsurancePolicy implements ShouldQueue
             // **IMPORTANT**: Extract the *actual* policy reference/number from Bimafy
             $bimafyPolicyReference = $policyDetails['policy_reference'] ?? $policyDetails['policy_number'] ?? null; // Adjust field name based on actual response
 
-            if (!$bimafyPolicyReference) {
-                 Log::error('Bimafy response missing policy reference/number.', ['insurance_id' => $this->insurance->id, 'response' => $policyDetails]);
-                 throw new \Exception('Bimafy response missing policy reference/number.');
+            if (! $bimafyPolicyReference) {
+                Log::error('Bimafy response missing policy reference/number.', ['insurance_id' => $this->insurance->id, 'response' => $policyDetails]);
+                throw new \Exception('Bimafy response missing policy reference/number.');
             }
 
             // Update our local record to 'active' and store the real reference
             $this->insurance->update([
                 'status' => 'active',
                 'bimafy_policy_reference' => $bimafyPolicyReference, // Store the actual reference
-                'admin_notes' => 'Policy issued via Bimafy. Ref: ' . $bimafyPolicyReference,
+                'admin_notes' => 'Policy issued via Bimafy. Ref: '.$bimafyPolicyReference,
                 // Optionally update coverage_details with more info from $policyDetails
                 'coverage_details' => $policyDetails['coverage'] ?? $this->insurance->coverage_details, // Keep old if none provided
             ]);
@@ -173,29 +175,29 @@ class IssueTravelInsurancePolicy implements ShouldQueue
             // Update status to 'issue_failed'
             $this->insurance->update([
                 'status' => 'issue_failed',
-                'admin_notes' => 'Bimafy API call failed after payment: ' . $e->getMessage()
+                'admin_notes' => 'Bimafy API call failed after payment: '.$e->getMessage(),
             ]);
 
             // TODO: Notify admin about the failure
 
             // Mark the job as failed so it might retry based on $tries
-             $this->fail($e);
+            $this->fail($e);
         }
     }
 
-     /**
-      * Handle a job failure.
-      */
-     public function failed(\Throwable $exception): void
-     {
-         Log::critical('IssueTravelInsurancePolicy Job Failed Permanently', [
-             'insurance_id' => $this->insurance->id,
-             'error' => $exception->getMessage()
-         ]);
-         // Optionally notify admin that manual intervention is needed
-         $this->insurance->update([
+    /**
+     * Handle a job failure.
+     */
+    public function failed(\Throwable $exception): void
+    {
+        Log::critical('IssueTravelInsurancePolicy Job Failed Permanently', [
+            'insurance_id' => $this->insurance->id,
+            'error' => $exception->getMessage(),
+        ]);
+        // Optionally notify admin that manual intervention is needed
+        $this->insurance->update([
             'status' => 'issue_failed',
-            'admin_notes' => 'Bimafy API call failed permanently after retries: ' . $exception->getMessage()
-         ]);
-     }
+            'admin_notes' => 'Bimafy API call failed permanently after retries: '.$exception->getMessage(),
+        ]);
+    }
 }

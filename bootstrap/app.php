@@ -1,4 +1,5 @@
 <?php
+
 // bootstrap/app.php
 
 use Illuminate\Foundation\Application;
@@ -17,7 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
-        
+
         // This alias is correct
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureUserHasRole::class,

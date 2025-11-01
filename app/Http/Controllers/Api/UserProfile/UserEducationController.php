@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Api\UserProfile;
 use App\Http\Controllers\Controller;
 use App\Models\UserEducation;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; // <-- Added facade
+
+// <-- Added facade
 
 class UserEducationController extends Controller
 {
@@ -63,7 +64,7 @@ class UserEducationController extends Controller
             'is_current' => 'required|boolean',
             'result' => 'nullable|string|max:255', // Added from migration
         ]);
-        
+
         $education->update($validated);
 
         return response()->json($education->load('degree', 'university'));

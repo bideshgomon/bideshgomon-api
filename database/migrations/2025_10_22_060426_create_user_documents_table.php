@@ -13,16 +13,16 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('document_type_id')->constrained()->onDelete('cascade');
-            
+
             $table->string('file_path'); // Path to the stored file
             $table->string('file_name');
             $table->string('document_number')->nullable(); // e.g., Passport number
-            
+
             // --- Crucial for your notification feature ---
             $table->date('issue_date')->nullable();
             $table->date('expiry_date')->nullable();
             // ---------------------------------------------
-            
+
             $table->string('issuing_country_id')->nullable();
             $table->string('status')->default('pending'); // 'pending', 'verified', 'expired'
             $table->timestamps();

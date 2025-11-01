@@ -17,8 +17,8 @@ class AirlineController extends Controller
         $query = Airline::query();
 
         if ($request->has('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('iata_code', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like', '%'.$request->search.'%')
+                ->orWhere('iata_code', 'like', '%'.$request->search.'%');
         }
 
         return $query->orderBy('name')->paginate(10);

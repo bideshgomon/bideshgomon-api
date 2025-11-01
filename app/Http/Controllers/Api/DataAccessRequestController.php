@@ -5,10 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\DataAccessRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class DataAccessRequestController extends Controller
 {
@@ -19,35 +17,34 @@ class DataAccessRequestController extends Controller
     {
         // 1. Authorization: Only 'consultant' can request
         $consultant = $request->user();
-        if (!$consultant->hasRole('consultant')) {
+        if (! $consultant->hasRole('consultant')) {
             return response()->json(['message' => 'Unauthorized: Only consultants can request data access.'], 403);
         }
 
         // 2. Target User Check: Cannot request access to self or non-'user' roles
-        if ($user->id === $consultant->id || !$user->hasRole('user')) {
+        if ($user->id === $consultant->id || ! $user->hasRole('user')) {
             return response()->json(['message' => 'Invalid target user.'], 400);
         }
 
         // 3. Prevent Duplicate Pending Requests: Check if a pending request already exists
         $existingPending = DataAccessRequest::where('consultant_id', $consultant->id)
-                                            ->where('user_id', $user->id)
-                                            ->where('status', 'pending')
-                                            ->first();
+            ->where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->first();
 
         if ($existingPending) {
             return response()->json(['message' => 'A pending request already exists for this user.'], 409); // 409 Conflict
         }
 
         // 4. Prevent Request if Already Approved: Check if an approved request exists
-         $existingApproved = DataAccessRequest::where('consultant_id', $consultant->id)
-                                             ->where('user_id', $user->id)
-                                             ->where('status', 'approved')
-                                             ->first();
+        $existingApproved = DataAccessRequest::where('consultant_id', $consultant->id)
+            ->where('user_id', $user->id)
+            ->where('status', 'approved')
+            ->first();
 
         if ($existingApproved) {
             return response()->json(['message' => 'You already have approved access to this user\'s data.'], 409);
         }
-
 
         // 5. Create the Request
         $dataAccessRequest = DataAccessRequest::create([
@@ -69,16 +66,16 @@ class DataAccessRequestController extends Controller
     {
         // 1. Authorization: Only 'user' can view their requests
         $user = $request->user();
-        if (!$user->hasRole('user')) {
+        if (! $user->hasRole('user')) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         // 2. Fetch Pending Requests: Eager load consultant details
         $pendingRequests = DataAccessRequest::where('user_id', $user->id)
-                                           ->where('status', 'pending')
-                                           ->with('consultant:id,name,email') // Load consultant info
-                                           ->orderBy('requested_at', 'desc')
-                                           ->get();
+            ->where('status', 'pending')
+            ->with('consultant:id,name,email') // Load consultant info
+            ->orderBy('requested_at', 'desc')
+            ->get();
 
         return response()->json($pendingRequests);
     }
@@ -90,7 +87,7 @@ class DataAccessRequestController extends Controller
     {
         // 1. Authorization: Ensure the logged-in user is the target of the request
         $user = $request->user();
-        if ($dataAccessRequest->user_id !== $user->id || !$user->hasRole('user')) {
+        if ($dataAccessRequest->user_id !== $user->id || ! $user->hasRole('user')) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -115,9 +112,9 @@ class DataAccessRequestController extends Controller
      */
     public function deny(Request $request, DataAccessRequest $dataAccessRequest)
     {
-         // 1. Authorization: Ensure the logged-in user is the target of the request
+        // 1. Authorization: Ensure the logged-in user is the target of the request
         $user = $request->user();
-        if ($dataAccessRequest->user_id !== $user->id || !$user->hasRole('user')) {
+        if ($dataAccessRequest->user_id !== $user->id || ! $user->hasRole('user')) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 

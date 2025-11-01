@@ -21,7 +21,7 @@ class FieldOfStudyController extends Controller
 
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where('name', 'like', '%' . $search . '%');
+            $query->where('name', 'like', '%'.$search.'%');
         }
 
         $fieldOfStudyToEdit = null;

@@ -35,7 +35,6 @@ return [
         ],
     ],
 
-   
     // ... other services like mailgun, ses, stripe ...
 
     'gemini' => [

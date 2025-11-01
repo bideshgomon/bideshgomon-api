@@ -9,9 +9,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ConsultantProfile extends Model
 {
     use HasFactory;
-    
+
     // Check your migration, if table is 'consultant_user', uncomment the line below
-    // protected $table = 'consultant_user'; 
+    // protected $table = 'consultant_user';
 
     protected $fillable = [
         'user_id',

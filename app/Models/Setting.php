@@ -25,7 +25,6 @@ class Setting extends Model
     //     // Example: 'value' => 'array', // If type is 'json'
     // ];
 
-
     /**
      * Override the default retrieval to potentially cast based on type.
      * This is a basic example; more complex casting might be needed.
@@ -41,6 +40,7 @@ class Setting extends Model
         if ($this->type === 'json') {
             return json_decode($value, true);
         }
+
         return $value;
     }
 

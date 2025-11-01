@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
-use App\Models\StudentVisaApplication;
 use App\Models\Country;
-use App\Models\University;
 use App\Models\Course;
+use App\Models\StudentVisaApplication;
+use App\Models\University;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class StudentVisaApplicationPageController extends Controller
@@ -41,7 +40,7 @@ class StudentVisaApplicationPageController extends Controller
      */
     public function show(Request $request, StudentVisaApplication $studentVisaApplication)
     {
-         // Basic authorization
+        // Basic authorization
         if ($request->user()->id !== $studentVisaApplication->user_id) {
             abort(403);
         }

@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-use App\Models\User;
 use App\Models\Role;
+use App\Models\User;
 use App\Models\UserProfile;
-use Illuminate\Support\Facades\Log; // <-- [RECOMMENDATION] Add Log facade
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator; // <-- [RECOMMENDATION] Add Log facade
 
 class AuthController extends Controller
 {
@@ -31,11 +31,12 @@ class AuthController extends Controller
 
         // Find the 'user' role
         $userRole = Role::where('slug', 'user')->first(); // <-- [PATCH] Find by 'slug' for consistency
-        if (!$userRole) {
-             // --- [PATCH START] ---
-             Log::error('Default user role "user" not found during API registration.');
-             return response()->json(['message' => 'System configuration error: Default role not found.'], 500);
-             // --- [PATCH END] ---
+        if (! $userRole) {
+            // --- [PATCH START] ---
+            Log::error('Default user role "user" not found during API registration.');
+
+            return response()->json(['message' => 'System configuration error: Default role not found.'], 500);
+            // --- [PATCH END] ---
         }
 
         $user = User::create([
@@ -53,14 +54,14 @@ class AuthController extends Controller
 
         // --- [PATCH START] ---
         // Load the 'profile' relationship (which we renamed in User.php)
-        $user->load('role', 'profile'); 
+        $user->load('role', 'profile');
         // --- [PATCH END] ---
 
         return response()->json([
             'message' => 'Registration successful! Profile created.',
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'user' => $user // Send back user with relations
+            'user' => $user, // Send back user with relations
         ], 201);
     }
 
@@ -78,18 +79,19 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        if (! Auth::attempt($request->only('email', 'password'))) {
             return response()->json(['message' => 'Invalid login credentials'], 401);
         }
 
         $user = User::where('email', $request['email'])->firstOrFail();
 
         // Optional: Check if user is active
-        if (!$user->is_active) {
-             // --- [PATCH START] ---
-             Auth::logout(); // Log out the user if they are inactive
-             // --- [PATCH END] ---
-             return response()->json(['message' => 'Your account is deactivated.'], 403);
+        if (! $user->is_active) {
+            // --- [PATCH START] ---
+            Auth::logout(); // Log out the user if they are inactive
+
+            // --- [PATCH END] ---
+            return response()->json(['message' => 'Your account is deactivated.'], 403);
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -98,7 +100,7 @@ class AuthController extends Controller
             'message' => 'Login successful',
             'access_token' => $token,
             'token_type' => 'Bearer',
-            'user' => $user->load('role') // Send back user data
+            'user' => $user->load('role'), // Send back user data
         ]);
     }
 
@@ -114,11 +116,10 @@ class AuthController extends Controller
         // Eager load relationships based on role SLUG
         // Use the renamed 'profile' relation
         if ($user->role->slug === 'user') {
-            $user->load('profile'); 
+            $user->load('profile');
         } elseif ($user->role->slug === 'agency') {
             $user->load('ownedAgency');
-        } 
-        elseif ($user->role->slug === 'consultant') {
+        } elseif ($user->role->slug === 'consultant') {
             // Load relations defined in User.php
             $user->load('agenciesAsConsultant', 'clients');
         }

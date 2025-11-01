@@ -7,7 +7,6 @@ use App\Models\Course;
 use App\Models\Degree;
 use App\Models\FieldOfStudy;
 use App\Models\University;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class CourseController extends Controller

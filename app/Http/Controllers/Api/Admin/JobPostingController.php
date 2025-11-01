@@ -1,4 +1,5 @@
 <?php
+
 // app/Http/Controllers/Api/Admin/JobPostingController.php
 
 namespace App\Http\Controllers\Api\Admin;
@@ -31,7 +32,7 @@ class JobPostingController extends Controller
 
             return response()->json([
                 'message' => 'Job posting created successfully.',
-                'jobPosting' => $jobPosting
+                'jobPosting' => $jobPosting,
             ], 201);
 
         } catch (ValidationException $e) {

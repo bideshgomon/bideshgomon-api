@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\UserProfileUpdateRequest;
 use App\Models\UserProfile; // Import the UserProfile model
-use Illuminate\Support\Facades\Auth; // To get the authenticated user
-use App\Http\Requests\UserProfileUpdateRequest; // We'll create this next
+use Illuminate\Http\Request; // To get the authenticated user
+use Illuminate\Support\Facades\Auth; // We'll create this next
 
 class UserProfileController extends Controller
 {
@@ -25,7 +25,7 @@ class UserProfileController extends Controller
 
         return response()->json([
             'message' => 'Profile details updated successfully.',
-            'profile' => $profile // Return the updated profile data
+            'profile' => $profile, // Return the updated profile data
         ], 200);
     }
 

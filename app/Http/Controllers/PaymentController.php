@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Library\SslCommerz\SslCommerzNotification;
-use Illuminate\Support\Str;
+use App\Models\Country;
+use App\Models\Payment;
+use App\Models\TravelInsurance;
+use App\Models\User; // <-- Import DB Facade
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB; // <-- ADDED: Import Payment model
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\DB; // <-- Import DB Facade
-use App\Models\TravelInsurance;
-use App\Models\Payment; // <-- ADDED: Import Payment model
-use App\Models\Country;
-use App\Models\User;
-use App\Jobs\IssueTravelInsurancePolicy;
 use Throwable; // <-- ADDED: Import Throwable for exceptions
 
 class PaymentController extends Controller
@@ -79,12 +77,13 @@ class PaymentController extends Controller
             DB::commit(); // Commit
         } catch (Throwable $e) {
             DB::rollBack();
-            Log::error('Failed to create insurance or payment record: ' . $e->getMessage(), $validated);
+            Log::error('Failed to create insurance or payment record: '.$e->getMessage(), $validated);
+
             return response()->json(['message' => 'Could not initiate payment process. Please try again.'], 500);
         }
         // --- [PATCH END] ---
 
-        # Prepare data for SSLCommerz
+        // Prepare data for SSLCommerz
         $post_data = [];
         $post_data['total_amount'] = $validated['total_premium'];
         $post_data['currency'] = $validated['currency'];
@@ -102,12 +101,12 @@ class PaymentController extends Controller
         $post_data['cus_postcode'] = '1200'; // Default or from user profile
         $post_data['cus_country'] = 'Bangladesh'; // Default or from user profile
         $post_data['cus_phone'] = $validated['policyholder_phone'];
-        $post_data['shipping_method'] = "NO";
+        $post_data['shipping_method'] = 'NO';
 
-        $post_data['product_name'] = "Travel Insurance: " . $validated['package_name'];
-        $post_data['product_category'] = "Insurance";
-        $post_data['product_profile'] = "non-physical-goods";
-        
+        $post_data['product_name'] = 'Travel Insurance: '.$validated['package_name'];
+        $post_data['product_category'] = 'Insurance';
+        $post_data['product_profile'] = 'non-physical-goods';
+
         // Pass our internal IDs for tracking
         $post_data['value_a'] = $user->id;
         $post_data['value_b'] = $validated['quote_reference']; // Keep quote ref
@@ -115,13 +114,14 @@ class PaymentController extends Controller
         $post_data['value_d'] = $insurance->id; // Pass our insurance record ID
 
         try {
-            $sslc = new SslCommerzNotification();
+            $sslc = new SslCommerzNotification;
             $payment_options_json = $sslc->makePayment($post_data, 'checkout', 'json');
             $payment_options = json_decode($payment_options_json, true);
 
             if (isset($payment_options['status']) && in_array(strtoupper($payment_options['status']), ['SUCCESS', 'VALID'])) {
                 // --- [PATCH START] Update payment status to 'pending' ---
                 $payment->update(['status' => 'pending']); // Now waiting for gateway
+
                 // --- [PATCH END] ---
                 return response()->json(['redirectUrl' => $payment_options['GatewayPageURL']], 200);
             } else {
@@ -129,6 +129,7 @@ class PaymentController extends Controller
                 // --- [PATCH START] Update payment status to 'failed' ---
                 $payment->update(['status' => 'failed', 'gateway_response' => json_encode($payment_options)]);
                 $insurance->update(['status' => 'payment_failed']);
+
                 // --- [PATCH END] ---
                 return response()->json(['message' => $payment_options['message'] ?? 'Payment initiation failed.'], 400);
             }
@@ -137,6 +138,7 @@ class PaymentController extends Controller
             // --- [PATCH START] Update payment status to 'failed' ---
             $payment->update(['status' => 'failed', 'gateway_response' => $e->getMessage()]);
             $insurance->update(['status' => 'payment_failed']);
+
             // --- [PATCH END] ---
             return response()->json(['message' => 'Could not initiate payment. Please try again later.'], 500);
         }
@@ -152,12 +154,12 @@ class PaymentController extends Controller
         // --- [PATCH START] Update generic payment table ---
         $payment = Payment::where('transaction_id', $tran_id)->first();
         if ($payment && $payment->status === 'pending') { // Only update if pending
-             $payment->update([
-                 'status' => 'success', // Marked as success by gateway redirect
-                 'gateway_transaction_id' => $request->input('bank_tran_id'), // Capture bank ID
-                 'gateway_response' => json_encode($request->all()),
-                 'paid_at' => now(), // Mark as paid
-             ]);
+            $payment->update([
+                'status' => 'success', // Marked as success by gateway redirect
+                'gateway_transaction_id' => $request->input('bank_tran_id'), // Capture bank ID
+                'gateway_response' => json_encode($request->all()),
+                'paid_at' => now(), // Mark as paid
+            ]);
         }
         // --- [PATCH END] ---
 
@@ -166,9 +168,9 @@ class PaymentController extends Controller
             ->where('status', 'pending_payment')
             ->update(['status' => 'processing']); // Set to processing, wait for IPN to confirm
 
-        return Redirect::away(config('app.frontend_url', url('/')) .
-            '/payment/success?transaction_id=' . $tran_id .
-            '&status=' . $request->input('status'));
+        return Redirect::away(config('app.frontend_url', url('/')).
+            '/payment/success?transaction_id='.$tran_id.
+            '&status='.$request->input('status'));
     }
 
     public function paymentFail(Request $request)
@@ -189,8 +191,8 @@ class PaymentController extends Controller
             ->where('status', 'pending_payment')
             ->update(['status' => 'payment_failed']);
 
-        return Redirect::away(config('app.frontend_url', url('/')) .
-            '/payment/fail?transaction_id=' . $tran_id);
+        return Redirect::away(config('app.frontend_url', url('/')).
+            '/payment/fail?transaction_id='.$tran_id);
     }
 
     public function paymentCancel(Request $request)
@@ -200,7 +202,7 @@ class PaymentController extends Controller
 
         // --- [PATCH START] Update generic payment table ---
         Payment::where('transaction_id', $tran_id)
-             ->whereIn('status', ['initiated', 'pending'])
+            ->whereIn('status', ['initiated', 'pending'])
             ->update([
                 'status' => 'cancelled',
                 'gateway_response' => json_encode($request->all()),
@@ -211,8 +213,8 @@ class PaymentController extends Controller
             ->where('status', 'pending_payment')
             ->update(['status' => 'payment_cancelled']);
 
-        return Redirect::away(config('app.frontend_url', url('/')) .
-            '/payment/cancel?transaction_id=' . $tran_id);
+        return Redirect::away(config('app.frontend_url', url('/')).
+            '/payment/cancel?transaction_id='.$tran_id);
     }
 
     public function paymentIpn(Request $request)
@@ -220,8 +222,9 @@ class PaymentController extends Controller
         Log::info('SSLCommerz IPN Received', $request->all());
         $ipnData = $request->all();
 
-        if (empty($ipnData) || !isset($ipnData['tran_id'])) {
+        if (empty($ipnData) || ! isset($ipnData['tran_id'])) {
             Log::error('SSLCommerz IPN: Received empty or invalid data.');
+
             return response()->json(['status' => 'error', 'message' => 'Invalid data'], 400);
         }
 
@@ -231,32 +234,35 @@ class PaymentController extends Controller
 
         // --- [PATCH START] Find Payment Record ---
         $payment = Payment::where('transaction_id', $transactionId)->first();
-        if (!$payment) {
-             Log::error('SSLCommerz IPN: Could not find matching Payment record.', [
+        if (! $payment) {
+            Log::error('SSLCommerz IPN: Could not find matching Payment record.', [
                 'tran_id' => $transactionId,
             ]);
+
             return response()->json(['status' => 'error', 'message' => 'Payment Record not found'], 404);
         }
         // --- [PATCH END] ---
 
         $insurance = TravelInsurance::find($ourInsuranceRecordId); // Keep finding insurance record
-        if (!$insurance || $payment->payable_id != $ourInsuranceRecordId || $payment->payable_type != TravelInsurance::class) {
+        if (! $insurance || $payment->payable_id != $ourInsuranceRecordId || $payment->payable_type != TravelInsurance::class) {
             Log::error('SSLCommerz IPN: Could not find matching local insurance record or payment mismatch.', [
                 'tran_id' => $transactionId,
                 'local_insurance_id' => $ourInsuranceRecordId,
-                'payment_payable_id' => $payment->payable_id ?? 'N/A'
+                'payment_payable_id' => $payment->payable_id ?? 'N/A',
             ]);
+
             return response()->json(['status' => 'error', 'message' => 'Record mismatch'], 404);
         }
 
         // Check if already processed
         if ($insurance->status !== 'pending_payment' || $payment->status === 'success') {
             Log::info('SSLCommerz IPN: Transaction already processed.', ['tran_id' => $transactionId, 'status' => $insurance->status]);
+
             return response()->json(['status' => 'success', 'message' => 'Already processed'], 200);
         }
 
         if (in_array($paymentStatus, ['VALID', 'VALIDATED'])) {
-            $sslc = new SslCommerzNotification();
+            $sslc = new SslCommerzNotification;
             $isValid = $sslc->orderValidate($ipnData, $transactionId, $insurance->premium_paid, $insurance->currency);
 
             if ($isValid) {
@@ -272,13 +278,14 @@ class PaymentController extends Controller
 
                     $insurance->update([
                         'status' => 'processing', // 'processing' until job runs
-                        'admin_notes' => 'Payment validated via IPN. Bank TRN: ' . ($ipnData['bank_tran_id'] ?? 'N/A')
+                        'admin_notes' => 'Payment validated via IPN. Bank TRN: '.($ipnData['bank_tran_id'] ?? 'N/A'),
                     ]);
 
                     DB::commit();
                 } catch (Throwable $e) {
                     DB::rollBack();
                     Log::error('SSLCommerz IPN: DB update failed after validation.', ['error' => $e->getMessage()]);
+
                     return response()->json(['status' => 'error', 'message' => 'Database update failed'], 500);
                 }
                 // --- [PATCH END] ---
@@ -287,20 +294,22 @@ class PaymentController extends Controller
                 \App\Jobs\IssueTravelInsurancePolicy::dispatch($insurance);
 
                 Log::info('SSLCommerz IPN Validated and Job Dispatched.', ['tran_id' => $transactionId]);
+
                 return response()->json(['status' => 'success', 'message' => 'IPN Processed'], 200);
 
             } else {
                 // --- [PATCH START] Update both records on validation fail ---
                 $payment->update([
                     'status' => 'failed',
-                    'gateway_response' => json_encode($ipnData)
+                    'gateway_response' => json_encode($ipnData),
                 ]);
                 $insurance->update([
                     'status' => 'payment_failed',
-                    'admin_notes' => 'IPN validation failed.'
+                    'admin_notes' => 'IPN validation failed.',
                 ]);
                 // --- [PATCH END] ---
                 Log::error('SSLCommerz IPN Validation FAILED.', $ipnData);
+
                 return response()->json(['status' => 'error', 'message' => 'IPN Validation Failed'], 400);
             }
         } else {
@@ -315,11 +324,12 @@ class PaymentController extends Controller
             ]);
             $insurance->update([
                 'status' => $newStatus,
-                'admin_notes' => "IPN Status: $paymentStatus"
+                'admin_notes' => "IPN Status: $paymentStatus",
             ]);
             // --- [PATCH END] ---
 
             Log::warning('SSLCommerz IPN received non-valid status.', $ipnData);
+
             return response()->json(['status' => 'success', 'message' => 'IPN Received for non-valid status'], 200);
         }
     }

@@ -13,10 +13,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('technical_education_type_id')->nullable()->constrained()->onDelete('set null');
-            
+
             $table->string('course_name');
             $table->string('institution_name');
-            
+
             $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->string('file_path')->nullable(); // Optional certificate scan

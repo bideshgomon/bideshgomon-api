@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\University;
 use App\Models\Course;
-use App\Models\JobPosting; // <-- ADDED
+use App\Models\JobPosting;
+use App\Models\University; // <-- ADDED
 use Illuminate\Http\Request;
 
 class PublicSearchController extends Controller
@@ -16,7 +16,7 @@ class PublicSearchController extends Controller
     public function searchUniversities(Request $request)
     {
         $query = University::with('country') // Eager load country
-                            ->orderBy('name', 'asc');
+            ->orderBy('name', 'asc');
 
         // Filter by Country ID
         if ($request->filled('country_id')) {
@@ -26,9 +26,9 @@ class PublicSearchController extends Controller
         // Filter by Search Term (Name or City)
         if ($request->filled('search')) {
             $searchTerm = $request->input('search');
-            $query->where(function($q) use ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
                 $q->where('name', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('city', 'LIKE', "%{$searchTerm}%");
+                    ->orWhere('city', 'LIKE', "%{$searchTerm}%");
             });
         }
 
@@ -43,7 +43,7 @@ class PublicSearchController extends Controller
     public function searchCourses(Request $request)
     {
         $query = Course::with('university.country') // Eager load university and its country
-                       ->orderBy('name', 'asc');
+            ->orderBy('name', 'asc');
 
         // Filter by University ID
         if ($request->filled('university_id')) {
@@ -54,7 +54,7 @@ class PublicSearchController extends Controller
         if ($request->filled('degree_level')) {
             $query->where('degree_level', $request->input('degree_level'));
         }
-        
+
         // Filter by Field of Study
         if ($request->filled('field_of_study')) {
             $query->where('field_of_study', $request->input('field_of_study'));
@@ -65,7 +65,7 @@ class PublicSearchController extends Controller
             $searchTerm = $request->input('search');
             $query->where('name', 'LIKE', "%{$searchTerm}%");
         }
-        
+
         // Add more filters later (e.g., tuition fee range, duration)
 
         return $query->paginate(15);
@@ -95,9 +95,9 @@ class PublicSearchController extends Controller
     public function searchJobPostings(Request $request) // <-- ADDED THIS METHOD
     {
         $query = JobPosting::with(['jobCategory', 'country']) // Eager load relationships
-                           ->where('status', 'active') // Only show active jobs
-                           ->orderBy('is_featured', 'desc') // Show featured first
-                           ->latest(); // Then by newest
+            ->where('status', 'active') // Only show active jobs
+            ->orderBy('is_featured', 'desc') // Show featured first
+            ->latest(); // Then by newest
 
         // Filter by Job Category ID
         if ($request->filled('job_category_id')) {
@@ -112,10 +112,10 @@ class PublicSearchController extends Controller
         // Filter by Search Term (Title, Company, Skills)
         if ($request->filled('search')) {
             $searchTerm = $request->input('search');
-            $query->where(function($q) use ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
                 $q->where('title', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('company_name', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('skills_required', 'LIKE', "%{$searchTerm}%"); // Basic skill search
+                    ->orWhere('company_name', 'LIKE', "%{$searchTerm}%")
+                    ->orWhere('skills_required', 'LIKE', "%{$searchTerm}%"); // Basic skill search
             });
         }
 

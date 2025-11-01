@@ -25,12 +25,12 @@ return new class extends Migration
             // Re-add foreign key if dropped (ensure it matches original definition but allows null)
             // $table->foreign('state_id')->references('id')->on('states')->onDelete('cascade');
 
-             // Add a check constraint (Optional but Recommended - SQL syntax varies)
-             // Ensures that either state_id OR country_id is set, but not neither.
-             // Example for MySQL:
-             // DB::statement('ALTER TABLE cities ADD CONSTRAINT chk_city_parent CHECK (state_id IS NOT NULL OR country_id IS NOT NULL)');
-             // Example for PostgreSQL:
-             // DB::statement('ALTER TABLE cities ADD CONSTRAINT chk_city_parent CHECK (state_id IS NOT NULL OR country_id IS NOT NULL)');
+            // Add a check constraint (Optional but Recommended - SQL syntax varies)
+            // Ensures that either state_id OR country_id is set, but not neither.
+            // Example for MySQL:
+            // DB::statement('ALTER TABLE cities ADD CONSTRAINT chk_city_parent CHECK (state_id IS NOT NULL OR country_id IS NOT NULL)');
+            // Example for PostgreSQL:
+            // DB::statement('ALTER TABLE cities ADD CONSTRAINT chk_city_parent CHECK (state_id IS NOT NULL OR country_id IS NOT NULL)');
         });
     }
 
@@ -48,9 +48,9 @@ return new class extends Migration
 
             // Revert state_id to non-nullable (assuming it was originally)
             // May require handling existing null values first
-             // $table->dropForeign(['state_id']); // If necessary
-             // $table->foreignId('state_id')->nullable(false)->change(); // This might fail if nulls exist
-             // $table->foreign('state_id')->references('id')->on('states')->onDelete('cascade'); // If necessary
+            // $table->dropForeign(['state_id']); // If necessary
+            // $table->foreignId('state_id')->nullable(false)->change(); // This might fail if nulls exist
+            // $table->foreign('state_id')->references('id')->on('states')->onDelete('cascade'); // If necessary
         });
     }
 };

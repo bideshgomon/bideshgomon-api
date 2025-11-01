@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Role; // Import Role model
+use App\Models\Role;
+use App\Models\User; // Import Role model
 use Illuminate\Http\Request; // Import Request
 use Inertia\Inertia;
 use Inertia\Response; // Import Response
@@ -18,14 +18,14 @@ class UserPageController extends Controller
     {
         // Start building the query to fetch users
         $query = User::with('role') // Eager load the role relationship
-                    ->latest('created_at'); // Order by newest first
+            ->latest('created_at'); // Order by newest first
 
         // Add filtering based on request parameters (optional for now)
         if ($request->filled('search')) {
             $searchTerm = $request->input('search');
             $query->where(function ($q) use ($searchTerm) {
                 $q->where('name', 'LIKE', "%{$searchTerm}%")
-                  ->orWhere('email', 'LIKE', "%{$searchTerm}%");
+                    ->orWhere('email', 'LIKE', "%{$searchTerm}%");
             });
         }
 
@@ -40,9 +40,9 @@ class UserPageController extends Controller
 
         // Pass users and roles to the Inertia view
         return Inertia::render('Admin/Users/Index', [
-             'users' => $users, // <-- Pass the paginated users
-             'filters' => $request->only(['search', 'role']), // Pass current filters back
-             'roles' => Role::select('id', 'name', 'slug')->get(), // Pass roles for filter dropdown
+            'users' => $users, // <-- Pass the paginated users
+            'filters' => $request->only(['search', 'role']), // Pass current filters back
+            'roles' => Role::select('id', 'name', 'slug')->get(), // Pass roles for filter dropdown
         ]);
         // Note: Removed the comment about API call, data is now passed directly.
     }
@@ -62,7 +62,7 @@ class UserPageController extends Controller
      */
     public function edit(User $user): Response // <-- Add Response type hint
     {
-         // Eager load the role relationship for the specific user being edited
+        // Eager load the role relationship for the specific user being edited
         $user->load('role');
 
         return Inertia::render('Admin/Users/Edit', [

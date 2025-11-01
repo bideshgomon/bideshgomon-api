@@ -22,13 +22,13 @@ class StateController extends Controller
 
         if ($request->has('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 // Search state name
-                $q->where('name', 'like', '%' . $search . '%')
+                $q->where('name', 'like', '%'.$search.'%')
                   // Search related country name
-                  ->orWhereHas('country', function($countryQuery) use ($search) {
-                      $countryQuery->where('name', 'like', '%' . $search . '%');
-                  });
+                    ->orWhereHas('country', function ($countryQuery) use ($search) {
+                        $countryQuery->where('name', 'like', '%'.$search.'%');
+                    });
             });
         }
 
@@ -39,7 +39,7 @@ class StateController extends Controller
         }
 
         $states = $query->orderBy('name')->paginate(10)->withQueryString();
-        
+
         // Get all countries for the dropdown
         $countries = Country::orderBy('name')->get(['id', 'name']);
 

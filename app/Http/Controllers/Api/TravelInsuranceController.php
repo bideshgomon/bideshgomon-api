@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\TravelInsurance; // To potentially store issued policies
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log; // For logging API errors
 use Illuminate\Support\Facades\Validator; // For validation
@@ -14,7 +14,9 @@ use Illuminate\Validation\ValidationException;
 class TravelInsuranceController extends Controller
 {
     protected string $baseUrl;
+
     protected string $apiKey;
+
     protected string $apiSecret;
 
     public function __construct()
@@ -45,13 +47,13 @@ class TravelInsuranceController extends Controller
             // 'Authorization' => 'Bearer ' . $this->getToken(), // If token-based
         ];
 
-        $url = rtrim($this->baseUrl, '/') . '/' . ltrim($endpoint, '/');
+        $url = rtrim($this->baseUrl, '/').'/'.ltrim($endpoint, '/');
 
         // Add secret to data if required by Bimafy (check their docs)
         // $data['api_secret'] = $this->apiSecret; // Example
 
         $response = Http::withHeaders($headers)
-                        ->$method($url, $data);
+            ->$method($url, $data);
 
         if ($response->failed()) {
             Log::error('Bimafy API request failed', [
@@ -59,7 +61,7 @@ class TravelInsuranceController extends Controller
                 'method' => $method,
                 'status' => $response->status(),
                 'response' => $response->body(),
-                'request_data' => $data // Be careful logging sensitive data
+                'request_data' => $data, // Be careful logging sensitive data
             ]);
             $response->throw(); // Throw an exception to handle the failure
         }
@@ -116,7 +118,7 @@ class TravelInsuranceController extends Controller
             return response()->json($premiumDetails);
 
         } catch (ValidationException $e) {
-             return response()->json(['message' => 'Invalid input.', 'errors' => $e->errors()], 422);
+            return response()->json(['message' => 'Invalid input.', 'errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed to calculate premium.', 'error' => $e->getMessage()], 500);
         }
@@ -129,7 +131,7 @@ class TravelInsuranceController extends Controller
     public function issuePolicy(Request $request): JsonResponse
     {
         // **VALIDATION IS CRUCIAL HERE - includes all fields needed by Bimafy**
-         $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'quote_reference' => 'required|string', // Reference from calculatePremium response
             'package_id' => 'required',
             'destination_country_code' => 'required|string|size:2',
@@ -149,8 +151,8 @@ class TravelInsuranceController extends Controller
         }
 
         // Ensure user is authenticated before issuing policy
-        if (!auth()->check()) {
-             return response()->json(['message' => 'Unauthenticated.'], 401);
+        if (! auth()->check()) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 
         try {
@@ -166,13 +168,13 @@ class TravelInsuranceController extends Controller
             $policyReference = $policyDetails['policy_reference'] ?? null; // Example field
             $premium = $policyDetails['total_premium'] ?? 0; // Example field
             // Calculate duration if not provided directly
-             $startDate = new \DateTime($payload['start_date']);
-             $endDate = new \DateTime($payload['end_date']);
-             $duration = $endDate->diff($startDate)->days + 1; // Inclusive duration
+            $startDate = new \DateTime($payload['start_date']);
+            $endDate = new \DateTime($payload['end_date']);
+            $duration = $endDate->diff($startDate)->days + 1; // Inclusive duration
 
-            if (!$policyReference) {
-                 Log::error('Bimafy issue policy response missing policy reference', $policyDetails);
-                 throw new \Exception('Policy reference missing from Bimafy response.');
+            if (! $policyReference) {
+                Log::error('Bimafy issue policy response missing policy reference', $policyDetails);
+                throw new \Exception('Policy reference missing from Bimafy response.');
             }
 
             $insurance = TravelInsurance::create([
@@ -191,16 +193,17 @@ class TravelInsuranceController extends Controller
 
             // Return success response, potentially including the local record ID and Bimafy details
             return response()->json([
-                 'message' => 'Travel insurance policy issued successfully!',
-                 'policy_details' => $policyDetails, // From Bimafy
-                 'local_record_id' => $insurance->id // Your DB record ID
+                'message' => 'Travel insurance policy issued successfully!',
+                'policy_details' => $policyDetails, // From Bimafy
+                'local_record_id' => $insurance->id, // Your DB record ID
             ], 201); // 201 Created
 
         } catch (ValidationException $e) {
-             return response()->json(['message' => 'Invalid policy details.', 'errors' => $e->errors()], 422);
+            return response()->json(['message' => 'Invalid policy details.', 'errors' => $e->errors()], 422);
         } catch (\Exception $e) {
             // Log the detailed error
             Log::error('Bimafy policy issuance failed.', ['user_id' => auth()->id(), 'error' => $e->getMessage(), 'request_data' => $request->except(['payment_reference'])]); // Avoid logging payment refs if sensitive
+
             return response()->json(['message' => 'Failed to issue policy.', 'error' => $e->getMessage()], 500);
         }
     }

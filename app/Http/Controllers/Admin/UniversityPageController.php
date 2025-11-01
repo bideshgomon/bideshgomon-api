@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\University;
+use App\Models\City;
 use App\Models\Country;
 use App\Models\State;
-use App\Models\City;
-use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse; // <-- ADD THIS LINE
+use App\Models\University;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request; // <-- ADD THIS LINE
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -25,15 +25,15 @@ class UniversityPageController extends Controller
         if ($request->has('search')) {
             $search = $request->input('search');
             $query->where('name', 'like', "%{$search}%")
-                  ->orWhereHas('country', function ($q) use ($search) {
-                      $q->where('name', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('state', function ($q) use ($search) {
-                      $q->where('name', 'like', "%{$search}%");
-                  })
-                  ->orWhereHas('city', function ($q) use ($search) {
-                      $q->where('name', 'like', "%{$search}%");
-                  });
+                ->orWhereHas('country', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('state', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('city', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
         }
 
         $universities = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
@@ -77,7 +77,7 @@ class UniversityPageController extends Controller
         University::create($validated);
 
         return redirect()->route('admin.universities.index')
-                         ->with('success', 'University created successfully.');
+            ->with('success', 'University created successfully.');
     }
 
     /**
@@ -122,7 +122,7 @@ class UniversityPageController extends Controller
         $university->update($validated);
 
         return redirect()->route('admin.universities.index')
-                         ->with('success', 'University updated successfully.');
+            ->with('success', 'University updated successfully.');
     }
 
     /**
@@ -134,6 +134,6 @@ class UniversityPageController extends Controller
         $university->delete();
 
         return redirect()->route('admin.universities.index')
-                         ->with('success', 'University deleted successfully.');
+            ->with('success', 'University deleted successfully.');
     }
 }

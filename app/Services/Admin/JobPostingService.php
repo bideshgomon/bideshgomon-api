@@ -1,4 +1,5 @@
 <?php
+
 // app/Services/Admin/JobPostingService.php
 
 namespace App\Services\Admin;
@@ -11,8 +12,6 @@ class JobPostingService
 {
     /**
      * Get validation rules for storing a job posting.
-     *
-     * @return array
      */
     protected function getValidationRules(): array
     {
@@ -38,8 +37,6 @@ class JobPostingService
     /**
      * Validate and create a new job posting.
      *
-     * @param array $data
-     * @return JobPosting
      * @throws ValidationException
      */
     public function createJobPosting(array $data): JobPosting

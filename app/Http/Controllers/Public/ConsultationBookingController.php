@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreAppointmentRequest;
 use App\Models\ConsultationService;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Inertia\Response;
-use Illuminate\Http\RedirectResponse;
-use App\Http\Requests\StoreAppointmentRequest; // Uses the original request
+use Inertia\Response; // Uses the original request
 
 class ConsultationBookingController extends Controller
 {
@@ -54,7 +54,7 @@ class ConsultationBookingController extends Controller
         ]);
 
         return redirect()->route('dashboard')
-                         ->with('success', 'Your consultation request has been submitted!');
+            ->with('success', 'Your consultation request has been submitted!');
     }
 
     // Remove paymentSuccess and paymentCancel methods

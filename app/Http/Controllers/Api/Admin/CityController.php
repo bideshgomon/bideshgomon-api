@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\City;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class CityController extends Controller
 {
@@ -29,6 +28,7 @@ class CityController extends Controller
         ]);
 
         $city = City::create($validated);
+
         return response()->json($city->load('country', 'state'), 201);
     }
 
@@ -52,6 +52,7 @@ class CityController extends Controller
         ]);
 
         $city->update($validated);
+
         return response()->json($city->load('country', 'state'));
     }
 
@@ -61,6 +62,7 @@ class CityController extends Controller
     public function destroy(City $city)
     {
         $city->delete();
+
         return response()->json(null, 204);
     }
 }

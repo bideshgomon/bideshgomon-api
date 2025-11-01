@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Http\Request;
-use Inertia\Middleware;
-use Tighten\Ziggy\Ziggy; // YOUR CORRECT NAMESPACE
 use App\Models\User;
+use Illuminate\Http\Request;
+use Inertia\Middleware; // YOUR CORRECT NAMESPACE
+use Tighten\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -39,7 +39,7 @@ class HandleInertiaRequests extends Middleware
      */
     protected function transformUser(User $user): ?array
     {
-        if (!$user->relationLoaded('role')) {
+        if (! $user->relationLoaded('role')) {
             $user->loadMissing('role');
         }
 
@@ -50,7 +50,7 @@ class HandleInertiaRequests extends Middleware
         $role = $user->role ? [
             'id' => $user->role->id,
             'name' => $user->role->name,
-        ] : (object)['id' => null, 'name' => 'guest']; // Send a guest object instead of null
+        ] : (object) ['id' => null, 'name' => 'guest']; // Send a guest object instead of null
 
         return [
             'id' => $user->id,

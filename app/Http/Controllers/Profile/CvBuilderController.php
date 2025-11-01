@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Response as HttpResponse;
 
 class CvBuilderController extends Controller
 {
@@ -56,7 +56,7 @@ class CvBuilderController extends Controller
 
         $data = ['user' => $user];
         $pdf = Pdf::loadView('pdf.cv_template', $data);
-        $filename = Str::slug($user->name) . '-cv-' . date('Ymd') . '.pdf';
+        $filename = Str::slug($user->name).'-cv-'.date('Ymd').'.pdf';
 
         return $pdf->download($filename);
     }

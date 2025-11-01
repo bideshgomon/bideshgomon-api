@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Http\Requests\Admin\UpdateConsultantProfileRequest;
 use App\Models\Role;
-use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
-use Illuminate\Http\RedirectResponse;
-use App\Http\Requests\Admin\UpdateConsultantProfileRequest;
 
 class ConsultantController extends Controller
 {
@@ -43,11 +42,11 @@ class ConsultantController extends Controller
         return Inertia::render('Admin/Consultants/Edit', [
             'consultant' => $consultant,
             // Pass the profile, or a default object if it's null
-            'profile' => $consultant->consultantProfile ?? (object)[
+            'profile' => $consultant->consultantProfile ?? (object) [
                 'title' => '',
                 'bio' => '',
                 'specializations' => [],
-            ]
+            ],
         ]);
     }
 
@@ -63,6 +62,6 @@ class ConsultantController extends Controller
         );
 
         return redirect()->route('admin.consultants.index')
-                         ->with('success', 'Consultant profile updated.');
+            ->with('success', 'Consultant profile updated.');
     }
 }
