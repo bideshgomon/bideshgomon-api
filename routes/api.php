@@ -37,6 +37,7 @@ use App\Http\Controllers\Api\DocumentTypeController;
 use App\Http\Controllers\Api\PrebuiltDataController;
 use App\Http\Controllers\Api\PublicSearchController;
 // 👤 User Profile Controllers
+use App\Http\Controllers\Api\UserProfile\UserDocumentController;
 use App\Http\Controllers\Api\UserProfile\UserEducationController;
 use App\Http\Controllers\Api\UserProfile\UserLanguageController;
 use App\Http\Controllers\Api\UserProfile\UserLicenseController;
@@ -45,7 +46,6 @@ use App\Http\Controllers\Api\UserProfile\UserSkillController;
 use App\Http\Controllers\Api\UserProfile\UserTechnicalEducationController;
 use App\Http\Controllers\Api\UserProfile\UserTravelHistoryController;
 use App\Http\Controllers\Api\UserProfile\UserWorkExperienceController;
-use App\Http\Controllers\Controllers\Api\UserProfile\UserDocumentController;
 
 /*
 |--------------------------------------------------------------------------
