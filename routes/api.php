@@ -64,7 +64,7 @@ Route::get('/universities/{university}', [PublicSearchController::class, 'showUn
     ->name('api.public.universities.show');
 
 Route::get('/courses/{course}', [PublicSearchController::class, 'showCourseDetail'])
-        ->name('api.public.courses.show');
+    ->name('api.public.courses.show');
 
 Route::get('/search/jobs', [PublicSearchController::class, 'searchJobPostings'])->name('api.public.search.jobs');
 
