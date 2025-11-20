@@ -46,7 +46,7 @@ class SmsService
         }
     }
 
-    protected function twilioConfigured(): bool
+    public function twilioConfigured(): bool
     {
         return !empty(config('services.twilio.account_sid')) && !empty(config('services.twilio.auth_token')) && !empty(config('services.twilio.from'));
     }
