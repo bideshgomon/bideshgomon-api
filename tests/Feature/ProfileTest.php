@@ -28,13 +28,16 @@ class ProfileTest extends TestCase
         $response = $this
             ->actingAs($user)
             ->patch('/profile', [
-                'name' => 'Test User',
+                'first_name' => 'Test',
+                'middle_name' => null,
+                'last_name' => 'User',
+                'name_as_per_passport' => 'TEST USER',
                 'email' => 'test@example.com',
             ]);
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect('/profile');
+            ->assertRedirect(route('profile.edit', ['section' => 'basic'], false));
 
         $user->refresh();
 
@@ -50,13 +53,16 @@ class ProfileTest extends TestCase
         $response = $this
             ->actingAs($user)
             ->patch('/profile', [
-                'name' => 'Test User',
+                'first_name' => 'Existing',
+                'middle_name' => null,
+                'last_name' => 'User',
+                'name_as_per_passport' => 'EXISTING USER',
                 'email' => $user->email,
             ]);
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect('/profile');
+            ->assertRedirect(route('profile.edit', ['section' => 'basic'], false));
 
         $this->assertNotNull($user->refresh()->email_verified_at);
     }

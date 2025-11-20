@@ -89,6 +89,16 @@ class ProfileController extends Controller
         // Create profile if doesn't exist
         if (!$user->profile) {
             $user->profile()->create([]);
+            $user->load('profile'); // Reload the profile relationship
+        }
+        
+        // Ensure we have fresh profile data and log for debugging
+        if ($user->profile) {
+            $user->profile->refresh();
+            \Log::info('Profile edit returning', [
+                'user_id' => $user->id,
+                'profile_names' => $user->profile->only(['first_name','middle_name','last_name','name_as_per_passport'])
+            ]);
         }
 
         return Inertia::render('Profile/Edit', [
@@ -115,6 +125,11 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        \Log::info('Profile update started', [
+            'user_id' => $request->user()->id,
+            'input' => $request->all()
+        ]);
+
         // Update user email if changed
         $request->user()->fill($request->only('email'));
 
@@ -125,7 +140,15 @@ class ProfileController extends Controller
         $request->user()->save();
 
         // Update user profile with passport-standard name fields
-        $profile = $request->user()->profile ?? $request->user()->profile()->create([]);
+        // Ensure profile exists
+        if (!$request->user()->profile) {
+            $request->user()->profile()->create([]);
+            $request->user()->load('profile');
+        }
+        
+        $profile = $request->user()->profile;
+        
+        \Log::info('Profile before update', ['profile' => $profile->toArray()]);
         
         $profile->update([
             'first_name' => $request->input('first_name'),
@@ -133,6 +156,8 @@ class ProfileController extends Controller
             'last_name' => $request->input('last_name'),
             'name_as_per_passport' => $request->input('name_as_per_passport'),
         ]);
+
+        \Log::info('Profile after update', ['profile' => $profile->fresh()->toArray()]);
 
         // Also update the user's name field for backward compatibility
         $fullName = trim(implode(' ', array_filter([
@@ -145,7 +170,10 @@ class ProfileController extends Controller
             $request->user()->update(['name' => $fullName]);
         }
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        \Log::info('Profile update completed successfully');
+
+        return Redirect::route('profile.edit', ['section' => 'basic'])
+            ->with('status', 'profile-updated');
     }
 
     /**

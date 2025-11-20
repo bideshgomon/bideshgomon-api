@@ -33,7 +33,8 @@ class UserWorkExperienceController extends Controller
             'end_date' => 'nullable|date|after:start_date',
             'is_current_employment' => 'boolean',
             'city' => 'nullable|string|max:255',
-            'country_id' => 'nullable|exists:countries,id',
+            // Switched from normalized country_id to storing full country name for consistency with other profile sections
+            'country' => 'nullable|string|max:100',
             'description' => 'nullable|string|max:2000',
             'responsibilities' => 'nullable|array',
             'industry' => 'nullable|string|max:255',
@@ -90,7 +91,8 @@ class UserWorkExperienceController extends Controller
             'end_date' => 'nullable|date|after:start_date',
             'is_current_employment' => 'boolean',
             'city' => 'nullable|string|max:255',
-            'country_id' => 'nullable|exists:countries,id',
+            // Switched from normalized country_id to storing full country name for consistency with other profile sections
+            'country' => 'nullable|string|max:100',
             'description' => 'nullable|string|max:2000',
             'responsibilities' => 'nullable|array',
             'industry' => 'nullable|string|max:255',

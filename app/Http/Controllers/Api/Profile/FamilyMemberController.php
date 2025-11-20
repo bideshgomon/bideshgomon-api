@@ -26,11 +26,12 @@ class FamilyMemberController extends Controller
             'place_of_birth' => 'nullable|string|max:255',
             'gender' => 'required|string|in:male,female,other',
             'nationality' => 'required|string|max:100',
-            'current_country' => 'nullable|string|max:100',
-            'current_city' => 'nullable|string|max:100',
+            'country_of_residence' => 'nullable|string|max:100',
+            'city' => 'nullable|string|max:100',
             'occupation' => 'nullable|string|max:255',
-            'employer' => 'nullable|string|max:255',
-            'annual_income_bdt' => 'nullable|numeric|min:0',
+            'employer_name' => 'nullable|string|max:255',
+            'annual_income' => 'nullable|numeric|min:0',
+            'income_currency' => 'nullable|string|max:3',
             'education_level' => 'nullable|string|in:none,primary,secondary,higher_secondary,bachelors,masters,doctorate',
             'marital_status' => 'nullable|string|in:single,married,divorced,widowed,separated',
             'is_dependent' => 'boolean',
@@ -38,11 +39,11 @@ class FamilyMemberController extends Controller
             'will_accompany' => 'boolean',
             'will_accompany_travel' => 'boolean',
             'passport_number' => 'nullable|string|max:50',
-            'visa_status' => 'nullable|string|in:none,tourist,student,work,permanent_resident,citizen',
-            'deceased' => 'boolean',
+            'immigration_status' => 'nullable|string|in:citizen,permanent_resident,temporary_resident,student,refugee,other,not_applicable',
+            'is_deceased' => 'boolean',
             'deceased_date' => 'nullable|date|before_or_equal:today',
-            'contact_phone' => 'nullable|string|max:20',
-            'contact_email' => 'nullable|email|max:255',
+            'phone_number' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
             'emergency_contact' => 'boolean',
             'relationship_proof' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:10240',
             'address' => 'nullable|string|max:500',
@@ -59,7 +60,7 @@ class FamilyMemberController extends Controller
             $validated['relationship_proof_uploaded'] = false;
         }
 
-        $familyMember = Auth::user()->familyMembers()->create($validated);
+    $familyMember = Auth::user()->familyMembers()->create($validated);
 
         return response()->json($familyMember, 201);
     }
@@ -90,7 +91,7 @@ class FamilyMemberController extends Controller
             'will_accompany' => 'boolean',
             'will_accompany_travel' => 'boolean',
             'passport_number' => 'nullable|string|max:50',
-            'immigration_status' => 'nullable|string|in:none,tourist,student,work,permanent_resident,citizen',
+            'immigration_status' => 'nullable|string|in:citizen,permanent_resident,temporary_resident,student,refugee,other,not_applicable',
             'is_deceased' => 'boolean',
             'deceased_date' => 'nullable|date|before_or_equal:today',
             'phone_number' => 'nullable|string|max:20',

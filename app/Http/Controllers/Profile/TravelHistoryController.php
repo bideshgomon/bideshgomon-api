@@ -73,20 +73,20 @@ class TravelHistoryController extends Controller
         UserTravelHistory::create([
             'user_id' => Auth::id(),
             'country_visited' => $validated['country'],
-            'city_visited' => $validated['city'],
+            'city_visited' => $validated['city'] ?? null,
             'purpose' => $validated['purpose'],
             'entry_date' => $validated['entry_date'],
             'exit_date' => $validated['exit_date'],
             'duration_days' => $validated['duration_days'],
-            'accommodation_type' => $validated['accommodation_type'],
-            'accommodation_address' => $validated['accommodation_address'],
-            'transportation_mode' => $validated['transportation_mode'],
-            'entry_port' => $validated['entry_port'],
-            'exit_port' => $validated['exit_port'],
+            'accommodation_type' => $validated['accommodation_type'] ?? null,
+            'accommodation_address' => $validated['accommodation_address'] ?? null,
+            'transportation_mode' => $validated['transportation_mode'] ?? null,
+            'entry_port' => $validated['entry_port'] ?? null,
+            'exit_port' => $validated['exit_port'] ?? null,
             'visa_type_used' => $validated['visa_type_used'] ?? null,
             'sponsoring_organization' => $validated['sponsoring_organization'] ?? null,
-            'travel_companions' => $validated['travel_companions'],
-            'notes' => $validated['notes'],
+            'travel_companions' => $validated['travel_companions'] ?? null,
+            'notes' => $validated['notes'] ?? null,
         ]);
 
         return response()->json(['message' => 'Travel history record added successfully.'], 201);
@@ -119,20 +119,20 @@ class TravelHistoryController extends Controller
 
         $travelHistory->update([
             'country_visited' => $validated['country'],
-            'city_visited' => $validated['city'],
+            'city_visited' => $validated['city'] ?? null,
             'purpose' => $validated['purpose'],
             'entry_date' => $validated['entry_date'],
             'exit_date' => $validated['exit_date'],
             'duration_days' => $validated['duration_days'],
-            'accommodation_type' => $validated['accommodation_type'],
-            'accommodation_address' => $validated['accommodation_address'],
-            'transportation_mode' => $validated['transportation_mode'],
-            'entry_port' => $validated['entry_port'],
-            'exit_port' => $validated['exit_port'],
+            'accommodation_type' => $validated['accommodation_type'] ?? null,
+            'accommodation_address' => $validated['accommodation_address'] ?? null,
+            'transportation_mode' => $validated['transportation_mode'] ?? null,
+            'entry_port' => $validated['entry_port'] ?? null,
+            'exit_port' => $validated['exit_port'] ?? null,
             'visa_type_used' => $validated['visa_type_used'] ?? null,
             'sponsoring_organization' => $validated['sponsoring_organization'] ?? null,
-            'travel_companions' => $validated['travel_companions'],
-            'notes' => $validated['notes'],
+            'travel_companions' => $validated['travel_companions'] ?? null,
+            'notes' => $validated['notes'] ?? null,
         ]);
 
         return response()->json(['message' => 'Travel history record updated successfully.']);

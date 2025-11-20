@@ -17,6 +17,7 @@ const props = defineProps({
     recentVisaApplications: Array,
     userChartData: Array,
     revenueChartData: Array,
+    recentImpersonations: Array,
 });
 
 const formatCurrency = (amount) => {
@@ -430,6 +431,67 @@ const formatDateTime = (date) => {
                     <div v-else class="text-center py-8 text-gray-500">
                         No revenue data available
                     </div>
+                </div>
+            </div>
+
+            <!-- Security & Audit: Recent Impersonations -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-gray-900">Recent Admin Impersonations</h3>
+                    <span class="text-xs text-gray-500">Last 10 sessions</span>
+                </div>
+                <div v-if="recentImpersonations && recentImpersonations.length" class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-3 py-2 text-left font-semibold text-gray-700">Admin</th>
+                                <th class="px-3 py-2 text-left font-semibold text-gray-700">Target User</th>
+                                <th class="px-3 py-2 text-left font-semibold text-gray-700">Purpose</th>
+                                <th class="px-3 py-2 text-left font-semibold text-gray-700">Started</th>
+                                <th class="px-3 py-2 text-left font-semibold text-gray-700">Ended</th>
+                                <th class="px-3 py-2 text-left font-semibold text-gray-700">Duration</th>
+                                <th class="px-3 py-2 text-left font-semibold text-gray-700">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr v-for="log in recentImpersonations" :key="log.id" class="hover:bg-gray-50">
+                                <td class="px-3 py-2">
+                                    <span class="font-medium text-gray-900" v-if="log.impersonator">{{ log.impersonator.name }}</span>
+                                    <span class="text-gray-400" v-else>Unknown</span>
+                                </td>
+                                <td class="px-3 py-2">
+                                    <span class="font-medium text-gray-900" v-if="log.target">{{ log.target.name }}</span>
+                                    <span class="text-gray-400" v-else>Unknown</span>
+                                </td>
+                                <td class="px-3 py-2 text-gray-700">
+                                    <span class="line-clamp-2 max-w-xs block">{{ log.purpose || '—' }}</span>
+                                </td>
+                                <td class="px-3 py-2 text-gray-600">{{ formatDateTime(log.started_at) }}</td>
+                                <td class="px-3 py-2 text-gray-600">
+                                    <span v-if="log.ended_at">{{ formatDateTime(log.ended_at) }}</span>
+                                    <span v-else class="text-gray-400">—</span>
+                                </td>
+                                <td class="px-3 py-2 text-gray-600">
+                                    <span v-if="log.duration_minutes !== null">{{ log.duration_minutes }} min</span>
+                                    <span v-else class="text-gray-400">—</span>
+                                </td>
+                                <td class="px-3 py-2">
+                                    <span
+                                        class="px-2 py-1 rounded-full text-xs font-semibold"
+                                        :class="{
+                                            'bg-green-100 text-green-700': log.status === 'ended',
+                                            'bg-yellow-100 text-yellow-700': log.status === 'active'
+                                        }"
+                                    >
+                                        {{ log.status }}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div v-else class="text-center py-8 text-sm text-gray-500">
+                    No impersonation sessions recorded yet.
                 </div>
             </div>
 

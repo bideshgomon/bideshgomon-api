@@ -11,7 +11,8 @@ class AdminUserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = User::with(['profile', 'country']);
+    // Eager load role (new role_id-based system), profile, country
+    $query = User::with(['profile', 'country', 'role']);
 
         // Search
         if ($request->filled('search')) {
@@ -25,7 +26,11 @@ class AdminUserController extends Controller
 
         // Filter by role
         if ($request->filled('role')) {
-            $query->where('role', $request->role);
+            // Support filtering by role slug or name (legacy compatibility)
+            $roleFilter = $request->role;
+            $query->whereHas('role', function ($q) use ($roleFilter) {
+                $q->where('slug', $roleFilter)->orWhere('name', $roleFilter);
+            });
         }
 
         // Filter by status
@@ -60,7 +65,7 @@ class AdminUserController extends Controller
             'suspended' => User::whereNotNull('suspended_at')->count(),
             'verified' => User::whereNotNull('email_verified_at')->count(),
             'unverified' => User::whereNull('email_verified_at')->count(),
-            'admins' => User::where('role', 'admin')->count(),
+            'admins' => User::whereHas('role', function ($q) { $q->where('slug', 'admin')->orWhere('name', 'admin'); })->count(),
         ];
 
         return Inertia::render('Admin/Users/Index', [
@@ -93,7 +98,8 @@ class AdminUserController extends Controller
 
         $user = User::findOrFail($id);
 
-        if ($user->role === 'admin') {
+        // Prevent suspending admin via role relationship
+        if ($user->role && in_array(strtolower($user->role->slug), ['admin'])) {
             return back()->with('error', 'Cannot suspend admin users.');
         }
 
@@ -147,7 +153,7 @@ class AdminUserController extends Controller
         }
 
         // Prevent deleting admins
-        if ($user->role === 'admin') {
+        if ($user->role && in_array(strtolower($user->role->slug), ['admin'])) {
             return back()->with('error', 'Cannot delete admin users.');
         }
 
@@ -200,7 +206,7 @@ class AdminUserController extends Controller
 
     public function export(Request $request)
     {
-        $query = User::with(['profile', 'country']);
+    $query = User::with(['profile', 'country', 'role']);
 
         // Apply same filters as index
         if ($request->filled('search')) {
@@ -213,7 +219,10 @@ class AdminUserController extends Controller
         }
 
         if ($request->filled('role')) {
-            $query->where('role', $request->role);
+            $roleFilter = $request->role;
+            $query->whereHas('role', function ($q) use ($roleFilter) {
+                $q->where('slug', $roleFilter)->orWhere('name', $roleFilter);
+            });
         }
 
         if ($request->filled('status')) {

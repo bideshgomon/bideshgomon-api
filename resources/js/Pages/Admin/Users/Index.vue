@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import {
     UsersIcon,
     MagnifyingGlassIcon,
@@ -13,6 +13,7 @@ import {
     EyeIcon,
     NoSymbolIcon,
     TrashIcon,
+    UserPlusIcon,
 } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
@@ -129,6 +130,26 @@ const formatDate = (date) => {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
+    });
+};
+
+// Impersonation helpers
+const page = usePage();
+const isAdmin = computed(() => page.props.auth?.user?.role?.slug === 'admin');
+const impersonating = computed(() => page.props.auth?.user?.impersonating);
+
+const canImpersonate = (user) => {
+    if (!isAdmin.value) return false;
+    if (impersonating.value) return false; // Already impersonating someone
+    // Do not impersonate admins (policy)
+    return user.role !== 'admin';
+};
+
+const impersonateUser = (user) => {
+    if (!canImpersonate(user)) return;
+    if (!confirm(`Impersonate ${user.name}? You will act as this user until you exit.`)) return;
+    router.post(route('admin.users.impersonate', user.id), {}, {
+        preserveScroll: true,
     });
 };
 </script>
@@ -426,6 +447,15 @@ const formatDate = (date) => {
                                             <EyeIcon class="h-4 w-4" />
                                             View
                                         </Link>
+                                        <button
+                                            v-if="canImpersonate(user)"
+                                            @click="impersonateUser(user)"
+                                            class="ml-3 text-amber-600 hover:text-amber-800 inline-flex items-center gap-1"
+                                            type="button"
+                                        >
+                                            <UserPlusIcon class="h-4 w-4" />
+                                            Impersonate
+                                        </button>
                                     </td>
                                 </tr>
                             </tbody>

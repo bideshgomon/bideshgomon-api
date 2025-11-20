@@ -98,6 +98,110 @@ Comprehensive admin panel for the Bidesh Gomon platform, providing complete mana
 - Cannot suspend/delete admin users
 - Cannot delete own account
 - Cannot demote self from admin
+ - Admin impersonation safeguards (cannot impersonate another admin)
+
+### 3.1 Admin Impersonation Feature ✅
+**Purpose**: Allow an admin to temporarily act as a target user to debug issues, verify UI, or assist account setup without needing credentials.
+
+**Workflow**:
+1. From `User Management` a (future UI action) triggers POST to `admin.users.impersonate`.
+2. Server stores original admin ID in session (`impersonator_id`) and switches auth user to target.
+3. Global Inertia shared props expose `auth.user.impersonating` + `impersonator_id`.
+4. Banner appears across authenticated layout showing impersonation state with “Exit Impersonation” button.
+5. POST to `admin.impersonation.leave` restores original admin identity and clears session key.
+
+**Routes Added**:
+- `POST /admin/users/{id}/impersonate` → start impersonation
+- `POST /admin/impersonation/leave` → end impersonation
+
+**Controller**:
+- `AdminImpersonationController` (methods: `impersonate`, `leave`)
+
+**Security Rules**:
+- Only admins can impersonate.
+- Cannot impersonate another admin (policy guard).
+- Session key prevents nesting or losing original identity.
+ - Original admin identity fetched and shown in banner for transparency.
+
+**UI Indicator**:
+- Gradient security banner (amber → orange → red) at top with explicit notice.
+- Shows acting user name and original admin name + ID.
+- Provides one-click “Exit & Restore Admin” button (POST with CSRF).
+- Banner suppressed when not impersonating to avoid user confusion.
+
+**Testing**:
+- `AdminImpersonationTest` verifies: start, block admin→admin, restore, audit log rows (start + end timestamps).
+
+**Audit Recommendations (Future)**:
+- Implemented `admin_impersonation_logs` table (impersonator_id, target_user_id, started_at, ended_at, purpose, timestamps).
+- Future enhancement: dashboard widget showing last 10 impersonations with duration and purpose.
+
+**Status**: Implemented & passing tests.
+
+### 3.1.1 Security Hardening (Nov 2025)
+Following initial implementation, the impersonation system was reinforced to meet industry-standard security expectations:
+
+- Gate Authorization: A dedicated Gate (`impersonate`) ensures only admins can initiate sessions and excludes targeting other admins.
+- Mandatory Purpose: Each session requires a clear `purpose` string stored in the audit log for later forensic review.
+- Nested Session Prevention: Controller guard blocks starting a new impersonation while one is active (middleware planned, controller guard used due to Kernel omission).
+- Integrity Cookie: A signed cookie (`original_admin_id`) mirrors the session value, checked on exit to detect tampering or stale sessions.
+- Duration Tracking: Computed `duration_minutes` exposed when a session has ended, aiding operational review.
+- Transparency: Banner always shows acting identity and original admin to prevent silent privilege escalation.
+
+### 3.1.2 Impersonation Dashboard Widget
+Added to the admin dashboard to surface recent impersonation activity:
+
+- Location: `Admin/Dashboard.vue` below chart sections.
+- Data: Last 10 sessions with impersonator, target user, purpose, started, ended, duration, status.
+- Backend Mapping: `AdminDashboardController@index` eager loads impersonator/target for minimal queries.
+- Status Badges: `active` (yellow), `ended` (green) reusing platform badge semantics.
+- Empty State: Graceful message if no sessions yet.
+- Purpose Handling: Truncated visually for long text without losing audit value.
+
+### 3.1.3 Future Improvements (Optional)
+- Real-time broadcasting of start/end events (Echo + WebSockets).
+- Duration anomaly alerts (e.g., sessions > 60 minutes).
+- Advanced filtering (date range, purpose keyword, admin/user selectors).
+- CSV/JSON export for compliance reviews.
+- Dedicated "Security Audit" page with deeper analytics.
+
+### 3.1.4 Audit & Compliance Notes
+- Immutable Lifecycle: Only `ended_at` is added post-start; no editing of purpose or impersonator references.
+- Principle of Least Privilege: Restricted strictly to `admin` role.
+- Forensic Readiness: Purpose + duration + timestamps + actor IDs supports investigation trails.
+- Tamper Resistance: Signed cookie + session alignment reduces risk of session fixation or hijack altering original admin identity.
+
+### 3.1.5 Impersonation Logs Management (Nov 2025)
+**Purpose**: Dedicated page for viewing and exporting impersonation audit logs with filtering.
+
+**Routes**:
+- `GET /admin/impersonations` → `AdminImpersonationLogController@index` (list logs)
+- `GET /admin/impersonations/export` → `AdminImpersonationLogController@export` (CSV download)
+
+**Features**:
+- Paginated log table (20 per page) with filters: status (active/ended), admin, target user, date range.
+- Admin dropdown filter populated with all admins.
+- CSV export honors current filters for targeted compliance reporting.
+- Table columns: ID, Admin, Target User, Purpose, Started, Ended, Duration, Status.
+- Empty state message if no logs found.
+
+**Page**: `Admin/Impersonations/Index.vue` (~150 lines) — filter panel, table, export button.
+
+**Controller**: `AdminImpersonationLogController` (100+ lines) — index with eager loading, export streaming CSV.
+
+**Events Dispatched** (extensibility hooks):
+- `ImpersonationStarted` on session start (payload: AdminImpersonationLog).
+- `ImpersonationEnded` on session end (payload: AdminImpersonationLog).
+These can be used for:
+- Real-time WebSocket alerts to monitoring dashboard.
+- Slack/email notifications for long-duration or anomaly sessions.
+- Integration with SIEM or audit aggregation systems.
+
+**Testing**:
+- `AdminImpersonationLogsTest`: 3 feature tests covering index access, duration accessor, CSV export headers.
+- Tests verify 200 status, accessor absolute value, CSV content-disposition header.
+
+**Status**: Fully implemented, tested, documented.
 
 ### 4. Analytics & Reporting System ✅
 **Purpose**: Platform insights and metrics
@@ -215,7 +319,14 @@ Comprehensive admin panel for the Bidesh Gomon platform, providing complete mana
 
 ### Modified Tables
 1. **users**
-   - Added: role, phone, country_id, suspended_at, suspension_reason
+2. **admin_impersonation_logs**
+   - Tracks impersonation session lifecycle.
+   - Columns: id, impersonator_id (FK users), target_user_id (FK users), started_at, ended_at, purpose (nullable), created_at, updated_at.
+   - Indexes: impersonator_id, target_user_id, started_at for efficient querying.
+   - Data Integrity: On user delete, related log rows cascade (historical retention strategy may adjust in future).
+   - Added historically: role (legacy, now removed), phone, country_id, suspended_at, suspension_reason, role_id
+   - Removed: legacy `role` string column (migration `2025_11_20_000001_drop_legacy_role_column_from_users_table`)
+   - Current Role Implementation: relational `role_id` referencing `roles` table
 
 ### Existing Tables Used
 - job_postings (36 fields)

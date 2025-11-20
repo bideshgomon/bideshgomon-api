@@ -12,6 +12,12 @@ class UserProfile extends Model
 
     protected $fillable = [
         'user_id',
+        // Passport-standard name fields
+        'first_name',
+        'middle_name',
+        'last_name',
+        'name_as_per_passport',
+        // Profile fields
         'bio',
         'avatar',
         'phone',

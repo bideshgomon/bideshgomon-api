@@ -10,6 +10,7 @@ use App\Models\UserCv;
 use App\Models\HotelBooking;
 use App\Models\FlightRequest;
 use App\Models\VisaApplication;
+use App\Models\AdminImpersonationLog;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -119,6 +120,33 @@ class AdminDashboardController extends Controller
             ];
         }
 
+        // Recent Admin Impersonations (Security / Audit Widget)
+        $recentImpersonations = AdminImpersonationLog::with([
+                'impersonator:id,name',
+                'target:id,name'
+            ])
+            ->latest('started_at')
+            ->limit(10)
+            ->get()
+            ->map(function ($log) {
+                return [
+                    'id' => $log->id,
+                    'impersonator' => $log->impersonator ? [
+                        'id' => $log->impersonator->id,
+                        'name' => $log->impersonator->name,
+                    ] : null,
+                    'target' => $log->target ? [
+                        'id' => $log->target->id,
+                        'name' => $log->target->name,
+                    ] : null,
+                    'purpose' => $log->purpose,
+                    'started_at' => $log->started_at, // Carbon -> serialized ISO8601 by Inertia
+                    'ended_at' => $log->ended_at,
+                    'duration_minutes' => $log->ended_at ? $log->ended_at->diffInMinutes($log->started_at) : null,
+                    'status' => $log->ended_at ? 'ended' : 'active',
+                ];
+            });
+
         return Inertia::render('Admin/Dashboard', [
             'stats' => [
                 'users' => [
@@ -163,6 +191,7 @@ class AdminDashboardController extends Controller
             'recentVisaApplications' => $recentVisaApplications,
             'userChartData' => $userChartData,
             'revenueChartData' => $revenueChartData,
+            'recentImpersonations' => $recentImpersonations,
         ]);
     }
 }

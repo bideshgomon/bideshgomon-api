@@ -42,18 +42,35 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:100',
+            'middle_name' => 'nullable|string|max:100',
+            'last_name' => 'required|string|max:100',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'phone' => 'required|string|max:20',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'referral_code' => 'nullable|string|size:8|exists:users,referral_code',
         ]);
 
+        // Combine name parts for user.name field
+        $fullName = trim(implode(' ', array_filter([
+            $request->first_name,
+            $request->middle_name,
+            $request->last_name,
+        ])));
+
         $user = User::create([
-            'name' => $request->name,
+            'name' => $fullName,
             'email' => $request->email,
             'phone' => $request->phone,
             'password' => Hash::make($request->password),
+        ]);
+
+        // Create profile with passport-standard name fields
+        $user->profile()->create([
+            'first_name' => $request->first_name,
+            'middle_name' => $request->middle_name,
+            'last_name' => $request->last_name,
+            'name_as_per_passport' => strtoupper($fullName),
         ]);
 
         event(new Registered($user));

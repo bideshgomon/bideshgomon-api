@@ -4,7 +4,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
-import { ref, computed, watch } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
 const props = defineProps({
     mustVerifyEmail: {
@@ -22,6 +22,11 @@ const props = defineProps({
 const user = usePage().props.auth.user;
 const saveError = ref('');
 
+// Debug: Check what we're receiving
+console.log('UpdateProfileInformationForm - userProfile prop:', props.userProfile);
+console.log('UpdateProfileInformationForm - first_name:', props.userProfile?.first_name);
+console.log('UpdateProfileInformationForm - last_name:', props.userProfile?.last_name);
+
 // Passport-standard name fields
 const form = useForm({
     first_name: props.userProfile?.first_name || '',
@@ -31,35 +36,81 @@ const form = useForm({
     email: user.email,
 });
 
+console.log('UpdateProfileInformationForm - form initialized:', {
+    first_name: form.first_name,
+    middle_name: form.middle_name,
+    last_name: form.last_name,
+    name_as_per_passport: form.name_as_per_passport
+});
+
 // Auto-generate passport name format when typing
 const autoGeneratePassportName = () => {
     const parts = [form.first_name, form.middle_name, form.last_name].filter(p => p && p.trim());
     form.name_as_per_passport = parts.join(' ').toUpperCase();
 };
 
-// Watch for prop changes and update form
-watch(() => props.userProfile, (newProfile) => {
-    if (newProfile) {
-        form.first_name = newProfile.first_name || '';
-        form.middle_name = newProfile.middle_name || '';
-        form.last_name = newProfile.last_name || '';
-        form.name_as_per_passport = newProfile.name_as_per_passport || '';
+// Hydrate form fields on mount if they are still empty but props have data (guards against race or cache issues)
+onMounted(() => {
+    if (!form.first_name && props.userProfile?.first_name) {
+        form.first_name = props.userProfile.first_name || '';
+        form.middle_name = props.userProfile.middle_name || '';
+        form.last_name = props.userProfile.last_name || '';
+        form.name_as_per_passport = props.userProfile.name_as_per_passport || '';
+        console.log('Form hydrated from userProfile onMounted:', {
+            first_name: form.first_name,
+            middle_name: form.middle_name,
+            last_name: form.last_name,
+            name_as_per_passport: form.name_as_per_passport
+        });
     }
-}, { deep: true, immediate: true });
+});
 
 const submit = () => {
-    saveError.value = '';
-    form.patch(route('profile.update'), {
-        preserveScroll: true,
-        preserveState: false,
-        onSuccess: () => {
-            saveError.value = '';
-        },
-        onError: (errors) => {
-            saveError.value = 'Failed to update profile information. Please check the form and try again.';
-            console.error('Save error:', errors);
-        }
+    console.log('=== SUBMIT FUNCTION CALLED ===');
+    console.log('Form data:', {
+        first_name: form.first_name,
+        middle_name: form.middle_name,
+        last_name: form.last_name,
+        name_as_per_passport: form.name_as_per_passport,
+        email: form.email
     });
+    console.log('Route URL:', route('profile.update'));
+    console.log('Form processing:', form.processing);
+    
+    saveError.value = '';
+    
+    try {
+        console.log('Calling form.patch...');
+        const result = form.patch(route('profile.update'), {
+            preserveScroll: true,
+            onBefore: () => {
+                console.log('onBefore callback triggered');
+            },
+            onStart: () => {
+                console.log('onStart callback triggered');
+            },
+            onProgress: (progress) => {
+                console.log('onProgress:', progress);
+            },
+            onSuccess: (page) => {
+                console.log('onSuccess callback triggered', page);
+                saveError.value = '';
+            },
+            onError: (errors) => {
+                console.error('onError callback triggered', errors);
+                saveError.value = 'Failed to update profile information. Please check the form and try again.';
+            },
+            onCancel: () => {
+                console.log('onCancel callback triggered');
+            },
+            onFinish: () => {
+                console.log('onFinish callback triggered');
+            }
+        });
+        console.log('form.patch() returned:', result);
+    } catch (error) {
+        console.error('Exception in form.patch():', error);
+    }
 };
 </script>
 

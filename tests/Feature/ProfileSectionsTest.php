@@ -23,8 +23,8 @@ class ProfileSectionsTest extends TestCase
         $this->user->profile()->create([]);
     }
 
-    /** @test */
-    public function family_member_can_be_created_with_all_new_fields()
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function family_member_can_be_created_with_all_new_fields(): void
     {
         $response = $this->actingAs($this->user)
             ->postJson('/api/profile/family-members', [
@@ -74,8 +74,8 @@ class ProfileSectionsTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function family_member_can_be_updated_with_correct_fields()
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function family_member_can_be_updated_with_correct_fields(): void
     {
         $familyMember = UserFamilyMember::create([
             'user_id' => $this->user->id,
@@ -106,8 +106,8 @@ class ProfileSectionsTest extends TestCase
         $this->assertTrue($familyMember->lives_with_user);
     }
 
-    /** @test */
-    public function work_experience_uses_correct_field_name_is_current_employment()
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function work_experience_uses_correct_field_name_is_current_employment(): void
     {
         $response = $this->actingAs($this->user)
             ->postJson('/api/profile/work-experience', [
@@ -127,8 +127,8 @@ class ProfileSectionsTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function work_experience_can_be_updated_with_is_current_employment()
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function work_experience_can_be_updated_with_is_current_employment(): void
     {
         $experience = UserWorkExperience::create([
             'user_id' => $this->user->id,
@@ -154,8 +154,8 @@ class ProfileSectionsTest extends TestCase
         $this->assertEquals('Senior Developer', $experience->position);
     }
 
-    /** @test */
-    public function all_profile_api_routes_are_accessible()
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function all_profile_api_routes_are_accessible(): void
     {
         $routes = [
             ['GET', '/api/profile/family-members'],
@@ -172,8 +172,8 @@ class ProfileSectionsTest extends TestCase
         }
     }
 
-    /** @test */
-    public function family_member_boolean_fields_cast_correctly()
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function family_member_boolean_fields_cast_correctly(): void
     {
         $member = UserFamilyMember::create([
             'user_id' => $this->user->id,
@@ -198,12 +198,12 @@ class ProfileSectionsTest extends TestCase
         $this->assertFalse($member->is_deceased);
     }
 
-    /** @test */
-    public function profile_completion_calculates_correctly()
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function profile_completion_calculates_correctly(): void
     {
         $completion = $this->user->calculateProfileCompletion();
         
-        $this->assertIsFloat($completion);
+    $this->assertIsInt($completion);
         $this->assertGreaterThanOrEqual(0, $completion);
         $this->assertLessThanOrEqual(100, $completion);
     }

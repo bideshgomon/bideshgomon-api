@@ -8,7 +8,9 @@ const props = defineProps({
 });
 
 const form = useForm({
-    name: '',
+    first_name: '',
+    middle_name: '',
+    last_name: '',
     email: '',
     phone: '',
     password: '',
@@ -72,31 +74,85 @@ const submit = () => {
                 <!-- Register Form Card -->
                 <div class="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-5">
                     <form @submit.prevent="submit" class="space-y-4">
-                        <!-- Name Input -->
-                        <div>
-                            <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
-                                Full Name
-                            </label>
-                            <div class="relative">
-                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <UserIcon class="h-5 w-5 text-gray-400" />
-                                </div>
-                                <input
-                                    id="name"
-                                    type="text"
-                                    v-model="form.name"
-                                    required
-                                    autofocus
-                                    autocomplete="name"
-                                    placeholder="Enter your full name"
-                                    class="block w-full pl-11 pr-4 py-4 text-base border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-                                    :class="{ 'border-red-300 focus:border-red-500 focus:ring-red-500': form.errors.name }"
-                                />
-                            </div>
-                            <p v-if="form.errors.name" class="mt-2 text-sm text-red-600 flex items-center">
-                                <span class="inline-block w-1 h-1 bg-red-600 rounded-full mr-2"></span>
-                                {{ form.errors.name }}
+                        <!-- Passport Name Notice -->
+                        <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl">
+                            <p class="text-xs text-blue-800">
+                                <span class="font-semibold">📝 Enter your name as it appears on your passport</span>
                             </p>
+                        </div>
+
+                        <!-- Name Fields Grid -->
+                        <div class="space-y-3">
+                            <!-- First Name -->
+                            <div>
+                                <label for="first_name" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    First Name *
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <UserIcon class="h-5 w-5 text-gray-400" />
+                                    </div>
+                                    <input
+                                        id="first_name"
+                                        type="text"
+                                        v-model="form.first_name"
+                                        required
+                                        autofocus
+                                        autocomplete="given-name"
+                                        placeholder="FIRST"
+                                        class="block w-full pl-11 pr-4 py-4 text-base border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors uppercase"
+                                        style="font-size: 16px"
+                                        :class="{ 'border-red-300 focus:border-red-500 focus:ring-red-500': form.errors.first_name }"
+                                    />
+                                </div>
+                                <p v-if="form.errors.first_name" class="mt-2 text-sm text-red-600 flex items-center">
+                                    <span class="inline-block w-1 h-1 bg-red-600 rounded-full mr-2"></span>
+                                    {{ form.errors.first_name }}
+                                </p>
+                            </div>
+
+                            <!-- Middle Name -->
+                            <div>
+                                <label for="middle_name" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Middle Name (Optional)
+                                </label>
+                                <input
+                                    id="middle_name"
+                                    type="text"
+                                    v-model="form.middle_name"
+                                    autocomplete="additional-name"
+                                    placeholder="MIDDLE"
+                                    class="block w-full px-4 py-4 text-base border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors uppercase"
+                                    style="font-size: 16px"
+                                    :class="{ 'border-red-300 focus:border-red-500 focus:ring-red-500': form.errors.middle_name }"
+                                />
+                                <p v-if="form.errors.middle_name" class="mt-2 text-sm text-red-600 flex items-center">
+                                    <span class="inline-block w-1 h-1 bg-red-600 rounded-full mr-2"></span>
+                                    {{ form.errors.middle_name }}
+                                </p>
+                            </div>
+
+                            <!-- Last Name -->
+                            <div>
+                                <label for="last_name" class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Last Name *
+                                </label>
+                                <input
+                                    id="last_name"
+                                    type="text"
+                                    v-model="form.last_name"
+                                    required
+                                    autocomplete="family-name"
+                                    placeholder="LAST"
+                                    class="block w-full px-4 py-4 text-base border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors uppercase"
+                                    style="font-size: 16px"
+                                    :class="{ 'border-red-300 focus:border-red-500 focus:ring-red-500': form.errors.last_name }"
+                                />
+                                <p v-if="form.errors.last_name" class="mt-2 text-sm text-red-600 flex items-center">
+                                    <span class="inline-block w-1 h-1 bg-red-600 rounded-full mr-2"></span>
+                                    {{ form.errors.last_name }}
+                                </p>
+                            </div>
                         </div>
 
                         <!-- Email Input -->

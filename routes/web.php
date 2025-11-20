@@ -476,6 +476,13 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::post('/users/{id}/suspend', [AdminUserController::class, 'suspend'])->name('admin.users.suspend');
     Route::post('/users/{id}/unsuspend', [AdminUserController::class, 'unsuspend'])->name('admin.users.unsuspend');
     Route::post('/users/{id}/update-role', [AdminUserController::class, 'updateRole'])->name('admin.users.update-role');
+    // Impersonation (admin only, will be guarded within controller by role check)
+    Route::post('/users/{id}/impersonate', [\App\Http\Controllers\Admin\AdminImpersonationController::class, 'impersonate'])
+        ->name('admin.users.impersonate');
+    Route::post('/impersonation/leave', [\App\Http\Controllers\Admin\AdminImpersonationController::class, 'leave'])->name('admin.impersonation.leave');
+    // Admin Impersonation Logs (Audit)
+    Route::get('/impersonations', [\App\Http\Controllers\Admin\AdminImpersonationLogController::class, 'index'])->name('admin.impersonations.index');
+    Route::get('/impersonations/export', [\App\Http\Controllers\Admin\AdminImpersonationLogController::class, 'export'])->name('admin.impersonations.export');
     Route::delete('/users/{id}', [AdminUserController::class, 'destroy'])->name('admin.users.destroy');
     Route::post('/users/bulk-suspend', [AdminUserController::class, 'bulkSuspend'])->name('admin.users.bulk-suspend');
     Route::post('/users/bulk-unsuspend', [AdminUserController::class, 'bulkUnsuspend'])->name('admin.users.bulk-unsuspend');
@@ -489,6 +496,14 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/settings', [AdminSettingsController::class, 'index'])->name('admin.settings.index');
     Route::post('/settings', [AdminSettingsController::class, 'update'])->name('admin.settings.update');
     Route::post('/settings/seed', [AdminSettingsController::class, 'seed'])->name('admin.settings.seed');
+    
+    // SEO Settings Management
+    Route::prefix('seo-settings')->name('seo-settings.')->middleware('role:admin')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\SeoSettingsController::class, 'index'])->name('index');
+        Route::put('/{pageType}', [\App\Http\Controllers\Admin\SeoSettingsController::class, 'update'])->name('update');
+        Route::delete('/{pageType}', [\App\Http\Controllers\Admin\SeoSettingsController::class, 'destroy'])->name('destroy');
+        Route::post('/generate-sitemap', [\App\Http\Controllers\Admin\SeoSettingsController::class, 'generateSitemap'])->name('generate-sitemap');
+    });
 });
 
 

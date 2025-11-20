@@ -21,6 +21,32 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
 <template>
     <div>
         <div class="min-h-screen bg-gray-100">
+            <!-- Impersonation Banner -->
+            <div v-if="$page.props.auth.user.impersonating" class="bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 text-white shadow-inner">
+                <div class="max-w-7xl mx-auto px-4 py-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-[13px]">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="font-semibold tracking-wide uppercase">Impersonation Mode</span>
+                            <span class="px-2 py-0.5 rounded bg-black/20 text-xs font-medium">SECURITY NOTICE</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="opacity-90">Acting as:</span>
+                            <span class="font-semibold">{{ $page.props.auth.user.name }}</span>
+                        </div>
+                        <div v-if="$page.props.auth.user.impersonator" class="flex items-center space-x-2">
+                            <span class="opacity-90">Original Admin:</span>
+                            <span class="font-medium">{{ $page.props.auth.user.impersonator.name }}</span>
+                            <span class="px-2 py-0.5 rounded bg-black/20 text-xs">ID {{ $page.props.auth.user.impersonator.id }}</span>
+                        </div>
+                    </div>
+                    <form :action="route('admin.impersonation.leave')" method="post" class="flex items-center">
+                        <input type="hidden" name="_token" :value="$page.props.csrf_token" />
+                        <button type="submit" class="inline-flex items-center px-4 py-1.5 rounded-md bg-black/25 hover:bg-black/35 transition font-semibold text-xs tracking-wide">
+                            Exit & Restore Admin
+                        </button>
+                    </form>
+                </div>
+            </div>
             <nav
                 class="border-b border-gray-100 bg-white"
             >
@@ -120,6 +146,7 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                             <DropdownLink :href="route('admin.applications.index')">📝 Job Applications</DropdownLink>
                                             <DropdownLink :href="route('admin.users.index')">👥 User Management</DropdownLink>
                                             <DropdownLink :href="route('admin.analytics.index')">📈 Analytics & Reports</DropdownLink>
+                                            <DropdownLink :href="route('seo-settings.index')">🔍 SEO Settings</DropdownLink>
                                             <DropdownLink :href="route('admin.settings.index')">⚙️ Platform Settings</DropdownLink>
                                         </template>
                                         
@@ -244,6 +271,7 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                             <ResponsiveNavLink :href="route('admin.applications.index')">📝 Job Applications</ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('admin.users.index')">👥 Users</ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('admin.analytics.index')">📈 Analytics</ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('seo-settings.index')">🔍 SEO</ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('admin.settings.index')">⚙️ Settings</ResponsiveNavLink>
                         </template>
                     </div>

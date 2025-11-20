@@ -34,6 +34,27 @@ class HandleInertiaRequests extends Middleware
         if ($user) {
             $user->loadMissing('role');
         }
+
+        $impersonator = null;
+        if (session()->has('impersonator_id')) {
+            $originalId = session('impersonator_id');
+            if ($user && $user->id !== $originalId) {
+                // Fetch minimal original admin data
+                $impersonatorModel = \App\Models\User::query()->with('role')->select(['id','name','email','role_id'])->find($originalId);
+                if ($impersonatorModel) {
+                    $impersonator = [
+                        'id' => $impersonatorModel->id,
+                        'name' => $impersonatorModel->name,
+                        'email' => $impersonatorModel->email,
+                        'role' => $impersonatorModel->role ? [
+                            'id' => $impersonatorModel->role->id,
+                            'name' => $impersonatorModel->role->name,
+                            'slug' => $impersonatorModel->role->slug,
+                        ] : null,
+                    ];
+                }
+            }
+        }
         
         return [
             ...parent::share($request),
@@ -47,6 +68,9 @@ class HandleInertiaRequests extends Middleware
                         'name' => $user->role->name,
                         'slug' => $user->role->slug,
                     ] : null,
+                    'impersonating' => session()->has('impersonator_id'),
+                    'impersonator_id' => session('impersonator_id'),
+                    'impersonator' => $impersonator,
                 ] : null,
             ],
         ];
