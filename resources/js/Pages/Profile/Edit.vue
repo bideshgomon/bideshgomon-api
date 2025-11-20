@@ -18,7 +18,8 @@ import {
     ShieldCheckIcon,
     LockClosedIcon,
     TrashIcon,
-    ChevronRightIcon
+    ChevronRightIcon,
+    PhoneIcon
 } from '@heroicons/vue/24/solid';
 
 // Import existing components
@@ -34,6 +35,7 @@ import EducationSection from './Partials/EducationSection.vue';
 import WorkExperienceSection from './Partials/WorkExperienceSection.vue';
 import SkillsSection from './Partials/SkillsSection.vue';
 import TravelHistorySection from './Partials/TravelHistorySection.vue';
+import PhoneNumbersSection from './Partials/PhoneNumbersSection.vue';
 
 const props = defineProps({
     mustVerifyEmail: Boolean,
@@ -66,6 +68,13 @@ const sections = [
         name: 'Basic Information', 
         icon: UserCircleIcon, 
         description: 'Name, email, and contact information',
+        category: 'essential' 
+    },
+    { 
+        id: 'phone', 
+        name: 'Phone Numbers', 
+        icon: PhoneIcon, 
+        description: 'Manage and verify your phone numbers',
         category: 'essential' 
     },
     { 
@@ -386,6 +395,11 @@ onMounted(() => {
                             v-if="activeSection === 'basic'"
                             :must-verify-email="mustVerifyEmail"
                             :status="status"
+                        />
+
+                        <!-- Phone Numbers -->
+                        <PhoneNumbersSection
+                            v-if="activeSection === 'phone'"
                         />
 
                         <!-- Profile Details -->
