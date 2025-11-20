@@ -217,7 +217,31 @@ class PhoneNumberController extends Controller
             'code' => 'required|string|size:6',
         ]);
 
-        // Find the verification code
+        // Try Twilio Verify API first if configured
+        if ($this->smsService->twilioVerifyConfigured()) {
+            $fullNumber = '+' . preg_replace('/\D+/', '', $phoneNumber->country_code) 
+                        . preg_replace('/\D+/', '', $phoneNumber->phone_number);
+            
+            $approved = $this->smsService->verifyTwilioCode($fullNumber, $validated['code']);
+            
+            if ($approved) {
+                $phoneNumber->update([
+                    'is_verified' => true,
+                    'verified_at' => now(),
+                ]);
+
+                return response()->json([
+                    'message' => 'Phone number verified successfully',
+                    'phone' => $phoneNumber->fresh(),
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'Invalid or expired verification code',
+                ], 422);
+            }
+        }
+
+        // Fallback: Local verification code check
         $verificationCode = PhoneVerificationCode::where('user_phone_number_id', $phoneNumber->id)
             ->where('code', $validated['code'])
             ->where('is_used', false)
