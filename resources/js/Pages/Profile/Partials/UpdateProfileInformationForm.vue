@@ -3,7 +3,6 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import PhoneNumbersSection from './PhoneNumbersSection.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 
@@ -198,10 +197,5 @@ const submit = () => {
                 </Transition>
             </div>
         </form>
-
-        <!-- Phone Numbers Section -->
-        <div class="mt-10 pt-10 border-t border-gray-200">
-            <PhoneNumbersSection />
-        </div>
     </section>
 </template>
