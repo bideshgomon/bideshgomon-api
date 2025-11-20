@@ -3,11 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\UserPhoneNumber;
+use App\Models\PhoneVerificationCode;
+use App\Services\SmsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PhoneNumberController extends Controller
 {
+    protected $smsService;
+
+    public function __construct(SmsService $smsService)
+    {
+        $this->smsService = $smsService;
+    }
+
     /**
      * Display a listing of the user's phone numbers.
      */
@@ -146,5 +155,115 @@ class PhoneNumberController extends Controller
         return response()->json([
             'message' => 'Phone number deleted successfully',
         ]);
+    }
+
+    /**
+     * Send verification code to phone number.
+     */
+    public function sendVerificationCode(UserPhoneNumber $phoneNumber)
+    {
+        // Check ownership
+        if ($phoneNumber->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        // Check if already verified
+        if ($phoneNumber->is_verified) {
+            return response()->json([
+                'message' => 'Phone number is already verified',
+            ], 422);
+        }
+
+        // Check rate limiting (max 3 codes per hour)
+        $recentCodes = PhoneVerificationCode::where('user_phone_number_id', $phoneNumber->id)
+            ->where('created_at', '>', now()->subHour())
+            ->count();
+
+        if ($recentCodes >= 3) {
+            return response()->json([
+                'message' => 'Too many verification attempts. Please try again later.',
+            ], 429);
+        }
+
+        // Create verification code
+        $verificationCode = PhoneVerificationCode::createForPhoneNumber($phoneNumber);
+
+        // Send SMS
+        $sent = $this->smsService->sendVerificationCode($phoneNumber, $verificationCode->code);
+
+        if (!$sent) {
+            return response()->json([
+                'message' => 'Failed to send verification code. Please try again.',
+            ], 500);
+        }
+
+        return response()->json([
+            'message' => 'Verification code sent successfully',
+            'expires_at' => $verificationCode->expires_at->toIso8601String(),
+        ]);
+    }
+
+    /**
+     * Verify phone number with code.
+     */
+    public function verifyCode(Request $request, UserPhoneNumber $phoneNumber)
+    {
+        // Check ownership
+        if ($phoneNumber->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $validated = $request->validate([
+            'code' => 'required|string|size:6',
+        ]);
+
+        // Find the verification code
+        $verificationCode = PhoneVerificationCode::where('user_phone_number_id', $phoneNumber->id)
+            ->where('code', $validated['code'])
+            ->where('is_used', false)
+            ->first();
+
+        if (!$verificationCode) {
+            return response()->json([
+                'message' => 'Invalid verification code',
+            ], 422);
+        }
+
+        // Check if expired
+        if ($verificationCode->isExpired()) {
+            return response()->json([
+                'message' => 'Verification code has expired. Please request a new one.',
+            ], 422);
+        }
+
+        // Check max attempts (prevent brute force)
+        if ($verificationCode->attempts >= 5) {
+            return response()->json([
+                'message' => 'Too many failed attempts. Please request a new code.',
+            ], 422);
+        }
+
+        // Mark code as used
+        $verificationCode->markAsUsed();
+
+        // Mark phone number as verified
+        $phoneNumber->update([
+            'is_verified' => true,
+            'verified_at' => now(),
+        ]);
+
+        return response()->json([
+            'message' => 'Phone number verified successfully',
+            'phone' => $phoneNumber->fresh(),
+        ]);
+    }
+
+    /**
+     * Resend verification code.
+     */
+    public function resendVerificationCode(UserPhoneNumber $phoneNumber)
+    {
+        // Reuse the sendVerificationCode method
+        return $this->sendVerificationCode($phoneNumber);
     }
 }

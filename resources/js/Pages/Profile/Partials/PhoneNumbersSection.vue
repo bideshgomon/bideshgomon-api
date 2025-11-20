@@ -25,6 +25,14 @@ const success = ref(null)
 const showDeleteModal = ref(false)
 const deleteId = ref(null)
 
+// Verification state
+const showVerifyModal = ref(false)
+const verifyingPhone = ref(null)
+const verificationCode = ref('')
+const verificationErrors = ref({})
+const isVerifying = ref(false)
+const isSendingCode = ref(false)
+
 const form = ref({
     country_code: '+880',
     phone_number: '',
@@ -209,6 +217,91 @@ const getCountryFlag = (countryCode) => {
     return country?.flag || '📱'
 }
 
+const sendVerificationCode = async (phone) => {
+    try {
+        isSendingCode.value = true
+        error.value = null
+        
+        await axios.post(route('api.profile.phone-numbers.send-verification', phone.id))
+        
+        verifyingPhone.value = phone
+        showVerifyModal.value = true
+        success.value = 'Verification code sent to your phone'
+        
+        setTimeout(() => {
+            success.value = null
+        }, 3000)
+    } catch (err) {
+        error.value = err.response?.data?.message || 'Failed to send verification code'
+        console.error('Failed to send verification code:', err)
+    } finally {
+        isSendingCode.value = false
+    }
+}
+
+const verifyPhoneNumber = async () => {
+    if (!verificationCode.value || verificationCode.value.length !== 6) {
+        verificationErrors.value = { code: 'Please enter a 6-digit code' }
+        return
+    }
+    
+    try {
+        isVerifying.value = true
+        verificationErrors.value = {}
+        error.value = null
+        
+        await axios.post(
+            route('api.profile.phone-numbers.verify', verifyingPhone.value.id),
+            { code: verificationCode.value }
+        )
+        
+        success.value = 'Phone number verified successfully!'
+        await fetchPhoneNumbers()
+        closeVerifyModal()
+        
+        setTimeout(() => {
+            success.value = null
+        }, 3000)
+    } catch (err) {
+        if (err.response?.data?.errors) {
+            verificationErrors.value = err.response.data.errors
+        } else {
+            verificationErrors.value = { code: err.response?.data?.message || 'Verification failed' }
+        }
+        console.error('Failed to verify phone number:', err)
+    } finally {
+        isVerifying.value = false
+    }
+}
+
+const resendVerificationCode = async () => {
+    try {
+        isSendingCode.value = true
+        error.value = null
+        
+        await axios.post(route('api.profile.phone-numbers.resend-verification', verifyingPhone.value.id))
+        
+        success.value = 'Verification code resent successfully'
+        verificationCode.value = ''
+        
+        setTimeout(() => {
+            success.value = null
+        }, 3000)
+    } catch (err) {
+        error.value = err.response?.data?.message || 'Failed to resend code'
+        console.error('Failed to resend verification code:', err)
+    } finally {
+        isSendingCode.value = false
+    }
+}
+
+const closeVerifyModal = () => {
+    showVerifyModal.value = false
+    verifyingPhone.value = null
+    verificationCode.value = ''
+    verificationErrors.value = {}
+}
+
 onMounted(() => {
     fetchPhoneNumbers()
 })
@@ -301,6 +394,16 @@ onMounted(() => {
 
                     <!-- Actions -->
                     <div class="flex flex-col sm:flex-row gap-2">
+                        <button
+                            v-if="!phone.is_verified"
+                            @click="sendVerificationCode(phone)"
+                            class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all shadow-md disabled:opacity-50"
+                            :disabled="isSendingCode || isLoading"
+                            style="min-height: 44px"
+                        >
+                            <CheckBadgeIcon class="w-4 h-4" />
+                            Verify
+                        </button>
                         <button
                             @click="openEditModal(phone)"
                             class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/20 rounded-lg hover:bg-sky-100 dark:hover:bg-sky-900/30 transition-colors"
@@ -490,6 +593,89 @@ onMounted(() => {
                         <span v-else>Delete Phone Number</span>
                     </button>
                 </div>
+            </div>
+        </Modal>
+
+        <!-- Verification Modal -->
+        <Modal :show="showVerifyModal" @close="closeVerifyModal" max-width="md">
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center">
+                        <CheckBadgeIcon class="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Verify Phone Number</h2>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                            {{ verifyingPhone?.country_code }} {{ verifyingPhone?.phone_number }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+                    <p class="text-sm text-blue-800 dark:text-blue-200">
+                        We've sent a 6-digit verification code to your phone. Enter it below to verify your number.
+                        <strong>Code expires in 10 minutes.</strong>
+                    </p>
+                </div>
+
+                <form @submit.prevent="verifyPhoneNumber" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Verification Code <span class="text-red-500">*</span>
+                        </label>
+                        <input
+                            v-model="verificationCode"
+                            type="text"
+                            inputmode="numeric"
+                            pattern="[0-9]*"
+                            maxlength="6"
+                            placeholder="Enter 6-digit code"
+                            class="w-full px-4 py-3 text-center text-2xl font-bold tracking-widest border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600"
+                            :class="{ 'border-red-500': verificationErrors.code }"
+                            style="font-size: 24px; min-height: 60px; letter-spacing: 0.5em"
+                            autofocus
+                        />
+                        <p v-if="verificationErrors.code" class="text-xs text-red-600 dark:text-red-400 mt-2">
+                            {{ verificationErrors.code }}
+                        </p>
+                    </div>
+
+                    <div class="flex items-center justify-between py-2">
+                        <button
+                            type="button"
+                            @click="resendVerificationCode"
+                            class="text-sm font-medium text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 disabled:opacity-50 transition-colors"
+                            :disabled="isSendingCode"
+                        >
+                            <span v-if="isSendingCode">Sending...</span>
+                            <span v-else>Resend Code</span>
+                        </button>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">
+                            Didn't receive the code?
+                        </span>
+                    </div>
+
+                    <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-3 pt-4">
+                        <button
+                            type="button"
+                            @click="closeVerifyModal"
+                            class="w-full sm:w-auto px-6 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                            style="min-height: 44px"
+                            :disabled="isVerifying"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            class="w-full sm:flex-1 px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+                            style="min-height: 44px"
+                            :disabled="isVerifying || !verificationCode || verificationCode.length !== 6"
+                        >
+                            <span v-if="isVerifying">Verifying...</span>
+                            <span v-else>Verify Phone Number</span>
+                        </button>
+                    </div>
+                </form>
             </div>
         </Modal>
     </section>

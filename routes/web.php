@@ -175,6 +175,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/phone-numbers', [PhoneNumberController::class, 'store'])->name('phone-numbers.store');
         Route::put('/phone-numbers/{phoneNumber}', [PhoneNumberController::class, 'update'])->name('phone-numbers.update');
         Route::delete('/phone-numbers/{phoneNumber}', [PhoneNumberController::class, 'destroy'])->name('phone-numbers.destroy');
+        Route::post('/phone-numbers/{phoneNumber}/send-verification', [PhoneNumberController::class, 'sendVerificationCode'])->name('phone-numbers.send-verification');
+        Route::post('/phone-numbers/{phoneNumber}/verify', [PhoneNumberController::class, 'verifyCode'])->name('phone-numbers.verify');
+        Route::post('/phone-numbers/{phoneNumber}/resend-verification', [PhoneNumberController::class, 'resendVerificationCode'])->name('phone-numbers.resend-verification');
     });
     
     // API route for all skills (not profile-specific)
