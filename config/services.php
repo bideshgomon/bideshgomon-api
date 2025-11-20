@@ -41,4 +41,17 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI', env('APP_URL').'/auth/google/callback'),
     ],
 
+    'twilio' => [
+        'account_sid' => env('TWILIO_ACCOUNT_SID'),
+        'auth_token' => env('TWILIO_AUTH_TOKEN'),
+        'from' => env('TWILIO_FROM'),
+    ],
+
+    'sms' => [
+        'ssl_wireless' => [
+            'token' => env('SMS_SSL_WIRELESS_TOKEN'),
+            'sid' => env('SMS_SSL_WIRELESS_SID'),
+        ],
+    ],
+
 ];
