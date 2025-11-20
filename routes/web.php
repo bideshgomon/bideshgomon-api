@@ -248,6 +248,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/referrals/list', [ReferralController::class, 'referrals'])->name('referral.referrals');
     Route::get('/referrals/rewards', [ReferralController::class, 'rewards'])->name('referral.rewards');
 
+    // Profile Assessment routes
+    Route::prefix('profile/assessment')->name('profile.assessment.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\ProfileAssessmentController::class, 'show'])->name('show');
+        Route::post('/generate', [\App\Http\Controllers\ProfileAssessmentController::class, 'generate'])->name('generate');
+        Route::get('/recommendations', [\App\Http\Controllers\ProfileAssessmentController::class, 'recommendations'])->name('recommendations');
+        Route::get('/score-breakdown', [\App\Http\Controllers\ProfileAssessmentController::class, 'scoreBreakdown'])->name('score-breakdown');
+        Route::get('/visa-eligibility', [\App\Http\Controllers\ProfileAssessmentController::class, 'visaEligibility'])->name('visa-eligibility');
+    });
+
     // Travel Insurance routes
     Route::prefix('services/travel-insurance')->name('travel-insurance.')->group(function () {
         Route::get('/', [TravelInsuranceController::class, 'index'])->name('index');
