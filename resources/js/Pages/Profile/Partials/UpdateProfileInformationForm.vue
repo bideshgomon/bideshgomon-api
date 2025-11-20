@@ -4,7 +4,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 const props = defineProps({
     mustVerifyEmail: {
@@ -37,10 +37,21 @@ const autoGeneratePassportName = () => {
     form.name_as_per_passport = parts.join(' ').toUpperCase();
 };
 
+// Watch for prop changes and update form
+watch(() => props.userProfile, (newProfile) => {
+    if (newProfile) {
+        form.first_name = newProfile.first_name || '';
+        form.middle_name = newProfile.middle_name || '';
+        form.last_name = newProfile.last_name || '';
+        form.name_as_per_passport = newProfile.name_as_per_passport || '';
+    }
+}, { deep: true, immediate: true });
+
 const submit = () => {
     saveError.value = '';
     form.patch(route('profile.update'), {
         preserveScroll: true,
+        preserveState: false,
         onSuccess: () => {
             saveError.value = '';
         },
