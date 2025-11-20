@@ -28,17 +28,29 @@ class PhoneNumberController extends Controller
     {
         $validated = $request->validate([
             'phone_number' => 'required|string|max:20',
-            'phone_type' => 'required|in:mobile,home,work,whatsapp',
+            'label' => 'required|string|max:50',
             'country_code' => 'required|string|max:5',
             'is_primary' => 'boolean',
         ]);
+
+        // Map label to phone_type (convert label to lowercase for type)
+        $phoneType = strtolower($validated['label']);
+        // If label is custom, default to 'mobile'
+        if (!in_array($phoneType, ['mobile', 'home', 'work', 'whatsapp'])) {
+            $phoneType = 'mobile';
+        }
 
         // If setting as primary, unset other primary numbers
         if ($request->is_primary) {
             Auth::user()->phoneNumbers()->update(['is_primary' => false]);
         }
 
-        $phoneNumber = Auth::user()->phoneNumbers()->create($validated);
+        $phoneNumber = Auth::user()->phoneNumbers()->create([
+            'phone_number' => $validated['phone_number'],
+            'phone_type' => $phoneType,
+            'country_code' => $validated['country_code'],
+            'is_primary' => $validated['is_primary'] ?? false,
+        ]);
 
         return response()->json([
             'message' => 'Phone number added successfully',
@@ -58,10 +70,33 @@ class PhoneNumberController extends Controller
 
         $validated = $request->validate([
             'phone_number' => 'sometimes|string|max:20',
-            'phone_type' => 'sometimes|in:mobile,home,work,whatsapp',
+            'label' => 'sometimes|string|max:50',
             'country_code' => 'sometimes|string|max:5',
             'is_primary' => 'boolean',
         ]);
+
+        // Prepare update data
+        $updateData = [];
+        
+        if (isset($validated['phone_number'])) {
+            $updateData['phone_number'] = $validated['phone_number'];
+        }
+        
+        if (isset($validated['country_code'])) {
+            $updateData['country_code'] = $validated['country_code'];
+        }
+        
+        if (isset($validated['label'])) {
+            $phoneType = strtolower($validated['label']);
+            if (!in_array($phoneType, ['mobile', 'home', 'work', 'whatsapp'])) {
+                $phoneType = 'mobile';
+            }
+            $updateData['phone_type'] = $phoneType;
+        }
+        
+        if (isset($validated['is_primary'])) {
+            $updateData['is_primary'] = $validated['is_primary'];
+        }
 
         // If setting as primary, unset other primary numbers
         if (isset($validated['is_primary']) && $validated['is_primary']) {
@@ -70,7 +105,7 @@ class PhoneNumberController extends Controller
                 ->update(['is_primary' => false]);
         }
 
-        $phoneNumber->update($validated);
+        $phoneNumber->update($updateData);
 
         return response()->json([
             'message' => 'Phone number updated successfully',

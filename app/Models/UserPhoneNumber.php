@@ -26,6 +26,8 @@ class UserPhoneNumber extends Model
         'verified_at' => 'datetime',
     ];
 
+    protected $appends = ['label'];
+
     /**
      * Get the user that owns the phone number.
      */
@@ -46,6 +48,14 @@ class UserPhoneNumber extends Model
      * Get formatted phone type.
      */
     public function getFormattedTypeAttribute(): string
+    {
+        return ucfirst($this->phone_type);
+    }
+
+    /**
+     * Get label for frontend (same as phone_type but capitalized).
+     */
+    public function getLabelAttribute(): string
     {
         return ucfirst($this->phone_type);
     }
