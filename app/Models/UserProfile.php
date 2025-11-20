@@ -1,0 +1,81 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class UserProfile extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'bio',
+        'avatar',
+        'phone',
+        'dob',
+        'gender',
+        'nationality',
+        'marital_status',
+        'present_address_line',
+        'present_city',
+        'present_division',
+        'present_district',
+        'present_postal_code',
+        'permanent_address_line',
+        'permanent_city',
+        'permanent_division',
+        'permanent_district',
+        'permanent_postal_code',
+        'nid',
+        'passport_number',
+        'passport_issue_date',
+        'passport_expiry_date',
+        // Financial fields
+        'employer_name',
+        'employer_address',
+        'employment_start_date',
+        'monthly_income_bdt',
+        'annual_income_bdt',
+        'bank_name',
+        'bank_branch',
+        'bank_account_number',
+        'bank_account_type',
+        'bank_balance_bdt',
+        'bank_statement_path',
+        'owns_property',
+        'property_type',
+        'property_address',
+        'property_value_bdt',
+        'property_documents_path',
+        'owns_vehicle',
+        'vehicle_type',
+        'vehicle_make_model',
+        'vehicle_year',
+        'vehicle_value_bdt',
+        'has_investments',
+        'investment_types',
+        'investment_value_bdt',
+        'has_liabilities',
+        'liability_types',
+        'liabilities_amount_bdt',
+        'total_assets_bdt',
+        'net_worth_bdt',
+        'tax_return_path',
+        'salary_certificate_path',
+        'financial_sponsor_info',
+    ];
+
+    protected $casts = [
+        'dob' => 'date',
+        'passport_issue_date' => 'date',
+        'passport_expiry_date' => 'date',
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+}

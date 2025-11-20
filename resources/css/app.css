@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Mobile-specific profile form improvements */
+@layer utilities {
+    /* Prevent iOS zoom on input focus */
+    @media (max-width: 640px) {
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="number"],
+        input[type="date"],
+        input[type="password"],
+        textarea,
+        select {
+            font-size: 16px !important;
+        }
+        
+        /* Better touch targets on mobile */
+        button,
+        .btn,
+        a.btn {
+            min-height: 44px;
+            min-width: 44px;
+        }
+        
+        /* Stack grids on mobile */
+        .sm\:grid-cols-2,
+        .sm\:grid-cols-3,
+        .sm\:grid-cols-4 {
+            grid-template-columns: 1fr !important;
+        }
+        
+        /* Reduce padding on mobile */
+        .section-content {
+            padding: 1rem !important;
+        }
+        
+        /* Full width buttons on mobile */
+        .mobile-full {
+            width: 100%;
+        }
+    }
+    
+    /* Better spacing for profile cards */
+    .profile-card {
+        @apply bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 p-4 md:p-6;
+    }
+    
+    /* Responsive form groups */
+    .form-group {
+        @apply space-y-4;
+    }
+    
+    .form-grid {
+        @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3;
+    }
+}
+
+/* Dark mode improvements */
+@layer base {
+    html.dark {
+        color-scheme: dark;
+    }
+}

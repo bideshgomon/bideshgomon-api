@@ -1,0 +1,436 @@
+<script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, Link, router } from '@inertiajs/vue3';
+import {
+    ArrowLeftIcon,
+    PencilIcon,
+    TrashIcon,
+    SparklesIcon,
+    MapPinIcon,
+    BriefcaseIcon,
+    CurrencyDollarIcon,
+    CalendarIcon,
+    UserGroupIcon,
+    CheckCircleIcon,
+    XCircleIcon,
+    ClockIcon,
+    EyeIcon,
+} from '@heroicons/vue/24/outline';
+
+const props = defineProps({
+    job: Object,
+    applications: Object,
+});
+
+const categoryColors = {
+    hospitality: 'bg-blue-100 text-blue-800',
+    construction: 'bg-orange-100 text-orange-800',
+    healthcare: 'bg-green-100 text-green-800',
+    it: 'bg-purple-100 text-purple-800',
+    manufacturing: 'bg-gray-100 text-gray-800',
+    education: 'bg-yellow-100 text-yellow-800',
+    retail: 'bg-pink-100 text-pink-800',
+    transportation: 'bg-indigo-100 text-indigo-800',
+};
+
+const statusColors = {
+    pending: 'bg-yellow-100 text-yellow-800',
+    reviewed: 'bg-blue-100 text-blue-800',
+    shortlisted: 'bg-green-100 text-green-800',
+    rejected: 'bg-red-100 text-red-800',
+    hired: 'bg-purple-100 text-purple-800',
+};
+
+const getCategoryColor = (category) => {
+    return categoryColors[category?.toLowerCase()] || 'bg-gray-100 text-gray-800';
+};
+
+const getStatusColor = (status) => {
+    return statusColors[status?.toLowerCase()] || 'bg-gray-100 text-gray-800';
+};
+
+const formatDate = (date) => {
+    return new Date(date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+    });
+};
+
+const formatCurrency = (amount, currency) => {
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: currency || 'BDT',
+        minimumFractionDigits: 0,
+    }).format(amount);
+};
+
+const toggleFeatured = () => {
+    if (confirm(`${props.job.is_featured ? 'Remove from' : 'Add to'} featured jobs?`)) {
+        router.post(route('admin.jobs.toggle-featured', props.job.id));
+    }
+};
+
+const toggleActive = () => {
+    if (confirm(`${props.job.is_active ? 'Deactivate' : 'Activate'} this job posting?`)) {
+        router.post(route('admin.jobs.toggle-active', props.job.id));
+    }
+};
+
+const deleteJob = () => {
+    if (confirm('Are you sure you want to delete this job posting? This action cannot be undone.')) {
+        router.delete(route('admin.jobs.destroy', props.job.id));
+    }
+};
+
+const isExpired = () => {
+    return new Date(props.job.deadline) < new Date();
+};
+</script>
+
+<template>
+    <Head :title="job.title" />
+
+    <AuthenticatedLayout>
+        <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Header -->
+                <div class="mb-6">
+                    <Link
+                        :href="route('admin.jobs.index')"
+                        class="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4"
+                    >
+                        <ArrowLeftIcon class="h-5 w-5 mr-2" />
+                        Back to Jobs
+                    </Link>
+
+                    <div class="bg-white rounded-2xl shadow-sm p-6">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <h1 class="text-2xl font-bold text-gray-900">{{ job.title }}</h1>
+                                    <span
+                                        v-if="job.is_featured"
+                                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800"
+                                    >
+                                        <SparklesIcon class="h-4 w-4 mr-1" />
+                                        Featured
+                                    </span>
+                                    <span
+                                        :class="[
+                                            'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold',
+                                            job.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800',
+                                        ]"
+                                    >
+                                        {{ job.is_active ? 'Active' : 'Inactive' }}
+                                    </span>
+                                    <span
+                                        v-if="isExpired()"
+                                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800"
+                                    >
+                                        Expired
+                                    </span>
+                                </div>
+                                <p class="text-gray-600">{{ job.company_name }}</p>
+                                <div class="flex flex-wrap items-center gap-4 mt-3 text-sm text-gray-600">
+                                    <div class="flex items-center gap-1">
+                                        <MapPinIcon class="h-4 w-4" />
+                                        {{ job.city }}, {{ job.country?.name }}
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <BriefcaseIcon class="h-4 w-4" />
+                                        {{ job.job_type }}
+                                    </div>
+                                    <span
+                                        :class="['px-2 py-1 rounded-full text-xs font-semibold', getCategoryColor(job.category)]"
+                                    >
+                                        {{ job.category }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-wrap gap-2">
+                                <button
+                                    @click="toggleFeatured"
+                                    :class="[
+                                        'px-4 py-2 rounded-lg font-semibold text-sm transition-colors',
+                                        job.is_featured
+                                            ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200'
+                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200',
+                                    ]"
+                                >
+                                    <SparklesIcon class="h-4 w-4 inline mr-1" />
+                                    {{ job.is_featured ? 'Unfeature' : 'Feature' }}
+                                </button>
+                                <button
+                                    @click="toggleActive"
+                                    :class="[
+                                        'px-4 py-2 rounded-lg font-semibold text-sm transition-colors',
+                                        job.is_active
+                                            ? 'bg-red-100 text-red-800 hover:bg-red-200'
+                                            : 'bg-green-100 text-green-800 hover:bg-green-200',
+                                    ]"
+                                >
+                                    {{ job.is_active ? 'Deactivate' : 'Activate' }}
+                                </button>
+                                <Link
+                                    :href="route('admin.jobs.edit', job.id)"
+                                    class="px-4 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition-colors text-sm"
+                                >
+                                    <PencilIcon class="h-4 w-4 inline mr-1" />
+                                    Edit
+                                </Link>
+                                <button
+                                    @click="deleteJob"
+                                    class="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors text-sm"
+                                >
+                                    <TrashIcon class="h-4 w-4 inline mr-1" />
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Main Content -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- Job Details -->
+                        <div class="bg-white rounded-2xl shadow-sm p-6">
+                            <h2 class="text-lg font-semibold text-gray-900 mb-4">Job Description</h2>
+                            <p class="text-gray-700 whitespace-pre-wrap">{{ job.description }}</p>
+
+                            <div v-if="job.responsibilities" class="mt-6">
+                                <h3 class="text-md font-semibold text-gray-900 mb-3">Responsibilities</h3>
+                                <p class="text-gray-700 whitespace-pre-wrap">{{ job.responsibilities }}</p>
+                            </div>
+
+                            <div v-if="job.requirements" class="mt-6">
+                                <h3 class="text-md font-semibold text-gray-900 mb-3">Requirements</h3>
+                                <p class="text-gray-700 whitespace-pre-wrap">{{ job.requirements }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Skills & Benefits -->
+                        <div class="bg-white rounded-2xl shadow-sm p-6">
+                            <div v-if="job.skills_required?.length" class="mb-6">
+                                <h3 class="text-md font-semibold text-gray-900 mb-3">Required Skills</h3>
+                                <div class="flex flex-wrap gap-2">
+                                    <span
+                                        v-for="(skill, index) in job.skills_required"
+                                        :key="index"
+                                        class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium"
+                                    >
+                                        {{ skill }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div v-if="job.benefits?.length">
+                                <h3 class="text-md font-semibold text-gray-900 mb-3">Benefits</h3>
+                                <div class="flex flex-wrap gap-2">
+                                    <span
+                                        v-for="(benefit, index) in job.benefits"
+                                        :key="index"
+                                        class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium"
+                                    >
+                                        {{ benefit }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Applications -->
+                        <div class="bg-white rounded-2xl shadow-sm p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h2 class="text-lg font-semibold text-gray-900">
+                                    Applications ({{ applications.total }})
+                                </h2>
+                                <Link
+                                    :href="route('admin.applications.index', { job_id: job.id })"
+                                    class="text-indigo-600 hover:text-indigo-800 font-semibold text-sm"
+                                >
+                                    View All →
+                                </Link>
+                            </div>
+
+                            <div v-if="applications.data.length" class="space-y-4">
+                                <div
+                                    v-for="application in applications.data"
+                                    :key="application.id"
+                                    class="border border-gray-200 rounded-xl p-4 hover:border-indigo-300 transition-colors"
+                                >
+                                    <div class="flex items-start justify-between gap-4">
+                                        <div class="flex-1">
+                                            <h4 class="font-semibold text-gray-900">
+                                                {{ application.user?.name }}
+                                            </h4>
+                                            <p class="text-sm text-gray-600 mt-1">{{ application.user?.email }}</p>
+                                            <div class="flex flex-wrap items-center gap-3 mt-3 text-sm text-gray-600">
+                                                <div class="flex items-center gap-1">
+                                                    <CalendarIcon class="h-4 w-4" />
+                                                    Applied {{ formatDate(application.created_at) }}
+                                                </div>
+                                                <span
+                                                    :class="[
+                                                        'px-2 py-1 rounded-full text-xs font-semibold',
+                                                        getStatusColor(application.status),
+                                                    ]"
+                                                >
+                                                    {{ application.status }}
+                                                </span>
+                                                <span
+                                                    v-if="application.payment_status === 'paid'"
+                                                    class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800"
+                                                >
+                                                    <CheckCircleIcon class="h-3 w-3 mr-1" />
+                                                    Paid
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <Link
+                                            :href="route('admin.applications.show', application.id)"
+                                            class="px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors font-semibold text-sm"
+                                        >
+                                            <EyeIcon class="h-4 w-4 inline mr-1" />
+                                            View
+                                        </Link>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div v-else class="text-center py-12 text-gray-500">
+                                <UserGroupIcon class="h-12 w-12 mx-auto mb-3 text-gray-400" />
+                                <p>No applications yet</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div class="space-y-6">
+                        <!-- Salary & Compensation -->
+                        <div class="bg-white rounded-2xl shadow-sm p-6">
+                            <h3 class="text-md font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                <CurrencyDollarIcon class="h-5 w-5 text-indigo-600" />
+                                Salary & Compensation
+                            </h3>
+                            <div class="space-y-3 text-sm">
+                                <div>
+                                    <p class="text-gray-600">Salary Range</p>
+                                    <p class="font-semibold text-gray-900">
+                                        {{ formatCurrency(job.salary_min, job.salary_currency) }} -
+                                        {{ formatCurrency(job.salary_max, job.salary_currency) }}
+                                    </p>
+                                    <p class="text-gray-500 text-xs mt-1">{{ job.salary_period }}</p>
+                                </div>
+                                <div v-if="job.application_fee">
+                                    <p class="text-gray-600">Application Fee</p>
+                                    <p class="font-semibold text-gray-900">৳{{ job.application_fee }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Job Information -->
+                        <div class="bg-white rounded-2xl shadow-sm p-6">
+                            <h3 class="text-md font-semibold text-gray-900 mb-4">Job Information</h3>
+                            <div class="space-y-3 text-sm">
+                                <div v-if="job.experience_required">
+                                    <p class="text-gray-600">Experience Required</p>
+                                    <p class="font-semibold text-gray-900">{{ job.experience_required }}</p>
+                                </div>
+                                <div v-if="job.education_required">
+                                    <p class="text-gray-600">Education Required</p>
+                                    <p class="font-semibold text-gray-900">{{ job.education_required }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Gender Preference</p>
+                                    <p class="font-semibold text-gray-900 capitalize">{{ job.gender_preference }}</p>
+                                </div>
+                                <div v-if="job.age_min || job.age_max">
+                                    <p class="text-gray-600">Age Range</p>
+                                    <p class="font-semibold text-gray-900">
+                                        {{ job.age_min || 'Any' }} - {{ job.age_max || 'Any' }} years
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Positions Available</p>
+                                    <p class="font-semibold text-gray-900">{{ job.positions_available }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Important Dates -->
+                        <div class="bg-white rounded-2xl shadow-sm p-6">
+                            <h3 class="text-md font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                <CalendarIcon class="h-5 w-5 text-indigo-600" />
+                                Important Dates
+                            </h3>
+                            <div class="space-y-3 text-sm">
+                                <div>
+                                    <p class="text-gray-600">Posted On</p>
+                                    <p class="font-semibold text-gray-900">{{ formatDate(job.created_at) }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Application Deadline</p>
+                                    <p
+                                        :class="[
+                                            'font-semibold',
+                                            isExpired() ? 'text-red-600' : 'text-gray-900',
+                                        ]"
+                                    >
+                                        {{ formatDate(job.deadline) }}
+                                        <span v-if="isExpired()" class="text-xs">(Expired)</span>
+                                    </p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Last Updated</p>
+                                    <p class="font-semibold text-gray-900">{{ formatDate(job.updated_at) }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div v-if="job.contact_email || job.contact_phone" class="bg-white rounded-2xl shadow-sm p-6">
+                            <h3 class="text-md font-semibold text-gray-900 mb-4">Contact Information</h3>
+                            <div class="space-y-3 text-sm">
+                                <div v-if="job.contact_email">
+                                    <p class="text-gray-600">Email</p>
+                                    <a
+                                        :href="`mailto:${job.contact_email}`"
+                                        class="font-semibold text-indigo-600 hover:text-indigo-800"
+                                    >
+                                        {{ job.contact_email }}
+                                    </a>
+                                </div>
+                                <div v-if="job.contact_phone">
+                                    <p class="text-gray-600">Phone</p>
+                                    <a
+                                        :href="`tel:${job.contact_phone}`"
+                                        class="font-semibold text-indigo-600 hover:text-indigo-800"
+                                    >
+                                        {{ job.contact_phone }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Statistics -->
+                        <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-sm p-6 text-white">
+                            <h3 class="text-md font-semibold mb-4">Statistics</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-indigo-100">Total Applications</span>
+                                    <span class="font-bold text-2xl">{{ applications.total }}</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-indigo-100">Views</span>
+                                    <span class="font-bold text-2xl">{{ job.views_count || 0 }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </AuthenticatedLayout>
+</template>

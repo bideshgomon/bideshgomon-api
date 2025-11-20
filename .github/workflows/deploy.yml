@@ -1,0 +1,111 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, mysql
+          coverage: none
+          
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-dev --optimize-autoloader
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install NPM dependencies
+        run: npm ci
+        
+      - name: Build assets
+        run: npm run build
+        
+      - name: Create deployment package
+        run: |
+          mkdir -p deploy
+          rsync -av --exclude='.git' --exclude='node_modules' --exclude='tests' --exclude='.env' --exclude='storage/logs/*' . deploy/
+          cd deploy
+          tar -czf ../deploy.tar.gz .
+          
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            cd ${{ secrets.DEPLOY_PATH }}
+            
+            # Backup current deployment
+            if [ -d "current" ]; then
+              timestamp=$(date +%Y%m%d_%H%M%S)
+              mv current backup_$timestamp
+            fi
+            
+            # Create new deployment directory
+            mkdir -p releases/$(date +%Y%m%d_%H%M%S)
+            cd releases/$(date +%Y%m%d_%H%M%S)
+            
+            # Extract deployment package
+            tar -xzf ~/deploy.tar.gz
+            
+            # Copy .env from shared
+            cp ../../shared/.env .env
+            
+            # Link storage
+            rm -rf storage
+            ln -s ../../shared/storage storage
+            
+            # Set permissions
+            chmod -R 775 bootstrap/cache
+            chmod -R 775 storage
+            
+            # Run Laravel commands
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan migrate --force
+            
+            # Update current symlink
+            cd ../..
+            ln -sfn releases/$(date +%Y%m%d_%H%M%S) current
+            
+            # Reload PHP-FPM
+            sudo systemctl reload php8.2-fpm
+            
+            # Clean old releases (keep last 5)
+            cd releases
+            ls -t | tail -n +6 | xargs rm -rf
+            
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -f deploy.tar.gz
+          rm -rf deploy
+          
+      - name: Notify deployment status
+        if: always()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: 'Deployment to production: ${{ job.status }}'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}

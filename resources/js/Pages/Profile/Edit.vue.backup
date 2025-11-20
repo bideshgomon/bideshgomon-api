@@ -1,0 +1,323 @@
+<script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
+import { useProfileCompletion } from '@/Composables/useProfileCompletion';
+import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/vue/24/solid';
+
+// Import existing components
+import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
+import UpdateProfileDetailsForm from './Partials/UpdateProfileDetailsForm.vue';
+import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
+import DeleteUserForm from './Partials/DeleteUserForm.vue';
+import FamilySection from './Partials/FamilySection.vue';
+import FinancialSection from './Partials/FinancialSection.vue';
+import LanguagesSection from './Partials/LanguagesSection.vue';
+import SecuritySection from './Partials/SecuritySection.vue';
+import EducationSection from './Partials/EducationSection.vue';
+import WorkExperienceSection from './Partials/WorkExperienceSection.vue';
+import SkillsSection from './Partials/SkillsSection.vue';
+import TravelHistorySection from './Partials/TravelHistorySection.vue';
+
+const props = defineProps({
+    mustVerifyEmail: Boolean,
+    status: String,
+    user: Object,
+    userProfile: Object,
+    familyMembers: Array,
+    languages: Array,
+    securityInformation: Object,
+    educations: Array,
+    workExperiences: Array,
+    skills: Array,
+    travelHistory: Array,
+    phoneNumbers: Array,
+    divisions: Array,
+});
+
+// Active section management
+const activeSection = ref('basic');
+
+// Profile completion tracking
+const userRef = computed(() => props.user);
+const userProfileRef = computed(() => props.userProfile);
+const { completion, getCompletionColor, getCompletionBgColor } = useProfileCompletion(userRef, userProfileRef);
+
+const sections = [
+    { id: 'basic', name: 'Basic Information', icon: '', category: 'essential' },
+    { id: 'profile', name: 'Profile Details', icon: '', category: 'essential' },
+    { id: 'education', name: 'Education & Qualifications', icon: '', category: 'professional' },
+    { id: 'experience', name: 'Work Experience', icon: '', category: 'professional' },
+    { id: 'skills', name: 'Skills & Expertise', icon: '', category: 'professional' },
+    { id: 'travel', name: 'Travel History', icon: '', category: 'professional' },
+    { id: 'family', name: 'Family Information', icon: '', category: 'additional' },
+    { id: 'financial', name: 'Financial Information', icon: '', category: 'additional' },
+    { id: 'languages', name: 'Language Proficiency', icon: '', category: 'professional' },
+    { id: 'security', name: 'Background & Security', icon: '', category: 'additional' },
+    { id: 'password', name: 'Password', icon: '', category: 'settings' },
+    { id: 'delete', name: 'Delete Account', icon: '', category: 'settings' },
+];
+
+const currentSection = computed(() => sections.find(s => s.id === activeSection.value));
+</script>
+
+<template>
+    <Head title="Edit Profile" />
+
+    <AuthenticatedLayout>
+        <template #header>
+            <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                Edit Profile
+            </h2>
+        </template>
+
+        <div class="py-12">
+            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                <!-- Profile Completion Progress -->
+                <div class="mb-6 bg-white shadow sm:rounded-lg overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-sm font-semibold text-gray-900">Profile Completion</h3>
+                            <span :class="[
+                                'text-2xl font-bold',
+                                getCompletionColor(completion.percentage)
+                            ]">
+                                {{ completion.percentage }}%
+                            </span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3 mb-4">
+                            <div
+                                :class="[
+                                    'h-3 rounded-full transition-all duration-500',
+                                    getCompletionBgColor(completion.percentage)
+                                ]"
+                                :style="{ width: completion.percentage + '%' }"
+                            ></div>
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <CheckCircleIcon v-if="completion.isComplete" class="w-5 h-5 text-green-600 mr-2" />
+                            <ExclamationCircleIcon v-else class="w-5 h-5 text-yellow-600 mr-2" />
+                            <span class="text-gray-600">
+                                {{ completion.completed }} of {{ completion.total }} essential fields completed
+                                <span v-if="!completion.isComplete" class="text-gray-500">
+                                    � Complete your profile to unlock all features
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6 lg:grid-cols-4">
+                    <!-- Sidebar Navigation -->
+                    <div class="lg:col-span-1">
+                        <div class="bg-white shadow sm:rounded-lg sticky top-6">
+                            <div class="p-4">
+                                <h3 class="text-sm font-medium text-gray-900 mb-3">Profile Sections</h3>
+                                
+                                <nav class="space-y-4">
+                                    <!-- Essential Sections -->
+                                    <div>
+                                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 px-3">
+                                            Essential
+                                        </p>
+                                        <div class="space-y-1">
+                                            <button
+                                                v-for="section in sections.filter(s => s.category === 'essential')"
+                                                :key="section.id"
+                                                @click="changeSection(section.id)"
+                                                :class="[
+                                                    'w-full text-left px-3 py-2 rounded-md text-sm transition-all duration-150 flex items-center justify-between',
+                                                    activeSection === section.id
+                                                        ? 'bg-indigo-600 text-white font-medium shadow-sm'
+                                                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                                                ]"
+                                            >
+                                                <span>
+                                                    {{ section.name }}
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Professional Sections -->
+                                    <div>
+                                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 px-3">
+                                            Professional
+                                        </p>
+                                        <div class="space-y-1">
+                                            <button
+                                                v-for="section in sections.filter(s => s.category === 'professional')"
+                                                :key="section.id"
+                                                @click="changeSection(section.id)"
+                                                :class="[
+                                                    'w-full text-left px-3 py-2 rounded-md text-sm transition-all duration-150 flex items-center justify-between',
+                                                    activeSection === section.id
+                                                        ? 'bg-indigo-600 text-white font-medium shadow-sm'
+                                                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                                                ]"
+                                            >
+                                                <span>
+                                                    {{ section.name }}
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Additional Information -->
+                                    <div>
+                                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 px-3">
+                                            Additional Info
+                                        </p>
+                                        <div class="space-y-1">
+                                            <button
+                                                v-for="section in sections.filter(s => s.category === 'additional')"
+                                                :key="section.id"
+                                                @click="changeSection(section.id)"
+                                                :class="[
+                                                    'w-full text-left px-3 py-2 rounded-md text-sm transition-all duration-150 flex items-center justify-between',
+                                                    activeSection === section.id
+                                                        ? 'bg-indigo-600 text-white font-medium shadow-sm'
+                                                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                                                ]"
+                                            >
+                                                <span>
+                                                    {{ section.name }}
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Settings -->
+                                    <div>
+                                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 px-3">
+                                            Settings
+                                        </p>
+                                        <div class="space-y-1">
+                                            <button
+                                                v-for="section in sections.filter(s => s.category === 'settings')"
+                                                :key="section.id"
+                                                @click="changeSection(section.id)"
+                                                :class="[
+                                                    'w-full text-left px-3 py-2 rounded-md text-sm transition-all duration-150 flex items-center justify-between',
+                                                    activeSection === section.id
+                                                        ? 'bg-indigo-600 text-white font-medium shadow-sm'
+                                                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                                                ]"
+                                            >
+                                                <span>
+                                                    {{ section.name }}
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Content Area -->
+                    <div class="lg:col-span-3">
+                        <div class="bg-white shadow sm:rounded-lg">
+                            <!-- Section Header -->
+                            <div class="border-b border-gray-200 px-6 py-4">
+                                <div class="flex items-center">
+                                    <span class="text-3xl mr-3">{{ currentSection?.icon }}</span>
+                                    <div>
+                                        <h3 class="text-lg font-medium text-gray-900">
+                                            {{ currentSection?.name }}
+                                        </h3>
+                                        <p class="mt-1 text-sm text-gray-500">
+                                            {{ currentSection?.description }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Section Content -->
+                            <div class="p-6">
+                                <!-- Basic Information -->
+                                <UpdateProfileInformationForm
+                                    v-if="activeSection === 'basic'"
+                                    :must-verify-email="mustVerifyEmail"
+                                    :status="status"
+                                    class="max-w-xl"
+                                />
+
+                                <!-- Profile Details -->
+                                <UpdateProfileDetailsForm
+                                    v-if="activeSection === 'profile'"
+                                    :user-profile="userProfile"
+                                    :divisions="divisions"
+                                    class="max-w-xl"
+                                />
+
+                                <!-- Education Section -->
+                                <EducationSection
+                                    v-if="activeSection === 'education'"
+                                    :user-profile="userProfile"
+                                    :educations="educations"
+                                />
+
+                                <!-- Work Experience Section -->
+                                <WorkExperienceSection
+                                    v-if="activeSection === 'experience'"
+                                    :user-profile="userProfile"
+                                    :work-experiences="workExperiences"
+                                />
+
+                                <!-- Skills Section -->
+                                <SkillsSection
+                                    v-if="activeSection === 'skills'"
+                                    :user-profile="userProfile"
+                                    :user-skills="skills"
+                                />
+
+                                <!-- Travel History Section -->
+                                <TravelHistorySection
+                                    v-if="activeSection === 'travel'"
+                                    :travel-history="travelHistory"
+                                />
+
+                                <!-- Family Section -->
+                                <FamilySection
+                                    v-if="activeSection === 'family'"
+                                    :user-profile="userProfile"
+                                />
+
+                                <!-- Financial Section -->
+                                <FinancialSection
+                                    v-if="activeSection === 'financial'"
+                                    :user-profile="userProfile"
+                                />
+
+                                <!-- Languages Section -->
+                                <LanguagesSection
+                                    v-if="activeSection === 'languages'"
+                                    :user-profile="userProfile"
+                                />
+
+                                <!-- Security Section -->
+                                <SecuritySection
+                                    v-if="activeSection === 'security'"
+                                    :user-profile="userProfile"
+                                />
+
+                                <!-- Password -->
+                                <UpdatePasswordForm
+                                    v-if="activeSection === 'password'"
+                                    class="max-w-xl"
+                                />
+
+                                <!-- Delete Account -->
+                                <DeleteUserForm
+                                    v-if="activeSection === 'delete'"
+                                    class="max-w-xl"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </AuthenticatedLayout>
+</template>
