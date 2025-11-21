@@ -241,24 +241,37 @@ class ProfileAssessmentService
         $score = 20; // Base score
 
         foreach ($languages as $lang) {
-            // English is heavily weighted for international migration
-            if (strtolower($lang->language_name) === 'english') {
-                if ($lang->ielts_score && $lang->ielts_score >= 7.0) {
-                    $score += 40;
-                } elseif ($lang->ielts_score && $lang->ielts_score >= 6.0) {
-                    $score += 30;
-                } elseif ($lang->ielts_score) {
-                    $score += 20;
-                }
-                
-                if ($lang->toefl_score && $lang->toefl_score >= 100) {
-                    $score += 30;
-                } elseif ($lang->toefl_score) {
-                    $score += 20;
+            $languageName = strtolower($lang->language ?? '');
+            $testType = strtolower($lang->test_taken ?? '');
+            // Prefer overall_score, fall back to test_score
+            $testScore = (float) ($lang->overall_score ?? $lang->test_score ?? 0);
+
+            if ($languageName === 'english') {
+                if ($testType === 'ielts') {
+                    if ($testScore >= 7.0) {
+                        $score += 40;
+                    } elseif ($testScore >= 6.0) {
+                        $score += 30;
+                    } elseif ($testScore > 0) {
+                        $score += 20;
+                    }
+                } elseif ($testType === 'toefl') {
+                    if ($testScore >= 100) {
+                        $score += 30;
+                    } elseif ($testScore > 0) {
+                        $score += 20;
+                    }
+                } else {
+                    // English listed but no test data – give minimal credit if proficiency high
+                    if (in_array($lang->proficiency_level, ['fluent','native'])) {
+                        $score += 20;
+                    } elseif ($lang->proficiency_level === 'intermediate') {
+                        $score += 10;
+                    }
                 }
             } else {
-                // Other languages
-                if ($lang->proficiency_level === 'fluent' || $lang->proficiency_level === 'native') {
+                // Other languages based on proficiency only
+                if (in_array($lang->proficiency_level, ['fluent','native'])) {
                     $score += 15;
                 } elseif ($lang->proficiency_level === 'intermediate') {
                     $score += 10;
@@ -422,10 +435,13 @@ class ProfileAssessmentService
         
         // Language proficiency
         $hasGoodEnglish = $user->languages()
-            ->where('language_name', 'English')
+            ->where('language', 'English')
             ->where(function($q) {
-                $q->where('ielts_score', '>=', 6.0)
-                  ->orWhere('toefl_score', '>=', 80);
+                $q->where(function($qq){
+                    $qq->where('test_taken','IELTS')->where('overall_score','>=',6.0);
+                })->orWhere(function($qq){
+                    $qq->where('test_taken','TOEFL')->where('overall_score','>=',80);
+                });
             })
             ->exists();
         
@@ -470,7 +486,7 @@ class ProfileAssessmentService
             $strengths[] = 'Extensive work experience across multiple roles';
         }
         
-        if ($user->languages()->where('language_name', 'English')->where('ielts_score', '>=', 7.0)->exists()) {
+        if ($user->languages()->where('language','English')->where('test_taken','IELTS')->where('overall_score','>=',7.0)->exists()) {
             $strengths[] = 'Excellent English proficiency (IELTS 7.0+)';
         }
         
@@ -657,7 +673,7 @@ class ProfileAssessmentService
         $hasPassport = $user->userPassports()->exists();
         $hasEducation = $user->educations()->exists();
         $hasExperience = $user->workExperiences()->count() >= 1;
-        $hasEnglish = $user->languages()->where('language_name', 'English')->exists();
+    $hasEnglish = $user->languages()->where('language', 'English')->exists();
         
         if ($hasPassport && $hasEducation && $hasEnglish) {
             $countries[] = ['code' => 'US', 'name' => 'United States', 'probability' => 65];
