@@ -65,7 +65,7 @@ class ServiceManagementController extends Controller
             'today' => TravelInsuranceBooking::whereDate('created_at', today())->count(),
             'revenue_month' => TravelInsuranceBooking::where('status', 'confirmed')
                 ->whereMonth('created_at', now()->month)
-                ->sum('amount'),
+                ->sum('total_amount'),
         ];
 
         // CV Builder Statistics
