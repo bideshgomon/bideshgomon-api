@@ -157,6 +157,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Backward compatibility alias used by ProfileAssessmentService & older tests.
+     */
+    public function userPassports(): HasMany
+    {
+        return $this->hasMany(UserPassport::class);
+    }
+
+    /**
      * Get the user's current passport.
      */
     public function currentPassport(): HasOne
