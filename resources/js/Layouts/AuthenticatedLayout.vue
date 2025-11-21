@@ -76,6 +76,17 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                 >
                                     Dashboard
                                 </NavLink>
+                                    <NavLink :href="route('documents.index')" :active="route().current('documents.*')">
+                                        Documents
+                                    </NavLink>
+                                    <NavLink :href="route('notifications.index')" :active="route().current('notifications.*')">
+                                        <span class="inline-flex items-center gap-1">
+                                            Notifications
+                                            <span v-if="$page.props.auth?.user?.unread_notifications > 0" class="ml-1 inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-red-600 text-white">
+                                                {{ $page.props.auth.user.unread_notifications }}
+                                            </span>
+                                        </span>
+                                    </NavLink>
                                 
                                 <!-- Services Dropdown -->
                                 <div class="relative">
@@ -151,6 +162,8 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                             <DropdownLink :href="route('admin.analytics.index')">📈 Analytics & Reports</DropdownLink>
                                             <DropdownLink :href="route('seo-settings.index')">🔍 SEO Settings</DropdownLink>
                                             <DropdownLink :href="route('admin.settings.index')">⚙️ Platform Settings</DropdownLink>
+                                                <DropdownLink :href="route('admin.documents.verify.index')">📄 Verify Documents</DropdownLink>
+                                                <DropdownLink :href="route('admin.notifications.index')">🔔 Admin Notifications</DropdownLink>
                                         </template>
                                         
                                         <!-- Regular User Menu -->

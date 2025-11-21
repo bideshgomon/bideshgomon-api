@@ -563,22 +563,33 @@ class User extends Authenticatable
         
         return $settings[$section] ?? true; // Default to visible
     }
+    /**
+     * Smart suggestions generated for the user.
+     */
+    public function smartSuggestions(): HasMany
+    {
+        return $this->hasMany(SmartSuggestion::class);
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(UserDocument::class);
+    }
+
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(UserNotification::class);
+    }
+
+    /**
+     * AI profile assessments history for the user.
+     */
+    public function profileAssessments(): HasMany
+    {
+        return $this->hasMany(ProfileAssessment::class);
+    }
 }
 
-/**
- * Get the user's smart suggestions.
- */
-public function smartSuggestions(): HasMany
-{
-    return $this->hasMany(SmartSuggestion::class);
-}
 
-/**
- * Get the user's profile assessments.
- */
-public function profileAssessments(): HasMany
-{
-    return $this->hasMany(ProfileAssessment::class);
-}
 
 

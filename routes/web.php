@@ -369,6 +369,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/{translation}', [\App\Http\Controllers\TranslationRequestController::class, 'show'])->name('show');
         Route::post('/{translation}/cancel', [\App\Http\Controllers\TranslationRequestController::class, 'cancel'])->name('cancel');
     });
+
+    // User Documents (upload & listing)
+    Route::get('/documents', [\App\Http\Controllers\DocumentController::class, 'index'])->name('documents.index');
+    Route::post('/documents', [\App\Http\Controllers\DocumentController::class, 'store'])->name('documents.store');
+    Route::delete('/documents/{document}', [\App\Http\Controllers\DocumentController::class, 'destroy'])->name('documents.destroy');
+
+    // Notifications
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{notification}/read', [\App\Http\Controllers\NotificationController::class, 'markRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllRead'])->name('notifications.read-all');
 });
 
 // Admin routes
@@ -440,6 +450,15 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::post('/{application}/notes', [AdminVisaController::class, 'addNote'])->name('add-note');
         Route::post('/documents/{document}/verify', [AdminVisaController::class, 'verifyDocument'])->name('verify-document');
     });
+
+    // Admin Document Verification
+    Route::get('/documents/verify', [\App\Http\Controllers\Admin\AdminDocumentVerificationController::class, 'index'])->name('documents.verify.index');
+    Route::post('/documents/{document}/approve', [\App\Http\Controllers\Admin\AdminDocumentVerificationController::class, 'approve'])->name('documents.approve');
+    Route::post('/documents/{document}/reject', [\App\Http\Controllers\Admin\AdminDocumentVerificationController::class, 'reject'])->name('documents.reject');
+
+    // Admin Notifications
+    Route::get('/notifications', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/broadcast', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'store'])->name('notifications.broadcast');
 });
 
 // Agency routes

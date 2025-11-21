@@ -71,6 +71,7 @@ class HandleInertiaRequests extends Middleware
                     'impersonating' => session()->has('impersonator_id'),
                     'impersonator_id' => session('impersonator_id'),
                     'impersonator' => $impersonator,
+                    'unread_notifications' => $user ? \App\Models\UserNotification::where('user_id', $user->id)->whereNull('read_at')->count() : 0,
                 ] : null,
             ],
         ];
