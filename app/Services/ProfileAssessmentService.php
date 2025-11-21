@@ -492,15 +492,16 @@ class ProfileAssessmentService
     {
         $weaknesses = [];
         
-        if ($user->educations()->isEmpty()) {
+        // Use loaded relationship collections instead of calling builder-specific methods like isEmpty()
+        if ($user->relationLoaded('educations') ? $user->educations->isEmpty() : $user->educations()->count() === 0) {
             $weaknesses[] = 'No education records added';
         }
         
-        if ($user->workExperiences()->isEmpty()) {
+        if ($user->relationLoaded('workExperiences') ? $user->workExperiences->isEmpty() : $user->workExperiences()->count() === 0) {
             $weaknesses[] = 'No work experience documented';
         }
         
-        if ($user->languages()->isEmpty()) {
+        if ($user->relationLoaded('languages') ? $user->languages->isEmpty() : $user->languages()->count() === 0) {
             $weaknesses[] = 'Language proficiency not documented';
         }
         

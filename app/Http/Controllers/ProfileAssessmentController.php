@@ -93,6 +93,8 @@ class ProfileAssessmentController extends Controller
             }
         );
 
+        \Log::info('ProfileAssessmentController@recommendations invoked', ['user_id' => $user->id]);
+
         return response()->json([
             'recommendations' => $assessment->recommendations,
             'missing_documents' => $assessment->missing_documents,
@@ -114,6 +116,8 @@ class ProfileAssessmentController extends Controller
                 return $this->assessmentService->assessProfile($user);
             }
         );
+
+        \Log::info('ProfileAssessmentController@scoreBreakdown invoked', ['user_id' => $user->id]);
 
         return response()->json([
             'sections' => [

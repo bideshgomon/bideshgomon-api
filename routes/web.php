@@ -34,7 +34,9 @@ Route::get('/', function () {
 })->name('welcome');
 
 // Public profile route (no auth required)
+// Exclude reserved path segments like 'assessment' used by internal profile features
 Route::get('/profile/{slug}', [\App\Http\Controllers\PublicProfileController::class, 'show'])
+    ->where('slug', '^(?!assessment$).*')
     ->name('profile.public.show');
 
 Route::get('/dashboard', function () {
