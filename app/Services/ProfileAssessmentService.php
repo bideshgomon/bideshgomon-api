@@ -390,7 +390,7 @@ class ProfileAssessmentService
         }
         
         if ($user->workExperiences()->exists()) $score++;
-        if ($user->languages()->whereNotNull('test_certificate_upload')->exists()) $score++;
+        if ($user->languages()->whereNotNull('test_certificate_path')->exists()) $score++;
         
         // Add more document checks as needed
         $score += 2; // Placeholder for additional document types
@@ -588,7 +588,7 @@ class ProfileAssessmentService
             $missing[] = 'Education certificates';
         }
         
-        if (!$user->languages()->whereNotNull('test_certificate_upload')->exists()) {
+        if (!$user->languages()->whereNotNull('test_certificate_path')->exists()) {
             $missing[] = 'Language test certificate (IELTS/TOEFL)';
         }
         
@@ -802,7 +802,7 @@ class ProfileAssessmentService
             $quality += 10;
         }
         
-        if ($user->languages()->whereNotNull('test_certificate_upload')->count() > 0) {
+        if ($user->languages()->whereNotNull('test_certificate_path')->count() > 0) {
             $quality += 10;
         }
         
