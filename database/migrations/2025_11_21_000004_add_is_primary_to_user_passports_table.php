@@ -10,7 +10,7 @@ return new class extends Migration
     {
         if (!Schema::hasColumn('user_passports', 'is_primary')) {
             Schema::table('user_passports', function (Blueprint $table) {
-                $table->boolean('is_primary')->default(false)->after('pages_count');
+                $table->boolean('is_primary')->default(false)->after('notes');
             });
         }
     }
