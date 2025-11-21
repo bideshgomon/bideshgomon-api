@@ -44,6 +44,11 @@ class User extends Authenticatable
         'google_id',
         'google_token',
         'google_refresh_token',
+        'public_profile_slug',
+        'profile_is_public',
+        'profile_visibility_settings',
+        'profile_bio',
+        'profile_headline',
     ];
 
     /**
@@ -66,6 +71,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'profile_is_public' => 'boolean',
+            'profile_visibility_settings' => 'array',
         ];
     }
 
@@ -521,6 +528,40 @@ class User extends Authenticatable
                 ],
             ]
         ];
+    }
+
+    /**
+     * Get profile views for this user.
+     */
+    public function profileViews(): HasMany
+    {
+        return $this->hasMany(ProfileView::class);
+    }
+
+    /**
+     * Get the public profile URL.
+     */
+    public function getPublicProfileUrlAttribute(): ?string
+    {
+        if (!$this->public_profile_slug) {
+            return null;
+        }
+
+        return route('profile.public.show', $this->public_profile_slug);
+    }
+
+    /**
+     * Check if a section is visible on public profile.
+     */
+    public function isSectionVisible(string $section): bool
+    {
+        if (!$this->profile_is_public) {
+            return false;
+        }
+
+        $settings = $this->profile_visibility_settings ?? [];
+        
+        return $settings[$section] ?? true; // Default to visible
     }
 }
 

@@ -33,6 +33,10 @@ Route::get('/', function () {
     ]);
 })->name('welcome');
 
+// Public profile route (no auth required)
+Route::get('/profile/{slug}', [\App\Http\Controllers\PublicProfileController::class, 'show'])
+    ->name('profile.public.show');
+
 Route::get('/dashboard', function () {
     $user = auth()->user();
     $profile = $user->userProfile;
@@ -255,6 +259,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/recommendations', [\App\Http\Controllers\ProfileAssessmentController::class, 'recommendations'])->name('recommendations');
         Route::get('/score-breakdown', [\App\Http\Controllers\ProfileAssessmentController::class, 'scoreBreakdown'])->name('score-breakdown');
         Route::get('/visa-eligibility', [\App\Http\Controllers\ProfileAssessmentController::class, 'visaEligibility'])->name('visa-eligibility');
+    });
+
+    // Public Profile Settings routes
+    Route::prefix('profile/public')->name('profile.public.')->group(function () {
+        Route::get('/settings', [\App\Http\Controllers\PublicProfileController::class, 'settings'])->name('settings');
+        Route::post('/settings', [\App\Http\Controllers\PublicProfileController::class, 'updateSettings'])->name('update-settings');
+        Route::get('/qr-code', [\App\Http\Controllers\PublicProfileController::class, 'generateQrCode'])->name('qr-code');
     });
 
     // Travel Insurance routes

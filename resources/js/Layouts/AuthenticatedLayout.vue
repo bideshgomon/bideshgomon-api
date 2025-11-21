@@ -135,6 +135,7 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                     <template #content>
                                         <DropdownLink :href="route('profile.edit')">👤 Profile</DropdownLink>
                                         <DropdownLink :href="route('profile.assessment.show')">✨ AI Assessment</DropdownLink>
+                                        <DropdownLink :href="route('profile.public.settings')">🌐 Public Profile</DropdownLink>
                                         
                                         <!-- Admin Menu -->
                                         <template v-if="isAdmin">
