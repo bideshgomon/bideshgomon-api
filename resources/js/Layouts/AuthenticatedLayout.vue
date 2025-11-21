@@ -155,6 +155,7 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                         
                                         <!-- Regular User Menu -->
                                         <template v-else>
+    <DropdownLink :href="route('suggestions.index')">✨ Smart Suggestions</DropdownLink>
                                             <div class="border-t border-gray-100 my-1"></div>
                                             <DropdownLink :href="route('wallet.index')">💰 My Wallet</DropdownLink>
                                             <DropdownLink :href="route('referral.index')">🔗 Referrals</DropdownLink>

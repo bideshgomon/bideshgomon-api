@@ -187,6 +187,15 @@ Route::middleware('auth')->group(function () {
     // API route for all skills (not profile-specific)
     Route::get('/api/skills', [\App\Http\Controllers\Api\SkillController::class, 'index'])->name('api.skills.index');
     
+    // Smart Suggestions
+    Route::prefix('suggestions')->name('suggestions.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\SmartSuggestionsController::class, 'index'])->name('index');
+        Route::post('/{suggestion}/complete', [\App\Http\Controllers\SmartSuggestionsController::class, 'complete'])->name('complete');
+        Route::post('/{suggestion}/dismiss', [\App\Http\Controllers\SmartSuggestionsController::class, 'dismiss'])->name('dismiss');
+        Route::post('/refresh', [\App\Http\Controllers\SmartSuggestionsController::class, 'refresh'])->name('refresh');
+        Route::get('/api', [\App\Http\Controllers\SmartSuggestionsController::class, 'apiIndex'])->name('api');
+    });
+    
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

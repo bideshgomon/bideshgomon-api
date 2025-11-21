@@ -565,4 +565,20 @@ class User extends Authenticatable
     }
 }
 
+/**
+ * Get the user's smart suggestions.
+ */
+public function smartSuggestions(): HasMany
+{
+    return $this->hasMany(SmartSuggestion::class);
+}
+
+/**
+ * Get the user's profile assessments.
+ */
+public function profileAssessments(): HasMany
+{
+    return $this->hasMany(ProfileAssessment::class);
+}
+
 
