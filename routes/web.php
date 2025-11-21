@@ -33,6 +33,13 @@ Route::get('/', function () {
     ]);
 })->name('welcome');
 
+// Short-circuit protected profile assessment JSON endpoints to ensure they are reachable
+// (these are still protected by 'auth' middleware)
+Route::middleware('auth')->get('/profile/assessment/recommendations', [\App\Http\Controllers\ProfileAssessmentController::class, 'recommendations'])
+    ->name('profile.assessment.recommendations');
+Route::middleware('auth')->get('/profile/assessment/score-breakdown', [\App\Http\Controllers\ProfileAssessmentController::class, 'scoreBreakdown'])
+    ->name('profile.assessment.score-breakdown');
+
 // Public profile route (no auth required)
 // Exclude reserved path segments like 'assessment' used by internal profile features
 Route::get('/profile/{slug}', [\App\Http\Controllers\PublicProfileController::class, 'show'])
