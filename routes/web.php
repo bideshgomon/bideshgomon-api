@@ -364,6 +364,9 @@ Route::middleware('auth')->group(function () {
 
 // Admin routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Service Management Dashboard
+    Route::get('/services', [\App\Http\Controllers\Admin\ServiceManagementController::class, 'index'])->name('services.index');
+    
     Route::get('/wallets', [\App\Http\Controllers\Admin\WalletController::class, 'index'])->name('wallets.index');
     Route::get('/wallets/{wallet}', [\App\Http\Controllers\Admin\WalletController::class, 'show'])->name('wallets.show');
     Route::post('/wallets/{wallet}/credit', [\App\Http\Controllers\Admin\WalletController::class, 'credit'])->name('wallets.credit');

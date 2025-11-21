@@ -11,6 +11,9 @@ use App\Models\HotelBooking;
 use App\Models\FlightRequest;
 use App\Models\VisaApplication;
 use App\Models\AdminImpersonationLog;
+use App\Models\JobApplication;
+use App\Models\ProfileAssessment;
+use App\Models\ProfileView;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -72,6 +75,23 @@ class AdminDashboardController extends Controller
         $pendingWithdrawals = WalletTransaction::where('transaction_type', 'debit')
             ->where('status', 'pending')
             ->count();
+
+        // Job Application Statistics
+        $totalJobApplications = JobApplication::count();
+        $jobApplicationsToday = JobApplication::whereDate('created_at', today())->count();
+        $pendingJobApplications = JobApplication::where('status', 'pending')->count();
+        $shortlistedJobApplications = JobApplication::where('status', 'shortlisted')->count();
+
+        // Profile Assessment Statistics
+        $totalAssessments = ProfileAssessment::count();
+        $assessmentsToday = ProfileAssessment::whereDate('assessed_at', today())->count();
+        $averageOverallScore = ProfileAssessment::avg('overall_score');
+        $highRiskProfiles = ProfileAssessment::where('risk_level', 'high')->count();
+
+        // Public Profile Statistics
+        $publicProfiles = User::where('profile_is_public', true)->count();
+        $totalProfileViews = ProfileView::count();
+        $profileViewsToday = ProfileView::whereDate('viewed_at', today())->count();
 
         // Recent Activities
         $recentUsers = User::with('role')->latest()->take(10)->get(['id', 'name', 'email', 'created_at', 'role_id']);
@@ -182,6 +202,23 @@ class AdminDashboardController extends Controller
                     'total_balance' => $totalWalletBalance,
                     'total_transactions' => $totalTransactions,
                     'pending_withdrawals' => $pendingWithdrawals,
+                ],
+                'jobs' => [
+                    'total_applications' => $totalJobApplications,
+                    'applications_today' => $jobApplicationsToday,
+                    'pending_applications' => $pendingJobApplications,
+                    'shortlisted_applications' => $shortlistedJobApplications,
+                ],
+                'assessments' => [
+                    'total_assessments' => $totalAssessments,
+                    'assessments_today' => $assessmentsToday,
+                    'average_score' => round($averageOverallScore, 2),
+                    'high_risk_profiles' => $highRiskProfiles,
+                ],
+                'public_profiles' => [
+                    'total_public' => $publicProfiles,
+                    'total_views' => $totalProfileViews,
+                    'views_today' => $profileViewsToday,
                 ],
             ],
             'recentUsers' => $recentUsers,

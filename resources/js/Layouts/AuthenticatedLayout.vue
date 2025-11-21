@@ -142,6 +142,7 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                             <div class="border-t border-gray-100 my-1"></div>
                                             <div class="px-4 py-2 text-xs text-gray-400 uppercase font-semibold tracking-wider">Admin Panel</div>
                                             <DropdownLink :href="route('admin.dashboard')">📊 Dashboard</DropdownLink>
+                                            <DropdownLink :href="route('admin.services.index')">🎯 Service Management</DropdownLink>
                                             <DropdownLink :href="route('admin.hotels.index')">🏨 Hotels Management</DropdownLink>
                                             <DropdownLink :href="route('admin.visa-applications.index')">🛂 Visa Applications</DropdownLink>
                                             <DropdownLink :href="route('admin.jobs.index')">💼 Job Postings</DropdownLink>
@@ -261,6 +262,7 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                 <div class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Admin Panel</div>
                             </div>
                             <ResponsiveNavLink :href="route('admin.dashboard')">📊 Dashboard</ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('admin.services.index')">🎯 Service Management</ResponsiveNavLink>
                             <div class="px-3 py-1">
                                 <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Services</div>
                             </div>
