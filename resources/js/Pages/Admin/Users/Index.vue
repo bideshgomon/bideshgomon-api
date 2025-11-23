@@ -1,6 +1,6 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import {
     UsersIcon,
@@ -14,6 +14,7 @@ import {
     NoSymbolIcon,
     TrashIcon,
     UserPlusIcon,
+    PencilIcon,
 } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
@@ -157,7 +158,7 @@ const impersonateUser = (user) => {
 <template>
     <Head title="User Management" />
 
-    <AuthenticatedLayout>
+    <AdminLayout>
         <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <!-- Header -->
@@ -167,13 +168,22 @@ const impersonateUser = (user) => {
                             <h1 class="text-3xl font-bold mb-2">User Management</h1>
                             <p class="text-blue-100">Manage and moderate platform users</p>
                         </div>
-                        <button
-                            @click="exportUsers"
-                            class="bg-white/20 hover:bg-white/30 px-6 py-3 rounded-xl font-semibold transition-colors flex items-center gap-2"
-                        >
-                            <ArrowDownTrayIcon class="h-5 w-5" />
-                            Export CSV
-                        </button>
+                        <div class="flex gap-3">
+                            <Link
+                                :href="route('admin.users.create')"
+                                class="bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-xl font-semibold transition-colors flex items-center gap-2"
+                            >
+                                <UserPlusIcon class="h-5 w-5" />
+                                Create User
+                            </Link>
+                            <button
+                                @click="exportUsers"
+                                class="bg-white/20 hover:bg-white/30 px-6 py-3 rounded-xl font-semibold transition-colors flex items-center gap-2"
+                            >
+                                <ArrowDownTrayIcon class="h-5 w-5" />
+                                Export CSV
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -447,6 +457,13 @@ const impersonateUser = (user) => {
                                             <EyeIcon class="h-4 w-4" />
                                             View
                                         </Link>
+                                        <Link
+                                            :href="route('admin.users.edit', user.id)"
+                                            class="ml-3 text-indigo-600 hover:text-indigo-900 inline-flex items-center gap-1"
+                                        >
+                                            <PencilIcon class="h-4 w-4" />
+                                            Edit
+                                        </Link>
                                         <button
                                             v-if="canImpersonate(user)"
                                             @click="impersonateUser(user)"
@@ -485,5 +502,5 @@ const impersonateUser = (user) => {
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </AdminLayout>
 </template>

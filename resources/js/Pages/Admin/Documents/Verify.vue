@@ -1,6 +1,6 @@
 <script setup>
 import { Link, useForm } from '@inertiajs/vue3'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import AdminLayout from '@/Layouts/AdminLayout.vue'
 import { useBangladeshFormat } from '@/Composables/useBangladeshFormat'
 
 const props = defineProps({
@@ -24,7 +24,7 @@ function reject(doc) {
 </script>
 
 <template>
-  <AuthenticatedLayout title="Verify Documents">
+  <AdminLayout title="Verify Documents">
     <div class="max-w-7xl mx-auto py-8 px-4">
       <h1 class="text-2xl font-bold mb-6">Document Verification</h1>
 
@@ -115,7 +115,7 @@ function reject(doc) {
         </div>
       </div>
     </div>
-  </AuthenticatedLayout>
+  </AdminLayout>
 </template>
 
 <script>

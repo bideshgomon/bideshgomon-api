@@ -1,8 +1,8 @@
 <script setup>
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { 
-    MagnifyingGlassIcon, 
+    MagnifyingGlassIcon,
     CheckCircleIcon, 
     XCircleIcon,
     CurrencyDollarIcon,
@@ -66,7 +66,7 @@ const rejectReward = (rewardId) => {
 <template>
     <Head title="Reward Management" />
 
-    <AuthenticatedLayout>
+    <AdminLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Reward Management
@@ -312,5 +312,5 @@ const rejectReward = (rewardId) => {
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </AdminLayout>
 </template>

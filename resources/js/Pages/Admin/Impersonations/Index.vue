@@ -1,5 +1,5 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 import { FunnelIcon, ArrowDownTrayIcon } from '@heroicons/vue/24/outline';
@@ -38,7 +38,7 @@ const formatDateTime = (dt) => dt ? new Date(dt).toLocaleString('en-US', { month
 
 <template>
   <Head title="Impersonation Logs" />
-  <AuthenticatedLayout>
+  <AdminLayout>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <div class="flex items-center justify-between">
         <div>
@@ -143,5 +143,5 @@ const formatDateTime = (dt) => dt ? new Date(dt).toLocaleString('en-US', { month
         </div>
       </div>
     </div>
-  </AuthenticatedLayout>
+  </AdminLayout>
 </template>

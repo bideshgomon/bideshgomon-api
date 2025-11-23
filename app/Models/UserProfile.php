@@ -72,12 +72,42 @@ class UserProfile extends Model
         'tax_return_path',
         'salary_certificate_path',
         'financial_sponsor_info',
+        'social_links',
+        // Emergency Contact
+        'emergency_contact_name',
+        'emergency_contact_relationship',
+        'emergency_contact_phone',
+        'emergency_contact_email',
+        'emergency_contact_address',
+        // Medical Information
+        'blood_group',
+        'allergies',
+        'medical_conditions',
+        'vaccinations',
+        'health_insurance_provider',
+        'health_insurance_policy_number',
+        'health_insurance_expiry_date',
+        // References
+        'references',
+        // Certifications
+        'certifications',
+        // Privacy
+        'privacy_settings',
+        'data_downloaded_at',
+        'preferences',
     ];
 
     protected $casts = [
         'dob' => 'date',
         'passport_issue_date' => 'date',
         'passport_expiry_date' => 'date',
+        'health_insurance_expiry_date' => 'date',
+        'data_downloaded_at' => 'datetime',
+        'social_links' => 'array',
+        'vaccinations' => 'array',
+        'references' => 'array',
+        'certifications' => 'array',
+        'privacy_settings' => 'array',
     ];
 
     public function user(): BelongsTo

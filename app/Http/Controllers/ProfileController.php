@@ -239,6 +239,220 @@ class ProfileController extends Controller
     }
 
     /**
+     * Update the user's social links.
+     */
+    public function updateSocialLinks(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'social_links' => ['nullable', 'array'],
+            'social_links.linkedin' => ['nullable', 'string', 'max:255', 'url'],
+            'social_links.github' => ['nullable', 'string', 'max:255', 'url'],
+            'social_links.facebook' => ['nullable', 'string', 'max:255'],
+            'social_links.twitter' => ['nullable', 'string', 'max:255', 'url'],
+            'social_links.instagram' => ['nullable', 'string', 'max:255'],
+            'social_links.youtube' => ['nullable', 'string', 'max:255', 'url'],
+            'social_links.tiktok' => ['nullable', 'string', 'max:255'],
+            'social_links.whatsapp' => ['nullable', 'string', 'max:20'],
+            'social_links.telegram' => ['nullable', 'string', 'max:100'],
+            'social_links.wechat' => ['nullable', 'string', 'max:100'],
+            'social_links.skype' => ['nullable', 'string', 'max:100'],
+            'social_links.discord' => ['nullable', 'string', 'max:100'],
+            'social_links.medium' => ['nullable', 'string', 'max:255', 'url'],
+            'social_links.behance' => ['nullable', 'string', 'max:255', 'url'],
+            'social_links.dribbble' => ['nullable', 'string', 'max:255', 'url'],
+            'social_links.website' => ['nullable', 'string', 'max:255', 'url'],
+        ]);
+
+        $profile = $request->user()->profile()->firstOrCreate([]);
+        
+        // Filter out empty values
+        $socialLinks = array_filter($validated['social_links'] ?? [], function($value) {
+            return !empty(trim($value));
+        });
+        
+        $profile->update(['social_links' => $socialLinks]);
+
+        return Redirect::back()->with('success', 'Social links updated successfully!');
+    }
+
+    /**
+     * Update emergency contact information.
+     */
+    public function updateEmergencyContact(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'emergency_contact_name' => ['required', 'string', 'max:255'],
+            'emergency_contact_relationship' => ['required', 'string', 'max:50'],
+            'emergency_contact_phone' => ['required', 'string', 'max:20'],
+            'emergency_contact_email' => ['nullable', 'email', 'max:255'],
+            'emergency_contact_address' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $profile = $request->user()->profile()->firstOrCreate([]);
+        $profile->update($validated);
+
+        return Redirect::back()->with('success', 'Emergency contact updated successfully!');
+    }
+
+    /**
+     * Update medical information.
+     */
+    public function updateMedicalInfo(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'blood_group' => ['required', 'string', 'max:10'],
+            'allergies' => ['nullable', 'string'],
+            'medical_conditions' => ['nullable', 'string'],
+            'vaccinations' => ['nullable', 'array'],
+            'vaccinations.*.id' => ['required', 'string'],
+            'vaccinations.*.name' => ['required', 'string'],
+            'vaccinations.*.date' => ['required', 'date'],
+            'health_insurance_provider' => ['nullable', 'string', 'max:255'],
+            'health_insurance_policy_number' => ['nullable', 'string', 'max:255'],
+            'health_insurance_expiry_date' => ['nullable', 'date'],
+        ]);
+
+        $profile = $request->user()->profile()->firstOrCreate([]);
+        $profile->update($validated);
+
+        return Redirect::back()->with('success', 'Medical information updated successfully!');
+    }
+
+    /**
+     * Update references.
+     */
+    public function updateReferences(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'references' => ['required', 'array'],
+            'references.*.id' => ['required'],
+            'references.*.type' => ['required', 'string', 'in:professional,academic,personal'],
+            'references.*.name' => ['required', 'string', 'max:255'],
+            'references.*.relationship' => ['required', 'string', 'max:100'],
+            'references.*.organization' => ['required', 'string', 'max:255'],
+            'references.*.position' => ['required', 'string', 'max:255'],
+            'references.*.email' => ['required', 'email', 'max:255'],
+            'references.*.phone' => ['required', 'string', 'max:20'],
+            'references.*.address' => ['nullable', 'string', 'max:500'],
+            'references.*.years_known' => ['nullable', 'integer', 'min:0', 'max:50'],
+            'references.*.can_contact' => ['boolean'],
+        ]);
+
+        $profile = $request->user()->profile()->firstOrCreate([]);
+        $profile->update($validated);
+
+        return Redirect::back()->with('success', 'References updated successfully!');
+    }
+
+    /**
+     * Update certifications.
+     */
+    public function updateCertifications(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'certifications' => ['required', 'array'],
+            'certifications.*.id' => ['required'],
+            'certifications.*.type' => ['required', 'string', 'in:professional,trade,driving,technical,language,other'],
+            'certifications.*.name' => ['required', 'string', 'max:255'],
+            'certifications.*.issuing_organization' => ['required', 'string', 'max:255'],
+            'certifications.*.issue_date' => ['required', 'date'],
+            'certifications.*.expiry_date' => ['nullable', 'date', 'after:issue_date'],
+            'certifications.*.credential_id' => ['nullable', 'string', 'max:100'],
+            'certifications.*.credential_url' => ['nullable', 'string', 'url', 'max:500'],
+            'certifications.*.never_expires' => ['boolean'],
+        ]);
+
+        $profile = $request->user()->profile()->firstOrCreate([]);
+        $profile->update($validated);
+
+        return Redirect::back()->with('success', 'Certifications updated successfully!');
+    }
+
+    /**
+     * Update privacy settings.
+     */
+    public function updatePrivacySettings(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'privacy_settings' => ['required', 'array'],
+            'privacy_settings.profile_visibility' => ['required', 'string', 'in:public,private,connections'],
+            'privacy_settings.show_email' => ['boolean'],
+            'privacy_settings.show_phone' => ['boolean'],
+            'privacy_settings.show_address' => ['boolean'],
+            'privacy_settings.show_dob' => ['boolean'],
+            'privacy_settings.show_social_links' => ['boolean'],
+            'privacy_settings.allow_search_engines' => ['boolean'],
+            'privacy_settings.show_in_directory' => ['boolean'],
+        ]);
+
+        $profile = $request->user()->profile()->firstOrCreate([]);
+        $profile->update($validated);
+
+        return Redirect::back()->with('success', 'Privacy settings updated successfully!');
+    }
+
+    /**
+     * Download user data (GDPR).
+     */
+    public function downloadData(Request $request)
+    {
+        $user = $request->user();
+        $profile = $user->profile;
+
+        $data = [
+            'user' => $user->toArray(),
+            'profile' => $profile ? $profile->toArray() : null,
+            'family_members' => $user->familyMembers->toArray(),
+            'educations' => $user->educations->toArray(),
+            'work_experiences' => $user->workExperiences->toArray(),
+            'skills' => $user->skills->toArray(),
+            'languages' => $user->languages->toArray(),
+            'travel_history' => $user->travelHistory->toArray(),
+            'phone_numbers' => $user->phoneNumbers->toArray(),
+            'exported_at' => now()->toISOString(),
+        ];
+
+        // Update download timestamp
+        if ($profile) {
+            $profile->update(['data_downloaded_at' => now()]);
+        }
+
+        $filename = 'user-data-' . $user->id . '-' . now()->format('Y-m-d') . '.json';
+
+        return response()->json($data)
+            ->header('Content-Type', 'application/json')
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+    }
+
+    /**
+     * Update user preferences.
+     */
+    public function updatePreferences(Request $request)
+    {
+        $validated = $request->validate([
+            'preferences.preferred_destinations' => 'nullable|array',
+            'preferences.service_interests' => 'nullable|array',
+            'preferences.communication_preferences' => 'nullable|array',
+            'preferences.language' => 'nullable|string|max:10',
+            'preferences.timezone' => 'nullable|string|max:50',
+            'preferences.currency' => 'nullable|string|max:10',
+            'preferences.notifications' => 'nullable|array',
+            'preferences.notifications.email' => 'nullable|boolean',
+            'preferences.notifications.sms' => 'nullable|boolean',
+            'preferences.notifications.push' => 'nullable|boolean',
+            'preferences.notifications.whatsapp' => 'nullable|boolean',
+            'preferences.theme' => 'nullable|string|in:light,dark,system',
+            'preferences.font_size' => 'nullable|string|in:small,medium,large',
+        ]);
+
+        $request->user()->profile->update([
+            'preferences' => $validated['preferences'] ?? []
+        ]);
+
+        return back()->with('success', 'Preferences updated successfully!');
+    }
+
+    /**
      * Delete the user's account.
      */
     public function destroy(Request $request): RedirectResponse

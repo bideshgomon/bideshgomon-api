@@ -1,5 +1,5 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import AdminLayout from '@/Layouts/AdminLayout.vue'
 import { useForm } from '@inertiajs/vue3'
 import { useBangladeshFormat } from '@/Composables/useBangladeshFormat'
 
@@ -31,7 +31,7 @@ function submit() {
 </script>
 
 <template>
-  <AuthenticatedLayout title="Admin Notifications">
+  <AdminLayout title="Admin Notifications">
     <div class="max-w-7xl mx-auto py-8 px-4">
       <h1 class="text-2xl font-bold mb-6">Notifications Center</h1>
 
@@ -100,7 +100,7 @@ function submit() {
         </ul>
       </div>
     </div>
-  </AuthenticatedLayout>
+  </AdminLayout>
 </template>
 
 <script>

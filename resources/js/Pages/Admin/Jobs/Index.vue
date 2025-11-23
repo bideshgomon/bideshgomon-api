@@ -1,5 +1,5 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import { 
@@ -122,7 +122,7 @@ const getCategoryColor = (cat) => {
 <template>
     <Head title="Manage Job Postings" />
 
-    <AuthenticatedLayout>
+    <AdminLayout>
         <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pb-12">
             <!-- Header -->
             <div class="bg-gradient-to-r from-indigo-600 to-purple-700 text-white px-4 py-8 sm:px-6 lg:px-8">
@@ -412,5 +412,5 @@ const getCategoryColor = (cat) => {
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </AdminLayout>
 </template>

@@ -295,6 +295,30 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the user's travel insurance bookings.
+     */
+    public function insuranceBookings(): HasMany
+    {
+        return $this->hasMany(TravelInsuranceBooking::class);
+    }
+
+    /**
+     * Get the user's flight bookings.
+     */
+    public function flightBookings(): HasMany
+    {
+        return $this->hasMany(FlightBooking::class);
+    }
+
+    /**
+     * Get the user's hotel bookings.
+     */
+    public function hotelBookings(): HasMany
+    {
+        return $this->hasMany(HotelBooking::class);
+    }
+
+    /**
      * Check if user has a specific role.
      */
     public function hasRole(string $roleSlug): bool

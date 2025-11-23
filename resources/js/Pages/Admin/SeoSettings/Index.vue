@@ -1,363 +1,371 @@
 <template>
-    <AuthenticatedLayout>
-        <Head title="SEO Settings Management" />
+    <AdminLayout>
+        <Head title="SEO Settings" />
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 border-b border-gray-200">
-                        <div class="flex justify-between items-center mb-6">
-                            <div>
-                                <h2 class="text-2xl font-bold text-gray-900">SEO Settings Management</h2>
-                                <p class="mt-1 text-sm text-gray-600">
-                                    Configure meta tags, Open Graph, Twitter Cards, and Schema.org markup for each page type
-                                </p>
-                            </div>
+        <div class="py-6">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Header -->
+                <div class="mb-8">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900">SEO Settings</h1>
+                            <p class="mt-2 text-sm text-gray-600">
+                                Configure meta tags, social media previews, and structured data for each page type
+                            </p>
+                        </div>
+                        <div class="flex gap-3">
                             <button
                                 @click="generateSitemap"
                                 :disabled="generating"
-                                class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150 disabled:opacity-50"
+                                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                <svg v-if="!generating" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg v-if="!generating" class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
-                                <svg v-else class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
+                                <svg v-else class="animate-spin h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
                                 {{ generating ? 'Generating...' : 'Generate Sitemap' }}
                             </button>
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Success/Error Messages -->
-                        <div v-if="$page.props.flash.success" class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                            {{ $page.props.flash.success }}
-                        </div>
-                        <div v-if="$page.props.flash.error" class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                            {{ $page.props.flash.error }}
-                        </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200">
+                    <!-- Tabs -->
+                    <div class="border-b border-gray-200">
+                        <nav class="flex space-x-4 px-6 overflow-x-auto" aria-label="Tabs">
+                            <button
+                                v-for="page in pageTypes"
+                                :key="page"
+                                type="button"
+                                @click="activeTab = page"
+                                :class="[
+                                    activeTab === page
+                                        ? 'border-indigo-500 text-indigo-600'
+                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
+                                    'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm capitalize transition-colors'
+                                ]"
+                            >
+                                {{ formatPageType(page) }}
+                            </button>
+                        </nav>
+                    </div>
 
-                        <!-- Tabs -->
-                        <div class="border-b border-gray-200">
-                            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                                <button
-                                    v-for="page in pageTypes"
-                                    :key="page"
-                                    @click="activeTab = page"
-                                    :class="[
-                                        activeTab === page
-                                            ? 'border-indigo-500 text-indigo-600'
-                                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
-                                        'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm capitalize'
-                                    ]"
-                                >
-                                    {{ page.replace('-', ' ') }}
-                                </button>
-                            </nav>
-                        </div>
-
-                        <!-- Form for active tab -->
-                        <form @submit.prevent="submitForm" class="mt-6 space-y-6">
-                            <!-- Basic Meta Tags -->
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Meta Tags</h3>
-                                
-                                <div class="space-y-4">
+                    <!-- Form -->
+                    <form @submit.prevent="submit" class="p-6">
+                        <div class="space-y-8">
+                            <!-- Basic Meta Tags Section -->
+                            <div class="pb-8 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Basic Meta Tags</h3>
+                                <div class="space-y-6">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700">Page Title</label>
+                                        <label class="block text-sm font-medium text-gray-900 mb-2">
+                                            Meta Title <span class="text-red-500">*</span>
+                                        </label>
                                         <input
                                             v-model="form.title"
                                             type="text"
                                             maxlength="255"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                            placeholder="e.g., BideshGomon - Your Gateway to International Opportunities"
+                                            class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                            :class="{ 'border-red-500': form.errors.title }"
+                                            placeholder="Enter meta title (recommended: 50-60 characters)"
                                         />
-                                        <p class="mt-1 text-xs text-gray-500">{{ form.title?.length || 0 }}/255 characters</p>
-                                        <p v-if="form.errors.title" class="mt-1 text-sm text-red-600">{{ form.errors.title }}</p>
+                                        <div class="flex justify-between items-center mt-2">
+                                            <p v-if="form.errors.title" class="text-red-600 text-sm">{{ form.errors.title }}</p>
+                                            <span class="ml-auto text-xs text-gray-500">{{ form.title.length }}/255 characters</span>
+                                        </div>
                                     </div>
 
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700">Meta Description</label>
+                                        <label class="block text-sm font-medium text-gray-900 mb-2">
+                                            Meta Description <span class="text-red-500">*</span>
+                                        </label>
                                         <textarea
                                             v-model="form.description"
                                             rows="3"
                                             maxlength="500"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                            placeholder="Write a compelling description for search results..."
+                                            class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                            :class="{ 'border-red-500': form.errors.description }"
+                                            placeholder="Enter meta description (recommended: 150-160 characters)"
                                         ></textarea>
-                                        <p class="mt-1 text-xs text-gray-500">{{ form.description?.length || 0 }}/500 characters (155-160 recommended)</p>
-                                        <p v-if="form.errors.description" class="mt-1 text-sm text-red-600">{{ form.errors.description }}</p>
+                                        <div class="flex justify-between items-center mt-2">
+                                            <p v-if="form.errors.description" class="text-red-600 text-sm">{{ form.errors.description }}</p>
+                                            <span class="ml-auto text-xs text-gray-500">{{ form.description.length }}/500 characters</span>
+                                        </div>
                                     </div>
 
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">Keywords</label>
-                                        <input
-                                            v-model="form.keywords"
-                                            type="text"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                            placeholder="visa, migration, jobs, Bangladesh, overseas"
-                                        />
-                                        <p class="mt-1 text-xs text-gray-500">Comma-separated keywords</p>
-                                        <p v-if="form.errors.keywords" class="mt-1 text-sm text-red-600">{{ form.errors.keywords }}</p>
-                                    </div>
+                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-900 mb-2">Meta Keywords</label>
+                                            <input
+                                                v-model="form.keywords"
+                                                type="text"
+                                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                                placeholder="keyword1, keyword2, keyword3"
+                                            />
+                                        </div>
 
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">Canonical URL</label>
-                                        <input
-                                            v-model="form.canonical_url"
-                                            type="url"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                            placeholder="https://bideshgomon.com/page"
-                                        />
-                                        <p class="mt-1 text-xs text-gray-500">Optional: Override default canonical URL</p>
-                                        <p v-if="form.errors.canonical_url" class="mt-1 text-sm text-red-600">{{ form.errors.canonical_url }}</p>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-900 mb-2">Canonical URL</label>
+                                            <input
+                                                v-model="form.canonical_url"
+                                                type="url"
+                                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                                :class="{ 'border-red-500': form.errors.canonical_url }"
+                                                placeholder="https://example.com/page"
+                                            />
+                                            <p v-if="form.errors.canonical_url" class="mt-2 text-red-600 text-sm">{{ form.errors.canonical_url }}</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Open Graph (Facebook) -->
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Open Graph Tags (Facebook)</h3>
-                                
-                                <div class="space-y-4">
+                            <!-- Open Graph Section -->
+                            <div class="pb-8 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Open Graph (Facebook)</h3>
+                                <div class="space-y-6">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700">OG Title</label>
+                                        <label class="block text-sm font-medium text-gray-900 mb-2">OG Title</label>
                                         <input
                                             v-model="form.og_title"
                                             type="text"
-                                            maxlength="255"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                            placeholder="Title for social media shares"
+                                            class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                            placeholder="Title for social media sharing"
                                         />
-                                        <p v-if="form.errors.og_title" class="mt-1 text-sm text-red-600">{{ form.errors.og_title }}</p>
                                     </div>
 
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700">OG Description</label>
+                                        <label class="block text-sm font-medium text-gray-900 mb-2">OG Description</label>
                                         <textarea
                                             v-model="form.og_description"
-                                            rows="2"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                            placeholder="Description for social media shares"
+                                            rows="3"
+                                            class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                            placeholder="Description for social media sharing"
                                         ></textarea>
-                                        <p v-if="form.errors.og_description" class="mt-1 text-sm text-red-600">{{ form.errors.og_description }}</p>
                                     </div>
 
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">OG Image URL</label>
-                                        <input
-                                            v-model="form.og_image"
-                                            type="url"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                            placeholder="https://bideshgomon.com/images/og-image.jpg"
-                                        />
-                                        <p class="mt-1 text-xs text-gray-500">Recommended: 1200×630px</p>
-                                        <p v-if="form.errors.og_image" class="mt-1 text-sm text-red-600">{{ form.errors.og_image }}</p>
-                                    </div>
+                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-900 mb-2">OG Image URL</label>
+                                            <input
+                                                v-model="form.og_image"
+                                                type="url"
+                                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                                placeholder="https://example.com/image.jpg"
+                                            />
+                                            <p class="text-xs text-gray-500 mt-1">Recommended: 1200×630px</p>
+                                        </div>
 
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">OG Type</label>
-                                        <select
-                                            v-model="form.og_type"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                        >
-                                            <option value="">Select type</option>
-                                            <option value="website">Website</option>
-                                            <option value="article">Article</option>
-                                            <option value="profile">Profile</option>
-                                            <option value="video">Video</option>
-                                        </select>
-                                        <p v-if="form.errors.og_type" class="mt-1 text-sm text-red-600">{{ form.errors.og_type }}</p>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-900 mb-2">OG Type</label>
+                                            <select
+                                                v-model="form.og_type"
+                                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                            >
+                                                <option value="website">Website</option>
+                                                <option value="article">Article</option>
+                                                <option value="product">Product</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Twitter Cards -->
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Twitter Card Tags</h3>
-                                
-                                <div class="space-y-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">Twitter Card Type</label>
-                                        <select
-                                            v-model="form.twitter_card"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                        >
-                                            <option value="">Select card type</option>
-                                            <option value="summary">Summary</option>
-                                            <option value="summary_large_image">Summary Large Image</option>
-                                            <option value="app">App</option>
-                                            <option value="player">Player</option>
-                                        </select>
-                                        <p v-if="form.errors.twitter_card" class="mt-1 text-sm text-red-600">{{ form.errors.twitter_card }}</p>
+                            <!-- Twitter Card Section -->
+                            <div class="pb-8 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Twitter Cards</h3>
+                                <div class="space-y-6">
+                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-900 mb-2">Card Type</label>
+                                            <select
+                                                v-model="form.twitter_card"
+                                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                            >
+                                                <option value="summary">Summary</option>
+                                                <option value="summary_large_image">Summary Large Image</option>
+                                                <option value="app">App</option>
+                                                <option value="player">Player</option>
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-900 mb-2">Twitter Handle</label>
+                                            <input
+                                                v-model="form.twitter_site"
+                                                type="text"
+                                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                                placeholder="@yourusername"
+                                            />
+                                        </div>
                                     </div>
 
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700">Twitter Title</label>
+                                        <label class="block text-sm font-medium text-gray-900 mb-2">Twitter Title</label>
                                         <input
                                             v-model="form.twitter_title"
                                             type="text"
-                                            maxlength="255"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                            placeholder="Title for Twitter shares"
+                                            class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                            placeholder="Title for Twitter cards"
                                         />
-                                        <p v-if="form.errors.twitter_title" class="mt-1 text-sm text-red-600">{{ form.errors.twitter_title }}</p>
                                     </div>
 
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700">Twitter Description</label>
+                                        <label class="block text-sm font-medium text-gray-900 mb-2">Twitter Description</label>
                                         <textarea
                                             v-model="form.twitter_description"
-                                            rows="2"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                            placeholder="Description for Twitter shares"
+                                            rows="3"
+                                            class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                            placeholder="Description for Twitter cards"
                                         ></textarea>
-                                        <p v-if="form.errors.twitter_description" class="mt-1 text-sm text-red-600">{{ form.errors.twitter_description }}</p>
                                     </div>
 
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700">Twitter Image URL</label>
+                                        <label class="block text-sm font-medium text-gray-900 mb-2">Twitter Image URL</label>
                                         <input
                                             v-model="form.twitter_image"
                                             type="url"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                            placeholder="https://bideshgomon.com/images/twitter-card.jpg"
+                                            class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                            placeholder="https://example.com/twitter-image.jpg"
                                         />
-                                        <p class="mt-1 text-xs text-gray-500">Recommended: 1200×628px (summary_large_image) or 120×120px (summary)</p>
-                                        <p v-if="form.errors.twitter_image" class="mt-1 text-sm text-red-600">{{ form.errors.twitter_image }}</p>
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">Twitter Site Handle</label>
-                                        <input
-                                            v-model="form.twitter_site"
-                                            type="text"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                            placeholder="@BideshGomon"
-                                        />
-                                        <p class="mt-1 text-xs text-gray-500">Include @ symbol</p>
-                                        <p v-if="form.errors.twitter_site" class="mt-1 text-sm text-red-600">{{ form.errors.twitter_site }}</p>
+                                        <p class="text-xs text-gray-500 mt-1">Recommended: 1200×600px</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Schema.org Markup -->
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Schema.org Structured Data (JSON-LD)</h3>
-                                
+                            <!-- Schema.org Section -->
+                            <div class="pb-8 border-b border-gray-200">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Schema.org Structured Data</h3>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700">JSON-LD Markup</label>
+                                    <label class="block text-sm font-medium text-gray-900 mb-2">JSON-LD Markup</label>
                                     <textarea
-                                        v-model="schemaMarkupString"
-                                        rows="10"
-                                        class="mt-1 block w-full font-mono text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                        placeholder='{"@context": "https://schema.org", "@type": "Organization", "name": "BideshGomon"}'
+                                        v-model="schemaMarkup"
+                                        rows="8"
+                                        class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono bg-gray-50"
+                                        placeholder='{"@context": "https://schema.org", "@type": "Organization", "name": "Your Company"}'
                                     ></textarea>
-                                    <p class="mt-1 text-xs text-gray-500">Enter valid JSON-LD markup for rich snippets</p>
-                                    <p v-if="form.errors.schema_markup" class="mt-1 text-sm text-red-600">{{ form.errors.schema_markup }}</p>
-                                    <p v-if="schemaError" class="mt-1 text-sm text-red-600">{{ schemaError }}</p>
+                                    <p class="text-xs text-gray-500 mt-1">Enter valid JSON-LD structured data markup</p>
                                 </div>
                             </div>
 
-                            <!-- Robots Meta -->
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Search Engine Directives</h3>
-                                
-                                <div class="space-y-4">
-                                    <div class="flex items-center space-x-6">
-                                        <label class="flex items-center">
+                            <!-- Robots Meta Section -->
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Robots Directives</h3>
+                                <div class="space-y-6">
+                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        <div class="relative inline-flex items-center">
                                             <input
+                                                id="index-checkbox"
                                                 v-model="form.index"
                                                 type="checkbox"
-                                                class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                                class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                                             />
-                                            <span class="ml-2 text-sm text-gray-700">Allow Indexing</span>
-                                        </label>
+                                            <label for="index-checkbox" class="ml-3 block text-sm font-medium text-gray-900">
+                                                Allow search engines to index this page
+                                            </label>
+                                        </div>
 
-                                        <label class="flex items-center">
+                                        <div class="relative inline-flex items-center">
                                             <input
+                                                id="follow-checkbox"
                                                 v-model="form.follow"
                                                 type="checkbox"
-                                                class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                                class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                                             />
-                                            <span class="ml-2 text-sm text-gray-700">Allow Following Links</span>
-                                        </label>
+                                            <label for="follow-checkbox" class="ml-3 block text-sm font-medium text-gray-900">
+                                                Allow search engines to follow links
+                                            </label>
+                                        </div>
                                     </div>
 
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700">Additional Robots Directives</label>
+                                        <label class="block text-sm font-medium text-gray-900 mb-2">Additional Directives</label>
                                         <input
                                             v-model="form.robots"
                                             type="text"
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                            placeholder="e.g., max-snippet:-1, max-image-preview:large"
+                                            class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                            placeholder="e.g., noarchive, noimageindex"
                                         />
-                                        <p class="mt-1 text-xs text-gray-500">Optional additional directives (comma-separated)</p>
-                                        <p v-if="form.errors.robots" class="mt-1 text-sm text-red-600">{{ form.errors.robots }}</p>
+                                        <p class="text-xs text-gray-500 mt-1">Comma-separated directives like: noarchive, noimageindex, nosnippet</p>
                                     </div>
 
-                                    <div class="bg-blue-50 border border-blue-200 rounded-md p-3">
-                                        <p class="text-sm text-blue-800">
-                                            <strong>Current Robots Meta:</strong> {{ computedRobotsMeta }}
-                                        </p>
+                                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                                        <h4 class="text-sm font-medium text-gray-900 mb-2">Preview</h4>
+                                        <code class="block p-3 bg-white rounded border border-gray-300 text-sm font-mono text-gray-800">
+                                            &lt;meta name="robots" content="{{ robotsContent }}" /&gt;
+                                        </code>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Actions -->
-                            <div class="flex items-center justify-between pt-4 border-t border-gray-200">
-                                <button
-                                    v-if="hasExistingSettings"
-                                    @click.prevent="deleteSeoSettings"
-                                    type="button"
-                                    class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150"
-                                >
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                    Reset to Default
-                                </button>
-                                <div v-else></div>
+                        <!-- Submit Button -->
+                        <div class="mt-8 flex justify-end gap-3">
+                            <button
+                                type="button"
+                                @click="resetForm"
+                                class="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors"
+                            >
+                                Reset
+                            </button>
+                            <button
+                                type="submit"
+                                :disabled="form.processing"
+                                class="inline-flex items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                            >
+                                {{ form.processing ? 'Saving...' : 'Save SEO Settings' }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
 
-                                <button
-                                    type="submit"
-                                    :disabled="form.processing"
-                                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 disabled:opacity-50"
-                                >
-                                    <svg v-if="!form.processing" class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    <svg v-else class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                    {{ form.processing ? 'Saving...' : 'Save SEO Settings' }}
-                                </button>
+                <!-- Info Panel -->
+                <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-blue-800">SEO Information</h3>
+                            <div class="mt-2 text-sm text-blue-700">
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Configure unique SEO settings for each page type</li>
+                                    <li>Optimal title length: 50-60 characters</li>
+                                    <li>Optimal description length: 150-160 characters</li>
+                                    <li>Changes are applied immediately to the frontend</li>
+                                </ul>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </AdminLayout>
 </template>
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { Head, useForm, router } from '@inertiajs/vue3'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import { router, useForm } from '@inertiajs/vue3'
+import AdminLayout from '@/Layouts/AdminLayout.vue'
+import { Head } from '@inertiajs/vue3'
 
 const props = defineProps({
-    settings: Object,
-    pageTypes: Array
+    settings: {
+        type: Object,
+        default: () => ({})
+    },
+    pageTypes: {
+        type: Array,
+        default: () => ['home', 'services', 'jobs', 'blog', 'visa', 'insurance', 'hotels', 'flights', 'cv-builder', 'about', 'contact']
+    }
 })
 
-const activeTab = ref(props.pageTypes[0])
+const activeTab = ref(props.pageTypes?.[0] || 'home')
 const generating = ref(false)
-const schemaError = ref(null)
-
-// Convert schema_markup object to string for textarea
-const schemaMarkupString = ref('')
 
 const form = useForm({
     title: '',
@@ -367,21 +375,45 @@ const form = useForm({
     og_title: '',
     og_description: '',
     og_image: '',
-    og_type: '',
-    twitter_card: '',
+    og_type: 'website',
+    twitter_card: 'summary_large_image',
+    twitter_site: '',
     twitter_title: '',
     twitter_description: '',
     twitter_image: '',
-    twitter_site: '',
-    schema_markup: null,
+    schema_markup: {},
     index: true,
     follow: true,
     robots: ''
 })
 
-// Load settings for active tab
-const loadTabSettings = () => {
-    const settings = props.settings[activeTab.value]
+const schemaMarkup = ref('')
+
+const robotsContent = computed(() => {
+    let content = []
+    if (form.index) content.push('index')
+    else content.push('noindex')
+    
+    if (form.follow) content.push('follow')
+    else content.push('nofollow')
+    
+    if (form.robots) {
+        content.push(form.robots)
+    }
+    
+    return content.join(', ')
+})
+
+watch(activeTab, (newTab) => {
+    loadSettings(newTab)
+})
+
+watch(() => props.settings, () => {
+    loadSettings(activeTab.value)
+}, { deep: true })
+
+function loadSettings(pageType) {
+    const settings = props.settings?.[pageType]
     if (settings) {
         form.title = settings.title || ''
         form.description = settings.description || ''
@@ -390,95 +422,61 @@ const loadTabSettings = () => {
         form.og_title = settings.og_title || ''
         form.og_description = settings.og_description || ''
         form.og_image = settings.og_image || ''
-        form.og_type = settings.og_type || ''
-        form.twitter_card = settings.twitter_card || ''
+        form.og_type = settings.og_type || 'website'
+        form.twitter_card = settings.twitter_card || 'summary_large_image'
+        form.twitter_site = settings.twitter_site || ''
         form.twitter_title = settings.twitter_title || ''
         form.twitter_description = settings.twitter_description || ''
         form.twitter_image = settings.twitter_image || ''
-        form.twitter_site = settings.twitter_site || ''
-        form.index = settings.index !== undefined ? settings.index : true
-        form.follow = settings.follow !== undefined ? settings.follow : true
+        form.index = settings.index ?? true
+        form.follow = settings.follow ?? true
         form.robots = settings.robots || ''
         
-        // Convert schema_markup to JSON string
-        schemaMarkupString.value = settings.schema_markup 
+        schemaMarkup.value = settings.schema_markup 
             ? JSON.stringify(settings.schema_markup, null, 2) 
             : ''
     } else {
-        // Reset form for new page type
-        form.reset()
-        schemaMarkupString.value = ''
+        resetForm()
     }
-    
-    form.clearErrors()
-    schemaError.value = null
 }
 
-// Watch for tab changes
-watch(activeTab, loadTabSettings)
-
-// Initialize with first tab
-loadTabSettings()
-
-const hasExistingSettings = computed(() => {
-    return props.settings[activeTab.value] !== undefined
-})
-
-const computedRobotsMeta = computed(() => {
-    let directives = []
-    directives.push(form.index ? 'index' : 'noindex')
-    directives.push(form.follow ? 'follow' : 'nofollow')
-    if (form.robots) {
-        directives.push(form.robots)
-    }
-    return directives.join(', ')
-})
-
-// Validate and parse schema markup
-watch(schemaMarkupString, (newValue) => {
-    if (!newValue.trim()) {
-        form.schema_markup = null
-        schemaError.value = null
+function submit() {
+    // Parse schema markup
+    try {
+        form.schema_markup = schemaMarkup.value ? JSON.parse(schemaMarkup.value) : {}
+    } catch (e) {
+        alert('Invalid JSON in Schema Markup field')
         return
     }
     
-    try {
-        form.schema_markup = JSON.parse(newValue)
-        schemaError.value = null
-    } catch (e) {
-        schemaError.value = 'Invalid JSON format'
-    }
-})
-
-const submitForm = () => {
-    form.put(route('seo-settings.update', activeTab.value), {
+    form.put(route('admin.seo-settings.update', activeTab.value), {
         preserveScroll: true,
         onSuccess: () => {
-            // Form will automatically show flash messages
+            // Success handled by flash message
         }
     })
 }
 
-const deleteSeoSettings = () => {
-    if (confirm('Are you sure you want to reset SEO settings for this page? This will revert to default values.')) {
-        router.delete(route('seo-settings.destroy', activeTab.value), {
-            preserveScroll: true,
-            onSuccess: () => {
-                loadTabSettings()
-            }
-        })
-    }
+function resetForm() {
+    form.reset()
+    schemaMarkup.value = ''
 }
 
-const generateSitemap = () => {
-    if (confirm('Generate XML sitemap from all indexed pages?')) {
+function generateSitemap() {
+    if (confirm('Generate sitemap.xml file?')) {
         generating.value = true
-        router.post(route('seo-settings.generate-sitemap'), {}, {
-            preserveScroll: true,
+        router.post(route('admin.seo-settings.generate-sitemap'), {}, {
             onFinish: () => {
                 generating.value = false
             }
         })
     }
 }
+
+function formatPageType(type) {
+    return type.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+}
+
+// Load initial settings
+loadSettings(activeTab.value)
 </script>

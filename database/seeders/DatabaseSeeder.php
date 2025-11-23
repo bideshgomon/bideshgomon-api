@@ -38,6 +38,7 @@ class DatabaseSeeder extends Seeder
         // ============================================
         // PHASE 3: Additional Features
         // ============================================
+        $this->call(ServiceModulesSeeder::class);  // Service categories and 39 service modules
         $this->call(JobPostingSeeder::class);
         $this->call(SettingsSeeder::class);
         $this->call(TravelInsurancePackageSeeder::class);

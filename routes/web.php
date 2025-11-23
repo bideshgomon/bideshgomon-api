@@ -9,7 +9,7 @@ use App\Http\Controllers\CvBuilderController;
 use App\Http\Controllers\FlightBookingController;
 use App\Http\Controllers\FlightRequestController;
 use App\Http\Controllers\HotelBookingController;
-use App\Http\Controllers\VisaApplicationController;
+// use App\Http\Controllers\VisaApplicationController; // Removed - use bgproject's tourist-visa system
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\OnboardingController;
@@ -33,18 +33,22 @@ Route::get('/', function () {
     ]);
 })->name('welcome');
 
+// Public settings API endpoint
+Route::get('/public/settings', function () {
+    return response()->json([
+        'app_name' => config('app.name', 'BideshGomon'),
+        'app_url' => config('app.url'),
+        'currency' => 'BDT',
+        'timezone' => config('app.timezone'),
+    ]);
+});
+
 // Short-circuit protected profile assessment JSON endpoints to ensure they are reachable
 // (these are still protected by 'auth' middleware)
 Route::middleware('auth')->get('/profile/assessment/recommendations', [\App\Http\Controllers\ProfileAssessmentController::class, 'recommendations'])
     ->name('profile.assessment.recommendations');
 Route::middleware('auth')->get('/profile/assessment/score-breakdown', [\App\Http\Controllers\ProfileAssessmentController::class, 'scoreBreakdown'])
     ->name('profile.assessment.score-breakdown');
-
-// Public profile route (no auth required)
-// Exclude reserved path segments like 'assessment' used by internal profile features
-Route::get('/profile/{slug}', [\App\Http\Controllers\PublicProfileController::class, 'show'])
-    ->where('slug', '^(?!assessment$).*')
-    ->name('profile.public.show');
 
 Route::get('/dashboard', function () {
     $user = auth()->user();
@@ -210,6 +214,15 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/details', [ProfileController::class, 'updateDetails'])->name('profile.update.details');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // Profile section routes (redirect to profile edit with section)
+    Route::get('/profile/financial', function () {
+        return redirect()->route('profile.edit', ['section' => 'financial']);
+    })->name('profile.financial.index');
+    
+    Route::get('/profile/languages', function () {
+        return redirect()->route('profile.edit', ['section' => 'languages']);
+    })->name('profile.languages.index');
 
     // Phone Numbers routes
     Route::prefix('phone-numbers')->name('phone-numbers.')->group(function () {
@@ -259,6 +272,28 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{id}', [\App\Http\Controllers\Profile\PassportController::class, 'destroy'])->name('destroy');
     });
 
+    // Social links
+    Route::post('/profile/social-links', [ProfileController::class, 'updateSocialLinks'])->name('profile.social-links.update');
+    
+    // Emergency contact
+    Route::post('/profile/emergency-contact', [ProfileController::class, 'updateEmergencyContact'])->name('profile.emergency-contact.update');
+    
+    // Medical information
+    Route::post('/profile/medical-info', [ProfileController::class, 'updateMedicalInfo'])->name('profile.medical-info.update');
+    
+    // References
+    Route::post('/profile/references', [ProfileController::class, 'updateReferences'])->name('profile.references.update');
+    
+    // Certifications
+    Route::post('/profile/certifications', [ProfileController::class, 'updateCertifications'])->name('profile.certifications.update');
+    
+    // Privacy & Data Control
+    Route::post('/profile/privacy-settings', [ProfileController::class, 'updatePrivacySettings'])->name('profile.privacy-settings.update');
+    Route::get('/profile/download-data', [ProfileController::class, 'downloadData'])->name('profile.download-data');
+    
+    // Preferences
+    Route::post('/profile/preferences', [ProfileController::class, 'updatePreferences'])->name('profile.preferences.update');
+
     // Wallet routes
     Route::get('/wallet', [WalletController::class, 'index'])->name('wallet.index');
     Route::get('/wallet/transactions', [WalletController::class, 'transactions'])->name('wallet.transactions');
@@ -278,6 +313,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/score-breakdown', [\App\Http\Controllers\ProfileAssessmentController::class, 'scoreBreakdown'])->name('score-breakdown');
         Route::get('/visa-eligibility', [\App\Http\Controllers\ProfileAssessmentController::class, 'visaEligibility'])->name('visa-eligibility');
     });
+    
+    // Alias for profile-assessment (with hyphen)
+    Route::get('/profile-assessment', [\App\Http\Controllers\ProfileAssessmentController::class, 'show'])->name('profile-assessment.show');
 
     // Public Profile Settings routes
     Route::prefix('profile/public')->name('profile.public.')->group(function () {
@@ -356,18 +394,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/bookings/{booking}/cancel', [HotelBookingController::class, 'cancel'])->name('bookings.cancel');
     });
 
-    // Visa Application routes
-    Route::prefix('services/visa')->name('visa.')->group(function () {
-        Route::get('/', [VisaApplicationController::class, 'index'])->name('index');
-        Route::get('/apply', [VisaApplicationController::class, 'create'])->name('create');
-        Route::post('/', [VisaApplicationController::class, 'store'])->name('store');
-        Route::get('/my-applications', [VisaApplicationController::class, 'myApplications'])->name('my-applications');
-        Route::get('/{application}', [VisaApplicationController::class, 'show'])->name('show');
-        Route::post('/{application}/documents', [VisaApplicationController::class, 'uploadDocument'])->name('upload-document');
-        Route::get('/{application}/payment', [VisaApplicationController::class, 'payment'])->name('payment');
-        Route::post('/{application}/payment', [VisaApplicationController::class, 'processPayment'])->name('process-payment');
-        Route::post('/{application}/cancel', [VisaApplicationController::class, 'cancel'])->name('cancel');
-    });
+    // Note: Generic visa application routes removed - use bgproject's dedicated tourist-visa system instead
 
     // Translation Service routes
     Route::prefix('services/translation')->name('translation.')->group(function () {
@@ -472,6 +499,28 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 // Agency routes
 Route::middleware(['auth', 'role:agency'])->prefix('agency')->name('agency.')->group(function () {
+    // Visa Management - Agency manages their assigned countries
+    Route::prefix('visa-management')->name('visa-management.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Agency\VisaManagementController::class, 'index'])->name('index');
+        Route::get('/statistics', [\App\Http\Controllers\Agency\VisaManagementController::class, 'statistics'])->name('statistics');
+        Route::get('/{country}/{visaType}', [\App\Http\Controllers\Agency\VisaManagementController::class, 'show'])->name('show');
+        
+        // Update visa requirement fees
+        Route::put('/visa-requirements/{visaRequirement}/fees', [\App\Http\Controllers\Agency\VisaManagementController::class, 'updateFees'])->name('update-fees');
+        Route::put('/visa-requirements/{visaRequirement}', [\App\Http\Controllers\Agency\VisaManagementController::class, 'updateRequirement'])->name('update-requirement');
+        
+        // Document management
+        Route::post('/visa-requirements/{visaRequirement}/documents', [\App\Http\Controllers\Agency\VisaManagementController::class, 'storeDocument'])->name('store-document');
+        Route::put('/documents/{document}', [\App\Http\Controllers\Agency\VisaManagementController::class, 'updateDocument'])->name('update-document');
+        Route::delete('/documents/{document}', [\App\Http\Controllers\Agency\VisaManagementController::class, 'destroyDocument'])->name('destroy-document');
+        
+        // Profession requirements management
+        Route::post('/visa-requirements/{visaRequirement}/professions', [\App\Http\Controllers\Agency\VisaManagementController::class, 'storeProfession'])->name('store-profession');
+        Route::put('/professions/{profession}', [\App\Http\Controllers\Agency\VisaManagementController::class, 'updateProfession'])->name('update-profession');
+        Route::delete('/professions/{profession}', [\App\Http\Controllers\Agency\VisaManagementController::class, 'destroyProfession'])->name('destroy-profession');
+    });
+    
+    // Flight requests
     Route::prefix('flight-requests')->name('flight-requests.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Agency\FlightRequestController::class, 'index'])->name('index');
         Route::get('/{id}', [\App\Http\Controllers\Agency\FlightRequestController::class, 'show'])->name('show');
@@ -508,6 +557,46 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     
     Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('admin.dashboard');
     
+    // Service Modules Management
+    Route::prefix('service-modules')->name('admin.service-modules.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\ServiceModuleController::class, 'index'])->name('index');
+        Route::get('/{serviceModule}', [\App\Http\Controllers\Admin\ServiceModuleController::class, 'show'])->name('show');
+        Route::put('/{serviceModule}', [\App\Http\Controllers\Admin\ServiceModuleController::class, 'update'])->name('update');
+        Route::post('/{serviceModule}/toggle-active', [\App\Http\Controllers\Admin\ServiceModuleController::class, 'toggleActive'])->name('toggle-active');
+        Route::post('/{serviceModule}/toggle-featured', [\App\Http\Controllers\Admin\ServiceModuleController::class, 'toggleFeatured'])->name('toggle-featured');
+        Route::post('/{serviceModule}/toggle-coming-soon', [\App\Http\Controllers\Admin\ServiceModuleController::class, 'toggleComingSoon'])->name('toggle-coming-soon');
+        Route::post('/bulk-update', [\App\Http\Controllers\Admin\ServiceModuleController::class, 'bulkUpdate'])->name('bulk-update');
+        Route::get('/{serviceModule}/analytics', [\App\Http\Controllers\Admin\ServiceModuleController::class, 'analytics'])->name('analytics');
+    });
+    
+    // Visa Requirements Management
+    Route::prefix('visa-requirements')->name('admin.visa-requirements.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\VisaRequirementController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\VisaRequirementController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\VisaRequirementController::class, 'store'])->name('store');
+        Route::get('/{visaRequirement}', [\App\Http\Controllers\Admin\VisaRequirementController::class, 'show'])->name('show');
+        Route::get('/{visaRequirement}/edit', [\App\Http\Controllers\Admin\VisaRequirementController::class, 'edit'])->name('edit');
+        Route::put('/{visaRequirement}', [\App\Http\Controllers\Admin\VisaRequirementController::class, 'update'])->name('update');
+        Route::delete('/{visaRequirement}', [\App\Http\Controllers\Admin\VisaRequirementController::class, 'destroy'])->name('destroy');
+        Route::post('/{visaRequirement}/toggle-active', [\App\Http\Controllers\Admin\VisaRequirementController::class, 'toggleActive'])->name('toggle-active');
+        Route::post('/{visaRequirement}/documents', [\App\Http\Controllers\Admin\VisaRequirementController::class, 'addDocument'])->name('add-document');
+        Route::post('/{visaRequirement}/profession-requirements', [\App\Http\Controllers\Admin\VisaRequirementController::class, 'addProfessionRequirement'])->name('add-profession');
+    });
+    
+    // Agency Country Assignments Management
+    Route::prefix('agency-assignments')->name('admin.agency-assignments.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\AgencyAssignmentController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\AgencyAssignmentController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\AgencyAssignmentController::class, 'store'])->name('store');
+        Route::get('/{agencyAssignment}', [\App\Http\Controllers\Admin\AgencyAssignmentController::class, 'show'])->name('show');
+        Route::put('/{agencyAssignment}', [\App\Http\Controllers\Admin\AgencyAssignmentController::class, 'update'])->name('update');
+        Route::delete('/{agencyAssignment}', [\App\Http\Controllers\Admin\AgencyAssignmentController::class, 'destroy'])->name('destroy');
+        Route::post('/{agencyAssignment}/toggle-active', [\App\Http\Controllers\Admin\AgencyAssignmentController::class, 'toggleActive'])->name('toggle-active');
+        Route::post('/assign-requirement', [\App\Http\Controllers\Admin\AgencyAssignmentController::class, 'assignRequirement'])->name('assign-requirement');
+        Route::post('/visa-requirements/{visaRequirement}/unassign', [\App\Http\Controllers\Admin\AgencyAssignmentController::class, 'unassignRequirement'])->name('unassign-requirement');
+        Route::post('/visa-requirements/{visaRequirement}/update-commission', [\App\Http\Controllers\Admin\AgencyAssignmentController::class, 'updateCommission'])->name('update-commission');
+    });
+    
     // Job Postings Management
     Route::resource('jobs', AdminJobPostingController::class)->names([
         'index' => 'admin.jobs.index',
@@ -525,6 +614,7 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     
     // Job Applications Management
     Route::get('/applications', [AdminJobApplicationController::class, 'index'])->name('admin.applications.index');
+    Route::get('/job-applications', [AdminJobApplicationController::class, 'index'])->name('admin.job-applications.index'); // Alias
     Route::get('/applications/{id}', [AdminJobApplicationController::class, 'show'])->name('admin.applications.show');
     Route::post('/applications/{id}/update-status', [AdminJobApplicationController::class, 'updateStatus'])->name('admin.applications.update-status');
     Route::post('/applications/bulk-update-status', [AdminJobApplicationController::class, 'bulkUpdateStatus'])->name('admin.applications.bulk-update-status');
@@ -532,7 +622,11 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     
     // User Management
     Route::get('/users', [AdminUserController::class, 'index'])->name('admin.users.index');
+    Route::get('/users/create', [AdminUserController::class, 'create'])->name('admin.users.create');
+    Route::post('/users', [AdminUserController::class, 'store'])->name('admin.users.store');
     Route::get('/users/{id}', [AdminUserController::class, 'show'])->name('admin.users.show');
+    Route::get('/users/{id}/edit', [AdminUserController::class, 'edit'])->name('admin.users.edit');
+    Route::put('/users/{id}', [AdminUserController::class, 'update'])->name('admin.users.update');
     Route::post('/users/{id}/suspend', [AdminUserController::class, 'suspend'])->name('admin.users.suspend');
     Route::post('/users/{id}/unsuspend', [AdminUserController::class, 'unsuspend'])->name('admin.users.unsuspend');
     Route::post('/users/{id}/update-role', [AdminUserController::class, 'updateRole'])->name('admin.users.update-role');
@@ -564,7 +658,22 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::delete('/{pageType}', [\App\Http\Controllers\Admin\SeoSettingsController::class, 'destroy'])->name('destroy');
         Route::post('/generate-sitemap', [\App\Http\Controllers\Admin\SeoSettingsController::class, 'generateSitemap'])->name('generate-sitemap');
     });
+    
+    // Marketing Campaigns
+    Route::prefix('marketing-campaigns')->name('marketing-campaigns.')->group(function () {
+        Route::post('{campaign}/pause', [\App\Http\Controllers\Admin\MarketingCampaignController::class, 'pause'])->name('pause');
+        Route::post('{campaign}/resume', [\App\Http\Controllers\Admin\MarketingCampaignController::class, 'resume'])->name('resume');
+        Route::post('{campaign}/cancel', [\App\Http\Controllers\Admin\MarketingCampaignController::class, 'cancel'])->name('cancel');
+        Route::post('{campaign}/duplicate', [\App\Http\Controllers\Admin\MarketingCampaignController::class, 'duplicate'])->name('duplicate');
+    });
+    Route::resource('marketing-campaigns', \App\Http\Controllers\Admin\MarketingCampaignController::class)->names('admin.marketing-campaigns');
 });
+
+// Public profile route (no auth required) - placed AFTER authenticated routes to avoid conflicts
+// Exclude reserved path segments like 'assessment', 'edit', 'financial', 'languages' used by authenticated routes
+Route::get('/profile/{slug}', [\App\Http\Controllers\PublicProfileController::class, 'show'])
+    ->where('slug', '^(?!assessment|edit|financial|languages|education|work-experience|passports|travel-history|visa-history).*')
+    ->name('profile.public.show');
 
 
 

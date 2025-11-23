@@ -1,5 +1,5 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { ArrowLeftIcon } from '@heroicons/vue/24/outline';
@@ -72,7 +72,7 @@ const submit = () => {
 <template>
     <Head title="Create Job Posting" />
 
-    <AuthenticatedLayout>
+    <AdminLayout>
         <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <Link
@@ -494,5 +494,5 @@ const submit = () => {
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </AdminLayout>
 </template>

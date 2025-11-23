@@ -21,6 +21,7 @@
         "vue": "^3.5.0"
     },
     "dependencies": {
-        "@heroicons/vue": "^2.2.0"
+        "@heroicons/vue": "^2.2.0",
+        "qrcode": "^1.5.4"
     }
 }

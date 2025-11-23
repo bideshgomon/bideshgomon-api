@@ -154,7 +154,7 @@ class SmartSuggestionsService
                     'description' => "Upload a clear scan of your passport (No: {$passport->passport_number}) for visa applications.",
                     'data' => ['passport_id' => $passport->id, 'document_type' => 'passport_scan'],
                     'action_type' => 'upload_document',
-                    'action_url' => route('profile.passports.edit', $passport),
+                    'action_url' => route('profile.passports.index'),
                     'relevance_score' => 95,
                     'expires_at' => now()->addDays(30),
                 ];
@@ -223,7 +223,7 @@ class SmartSuggestionsService
                         'requirements' => $visaRec['requirements'],
                     ],
                     'action_type' => 'apply_visa',
-                    'action_url' => route('visa-application.create'),
+                    'action_url' => route('dashboard'),
                     'relevance_score' => $visaRec['eligibility'],
                     'expires_at' => now()->addDays(180),
                 ];
@@ -311,7 +311,7 @@ class SmartSuggestionsService
                 'description' => 'Your profile is set up. Explore visa options and start your application process.',
                 'data' => ['service' => 'visa'],
                 'action_type' => 'browse_visas',
-                'action_url' => route('visa-application.create'),
+                'action_url' => route('dashboard'),
                 'relevance_score' => 80,
                 'expires_at' => now()->addDays(90),
             ];
@@ -498,7 +498,13 @@ class SmartSuggestionsService
     {
         return SmartSuggestion::where('user_id', $user->id)
             ->active()
-            ->orderByRaw("FIELD(priority, 'urgent', 'high', 'medium', 'low')")
+            ->orderByRaw("CASE priority 
+                WHEN 'urgent' THEN 1 
+                WHEN 'high' THEN 2 
+                WHEN 'medium' THEN 3 
+                WHEN 'low' THEN 4 
+                ELSE 5 
+            END")
             ->orderBy('relevance_score', 'desc')
             ->get();
     }

@@ -73,6 +73,41 @@ const benefits = [
                             </div>
                         </div>
                     </Link>
+                    
+                    <!-- Main Navigation Links -->
+                    <div class="hidden md:flex items-center gap-6">
+                        <Link :href="route('welcome')" class="text-gray-700 hover:text-indigo-600 font-medium transition border-b-2 border-indigo-600 pb-1">
+                            Home
+                        </Link>
+                        <Link href="#" class="text-gray-700 hover:text-indigo-600 font-medium transition">
+                            Services
+                        </Link>
+                        <Link href="#" class="text-gray-700 hover:text-indigo-600 font-medium transition">
+                            Jobs
+                        </Link>
+                        <Link href="#" class="text-gray-700 hover:text-indigo-600 font-medium transition">
+                            Visa
+                        </Link>
+                        <Link href="#" class="text-gray-700 hover:text-indigo-600 font-medium transition">
+                            Insurance
+                        </Link>
+                        <Link href="#" class="text-gray-700 hover:text-indigo-600 font-medium transition">
+                            Hotels
+                        </Link>
+                        <Link href="#" class="text-gray-700 hover:text-indigo-600 font-medium transition">
+                            Flights
+                        </Link>
+                        <Link href="#" class="text-gray-700 hover:text-indigo-600 font-medium transition">
+                            CV Builder
+                        </Link>
+                        <Link href="#" class="text-gray-700 hover:text-indigo-600 font-medium transition">
+                            About
+                        </Link>
+                        <Link href="#" class="text-gray-700 hover:text-indigo-600 font-medium transition">
+                            Contact
+                        </Link>
+                    </div>
+
                     <div class="flex items-center gap-4" v-if="canLogin">
                         <Link
                             :href="route('login')"

@@ -1,5 +1,5 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { 
@@ -52,7 +52,7 @@ const formatDate = (date) => {
 <template>
     <Head :title="`Application from ${application.user?.name}`" />
 
-    <AuthenticatedLayout>
+    <AdminLayout>
         <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <!-- Back Button -->
@@ -296,5 +296,5 @@ const formatDate = (date) => {
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </AdminLayout>
 </template>

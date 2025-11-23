@@ -1,5 +1,5 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { 
     BriefcaseIcon, SparklesIcon, GlobeAltIcon, 
@@ -57,7 +57,7 @@ const getRiskColor = (risk) => {
 <template>
     <Head title="Service Management Dashboard" />
 
-    <AuthenticatedLayout>
+    <AdminLayout>
         <!-- Header -->
         <div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -434,5 +434,5 @@ const getRiskColor = (risk) => {
             </div>
 
         </div>
-    </AuthenticatedLayout>
+    </AdminLayout>
 </template>

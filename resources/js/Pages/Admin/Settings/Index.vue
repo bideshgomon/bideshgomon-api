@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { Head, useForm, Link } from '@inertiajs/vue3';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { 
     CogIcon, 
     EnvelopeIcon, 
@@ -78,7 +78,7 @@ const updateSetting = (key, value) => {
 <template>
     <Head title="Settings" />
 
-    <AuthenticatedLayout>
+    <AdminLayout>
         <div class="py-6">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <!-- Header -->
@@ -216,5 +216,5 @@ const updateSetting = (key, value) => {
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </AdminLayout>
 </template>

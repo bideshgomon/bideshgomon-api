@@ -224,6 +224,15 @@ class PublicProfileController extends Controller
             $data['skills'] = $user->skills->pluck('skill_name')->toArray();
         }
 
+        // Social Links
+        if ($user->isSectionVisible('social_links') && $user->userProfile && $user->userProfile->social_links) {
+            // Filter out empty values
+            $socialLinks = array_filter($user->userProfile->social_links);
+            if (!empty($socialLinks)) {
+                $data['social_links'] = $socialLinks;
+            }
+        }
+
         return $data;
     }
 
@@ -258,6 +267,7 @@ class PublicProfileController extends Controller
             'skills' => true,
             'travel_history' => false,
             'documents' => false,
+            'social_links' => true,
         ];
     }
 

@@ -7,7 +7,7 @@ use App\Models\JobApplication;
 use App\Models\ProfileAssessment;
 use App\Models\User;
 use App\Models\TravelInsuranceBooking;
-use App\Models\CV;
+use App\Models\UserCv;
 use App\Models\HotelBooking;
 use App\Models\FlightRequest;
 use App\Models\VisaApplication;
@@ -70,10 +70,10 @@ class ServiceManagementController extends Controller
 
         // CV Builder Statistics
         $cvStats = [
-            'total' => CV::count(),
-            'today' => CV::whereDate('created_at', today())->count(),
-            'this_week' => CV::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count(),
-            'downloads_month' => CV::whereMonth('created_at', now()->month)->count(),
+            'total' => UserCv::count(),
+            'today' => UserCv::whereDate('created_at', today())->count(),
+            'this_week' => UserCv::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count(),
+            'downloads_month' => UserCv::whereMonth('created_at', now()->month)->count(),
         ];
 
         // Hotel Bookings Statistics

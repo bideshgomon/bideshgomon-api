@@ -1,11 +1,12 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { 
     UsersIcon, CurrencyDollarIcon, BriefcaseIcon, 
     WalletIcon, ChartBarIcon, ArrowTrendingUpIcon,
     DocumentTextIcon, ShieldCheckIcon, ClipboardDocumentListIcon,
-    ChartPieIcon, CogIcon, BuildingOffice2Icon, PaperAirplaneIcon
+    ChartPieIcon, CogIcon, BuildingOffice2Icon, PaperAirplaneIcon,
+    GlobeAltIcon, UserGroupIcon, RectangleStackIcon
 } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
@@ -41,7 +42,7 @@ const formatDateTime = (date) => {
 <template>
     <Head title="Admin Dashboard" />
 
-    <AuthenticatedLayout>
+    <AdminLayout>
         <!-- Header -->
         <div class="bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 text-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -221,124 +222,189 @@ const formatDateTime = (date) => {
 
             <!-- Quick Access Management -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 class="text-lg font-bold text-gray-900 mb-4">Quick Access</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <Link
-                        :href="route('admin.hotels.index')"
-                        class="flex items-center p-4 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl hover:shadow-md transition-all group"
-                    >
-                        <div class="p-3 bg-orange-100 rounded-lg group-hover:bg-orange-200 transition-colors">
-                            <BuildingOffice2Icon class="h-6 w-6 text-orange-600" />
-                        </div>
-                        <div class="ml-4">
-                            <p class="font-semibold text-gray-900">Hotels</p>
-                            <p class="text-sm text-gray-600">Manage hotels</p>
-                        </div>
-                    </Link>
+                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                    <RectangleStackIcon class="h-5 w-5 mr-2 text-indigo-600" />
+                    Quick Access Management
+                </h2>
+                
+                <!-- Core Services -->
+                <div class="mb-6">
+                    <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3">Core Services</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <Link
+                            :href="route('admin.service-modules.index')"
+                            class="flex items-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl hover:shadow-md transition-all group"
+                        >
+                            <div class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                                <RectangleStackIcon class="h-6 w-6 text-blue-600" />
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-semibold text-gray-900">Service Modules</p>
+                                <p class="text-sm text-gray-600">39 services</p>
+                            </div>
+                        </Link>
 
-                    <Link
-                        :href="route('admin.hotel-bookings.index')"
-                        class="flex items-center p-4 bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl hover:shadow-md transition-all group"
-                    >
-                        <div class="p-3 bg-amber-100 rounded-lg group-hover:bg-amber-200 transition-colors">
-                            <ClipboardDocumentListIcon class="h-6 w-6 text-amber-600" />
-                        </div>
-                        <div class="ml-4">
-                            <p class="font-semibold text-gray-900">Hotel Bookings</p>
-                            <p class="text-sm text-gray-600">Manage reservations</p>
-                        </div>
-                    </Link>
+                        <Link
+                            :href="route('admin.visa-requirements.index')"
+                            class="flex items-center p-4 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl hover:shadow-md transition-all group"
+                        >
+                            <div class="p-3 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors">
+                                <GlobeAltIcon class="h-6 w-6 text-purple-600" />
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-semibold text-gray-900">Visa Requirements</p>
+                                <p class="text-sm text-gray-600">Country rules</p>
+                            </div>
+                        </Link>
 
-                    <Link
-                        :href="route('admin.flight-requests.index')"
-                        class="flex items-center p-4 bg-gradient-to-br from-sky-50 to-blue-50 rounded-xl hover:shadow-md transition-all group"
-                    >
-                        <div class="p-3 bg-sky-100 rounded-lg group-hover:bg-sky-200 transition-colors">
-                            <PaperAirplaneIcon class="h-6 w-6 text-sky-600" />
-                        </div>
-                        <div class="ml-4">
-                            <p class="font-semibold text-gray-900">Flight Requests</p>
-                            <p class="text-sm text-gray-600">Manage bookings</p>
-                        </div>
-                    </Link>
+                        <Link
+                            :href="route('admin.agency-assignments.index')"
+                            class="flex items-center p-4 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl hover:shadow-md transition-all group"
+                        >
+                            <div class="p-3 bg-indigo-100 rounded-lg group-hover:bg-indigo-200 transition-colors">
+                                <UserGroupIcon class="h-6 w-6 text-indigo-600" />
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-semibold text-gray-900">Agency Assignments</p>
+                                <p class="text-sm text-gray-600">Country allocation</p>
+                            </div>
+                        </Link>
 
-                    <Link
-                        :href="route('admin.visa-applications.index')"
-                        class="flex items-center p-4 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl hover:shadow-md transition-all group"
-                    >
-                        <div class="p-3 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors">
-                            <DocumentTextIcon class="h-6 w-6 text-purple-600" />
-                        </div>
-                        <div class="ml-4">
-                            <p class="font-semibold text-gray-900">Visa Applications</p>
-                            <p class="text-sm text-gray-600">Process visas</p>
-                        </div>
-                    </Link>
+                        <Link
+                            :href="route('admin.users.index')"
+                            class="flex items-center p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl hover:shadow-md transition-all group"
+                        >
+                            <div class="p-3 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors">
+                                <UsersIcon class="h-6 w-6 text-purple-600" />
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-semibold text-gray-900">User Management</p>
+                                <p class="text-sm text-gray-600">All users</p>
+                            </div>
+                        </Link>
+                    </div>
+                </div>
 
-                    <Link
-                        :href="route('admin.jobs.index')"
-                        class="flex items-center p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl hover:shadow-md transition-all group"
-                    >
-                        <div class="p-3 bg-indigo-100 rounded-lg group-hover:bg-indigo-200 transition-colors">
-                            <BriefcaseIcon class="h-6 w-6 text-indigo-600" />
-                        </div>
-                        <div class="ml-4">
-                            <p class="font-semibold text-gray-900">Manage Jobs</p>
-                            <p class="text-sm text-gray-600">Job postings</p>
-                        </div>
-                    </Link>
+                <!-- Travel Services -->
+                <div class="mb-6">
+                    <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3">Travel Services</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <Link
+                            :href="route('admin.hotels.index')"
+                            class="flex items-center p-4 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl hover:shadow-md transition-all group"
+                        >
+                            <div class="p-3 bg-orange-100 rounded-lg group-hover:bg-orange-200 transition-colors">
+                                <BuildingOffice2Icon class="h-6 w-6 text-orange-600" />
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-semibold text-gray-900">Hotels</p>
+                                <p class="text-sm text-gray-600">Manage hotels</p>
+                            </div>
+                        </Link>
 
-                    <Link
-                        :href="route('admin.applications.index')"
-                        class="flex items-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl hover:shadow-md transition-all group"
-                    >
-                        <div class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
-                            <ClipboardDocumentListIcon class="h-6 w-6 text-blue-600" />
-                        </div>
-                        <div class="ml-4">
-                            <p class="font-semibold text-gray-900">Applications</p>
-                            <p class="text-sm text-gray-600">Review applications</p>
-                        </div>
-                    </Link>
+                        <Link
+                            :href="route('admin.hotel-bookings.index')"
+                            class="flex items-center p-4 bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl hover:shadow-md transition-all group"
+                        >
+                            <div class="p-3 bg-amber-100 rounded-lg group-hover:bg-amber-200 transition-colors">
+                                <ClipboardDocumentListIcon class="h-6 w-6 text-amber-600" />
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-semibold text-gray-900">Hotel Bookings</p>
+                                <p class="text-sm text-gray-600">Reservations</p>
+                            </div>
+                        </Link>
 
-                    <Link
-                        :href="route('admin.users.index')"
-                        class="flex items-center p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl hover:shadow-md transition-all group"
-                    >
-                        <div class="p-3 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors">
-                            <UsersIcon class="h-6 w-6 text-purple-600" />
-                        </div>
-                        <div class="ml-4">
-                            <p class="font-semibold text-gray-900">User Management</p>
-                            <p class="text-sm text-gray-600">Manage users</p>
-                        </div>
-                    </Link>
+                        <Link
+                            :href="route('admin.flight-requests.index')"
+                            class="flex items-center p-4 bg-gradient-to-br from-sky-50 to-blue-50 rounded-xl hover:shadow-md transition-all group"
+                        >
+                            <div class="p-3 bg-sky-100 rounded-lg group-hover:bg-sky-200 transition-colors">
+                                <PaperAirplaneIcon class="h-6 w-6 text-sky-600" />
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-semibold text-gray-900">Flight Requests</p>
+                                <p class="text-sm text-gray-600">Bookings</p>
+                            </div>
+                        </Link>
 
-                    <Link
-                        :href="route('admin.analytics.index')"
-                        class="flex items-center p-4 bg-gradient-to-br from-green-50 to-teal-50 rounded-xl hover:shadow-md transition-all group"
-                    >
-                        <div class="p-3 bg-green-100 rounded-lg group-hover:bg-green-200 transition-colors">
-                            <ChartPieIcon class="h-6 w-6 text-green-600" />
-                        </div>
-                        <div class="ml-4">
-                            <p class="font-semibold text-gray-900">Analytics</p>
-                            <p class="text-sm text-gray-600">Insights & metrics</p>
-                        </div>
-                    </Link>
+                        <Link
+                            :href="route('admin.visa-applications.index')"
+                            class="flex items-center p-4 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl hover:shadow-md transition-all group"
+                        >
+                            <div class="p-3 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors">
+                                <DocumentTextIcon class="h-6 w-6 text-purple-600" />
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-semibold text-gray-900">Visa Applications</p>
+                                <p class="text-sm text-gray-600">Process visas</p>
+                            </div>
+                        </Link>
+                    </div>
+                </div>
 
-                    <Link
-                        :href="route('admin.settings.index')"
-                        class="flex items-center p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl hover:shadow-md transition-all group"
-                    >
-                        <div class="p-3 bg-gray-100 rounded-lg group-hover:bg-gray-200 transition-colors">
-                            <CogIcon class="h-6 w-6 text-gray-600" />
-                        </div>
-                        <div class="ml-4">
-                            <p class="font-semibold text-gray-900">Settings</p>
-                            <p class="text-sm text-gray-600">Configure platform</p>
-                        </div>
-                    </Link>
+                <!-- Employment Services -->
+                <div class="mb-6">
+                    <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3">Employment Services</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <Link
+                            :href="route('admin.jobs.index')"
+                            class="flex items-center p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl hover:shadow-md transition-all group"
+                        >
+                            <div class="p-3 bg-indigo-100 rounded-lg group-hover:bg-indigo-200 transition-colors">
+                                <BriefcaseIcon class="h-6 w-6 text-indigo-600" />
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-semibold text-gray-900">Job Postings</p>
+                                <p class="text-sm text-gray-600">Manage jobs</p>
+                            </div>
+                        </Link>
+
+                        <Link
+                            :href="route('admin.applications.index')"
+                            class="flex items-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl hover:shadow-md transition-all group"
+                        >
+                            <div class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                                <ClipboardDocumentListIcon class="h-6 w-6 text-blue-600" />
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-semibold text-gray-900">Job Applications</p>
+                                <p class="text-sm text-gray-600">Review applicants</p>
+                            </div>
+                        </Link>
+                    </div>
+                </div>
+
+                <!-- System & Analytics -->
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3">System & Analytics</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <Link
+                            :href="route('admin.analytics.index')"
+                            class="flex items-center p-4 bg-gradient-to-br from-green-50 to-teal-50 rounded-xl hover:shadow-md transition-all group"
+                        >
+                            <div class="p-3 bg-green-100 rounded-lg group-hover:bg-green-200 transition-colors">
+                                <ChartPieIcon class="h-6 w-6 text-green-600" />
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-semibold text-gray-900">Analytics</p>
+                                <p class="text-sm text-gray-600">Insights & reports</p>
+                            </div>
+                        </Link>
+
+                        <Link
+                            :href="route('admin.settings.index')"
+                            class="flex items-center p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl hover:shadow-md transition-all group"
+                        >
+                            <div class="p-3 bg-gray-100 rounded-lg group-hover:bg-gray-200 transition-colors">
+                                <CogIcon class="h-6 w-6 text-gray-600" />
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-semibold text-gray-900">Settings</p>
+                                <p class="text-sm text-gray-600">Platform config</p>
+                            </div>
+                        </Link>
+                    </div>
                 </div>
             </div>
 
@@ -648,5 +714,5 @@ const formatDateTime = (date) => {
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </AdminLayout>
 </template>

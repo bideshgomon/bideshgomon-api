@@ -100,7 +100,7 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                         <template #content>
                                             <DropdownLink :href="route('flight-requests.create')">✈️ Flight Requests</DropdownLink>
                                             <DropdownLink :href="route('hotels.index')">🏨 Hotel Bookings</DropdownLink>
-                                            <DropdownLink :href="route('visa.index')">🛂 Visa Services</DropdownLink>
+                                            <!-- Visa Services removed - use bgproject's dedicated tourist-visa system -->
                                             <DropdownLink :href="route('translation.index')">🌐 Translation</DropdownLink>
                                         </template>
                                     </Dropdown>
@@ -153,7 +153,9 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                             <div class="border-t border-gray-100 my-1"></div>
                                             <div class="px-4 py-2 text-xs text-gray-400 uppercase font-semibold tracking-wider">Admin Panel</div>
                                             <DropdownLink :href="route('admin.dashboard')">📊 Dashboard</DropdownLink>
-                                            <DropdownLink :href="route('admin.services.index')">🎯 Service Management</DropdownLink>
+                                            <DropdownLink :href="route('admin.service-modules.index')">🎯 Service Modules (39)</DropdownLink>
+                                            <DropdownLink :href="route('admin.visa-requirements.index')">📋 Visa Requirements</DropdownLink>
+                                            <DropdownLink :href="route('admin.services.index')">📋 Service Management</DropdownLink>
                                             <DropdownLink :href="route('admin.hotels.index')">🏨 Hotels Management</DropdownLink>
                                             <DropdownLink :href="route('admin.visa-applications.index')">🛂 Visa Applications</DropdownLink>
                                             <DropdownLink :href="route('admin.jobs.index')">💼 Job Postings</DropdownLink>
@@ -176,7 +178,7 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                             <div class="px-4 py-2 text-xs text-gray-400 uppercase tracking-wider">My Services</div>
                                             <DropdownLink :href="route('flight-requests.index')">✈️ My Flights</DropdownLink>
                                             <DropdownLink :href="route('hotels.my-bookings')">🏨 My Hotels</DropdownLink>
-                                            <DropdownLink :href="route('visa.my-applications')">🛂 My Visas</DropdownLink>
+                                            <!-- <DropdownLink :href="route('visa.my-applications')">🛂 My Visas</DropdownLink> -->
                                             <DropdownLink :href="route('translation.my-requests')">🌐 My Translations</DropdownLink>
                                             <DropdownLink :href="route('jobs.my-applications')">📝 My Applications</DropdownLink>
                                         </template>
@@ -259,7 +261,7 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                         </div>
                         <ResponsiveNavLink :href="route('flight-requests.create')">✈️ Flight Requests</ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('hotels.index')">🏨 Hotel Bookings</ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('visa.index')">🛂 Visa Services</ResponsiveNavLink>
+                        <!-- Visa Services removed - use bgproject's dedicated tourist-visa system -->
                         <ResponsiveNavLink :href="route('translation.index')">🌐 Translation</ResponsiveNavLink>
                         
                         <ResponsiveNavLink
@@ -276,7 +278,9 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                 <div class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Admin Panel</div>
                             </div>
                             <ResponsiveNavLink :href="route('admin.dashboard')">📊 Dashboard</ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('admin.services.index')">🎯 Service Management</ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('admin.service-modules.index')">🎯 Service Modules (39)</ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('admin.visa-requirements.index')">📋 Visa Requirements</ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('admin.services.index')">📋 Service Management</ResponsiveNavLink>
                             <div class="px-3 py-1">
                                 <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Services</div>
                             </div>
@@ -328,7 +332,7 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                 <div class="px-4 py-2 text-xs text-gray-400 uppercase">My Services</div>
                                 <ResponsiveNavLink :href="route('flight-requests.index')">✈️ My Flights</ResponsiveNavLink>
                                 <ResponsiveNavLink :href="route('hotels.my-bookings')">🏨 My Hotels</ResponsiveNavLink>
-                                <ResponsiveNavLink :href="route('visa.my-applications')">🛂 My Visas</ResponsiveNavLink>
+                                <!-- <ResponsiveNavLink :href="route('visa.my-applications')">🛂 My Visas</ResponsiveNavLink> -->
                                 <ResponsiveNavLink :href="route('translation.my-requests')">🌐 My Translations</ResponsiveNavLink>
                                 <ResponsiveNavLink :href="route('jobs.my-applications')">📝 My Applications</ResponsiveNavLink>
                             </template>

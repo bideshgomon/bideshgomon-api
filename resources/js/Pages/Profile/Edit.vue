@@ -19,7 +19,8 @@ import {
     LockClosedIcon,
     TrashIcon,
     ChevronRightIcon,
-    PhoneIcon
+    PhoneIcon,
+    Cog6ToothIcon
 } from '@heroicons/vue/24/solid';
 
 // Import existing components
@@ -36,6 +37,14 @@ import WorkExperienceSection from './Partials/WorkExperienceSection.vue';
 import SkillsSection from './Partials/SkillsSection.vue';
 import TravelHistorySection from './Partials/TravelHistorySection.vue';
 import PhoneNumbersSection from './Partials/PhoneNumbersSection.vue';
+import SocialLinksSection from '@/Components/Profile/SocialLinksSection.vue';
+import EmergencyContactSection from '@/Components/Profile/EmergencyContactSection.vue';
+import MedicalInformationSection from '@/Components/Profile/MedicalInformationSection.vue';
+import ReferencesSection from '@/Components/Profile/ReferencesSection.vue';
+import CertificationsSection from '@/Components/Profile/CertificationsSection.vue';
+import ProfileCompletenessTracker from '@/Components/Profile/ProfileCompletenessTracker.vue';
+import PrivacyDataControl from '@/Components/Profile/PrivacyDataControl.vue';
+import PreferencesSettings from '@/Components/Profile/PreferencesSettings.vue';
 
 const props = defineProps({
     mustVerifyEmail: Boolean,
@@ -78,6 +87,27 @@ const sections = [
         category: 'essential' 
     },
     { 
+        id: 'social', 
+        name: 'Social Media & Contact', 
+        icon: GlobeAltIcon, 
+        description: 'Social profiles and additional contact methods',
+        category: 'essential' 
+    },
+    { 
+        id: 'emergency', 
+        name: 'Emergency Contact', 
+        icon: PhoneIcon, 
+        description: 'Emergency contact person details',
+        category: 'essential' 
+    },
+    { 
+        id: 'medical', 
+        name: 'Medical Information', 
+        icon: ShieldCheckIcon, 
+        description: 'Health records, vaccinations, and insurance',
+        category: 'essential' 
+    },
+    { 
         id: 'profile', 
         name: 'Profile Details', 
         icon: DocumentTextIcon, 
@@ -113,6 +143,27 @@ const sections = [
         category: 'professional' 
     },
     { 
+        id: 'references', 
+        name: 'References', 
+        icon: UsersIcon, 
+        description: 'Professional, academic, and personal references',
+        category: 'professional' 
+    },
+    { 
+        id: 'certifications', 
+        name: 'Certifications & Licenses', 
+        icon: ShieldCheckIcon, 
+        description: 'Professional certifications, licenses, and credentials',
+        category: 'professional' 
+    },
+    { 
+        id: 'completeness', 
+        name: 'Profile Completeness', 
+        icon: CheckCircleIcon, 
+        description: 'Track your profile completion progress',
+        category: 'additional' 
+    },
+    { 
         id: 'family', 
         name: 'Family Information', 
         icon: UsersIcon, 
@@ -145,6 +196,20 @@ const sections = [
         name: 'Password', 
         icon: LockClosedIcon, 
         description: 'Change your account password',
+        category: 'settings' 
+    },
+    { 
+        id: 'privacy', 
+        name: 'Privacy & Data', 
+        icon: LockClosedIcon, 
+        description: 'Privacy settings and data control',
+        category: 'settings' 
+    },
+    { 
+        id: 'preferences', 
+        name: 'Preferences', 
+        icon: Cog6ToothIcon, 
+        description: 'Personalize your experience',
         category: 'settings' 
     },
     { 
@@ -402,6 +467,24 @@ onMounted(() => {
                             v-if="activeSection === 'phone'"
                         />
 
+                        <!-- Social Media & Contact -->
+                        <SocialLinksSection
+                            v-if="activeSection === 'social'"
+                            :social-links="userProfile?.social_links || {}"
+                        />
+
+                        <!-- Emergency Contact -->
+                        <EmergencyContactSection
+                            v-if="activeSection === 'emergency'"
+                            :emergency-contact="userProfile"
+                        />
+
+                        <!-- Medical Information -->
+                        <MedicalInformationSection
+                            v-if="activeSection === 'medical'"
+                            :medical-info="userProfile"
+                        />
+
                         <!-- Profile Details -->
                         <UpdateProfileDetailsForm
                             v-if="activeSection === 'profile'"
@@ -436,6 +519,32 @@ onMounted(() => {
                             :travel-history="travelHistory"
                         />
 
+                        <!-- References Section -->
+                        <ReferencesSection
+                            v-if="activeSection === 'references'"
+                            :references="userProfile"
+                        />
+
+                        <!-- Certifications Section -->
+                        <CertificationsSection
+                            v-if="activeSection === 'certifications'"
+                            :certifications="userProfile"
+                        />
+
+                        <!-- Profile Completeness Tracker -->
+                        <ProfileCompletenessTracker
+                            v-if="activeSection === 'completeness'"
+                            :user="user"
+                            :user-profile="userProfile"
+                            :family-members="familyMembers"
+                            :languages="languages"
+                            :educations="educations"
+                            :work-experiences="workExperiences"
+                            :skills="skills"
+                            :travel-history="travelHistory"
+                            :phone-numbers="phoneNumbers"
+                        />
+
                         <!-- Family Section -->
                         <FamilySection
                             v-if="activeSection === 'family'"
@@ -451,6 +560,18 @@ onMounted(() => {
                         <!-- Languages Section -->
                         <LanguagesSection
                             v-if="activeSection === 'languages'"
+                            :user-profile="userProfile"
+                        />
+
+                        <!-- Privacy & Data Control -->
+                        <PrivacyDataControl
+                            v-if="activeSection === 'privacy'"
+                            :user-profile="userProfile"
+                        />
+
+                        <!-- Preferences & Settings -->
+                        <PreferencesSettings
+                            v-if="activeSection === 'preferences'"
                             :user-profile="userProfile"
                         />
 

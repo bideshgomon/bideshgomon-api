@@ -1,5 +1,5 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import { 
@@ -115,7 +115,7 @@ const formatDate = (date) => {
 <template>
     <Head title="Job Applications Management" />
 
-    <AuthenticatedLayout>
+    <AdminLayout>
         <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pb-12">
             <!-- Header -->
             <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-4 py-8 sm:px-6 lg:px-8">
@@ -381,5 +381,5 @@ const formatDate = (date) => {
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </AdminLayout>
 </template>
