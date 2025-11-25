@@ -61,35 +61,36 @@ const updatePassword = () => {
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900">
+            <h2 class="text-base md:text-lg font-semibold text-gray-900">
                 Update Password
             </h2>
 
-            <p class="mt-1 text-sm text-gray-600">
+            <p class="mt-1 text-sm md:text-base text-gray-600">
                 Ensure your account is using a long, random password to stay
                 secure.
             </p>
         </header>
 
-        <form @submit.prevent="updatePassword" class="mt-6 space-y-6">
-            <div>
-                <InputLabel for="current_password" value="Current Password" />
-                <div class="relative">
-                    <TextInput
-                        id="current_password"
-                        ref="currentPasswordInput"
-                        v-model="form.current_password"
-                        :type="showCurrentPassword ? 'text' : 'password'"
-                        class="mt-1 block w-full pr-12"
-                        style="font-size: 16px"
-                        autocomplete="current-password"
-                    />
-                    <button
-                        type="button"
-                        @click="showCurrentPassword = !showCurrentPassword"
-                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
-                        style="min-height: 44px"
-                    >
+        <form @submit.prevent="updatePassword" class="mt-4 md:mt-6">
+            <!-- Card Container -->
+            <div class="bg-white shadow-sm rounded-lg md:rounded-xl p-3 md:p-6 space-y-4 md:space-y-6">
+                <div>
+                    <InputLabel for="current_password" value="Current Password" class="text-sm md:text-base" />
+                    <div class="relative">
+                        <TextInput
+                            id="current_password"
+                            ref="currentPasswordInput"
+                            v-model="form.current_password"
+                            :type="showCurrentPassword ? 'text' : 'password'"
+                            class="mt-1 block w-full pr-12 py-3 px-4 text-base rounded-lg touch-manipulation"
+                            autocomplete="current-password"
+                        />
+                        <button
+                            type="button"
+                            @click="showCurrentPassword = !showCurrentPassword"
+                            class="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 hover:text-gray-600 touch-manipulation"
+                            style="min-height: 48px"
+                        >
                         <component :is="showCurrentPassword ? EyeSlashIcon : EyeIcon" class="w-5 h-5" />
                     </button>
                 </div>
@@ -99,24 +100,23 @@ const updatePassword = () => {
                 />
             </div>
 
-            <div>
-                <InputLabel for="password" value="New Password" />
-                <div class="relative">
-                    <TextInput
-                        id="password"
-                        ref="passwordInput"
-                        v-model="form.password"
-                        :type="showPassword ? 'text' : 'password'"
-                        class="mt-1 block w-full pr-12"
-                        style="font-size: 16px"
-                        autocomplete="new-password"
-                    />
-                    <button
-                        type="button"
-                        @click="showPassword = !showPassword"
-                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
-                        style="min-height: 44px"
-                    >
+                <div>
+                    <InputLabel for="password" value="New Password" class="text-sm md:text-base" />
+                    <div class="relative">
+                        <TextInput
+                            id="password"
+                            ref="passwordInput"
+                            v-model="form.password"
+                            :type="showPassword ? 'text' : 'password'"
+                            class="mt-1 block w-full pr-12 py-3 px-4 text-base rounded-lg touch-manipulation"
+                            autocomplete="new-password"
+                        />
+                        <button
+                            type="button"
+                            @click="showPassword = !showPassword"
+                            class="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 hover:text-gray-600 touch-manipulation"
+                            style="min-height: 48px"
+                        >
                         <component :is="showPassword ? EyeSlashIcon : EyeIcon" class="w-5 h-5" />
                     </button>
                 </div>
@@ -144,26 +144,26 @@ const updatePassword = () => {
                 <InputError :message="form.errors.password" class="mt-2" />
             </div>
 
-            <div>
-                <InputLabel
-                    for="password_confirmation"
-                    value="Confirm Password"
-                />
-                <div class="relative">
-                    <TextInput
-                        id="password_confirmation"
-                        v-model="form.password_confirmation"
-                        :type="showPasswordConfirmation ? 'text' : 'password'"
-                        class="mt-1 block w-full pr-12"
-                        style="font-size: 16px"
-                        autocomplete="new-password"
+                <div>
+                    <InputLabel
+                        for="password_confirmation"
+                        value="Confirm Password"
+                        class="text-sm md:text-base"
                     />
-                    <button
-                        type="button"
-                        @click="showPasswordConfirmation = !showPasswordConfirmation"
-                        class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
-                        style="min-height: 44px"
-                    >
+                    <div class="relative">
+                        <TextInput
+                            id="password_confirmation"
+                            v-model="form.password_confirmation"
+                            :type="showPasswordConfirmation ? 'text' : 'password'"
+                            class="mt-1 block w-full pr-12 py-3 px-4 text-base rounded-lg touch-manipulation"
+                            autocomplete="new-password"
+                        />
+                        <button
+                            type="button"
+                            @click="showPasswordConfirmation = !showPasswordConfirmation"
+                            class="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 hover:text-gray-600 touch-manipulation"
+                            style="min-height: 48px"
+                        >
                         <component :is="showPasswordConfirmation ? EyeSlashIcon : EyeIcon" class="w-5 h-5" />
                     </button>
                 </div>
@@ -173,9 +173,9 @@ const updatePassword = () => {
                 />
             </div>
 
-            <div class="space-y-4">
-                <!-- Error Message -->
-                <div v-if="saveError" class="rounded-md bg-red-50 p-4">
+                <div class="space-y-4">
+                    <!-- Error Message -->
+                    <div v-if="saveError" class="rounded-lg bg-red-50 p-3 md:p-4">
                     <div class="flex">
                         <div class="flex-shrink-0">
                             <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
@@ -193,24 +193,57 @@ const updatePassword = () => {
                     </div>
                 </div>
 
-                <div class="flex items-center gap-4">
-                    <PrimaryButton :disabled="form.processing" style="min-height: 44px">Save</PrimaryButton>
-
-                    <Transition
-                        enter-active-class="transition ease-in-out"
-                        enter-from-class="opacity-0"
-                        leave-active-class="transition ease-in-out"
-                        leave-to-class="opacity-0"
-                    >
-                        <p
-                            v-if="form.recentlySuccessful"
-                            class="text-sm text-gray-600"
-                        >
-                            ✓ Saved successfully.
-                        </p>
-                    </Transition>
                 </div>
             </div>
+            <!-- End Card Container -->
+
+            <!-- Desktop Save Button -->
+            <div class="hidden md:flex items-center gap-4 mt-6">
+                <PrimaryButton :disabled="form.processing" style="min-height: 44px">Save</PrimaryButton>
+
+                <Transition
+                    enter-active-class="transition ease-in-out"
+                    enter-from-class="opacity-0"
+                    leave-active-class="transition ease-in-out"
+                    leave-to-class="opacity-0"
+                >
+                    <p
+                        v-if="form.recentlySuccessful"
+                        class="text-sm text-gray-600"
+                    >
+                        ✓ Saved successfully.
+                    </p>
+                </Transition>
+            </div>
+
+            <!-- Mobile Sticky Save Button -->
+            <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4 shadow-2xl z-30 safe-area-bottom">
+                <button
+                    @click="updatePassword"
+                    :disabled="form.processing"
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 disabled:bg-gray-400 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-all duration-200 active:scale-98 touch-manipulation flex items-center justify-center gap-2"
+                    type="button"
+                >
+                    <svg v-if="form.processing" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>{{ form.processing ? 'Saving...' : (form.recentlySuccessful ? '✓ Saved!' : 'Update Password') }}</span>
+                </button>
+            </div>
+
+            <!-- Mobile Bottom Spacer -->
+            <div class="md:hidden h-24"></div>
         </form>
     </section>
 </template>
+
+<style scoped>
+.safe-area-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+.active\:scale-98:active {
+    transform: scale(0.98);
+}
+</style>

@@ -1,4 +1,19 @@
 <script setup>
+/**
+ * CV Builder - Create New CV
+ * 
+ * ALL DATA IS PRE-LOADED FROM USER PROFILE:
+ * - Personal Info: full_name, email, phone, address, city, country
+ * - Professional: professional_summary (from bio)
+ * - Social Links: linkedin_url, website_url
+ * - Education: degree, institution, field_of_study, dates, grade
+ * - Work Experience: job_title, company, location, dates, description
+ * - Skills: name, level (proficiency_level)
+ * - Languages: language name, proficiency level
+ * - Certifications: name, issuing_organization, dates, credential_id
+ * 
+ * Users can edit/add to this pre-filled data before creating their CV.
+ */
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
@@ -11,9 +26,12 @@ const props = defineProps({
     template: Object,
     user: Object,
     countries: Array,
+    profileData: Object,
     profileEducation: Array,
     profileExperience: Array,
+    profileSkills: Array,
     profileLanguages: Array,
+    profileCertifications: Array,
 });
 
 const currentStep = ref(1);
@@ -35,20 +53,20 @@ const hasEnoughBalance = computed(() => {
 const form = useForm({
     cv_template_id: props.template.id,
     title: `My ${props.template.name} CV`,
-    full_name: props.user.name || '',
-    email: props.user.email || '',
-    phone: props.user.profile?.phone || '',
-    city: props.user.profile?.city || '',
-    country_id: props.user.profile?.country_id || null,
-    address: props.user.profile?.address || '',
-    linkedin_url: '',
-    website_url: '',
-    professional_summary: '',
-    education: props.profileEducation || [],
-    experience: props.profileExperience || [],
-    skills: [],
-    languages: props.profileLanguages || [],
-    certifications: [],
+    full_name: props.profileData?.full_name || props.user.name || '',
+    email: props.profileData?.email || props.user.email || '',
+    phone: props.profileData?.phone || '',
+    city: props.profileData?.city || '',
+    country_id: props.profileData?.country_id || props.user.profile?.country_id || null,
+    address: props.profileData?.address || '',
+    linkedin_url: props.profileData?.linkedin_url || '',
+    website_url: props.profileData?.website_url || '',
+    professional_summary: props.profileData?.professional_summary || '',
+    education: props.profileEducation && props.profileEducation.length > 0 ? props.profileEducation : [],
+    experience: props.profileExperience && props.profileExperience.length > 0 ? props.profileExperience : [],
+    skills: props.profileSkills && props.profileSkills.length > 0 ? props.profileSkills : [],
+    languages: props.profileLanguages && props.profileLanguages.length > 0 ? props.profileLanguages : [],
+    certifications: props.profileCertifications && props.profileCertifications.length > 0 ? props.profileCertifications : [],
     projects: [],
     references: [],
 });
@@ -83,7 +101,7 @@ const addExperience = () => {
 const addSkill = () => {
     form.skills.push({
         name: '',
-        proficiency: 'intermediate',
+        level: 'intermediate',
     });
 };
 
@@ -190,37 +208,37 @@ const stepTitles = [
 
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <!-- Step Indicator -->
-            <div class="mb-6 flex items-center justify-between">
+            <div class="mb-6 flex items-center justify-between overflow-x-auto pb-2">
                 <div 
                     v-for="(step, index) in stepTitles" 
                     :key="index"
-                    class="flex-1 relative"
+                    class="flex-1 relative min-w-[60px]"
                 >
                     <div class="flex flex-col items-center">
                         <div 
-                            class="w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all"
+                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-semibold transition-all text-xs sm:text-base"
                             :class="currentStep > index + 1 ? 'bg-green-500 text-white' : currentStep === index + 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'"
                         >
-                            <CheckCircleIcon v-if="currentStep > index + 1" class="h-6 w-6" />
+                            <CheckCircleIcon v-if="currentStep > index + 1" class="h-4 w-4 sm:h-6 sm:w-6" />
                             <span v-else>{{ index + 1 }}</span>
                         </div>
-                        <div class="text-xs mt-2 text-center hidden sm:block" :class="currentStep === index + 1 ? 'text-blue-600 font-semibold' : 'text-gray-500'">
+                        <div class="text-[10px] sm:text-xs mt-1 sm:mt-2 text-center max-w-[80px] leading-tight" :class="currentStep === index + 1 ? 'text-blue-600 font-semibold' : 'text-gray-500'">
                             {{ step }}
                         </div>
                     </div>
                     <div 
                         v-if="index < stepTitles.length - 1"
-                        class="absolute top-5 left-1/2 w-full h-0.5 -z-10"
+                        class="absolute top-4 sm:top-5 left-1/2 w-full h-0.5 -z-10"
                         :class="currentStep > index + 1 ? 'bg-green-500' : 'bg-gray-200'"
                     ></div>
                 </div>
             </div>
 
             <!-- Form Content -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
                 <!-- Step 1: Personal Information -->
                 <div v-show="currentStep === 1" class="space-y-4">
-                    <h2 class="text-xl font-bold text-gray-900 mb-4">Personal Information</h2>
+                    <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-4">Personal Information</h2>
                     
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">CV Title *</label>
@@ -316,8 +334,8 @@ const stepTitles = [
 
                 <!-- Step 2: Professional Summary -->
                 <div v-show="currentStep === 2" class="space-y-4">
-                    <h2 class="text-xl font-bold text-gray-900 mb-4">Professional Summary</h2>
-                    <p class="text-sm text-gray-600 mb-4">Write a compelling 2-3 paragraph summary highlighting your experience, skills, and career goals. (Minimum 50 characters)</p>
+                    <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-4">Professional Summary</h2>
+                    <p class="text-xs sm:text-sm text-gray-600 mb-4">Write a compelling 2-3 paragraph summary highlighting your experience, skills, and career goals. (Minimum 50 characters)</p>
                     
                     <div>
                         <textarea 
@@ -551,7 +569,7 @@ const stepTitles = [
                             <div 
                                 v-for="(skill, index) in form.skills" 
                                 :key="index"
-                                class="flex items-center space-x-2 border border-gray-200 rounded-lg p-3"
+                                class="flex flex-col sm:flex-row sm:items-center gap-2 border border-gray-200 rounded-lg p-3"
                             >
                                 <input 
                                     v-model="skill.name"
@@ -559,22 +577,24 @@ const stepTitles = [
                                     class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
                                     placeholder="Skill name"
                                 />
-                                <select 
-                                    v-model="skill.proficiency"
-                                    class="px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                                >
-                                    <option value="beginner">Beginner</option>
-                                    <option value="intermediate">Intermediate</option>
-                                    <option value="advanced">Advanced</option>
-                                    <option value="expert">Expert</option>
-                                </select>
-                                <button 
-                                    @click="removeSkill(index)"
-                                    type="button"
-                                    class="text-red-500 hover:text-red-700"
-                                >
-                                    <TrashIcon class="h-5 w-5" />
-                                </button>
+                                <div class="flex items-center gap-2">
+                                    <select 
+                                        v-model="skill.level"
+                                        class="flex-1 sm:flex-none px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                    >
+                                        <option value="beginner">Beginner</option>
+                                        <option value="intermediate">Intermediate</option>
+                                        <option value="advanced">Advanced</option>
+                                        <option value="expert">Expert</option>
+                                    </select>
+                                    <button 
+                                        @click="removeSkill(index)"
+                                        type="button"
+                                        class="text-red-500 hover:text-red-700 p-2"
+                                    >
+                                        <TrashIcon class="h-5 w-5" />
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -597,7 +617,7 @@ const stepTitles = [
                             <div 
                                 v-for="(lang, index) in form.languages" 
                                 :key="index"
-                                class="flex items-center space-x-2 border border-gray-200 rounded-lg p-3"
+                                class="flex flex-col sm:flex-row sm:items-center gap-2 border border-gray-200 rounded-lg p-3"
                             >
                                 <input 
                                     v-model="lang.language"
@@ -605,22 +625,24 @@ const stepTitles = [
                                     class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
                                     placeholder="Language name"
                                 />
-                                <select 
-                                    v-model="lang.proficiency"
-                                    class="px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                                >
-                                    <option value="basic">Basic</option>
-                                    <option value="intermediate">Intermediate</option>
-                                    <option value="fluent">Fluent</option>
-                                    <option value="native">Native</option>
-                                </select>
-                                <button 
-                                    @click="removeLanguage(index)"
-                                    type="button"
-                                    class="text-red-500 hover:text-red-700"
-                                >
-                                    <TrashIcon class="h-5 w-5" />
-                                </button>
+                                <div class="flex items-center gap-2">
+                                    <select 
+                                        v-model="lang.proficiency"
+                                        class="flex-1 sm:flex-none px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                    >
+                                        <option value="basic">Basic</option>
+                                        <option value="intermediate">Intermediate</option>
+                                        <option value="fluent">Fluent</option>
+                                        <option value="native">Native</option>
+                                    </select>
+                                    <button 
+                                        @click="removeLanguage(index)"
+                                        type="button"
+                                        class="text-red-500 hover:text-red-700 p-2"
+                                    >
+                                        <TrashIcon class="h-5 w-5" />
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -741,8 +763,8 @@ const stepTitles = [
             </div>
 
             <!-- Payment Insufficient Balance Warning -->
-            <div v-if="isPremiumTemplate && !hasEnoughBalance" class="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <p class="text-sm text-red-800">
+            <div v-if="isPremiumTemplate && !hasEnoughBalance" class="mt-4 p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p class="text-xs sm:text-sm text-red-800">
                     ⚠️ Insufficient wallet balance. You need <span class="font-bold">৳{{ template.price }}</span> but have <span class="font-bold">৳{{ userWalletBalance }}</span>.
                     <Link :href="route('wallet.index')" class="underline font-medium">Add funds to your wallet</Link>
                 </p>

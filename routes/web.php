@@ -76,6 +76,17 @@ Route::get('/dashboard', function () {
     // Generate smart suggestions based on profile completion
     $suggestions = [];
     
+    // Always show Profile Assessment as first suggestion if profile exists
+    if ($profile) {
+        $suggestions[] = [
+            'title' => 'AI Profile Assessment',
+            'description' => 'Get personalized recommendations and improve your profile strength',
+            'icon' => 'sparkles',
+            'priority' => 'high',
+            'route' => 'profile.assessment.show',
+        ];
+    }
+    
     if (!$profile || !$profile->phone) {
         $suggestions[] = [
             'title' => 'Add Contact Information',
@@ -119,23 +130,8 @@ Route::get('/dashboard', function () {
     // Personalized service recommendations
     $recommendedServices = [];
     
-    if ($profile && $profile->passport_number && $user->educations()->count() > 0) {
-        $recommendedServices[] = [
-            'name' => 'Apply for Student Visa',
-            'description' => 'You have education records - perfect for study abroad applications',
-            'route' => 'visa.create',
-            'color' => 'blue',
-        ];
-    }
-    
-    if ($user->workExperiences()->count() > 0 && $profile && $profile->monthly_income_bdt) {
-        $recommendedServices[] = [
-            'name' => 'Browse Work Visas',
-            'description' => 'Your work experience qualifies you for employment abroad',
-            'route' => 'visa.create',
-            'color' => 'purple',
-        ];
-    }
+    // Note: Visa routes removed - using bgproject's tourist-visa system instead
+    // Removed student visa and work visa recommendations that referenced non-existent routes
     
     return Inertia::render('Dashboard', [
         'stats' => $stats,
@@ -147,6 +143,18 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    // User Services Routes
+    Route::get('/services', [\App\Http\Controllers\ServiceController::class, 'index'])->name('services.index');
+    Route::get('/services/{slug}', [\App\Http\Controllers\ServiceController::class, 'show'])->name('services.show');
+    
+    // User Applications Routes
+    Route::post('/my-applications', [\App\Http\Controllers\User\UserApplicationController::class, 'store'])->name('user.applications.store');
+    Route::get('/my-applications', [\App\Http\Controllers\User\UserApplicationController::class, 'index'])->name('user.applications.index');
+    Route::get('/my-applications/{id}', [\App\Http\Controllers\User\UserApplicationController::class, 'show'])->name('user.applications.show');
+    Route::get('/my-applications/{id}/quotes', [\App\Http\Controllers\User\UserApplicationController::class, 'quotes'])->name('user.applications.quotes');
+    Route::post('/my-applications/{id}/quotes/{quoteId}/accept', [\App\Http\Controllers\User\UserApplicationController::class, 'acceptQuote'])->name('user.applications.quotes.accept');
+    Route::post('/my-applications/{id}/quotes/{quoteId}/reject', [\App\Http\Controllers\User\UserApplicationController::class, 'rejectQuote'])->name('user.applications.quotes.reject');
+    
     // Onboarding
     Route::get('/onboarding/welcome', [OnboardingController::class, 'welcome'])->name('onboarding.welcome');
     
@@ -181,7 +189,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/work-experience/{userWorkExperience}', [\App\Http\Controllers\Profile\UserWorkExperienceController::class, 'update'])->name('work-experience.update');
         Route::delete('/work-experience/{userWorkExperience}', [\App\Http\Controllers\Profile\UserWorkExperienceController::class, 'destroy'])->name('work-experience.destroy');
         
-        // Skills
+        // Skills (profile-specific)
         Route::get('/skills', [\App\Http\Controllers\Api\UserSkillController::class, 'index'])->name('skills.index');
         Route::post('/skills', [\App\Http\Controllers\Api\UserSkillController::class, 'store'])->name('skills.store');
         Route::put('/skills/{id}', [\App\Http\Controllers\Api\UserSkillController::class, 'update'])->name('skills.update');
@@ -199,6 +207,19 @@ Route::middleware('auth')->group(function () {
     
     // API route for all skills (not profile-specific)
     Route::get('/api/skills', [\App\Http\Controllers\Api\SkillController::class, 'index'])->name('api.skills.index');
+    
+    // API routes for data management lookups
+    Route::get('/api/countries', function () {
+        return response()->json(\App\Models\Country::where('is_active', true)->orderBy('name')->get(['id', 'code', 'name', 'name_bn']));
+    })->name('api.countries');
+    
+    Route::get('/api/cities', function (Illuminate\Http\Request $request) {
+        $query = \App\Models\City::where('is_active', true)->orderBy('name');
+        if ($request->has('country_id')) {
+            $query->where('country_id', $request->country_id);
+        }
+        return response()->json($query->get(['id', 'name', 'name_bn', 'country_id']));
+    })->name('api.cities');
     
     // Smart Suggestions
     Route::prefix('suggestions')->name('suggestions.')->group(function () {
@@ -348,6 +369,25 @@ Route::middleware('auth')->group(function () {
         Route::get('/{id}/download', [CvBuilderController::class, 'download'])->name('download');
     });
 
+    // Tourist Visa Application routes
+    Route::prefix('profile/tourist-visa')->name('profile.tourist-visa.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Profile\TouristVisaController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Profile\TouristVisaController::class, 'create'])->name('create');
+        Route::get('/requirements/{country}', [\App\Http\Controllers\Profile\TouristVisaController::class, 'getRequirements'])->name('requirements');
+        Route::get('/{touristVisa}', [\App\Http\Controllers\Profile\TouristVisaController::class, 'show'])->name('show');
+    });
+
+    // Service Quote routes (for users to view and accept quotes)
+    Route::prefix('profile/service-applications')->name('profile.service-applications.')->group(function () {
+        Route::get('/{application}/quotes', [\App\Http\Controllers\Api\Profile\ServiceQuoteController::class, 'index'])->name('quotes.index');
+        Route::get('/{application}/quotes/compare', [\App\Http\Controllers\Api\Profile\ServiceQuoteController::class, 'compare'])->name('quotes.compare');
+    });
+
+    Route::prefix('profile/service-quotes')->name('profile.service-quotes.')->group(function () {
+        Route::post('/{quote}/accept', [\App\Http\Controllers\Api\Profile\ServiceQuoteController::class, 'accept'])->name('accept');
+        Route::post('/{quote}/reject', [\App\Http\Controllers\Api\Profile\ServiceQuoteController::class, 'reject'])->name('reject');
+    });
+
     // Job Posting routes
     Route::prefix('jobs')->name('jobs.')->group(function () {
         Route::get('/', [JobController::class, 'index'])->name('index');
@@ -409,6 +449,7 @@ Route::middleware('auth')->group(function () {
     // User Documents (upload & listing)
     Route::get('/documents', [\App\Http\Controllers\DocumentController::class, 'index'])->name('documents.index');
     Route::post('/documents', [\App\Http\Controllers\DocumentController::class, 'store'])->name('documents.store');
+    Route::get('/documents/{document}/download', [\App\Http\Controllers\DocumentController::class, 'download'])->name('documents.download');
     Route::delete('/documents/{document}', [\App\Http\Controllers\DocumentController::class, 'destroy'])->name('documents.destroy');
 
     // Notifications
@@ -421,6 +462,151 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     // Service Management Dashboard
     Route::get('/services', [\App\Http\Controllers\Admin\ServiceManagementController::class, 'index'])->name('services.index');
+    
+    // Data Management
+    Route::prefix('data')->name('data.')->group(function () {
+        // Countries Management
+        Route::resource('countries', \App\Http\Controllers\Admin\DataManagement\CountryController::class);
+        Route::post('/countries/{country}/toggle-status', [\App\Http\Controllers\Admin\DataManagement\CountryController::class, 'toggleStatus'])->name('countries.toggle-status');
+        Route::get('/countries-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\CountryController::class, 'bulkUpload'])->name('countries.bulk-upload');
+        Route::post('/countries-process-upload', [\App\Http\Controllers\Admin\DataManagement\CountryController::class, 'processBulkUpload'])->name('countries.process-upload');
+        Route::get('/countries-template', [\App\Http\Controllers\Admin\DataManagement\CountryController::class, 'downloadTemplate'])->name('countries.template');
+        Route::get('/countries-export', [\App\Http\Controllers\Admin\DataManagement\CountryController::class, 'export'])->name('countries.export');
+        
+        // Currencies Management
+        Route::resource('currencies', \App\Http\Controllers\Admin\DataManagement\CurrencyController::class);
+        Route::post('/currencies/{currency}/toggle-status', [\App\Http\Controllers\Admin\DataManagement\CurrencyController::class, 'toggleStatus'])->name('currencies.toggle-status');
+        Route::get('/currencies-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\CurrencyController::class, 'bulkUpload'])->name('currencies.bulk-upload');
+        Route::post('/currencies-process-upload', [\App\Http\Controllers\Admin\DataManagement\CurrencyController::class, 'processBulkUpload'])->name('currencies.process-upload');
+        Route::get('/currencies-template', [\App\Http\Controllers\Admin\DataManagement\CurrencyController::class, 'downloadTemplate'])->name('currencies.template');
+        Route::get('/currencies-export', [\App\Http\Controllers\Admin\DataManagement\CurrencyController::class, 'export'])->name('currencies.export');
+        
+        // Languages Management
+        Route::resource('languages', \App\Http\Controllers\Admin\DataManagement\LanguageController::class);
+        Route::post('/languages/{language}/toggle-status', [\App\Http\Controllers\Admin\DataManagement\LanguageController::class, 'toggleStatus'])->name('languages.toggle-status');
+        Route::get('/languages-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\LanguageController::class, 'bulkUpload'])->name('languages.bulk-upload');
+        Route::post('/languages-process-upload', [\App\Http\Controllers\Admin\DataManagement\LanguageController::class, 'processBulkUpload'])->name('languages.process-upload');
+        Route::get('/languages-template', [\App\Http\Controllers\Admin\DataManagement\LanguageController::class, 'downloadTemplate'])->name('languages.template');
+        Route::get('/languages-export', [\App\Http\Controllers\Admin\DataManagement\LanguageController::class, 'export'])->name('languages.export');
+        
+        // Language Tests Management
+        Route::resource('language-tests', \App\Http\Controllers\Admin\DataManagement\LanguageTestController::class);
+        Route::post('/language-tests/{languageTest}/toggle-status', [\App\Http\Controllers\Admin\DataManagement\LanguageTestController::class, 'toggleStatus'])->name('language-tests.toggle-status');
+        Route::get('/language-tests-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\LanguageTestController::class, 'bulkUpload'])->name('language-tests.bulk-upload');
+        Route::post('/language-tests-process-upload', [\App\Http\Controllers\Admin\DataManagement\LanguageTestController::class, 'processBulkUpload'])->name('language-tests.process-upload');
+        Route::get('/language-tests-template', [\App\Http\Controllers\Admin\DataManagement\LanguageTestController::class, 'downloadTemplate'])->name('language-tests.template');
+        Route::get('/language-tests-export', [\App\Http\Controllers\Admin\DataManagement\LanguageTestController::class, 'export'])->name('language-tests.export');
+        
+        // Job Categories Management
+        Route::resource('job-categories', \App\Http\Controllers\Admin\DataManagement\JobCategoryController::class);
+        Route::post('/job-categories/{jobCategory}/toggle-status', [\App\Http\Controllers\Admin\DataManagement\JobCategoryController::class, 'toggleStatus'])->name('job-categories.toggle-status');
+        Route::get('/job-categories-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\JobCategoryController::class, 'bulkUpload'])->name('job-categories.bulk-upload');
+        Route::post('/job-categories-process-upload', [\App\Http\Controllers\Admin\DataManagement\JobCategoryController::class, 'processBulkUpload'])->name('job-categories.process-upload');
+        Route::get('/job-categories-template', [\App\Http\Controllers\Admin\DataManagement\JobCategoryController::class, 'downloadTemplate'])->name('job-categories.template');
+        Route::get('/job-categories-export', [\App\Http\Controllers\Admin\DataManagement\JobCategoryController::class, 'export'])->name('job-categories.export');
+        
+        // Skill Categories Management
+        Route::resource('skill-categories', \App\Http\Controllers\Admin\DataManagement\SkillCategoryController::class);
+        Route::post('/skill-categories/{skillCategory}/toggle-status', [\App\Http\Controllers\Admin\DataManagement\SkillCategoryController::class, 'toggleStatus'])->name('skill-categories.toggle-status');
+        Route::get('/skill-categories-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\SkillCategoryController::class, 'bulkUpload'])->name('skill-categories.bulk-upload');
+        Route::post('/skill-categories-process-upload', [\App\Http\Controllers\Admin\DataManagement\SkillCategoryController::class, 'processBulkUpload'])->name('skill-categories.process-upload');
+        Route::get('/skill-categories-template', [\App\Http\Controllers\Admin\DataManagement\SkillCategoryController::class, 'downloadTemplate'])->name('skill-categories.template');
+        Route::get('/skill-categories-export', [\App\Http\Controllers\Admin\DataManagement\SkillCategoryController::class, 'export'])->name('skill-categories.export');
+        
+        // Skills Management
+        Route::resource('skills', \App\Http\Controllers\Admin\DataManagement\SkillController::class);
+        Route::post('/skills/{skill}/toggle-status', [\App\Http\Controllers\Admin\DataManagement\SkillController::class, 'toggleStatus'])->name('skills.toggle-status');
+        Route::get('/skills-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\SkillController::class, 'bulkUpload'])->name('skills.bulk-upload');
+        Route::post('/skills-process-upload', [\App\Http\Controllers\Admin\DataManagement\SkillController::class, 'processBulkUpload'])->name('skills.process-upload');
+        Route::get('/skills-template', [\App\Http\Controllers\Admin\DataManagement\SkillController::class, 'downloadTemplate'])->name('skills.template');
+        Route::get('/skills-export', [\App\Http\Controllers\Admin\DataManagement\SkillController::class, 'export'])->name('skills.export');
+        
+        // Cities Management
+        Route::resource('cities', \App\Http\Controllers\Admin\DataManagement\CityController::class);
+        Route::post('/cities/{city}/toggle-status', [\App\Http\Controllers\Admin\DataManagement\CityController::class, 'toggleStatus'])->name('cities.toggle-status');
+        Route::get('/cities-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\CityController::class, 'bulkUpload'])->name('cities-bulk-upload');
+        Route::post('/cities-process-upload', [\App\Http\Controllers\Admin\DataManagement\CityController::class, 'processBulkUpload'])->name('cities-process-upload');
+        Route::get('/cities-template', [\App\Http\Controllers\Admin\DataManagement\CityController::class, 'downloadTemplate'])->name('cities-template');
+        Route::get('/cities-export', [\App\Http\Controllers\Admin\DataManagement\CityController::class, 'export'])->name('cities-export');
+        
+        // Airports Management
+        Route::resource('airports', \App\Http\Controllers\API\AirportController::class);
+        Route::post('/airports/{airport}/toggle-status', [\App\Http\Controllers\API\AirportController::class, 'toggleStatus'])->name('airports.toggle-status');
+        Route::get('/airports-bulk-upload', [\App\Http\Controllers\API\AirportController::class, 'bulkUpload'])->name('airports.bulk-upload');
+        Route::post('/airports-process-upload', [\App\Http\Controllers\API\AirportController::class, 'processBulkUpload'])->name('airports.process-upload');
+        Route::get('/airports-template', [\App\Http\Controllers\API\AirportController::class, 'downloadTemplate'])->name('airports.template');
+        Route::get('/airports-export', [\App\Http\Controllers\API\AirportController::class, 'export'])->name('airports.export');
+        
+        // Degrees Management
+        Route::resource('degrees', \App\Http\Controllers\Admin\DataManagement\DegreeController::class);
+        Route::post('/degrees/{degree}/toggle-status', [\App\Http\Controllers\Admin\DataManagement\DegreeController::class, 'toggleStatus'])->name('degrees.toggle-status');
+        Route::get('/degrees-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\DegreeController::class, 'bulkUpload'])->name('degrees.bulk-upload');
+        Route::post('/degrees-process-upload', [\App\Http\Controllers\Admin\DataManagement\DegreeController::class, 'processBulkUpload'])->name('degrees.process-upload');
+        Route::get('/degrees-template', [\App\Http\Controllers\Admin\DataManagement\DegreeController::class, 'downloadTemplate'])->name('degrees.template');
+        Route::get('/degrees-export', [\App\Http\Controllers\Admin\DataManagement\DegreeController::class, 'export'])->name('degrees.export');
+        
+        // Service Categories Management
+        Route::resource('service-categories', \App\Http\Controllers\Admin\DataManagement\ServiceCategoryController::class);
+        Route::post('/service-categories/{serviceCategory}/toggle-status', [\App\Http\Controllers\Admin\DataManagement\ServiceCategoryController::class, 'toggleStatus'])->name('service-categories.toggle-status');
+        Route::get('/service-categories-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\ServiceCategoryController::class, 'bulkUpload'])->name('service-categories.bulk-upload');
+        Route::post('/service-categories-process-upload', [\App\Http\Controllers\Admin\DataManagement\ServiceCategoryController::class, 'processBulkUpload'])->name('service-categories.process-upload');
+        Route::get('/service-categories-template', [\App\Http\Controllers\Admin\DataManagement\ServiceCategoryController::class, 'downloadTemplate'])->name('service-categories.template');
+        Route::get('/service-categories-export', [\App\Http\Controllers\Admin\DataManagement\ServiceCategoryController::class, 'export'])->name('service-categories.export');
+        
+        // Blog Categories Management
+        Route::resource('blog-categories', \App\Http\Controllers\Admin\DataManagement\BlogCategoryController::class);
+        Route::post('/blog-categories/{blogCategory}/toggle-status', [\App\Http\Controllers\Admin\DataManagement\BlogCategoryController::class, 'toggleStatus'])->name('blog-categories.toggle-status');
+        Route::get('/blog-categories-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\BlogCategoryController::class, 'bulkUpload'])->name('blog-categories.bulk-upload');
+        Route::post('/blog-categories-process-upload', [\App\Http\Controllers\Admin\DataManagement\BlogCategoryController::class, 'processBulkUpload'])->name('blog-categories.process-upload');
+        Route::get('/blog-categories-template', [\App\Http\Controllers\Admin\DataManagement\BlogCategoryController::class, 'downloadTemplate'])->name('blog-categories.template');
+        Route::get('/blog-categories-export', [\App\Http\Controllers\Admin\DataManagement\BlogCategoryController::class, 'export'])->name('blog-categories.export');
+        
+        // Blog Tags Management
+        Route::resource('blog-tags', \App\Http\Controllers\Admin\DataManagement\BlogTagController::class);
+        Route::get('/blog-tags-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\BlogTagController::class, 'bulkUpload'])->name('blog-tags.bulk-upload');
+        Route::post('/blog-tags-process-upload', [\App\Http\Controllers\Admin\DataManagement\BlogTagController::class, 'processBulkUpload'])->name('blog-tags.process-upload');
+        Route::get('/blog-tags-template', [\App\Http\Controllers\Admin\DataManagement\BlogTagController::class, 'downloadTemplate'])->name('blog-tags.template');
+        Route::get('/blog-tags-export', [\App\Http\Controllers\Admin\DataManagement\BlogTagController::class, 'export'])->name('blog-tags.export');
+
+        // Email Templates
+        Route::post('email-templates/{emailTemplate}/toggle-status', [\App\Http\Controllers\Admin\DataManagement\EmailTemplateController::class, 'toggleStatus'])->name('email-templates.toggle-status');
+        Route::resource('email-templates', \App\Http\Controllers\Admin\DataManagement\EmailTemplateController::class);
+        Route::get('/email-templates-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\EmailTemplateController::class, 'bulkUpload'])->name('email-templates.bulk-upload');
+        Route::post('/email-templates-process-upload', [\App\Http\Controllers\Admin\DataManagement\EmailTemplateController::class, 'processBulkUpload'])->name('email-templates.process-upload');
+        Route::get('/email-templates-template', [\App\Http\Controllers\Admin\DataManagement\EmailTemplateController::class, 'downloadTemplate'])->name('email-templates.template');
+        Route::get('/email-templates-export', [\App\Http\Controllers\Admin\DataManagement\EmailTemplateController::class, 'export'])->name('email-templates.export');
+
+        // CV Templates Management
+        Route::post('cv-templates/{cvTemplate}/toggle-status', [\App\Http\Controllers\Admin\DataManagement\CvTemplateController::class, 'toggleStatus'])->name('cv-templates.toggle-status');
+        Route::resource('cv-templates', \App\Http\Controllers\Admin\DataManagement\CvTemplateController::class);
+        Route::get('/cv-templates-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\CvTemplateController::class, 'bulkUpload'])->name('cv-templates.bulk-upload');
+        Route::post('/cv-templates-process-upload', [\App\Http\Controllers\Admin\DataManagement\CvTemplateController::class, 'processBulkUpload'])->name('cv-templates.process-upload');
+        Route::get('/cv-templates-template', [\App\Http\Controllers\Admin\DataManagement\CvTemplateController::class, 'downloadTemplate'])->name('cv-templates.template');
+        Route::get('/cv-templates-export', [\App\Http\Controllers\Admin\DataManagement\CvTemplateController::class, 'export'])->name('cv-templates.export');
+
+        // SEO Settings Management
+        Route::resource('seo-settings', \App\Http\Controllers\Admin\DataManagement\SeoSettingController::class);
+        Route::get('/seo-settings-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\SeoSettingController::class, 'bulkUpload'])->name('seo-settings.bulk-upload');
+        Route::post('/seo-settings-process-upload', [\App\Http\Controllers\Admin\DataManagement\SeoSettingController::class, 'processBulkUpload'])->name('seo-settings.process-upload');
+        Route::get('/seo-settings-template', [\App\Http\Controllers\Admin\DataManagement\SeoSettingController::class, 'downloadTemplate'])->name('seo-settings.template');
+        Route::get('/seo-settings-export', [\App\Http\Controllers\Admin\DataManagement\SeoSettingController::class, 'export'])->name('seo-settings.export');
+
+        // Smart Suggestions Management
+        Route::resource('smart-suggestions', \App\Http\Controllers\Admin\DataManagement\SmartSuggestionController::class);
+        Route::post('/smart-suggestions/{smartSuggestion}/mark-completed', [\App\Http\Controllers\Admin\DataManagement\SmartSuggestionController::class, 'markCompleted'])->name('smart-suggestions.mark-completed');
+        Route::post('/smart-suggestions/{smartSuggestion}/dismiss', [\App\Http\Controllers\Admin\DataManagement\SmartSuggestionController::class, 'dismiss'])->name('smart-suggestions.dismiss');
+        Route::get('/smart-suggestions-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\SmartSuggestionController::class, 'bulkUpload'])->name('smart-suggestions.bulk-upload');
+        Route::post('/smart-suggestions-process-upload', [\App\Http\Controllers\Admin\DataManagement\SmartSuggestionController::class, 'processBulkUpload'])->name('smart-suggestions.process-upload');
+        Route::get('/smart-suggestions-template', [\App\Http\Controllers\Admin\DataManagement\SmartSuggestionController::class, 'downloadTemplate'])->name('smart-suggestions.template');
+        Route::get('/smart-suggestions-export', [\App\Http\Controllers\Admin\DataManagement\SmartSuggestionController::class, 'export'])->name('smart-suggestions.export');
+
+        // System Events Management
+        Route::resource('system-events', \App\Http\Controllers\Admin\DataManagement\SystemEventController::class);
+        Route::get('/system-events-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\SystemEventController::class, 'bulkUpload'])->name('system-events.bulk-upload');
+        Route::post('/system-events-process-upload', [\App\Http\Controllers\Admin\DataManagement\SystemEventController::class, 'processBulkUpload'])->name('system-events.process-upload');
+        Route::get('/system-events-template', [\App\Http\Controllers\Admin\DataManagement\SystemEventController::class, 'downloadTemplate'])->name('system-events.template');
+        Route::get('/system-events-export', [\App\Http\Controllers\Admin\DataManagement\SystemEventController::class, 'export'])->name('system-events.export');
+    });
     
     Route::get('/wallets', [\App\Http\Controllers\Admin\WalletController::class, 'index'])->name('wallets.index');
     Route::get('/wallets/{wallet}', [\App\Http\Controllers\Admin\WalletController::class, 'show'])->name('wallets.show');
@@ -569,6 +755,23 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::get('/{serviceModule}/analytics', [\App\Http\Controllers\Admin\ServiceModuleController::class, 'analytics'])->name('analytics');
     });
     
+    // Plugin System - Service Applications Management
+    Route::prefix('service-applications')->name('admin.service-applications.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\ServiceApplicationController::class, 'index'])->name('index');
+        Route::get('/{serviceApplication}', [\App\Http\Controllers\Admin\ServiceApplicationController::class, 'show'])->name('show');
+        Route::put('/{serviceApplication}/status', [\App\Http\Controllers\Admin\ServiceApplicationController::class, 'updateStatus'])->name('update-status');
+        Route::delete('/{serviceApplication}', [\App\Http\Controllers\Admin\ServiceApplicationController::class, 'destroy'])->name('destroy');
+        Route::get('/export', [\App\Http\Controllers\Admin\ServiceApplicationController::class, 'export'])->name('export');
+    });
+    
+    // Plugin System - Service Quotes Management
+    Route::prefix('service-quotes')->name('admin.service-quotes.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\ServiceQuoteController::class, 'index'])->name('index');
+        Route::get('/{serviceQuote}', [\App\Http\Controllers\Admin\ServiceQuoteController::class, 'show'])->name('show');
+        Route::put('/{serviceQuote}/status', [\App\Http\Controllers\Admin\ServiceQuoteController::class, 'updateStatus'])->name('update-status');
+        Route::delete('/{serviceQuote}', [\App\Http\Controllers\Admin\ServiceQuoteController::class, 'destroy'])->name('destroy');
+    });
+    
     // Visa Requirements Management
     Route::prefix('visa-requirements')->name('admin.visa-requirements.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\VisaRequirementController::class, 'index'])->name('index');
@@ -595,6 +798,20 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::post('/assign-requirement', [\App\Http\Controllers\Admin\AgencyAssignmentController::class, 'assignRequirement'])->name('assign-requirement');
         Route::post('/visa-requirements/{visaRequirement}/unassign', [\App\Http\Controllers\Admin\AgencyAssignmentController::class, 'unassignRequirement'])->name('unassign-requirement');
         Route::post('/visa-requirements/{visaRequirement}/update-commission', [\App\Http\Controllers\Admin\AgencyAssignmentController::class, 'updateCommission'])->name('update-commission');
+    });
+    
+    // Agency Resources Management (Exclusive Resource Model)
+    Route::prefix('agency-resources')->name('admin.agency-resources.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\AgencyResourceController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\AgencyResourceController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\AgencyResourceController::class, 'store'])->name('store');
+        Route::get('/{agencyResource}', [\App\Http\Controllers\Admin\AgencyResourceController::class, 'show'])->name('show');
+        Route::get('/{agencyResource}/edit', [\App\Http\Controllers\Admin\AgencyResourceController::class, 'edit'])->name('edit');
+        Route::put('/{agencyResource}', [\App\Http\Controllers\Admin\AgencyResourceController::class, 'update'])->name('update');
+        Route::delete('/{agencyResource}', [\App\Http\Controllers\Admin\AgencyResourceController::class, 'destroy'])->name('destroy');
+        Route::post('/{agencyResource}/approve', [\App\Http\Controllers\Admin\AgencyResourceController::class, 'approve'])->name('approve');
+        Route::post('/{agencyResource}/reject', [\App\Http\Controllers\Admin\AgencyResourceController::class, 'reject'])->name('reject');
+        Route::post('/check-availability', [\App\Http\Controllers\Admin\AgencyResourceController::class, 'checkAvailability'])->name('check-availability');
     });
     
     // Job Postings Management
@@ -667,6 +884,14 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::post('{campaign}/duplicate', [\App\Http\Controllers\Admin\MarketingCampaignController::class, 'duplicate'])->name('duplicate');
     });
     Route::resource('marketing-campaigns', \App\Http\Controllers\Admin\MarketingCampaignController::class)->names('admin.marketing-campaigns');
+    
+    // Service Applications Management
+    Route::prefix('service-applications')->name('service-applications.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\ServiceApplicationController::class, 'index'])->name('index');
+        Route::get('/{application}', [\App\Http\Controllers\Admin\ServiceApplicationController::class, 'show'])->name('show');
+        Route::post('/{application}/assign-agency', [\App\Http\Controllers\Admin\ServiceApplicationController::class, 'assignAgency'])->name('assign-agency');
+        Route::post('/{application}/update-status', [\App\Http\Controllers\Admin\ServiceApplicationController::class, 'updateStatus'])->name('update-status');
+    });
 });
 
 // Public profile route (no auth required) - placed AFTER authenticated routes to avoid conflicts
@@ -674,6 +899,22 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
 Route::get('/profile/{slug}', [\App\Http\Controllers\PublicProfileController::class, 'show'])
     ->where('slug', '^(?!assessment|edit|financial|languages|education|work-experience|passports|travel-history|visa-history).*')
     ->name('profile.public.show');
+
+// Agency Routes (for agency users)
+Route::middleware(['auth', 'verified'])->prefix('agency')->name('agency.')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\Agency\DashboardController::class, 'index'])->name('dashboard');
+    
+    // Applications
+    Route::get('/applications', [\App\Http\Controllers\Agency\ApplicationController::class, 'index'])->name('applications.index');
+    Route::get('/applications/{application}', [\App\Http\Controllers\Agency\ApplicationController::class, 'show'])->name('applications.show');
+    Route::post('/applications/{application}/update-status', [\App\Http\Controllers\Agency\ApplicationController::class, 'updateStatus'])->name('applications.update-status');
+    
+    // Quotes
+    Route::get('/applications/{application}/quote/create', [\App\Http\Controllers\Agency\QuoteController::class, 'create'])->name('quotes.create');
+    Route::post('/applications/{application}/quote', [\App\Http\Controllers\Agency\QuoteController::class, 'store'])->name('quotes.store');
+    Route::get('/quotes/{quote}/edit', [\App\Http\Controllers\Agency\QuoteController::class, 'edit'])->name('quotes.edit');
+    Route::put('/quotes/{quote}', [\App\Http\Controllers\Agency\QuoteController::class, 'update'])->name('quotes.update');
+});
 
 
 

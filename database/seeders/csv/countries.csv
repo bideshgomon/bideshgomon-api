@@ -1,0 +1,62 @@
+name,name_bn,iso_code_2,iso_code_3,phone_code,currency_code,flag_emoji,region,is_active
+Bangladesh,বাংলাদেশ,BD,BGD,+880,BDT,🇧🇩,Asia,1
+United States,যুক্তরাষ্ট্র,US,USA,+1,USD,🇺🇸,Americas,1
+United Kingdom,যুক্তরাজ্য,GB,GBR,+44,GBP,🇬🇧,Europe,1
+Canada,কানাডা,CA,CAN,+1,CAD,🇨🇦,Americas,1
+Australia,অস্ট্রেলিয়া,AU,AUS,+61,AUD,🇦🇺,Oceania,1
+Germany,জার্মানি,DE,DEU,+49,EUR,🇩🇪,Europe,1
+France,ফ্রান্স,FR,FRA,+33,EUR,🇫🇷,Europe,1
+India,ভারত,IN,IND,+91,INR,🇮🇳,Asia,1
+China,চীন,CN,CHN,+86,CNY,🇨🇳,Asia,1
+Japan,জাপান,JP,JPN,+81,JPY,🇯🇵,Asia,1
+South Korea,দক্ষিণ কোরিয়া,KR,KOR,+82,KRW,🇰🇷,Asia,1
+Singapore,সিঙ্গাপুর,SG,SGP,+65,SGD,🇸🇬,Asia,1
+Malaysia,মালয়েশিয়া,MY,MYS,+60,MYR,🇲🇾,Asia,1
+Thailand,থাইল্যান্ড,TH,THA,+66,THB,🇹🇭,Asia,1
+United Arab Emirates,সংযুক্ত আরব আমিরাত,AE,ARE,+971,AED,🇦🇪,Asia,1
+Saudi Arabia,সৌদি আরব,SA,SAU,+966,SAR,🇸🇦,Asia,1
+Qatar,কাতার,QA,QAT,+974,QAR,🇶🇦,Asia,1
+Kuwait,কুয়েত,KW,KWT,+965,KWD,🇰🇼,Asia,1
+Oman,ওমান,OM,OMN,+968,OMR,🇴🇲,Asia,1
+Bahrain,বাহরাইন,BH,BHR,+973,BHD,🇧🇭,Asia,1
+Turkey,তুরস্ক,TR,TUR,+90,TRY,🇹🇷,Asia,1
+Italy,ইতালি,IT,ITA,+39,EUR,🇮🇹,Europe,1
+Spain,স্পেন,ES,ESP,+34,EUR,🇪🇸,Europe,1
+Netherlands,নেদারল্যান্ড,NL,NLD,+31,EUR,🇳🇱,Europe,1
+Sweden,সুইডেন,SE,SWE,+46,SEK,🇸🇪,Europe,1
+Norway,নরওয়ে,NO,NOR,+47,NOK,🇳🇴,Europe,1
+Denmark,ডেনমার্ক,DK,DNK,+45,DKK,🇩🇰,Europe,1
+Finland,ফিনল্যান্ড,FI,FIN,+358,EUR,🇫🇮,Europe,1
+Switzerland,স্বিটজারল্যান্ড,CH,CHE,+41,CHF,🇨🇭,Europe,1
+Austria,অস্ট্রিয়া,AT,AUT,+43,EUR,🇦🇹,Europe,1
+Belgium,বেলজিয়াম,BE,BEL,+32,EUR,🇧🇪,Europe,1
+Poland,পোল্যান্ড,PL,POL,+48,PLN,🇵🇱,Europe,1
+Portugal,পর্তুগাল,PT,PRT,+351,EUR,🇵🇹,Europe,1
+Ireland,আয়ারল্যান্ড,IE,IRL,+353,EUR,🇮🇪,Europe,1
+New Zealand,নিউজিল্যান্ড,NZ,NZL,+64,NZD,🇳🇿,Oceania,1
+South Africa,দক্ষিণ আফ্রিকা,ZA,ZAF,+27,ZAR,🇿🇦,Africa,1
+Brazil,ব্রাজিল,BR,BRA,+55,BRL,🇧🇷,Americas,1
+Mexico,মেক্সিকো,MX,MEX,+52,MXN,🇲🇽,Americas,1
+Argentina,আর্জেন্টিনা,AR,ARG,+54,ARS,🇦🇷,Americas,1
+Chile,চিলি,CL,CHL,+56,CLP,🇨🇱,Americas,1
+Russia,রাশিয়া,RU,RUS,+7,RUB,🇷🇺,Europe,1
+Pakistan,পাকিস্তান,PK,PAK,+92,PKR,🇵🇰,Asia,1
+Nepal,নেপাল,NP,NPL,+977,NPR,🇳🇵,Asia,1
+Sri Lanka,শ্রীলংকা,LK,LKA,+94,LKR,🇱🇰,Asia,1
+Maldives,মালদ্বীপ,MV,MDV,+960,MVR,🇲🇻,Asia,1
+Indonesia,ইন্দোনেশিয়া,ID,IDN,+62,IDR,🇮🇩,Asia,1
+Philippines,ফিলিপাইন,PH,PHL,+63,PHP,🇵🇭,Asia,1
+Vietnam,ভিয়েতনাম,VN,VNM,+84,VND,🇻🇳,Asia,1
+Hong Kong,হংকং,HK,HKG,+852,HKD,🇭🇰,Asia,1
+Taiwan,তাইওয়ান,TW,TWN,+886,TWD,🇹🇼,Asia,1
+Israel,ইসরায়েল,IL,ISR,+972,ILS,🇮🇱,Asia,1
+Egypt,মিশর,EG,EGY,+20,EGP,🇪🇬,Africa,1
+Morocco,মরক্কো,MA,MAR,+212,MAD,🇲🇦,Africa,1
+Kenya,কেনিয়া,KE,KEN,+254,KES,🇰🇪,Africa,1
+Nigeria,নাইজেরিয়া,NG,NGA,+234,NGN,🇳🇬,Africa,1
+Ghana,ঘানা,GH,GHA,+233,GHS,🇬🇭,Africa,1
+Czech Republic,চেক প্রজাতন্ত্র,CZ,CZE,+420,CZK,🇨🇿,Europe,1
+Greece,গ্রীস,GR,GRC,+30,EUR,🇬🇷,Europe,1
+Hungary,হাঙ্গেরি,HU,HUN,+36,HUF,🇭🇺,Europe,1
+Romania,রোমানিয়া,RO,ROU,+40,RON,🇷🇴,Europe,1
+Ukraine,ইউক্রেন,UA,UKR,+380,UAH,🇺🇦,Europe,1

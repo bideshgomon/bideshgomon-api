@@ -1,0 +1,41 @@
+name,name_bn,short_name,level,typical_duration_years,is_active
+Secondary School Certificate,মাধ্যমিক স্কুল সার্টিফিকেট,SSC,secondary,10,1
+Higher Secondary Certificate,উচ্চ মাধ্যমিক সার্টিফিকেট,HSC,higher_secondary,12,1
+Diploma,ডিপ্লোমা,Diploma,diploma,3,1
+Associate Degree,এসোসিয়েট ডিগ্রি,Associate,diploma,2,1
+Bachelor's Degree,স্নাতক ডিগ্রি,Bachelor,bachelor,4,1
+Bachelor of Arts,কলা অনুষদ স্নাতক,BA,bachelor,4,1
+Bachelor of Science,বিজ্ঞান অনুষদ স্নাতক,BSc,bachelor,4,1
+Bachelor of Business Administration,ব্যবসায় প্রশাসন স্নাতক,BBA,bachelor,4,1
+Bachelor of Engineering,প্রকৌশল স্নাতক,BEng,bachelor,4,1
+Bachelor of Technology,প্রযুক্তি স্নাতক,BTech,bachelor,4,1
+Bachelor of Computer Science,কম্পিউটার বিজ্ঞান স্নাতক,BCS,bachelor,4,1
+Bachelor of Medicine and Surgery,চিকিৎসা ও শল্যবিদ্যা স্নাতক,MBBS,bachelor,5,1
+Bachelor of Dental Surgery,দন্ত চিকিৎসা স্নাতক,BDS,bachelor,5,1
+Bachelor of Laws,আইন স্নাতক,LLB,bachelor,3,1
+Bachelor of Education,শিক্ষা স্নাতক,BEd,bachelor,2,1
+Bachelor of Nursing,নার্সিং স্নাতক,BScN,bachelor,4,1
+Master's Degree,স্নাতকোত্তর ডিগ্রি,Master,master,2,1
+Master of Arts,কলা অনুষদ স্নাতকোত্তর,MA,master,2,1
+Master of Science,বিজ্ঞান অনুষদ স্নাতকোত্তর,MSc,master,2,1
+Master of Business Administration,ব্যবসায় প্রশাসন স্নাতকোত্তর,MBA,master,2,1
+Master of Engineering,প্রকৌশল স্নাতকোত্তর,MEng,master,2,1
+Master of Technology,প্রযুক্তি স্নাতকোত্তর,MTech,master,2,1
+Master of Computer Science,কম্পিউটার বিজ্ঞান স্নাতকোত্তর,MCS,master,2,1
+Master of Public Health,জনস্বাস্থ্য স্নাতকোত্তর,MPH,master,2,1
+Master of Laws,আইন স্নাতকোত্তর,LLM,master,1,1
+Master of Education,শিক্ষা স্নাতকোত্তর,MEd,master,2,1
+Master of Social Work,সমাজকর্ম স্নাতকোত্তর,MSW,master,2,1
+Master of Philosophy,দর্শন স্নাতকোত্তর,MPhil,master,2,1
+Doctor of Philosophy,দর্শন ডক্টরেট,PhD,doctorate,4,1
+Doctor of Medicine,চিকিৎসা ডক্টরেট,MD,doctorate,3,1
+Doctor of Business Administration,ব্যবসায় প্রশাসন ডক্টরেট,DBA,doctorate,4,1
+Doctor of Education,শিক্ষা ডক্টরেট,EdD,doctorate,4,1
+Doctor of Engineering,প্রকৌশল ডক্টরেট,DEng,doctorate,4,1
+Certificate,সার্টিফিকেট,Certificate,higher_secondary,1,1
+Professional Certificate,পেশাদার সার্টিফিকেট,Prof. Cert.,diploma,1,1
+Advanced Diploma,উচ্চতর ডিপ্লোমা,Adv. Diploma,diploma,2,1
+Graduate Certificate,স্নাতক সার্টিফিকেট,Grad. Cert.,bachelor,1,1
+Graduate Diploma,স্নাতক ডিপ্লোমা,Grad. Dip.,bachelor,1,1
+Postgraduate Certificate,স্নাতকোত্তর সার্টিফিকেট,PG Cert.,master,1,1
+Postgraduate Diploma,স্নাতকোত্তর ডিপ্লোমা,PG Dip.,master,1,1

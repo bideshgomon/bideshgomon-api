@@ -35,7 +35,7 @@ class WalletController extends Controller
 
         return Inertia::render('Wallet/Index', [
             'wallet' => $wallet,
-            'balance' => $wallet->balance,
+            'balance' => (float) $wallet->balance,
             'formattedBalance' => $wallet->formatted_balance,
             'recentTransactions' => $recentTransactions,
         ]);

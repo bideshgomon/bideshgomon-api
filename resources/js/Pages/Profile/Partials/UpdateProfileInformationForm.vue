@@ -117,21 +117,23 @@ const submit = () => {
 <template>
     <section>
         <header>
-            <h2 class="text-lg font-medium text-gray-900">
+            <h2 class="text-base md:text-lg font-semibold text-gray-900">
                 Profile Information
             </h2>
 
-            <p class="mt-1 text-sm text-gray-600">
+            <p class="mt-1 text-sm md:text-base text-gray-600">
                 Update your account's profile information and email address. Enter your name exactly as it appears on your passport.
             </p>
         </header>
 
         <form
             @submit.prevent="submit"
-            class="mt-6 space-y-6"
+            class="mt-4 md:mt-6"
         >
-            <!-- Passport Standard Name Fields -->
-            <div class="space-y-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
+            <!-- Card Container -->
+            <div class="bg-white shadow-sm rounded-lg md:rounded-xl p-3 md:p-6 space-y-4 md:space-y-6">
+                <!-- Passport Standard Name Fields -->
+                <div class="space-y-4 p-3 md:p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <div class="flex items-center text-sm text-blue-800">
                     <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
@@ -145,8 +147,7 @@ const submit = () => {
                         <TextInput
                             id="first_name"
                             type="text"
-                            class="mt-1 block w-full uppercase"
-                            style="font-size: 16px"
+                            class="mt-1 block w-full uppercase py-3 px-4 text-base rounded-lg touch-manipulation"
                             v-model="form.first_name"
                             @input="autoGeneratePassportName"
                             required
@@ -161,8 +162,7 @@ const submit = () => {
                         <TextInput
                             id="middle_name"
                             type="text"
-                            class="mt-1 block w-full uppercase"
-                            style="font-size: 16px"
+                            class="mt-1 block w-full uppercase py-3 px-4 text-base rounded-lg touch-manipulation"
                             v-model="form.middle_name"
                             @input="autoGeneratePassportName"
                             placeholder="MIDDLE"
@@ -176,8 +176,7 @@ const submit = () => {
                         <TextInput
                             id="last_name"
                             type="text"
-                            class="mt-1 block w-full uppercase"
-                            style="font-size: 16px"
+                            class="mt-1 block w-full uppercase py-3 px-4 text-base rounded-lg touch-manipulation"
                             v-model="form.last_name"
                             @input="autoGeneratePassportName"
                             required
@@ -193,8 +192,7 @@ const submit = () => {
                     <TextInput
                         id="name_as_per_passport"
                         type="text"
-                        class="mt-1 block w-full uppercase font-medium bg-gray-100"
-                        style="font-size: 16px"
+                        class="mt-1 block w-full uppercase font-medium bg-gray-100 py-3 px-4 text-base rounded-lg"
                         v-model="form.name_as_per_passport"
                         readonly
                         placeholder="AUTO-GENERATED FROM ABOVE"
@@ -204,44 +202,46 @@ const submit = () => {
                 </div>
             </div>
 
-            <div>
-                <InputLabel for="email" value="Email" />
+                <div>
+                    <InputLabel for="email" value="Email" />
 
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    style="font-size: 16px"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
-                />
+                    <TextInput
+                        id="email"
+                        type="email"
+                        class="mt-1 block w-full py-3 px-4 text-base rounded-lg touch-manipulation"
+                        v-model="form.email"
+                        required
+                        autocomplete="username"
+                    />
 
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
+                    <InputError class="mt-2" :message="form.errors.email" />
+                </div>
 
-            <div v-if="mustVerifyEmail && user.email_verified_at === null">
-                <p class="mt-2 text-sm text-gray-800">
-                    Your email address is unverified.
-                    <Link
-                        :href="route('verification.send')"
-                        method="post"
-                        as="button"
-                        class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                <div v-if="mustVerifyEmail && user.email_verified_at === null">
+                    <p class="mt-2 text-sm md:text-base text-gray-800">
+                        Your email address is unverified.
+                        <Link
+                            :href="route('verification.send')"
+                            method="post"
+                            as="button"
+                            class="rounded-md text-sm md:text-base text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        >
+                            Click here to re-send the verification email.
+                        </Link>
+                    </p>
+
+                    <div
+                        v-show="status === 'verification-link-sent'"
+                        class="mt-2 text-sm md:text-base font-medium text-green-600"
                     >
-                        Click here to re-send the verification email.
-                    </Link>
-                </p>
-
-                <div
-                    v-show="status === 'verification-link-sent'"
-                    class="mt-2 text-sm font-medium text-green-600"
-                >
-                    A new verification link has been sent to your email address.
+                        A new verification link has been sent to your email address.
+                    </div>
                 </div>
             </div>
+            <!-- End Card Container -->
 
-            <div class="flex items-center gap-4">
+            <!-- Desktop Save Button -->
+            <div class="hidden md:flex items-center gap-4 mt-6">
                 <PrimaryButton :disabled="form.processing" style="min-height: 44px">Save</PrimaryButton>
 
                 <Transition
@@ -258,6 +258,35 @@ const submit = () => {
                     </p>
                 </Transition>
             </div>
+
+            <!-- Mobile Sticky Save Button -->
+            <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4 shadow-2xl z-30 safe-area-bottom">
+                <button
+                    @click="submit"
+                    :disabled="form.processing"
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 disabled:bg-gray-400 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-all duration-200 active:scale-98 touch-manipulation flex items-center justify-center gap-2"
+                    type="button"
+                >
+                    <svg v-if="form.processing" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>{{ form.processing ? 'Saving...' : (form.recentlySuccessful ? '✓ Saved!' : 'Save Changes') }}</span>
+                </button>
+            </div>
+
+            <!-- Mobile Bottom Spacer (prevents content from being hidden behind sticky button) -->
+            <div class="md:hidden h-24"></div>
         </form>
     </section>
 </template>
+
+<style scoped>
+.safe-area-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+.active\:scale-98:active {
+    transform: scale(0.98);
+}
+</style>

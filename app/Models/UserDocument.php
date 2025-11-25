@@ -12,7 +12,22 @@ class UserDocument extends Model
 
     protected $fillable = [
         'user_id',
+        'title',
         'document_type',
+        'file_name',
+        'file_path',
+        'file_type',
+        'file_size',
+        'description',
+        'issue_date',
+        'expiry_date',
+        'document_number',
+        'issuing_authority',
+        'is_verified',
+        'verified_at',
+        'verified_by',
+        'is_shared',
+        'shared_with',
         'status',
         'original_filename',
         'storage_path',
@@ -29,9 +44,15 @@ class UserDocument extends Model
 
     protected $casts = [
         'meta' => 'array',
+        'shared_with' => 'array',
         'reviewed_at' => 'datetime',
+        'verified_at' => 'datetime',
         'expires_at' => 'datetime',
+        'expiry_date' => 'date',
+        'issue_date' => 'date',
         'is_primary' => 'boolean',
+        'is_verified' => 'boolean',
+        'is_shared' => 'boolean',
     ];
 
     // Status constants
@@ -43,15 +64,19 @@ class UserDocument extends Model
     public static function supportedTypes(): array
     {
         return [
-            'passport_scan',
-            'bank_statement',
-            'language_certificate',
-            'education_certificate',
-            'work_reference',
-            'medical_report',
-            'nid_scan',
-            'tax_document',
-            'financial_affidavit',
+            'passport' => '🛂 Passport',
+            'visa' => '✈️ Visa',
+            'nid' => '🪪 National ID',
+            'birth_certificate' => '📄 Birth Certificate',
+            'driving_license' => '🚗 Driving License',
+            'educational_certificate' => '🎓 Educational Certificate',
+            'work_permit' => '💼 Work Permit',
+            'bank_statement' => '🏦 Bank Statement',
+            'police_clearance' => '👮 Police Clearance',
+            'medical_certificate' => '🏥 Medical Certificate',
+            'insurance' => '🛡️ Insurance Document',
+            'reference_letter' => '📝 Reference Letter',
+            'other' => '📎 Other Document',
         ];
     }
 

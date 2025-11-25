@@ -46,52 +46,88 @@
                                 </div>
                             </div>
 
-                            <!-- Country & Visa Type -->
+                            <!-- Service Module Selection -->
                             <div>
+                                <h3 class="text-lg font-medium text-gray-900 mb-4">Select Service</h3>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Service Module *</label>
+                                    <select 
+                                        v-model="selectedServiceModule"
+                                        @change="onServiceModuleChange"
+                                        required
+                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    >
+                                        <option value="">Select a service</option>
+                                        <option v-for="module in serviceModules" :key="module.id" :value="module.id">
+                                            {{ module.name }} ({{ module.service_type }})
+                                        </option>
+                                    </select>
+                                    <p v-if="form.errors.service_module_id" class="mt-1 text-sm text-red-600">{{ form.errors.service_module_id }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Assignment Scope -->
+                            <div>
+                                <h3 class="text-lg font-medium text-gray-900 mb-4">Assignment Scope</h3>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Scope *</label>
+                                    <select 
+                                        v-model="form.assignment_scope"
+                                        required
+                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    >
+                                        <option value="global">Global (All Countries)</option>
+                                        <option value="country_specific">Country Specific</option>
+                                        <option value="visa_specific">Visa Type Specific</option>
+                                    </select>
+                                    <p class="mt-1 text-sm text-gray-500">
+                                        Global: Agency handles all applications. Country: Specific to one country. Visa: Specific country + visa type.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Country & Visa Type -->
+                            <div v-if="form.assignment_scope !== 'global'">
                                 <h3 class="text-lg font-medium text-gray-900 mb-4">Country & Visa Type</h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Country *</label>
-                                        <select 
-                                            v-model="selectedCountry"
-                                            @change="onCountryChange"
-                                            required
-                                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                        >
-                                            <option value="">Select a country</option>
-                                            <option v-for="country in countries" :key="country.country" :value="country.country">
-                                                {{ country.country }} ({{ country.country_code }})
-                                            </option>
-                                        </select>
-                                        <p v-if="form.errors.country" class="mt-1 text-sm text-red-600">{{ form.errors.country }}</p>
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Country Code *</label>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Country *</label>
+                                    <select 
+                                        v-model="selectedCountry"
+                                        @change="onCountryChange"
+                                        :required="form.assignment_scope !== 'global'"
+                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    >
+                                        <option value="">Select a country</option>
+                                        <option v-for="country in countries" :key="country.id" :value="country.id">
+                                            {{ country.name }} ({{ country.iso_code_2 }})
+                                        </option>
+                                    </select>
+                                    <p v-if="form.errors.country" class="mt-1 text-sm text-red-600">{{ form.errors.country }}</p>
+                                </div>                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Country Code</label>
                                         <input 
                                             v-model="form.country_code"
                                             type="text"
-                                            required
                                             readonly
                                             class="w-full rounded-md border-gray-300 bg-gray-50 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                         />
                                     </div>
 
-                                    <div class="md:col-span-2">
+                                    <div class="md:col-span-2" v-if="form.assignment_scope === 'visa_specific'">
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Visa Type *</label>
                                         <select 
-                                            v-model="form.visa_type"
-                                            required
-                                            :disabled="!selectedCountry"
+                                            v-model="form.visa_type_id"
+                                            @change="onVisaTypeChange"
+                                            :required="form.assignment_scope === 'visa_specific'"
                                             class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                         >
                                             <option value="">Select visa type</option>
-                                            <option v-for="type in availableVisaTypes" :key="type" :value="type">
-                                                {{ type }}
+                                            <option v-for="type in visaTypes" :key="type.id" :value="type.id">
+                                                {{ type.name }}
                                             </option>
                                         </select>
                                         <p v-if="form.errors.visa_type" class="mt-1 text-sm text-red-600">{{ form.errors.visa_type }}</p>
-                                        <p v-if="!selectedCountry" class="mt-1 text-sm text-gray-500">Select a country first</p>
                                     </div>
                                 </div>
                             </div>
@@ -250,17 +286,23 @@ import AdminLayout from '@/Layouts/AdminLayout.vue';
 
 const props = defineProps({
     agencies: Array,
+    serviceModules: Array,
     countries: Array,
+    visaTypes: Array,
 });
 
 const selectedCountry = ref('');
-const availableVisaTypes = ref([]);
+const selectedServiceModule = ref('');
 
 const form = useForm({
     agency_id: '',
+    service_module_id: '',
+    country_id: '',
     country: '',
     country_code: '',
+    visa_type_id: '',
     visa_type: '',
+    assignment_scope: 'visa_specific',
     platform_commission_rate: 15,
     commission_type: 'percentage',
     fixed_commission_amount: null,
@@ -272,12 +314,31 @@ const form = useForm({
 });
 
 const onCountryChange = () => {
-    const country = props.countries.find(c => c.country === selectedCountry.value);
+    const country = props.countries.find(c => c.id === parseInt(selectedCountry.value));
     if (country) {
-        form.country = country.country;
-        form.country_code = country.country_code;
-        availableVisaTypes.value = country.visa_types || [];
-        form.visa_type = '';
+        form.country = country.name;
+        form.country_code = country.iso_code_2;
+        form.country_id = country.id;
+    }
+};
+
+const onServiceModuleChange = () => {
+    const module = props.serviceModules.find(m => m.id === parseInt(selectedServiceModule.value));
+    if (module) {
+        form.service_module_id = module.id;
+        // Auto-set scope based on service type
+        if (module.service_type === 'premade' || module.service_type === 'api_based') {
+            form.assignment_scope = 'global';
+        }
+    }
+};
+
+const onVisaTypeChange = (event) => {
+    const visaTypeId = event.target.value;
+    const visaType = props.visaTypes.find(vt => vt.id === parseInt(visaTypeId));
+    if (visaType) {
+        form.visa_type_id = visaType.id;
+        form.visa_type = visaType.name;
     }
 };
 

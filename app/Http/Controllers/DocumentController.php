@@ -6,6 +6,7 @@ use App\Models\UserDocument;
 use App\Services\DocumentVerificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class DocumentController extends Controller
@@ -51,5 +52,23 @@ class DocumentController extends Controller
         }
         app(DocumentVerificationService::class)->delete($document);
         return redirect()->route('documents.index')->with('success', 'Document deleted');
+    }
+
+    public function download(UserDocument $document)
+    {
+        if ($document->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized access to document');
+        }
+
+        // Try both storage_path (old) and file_path (new) fields
+        $filePath = $document->file_path ?? $document->storage_path;
+        
+        if (!$filePath || !Storage::disk('private')->exists($filePath)) {
+            abort(404, 'File not found');
+        }
+
+        $fileName = $document->file_name ?? $document->original_filename ?? 'document.' . $document->file_type;
+        
+        return response()->download(Storage::disk('private')->path($filePath), $fileName);
     }
 }

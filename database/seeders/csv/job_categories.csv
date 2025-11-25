@@ -1,0 +1,87 @@
+parent_id,name,name_bn,slug,description,order,is_active
+,Information Technology,তথ্য প্রযুক্তি,information-technology,IT and software development jobs,1,1
+1,Software Development,সফটওয়্যার উন্নয়ন,software-development,Software engineering and programming,1,1
+1,Web Development,ওয়েব ডেভেলপমেন্ট,web-development,Website and web application development,2,1
+1,Mobile App Development,মোবাইল অ্যাপ উন্নয়ন,mobile-app-development,iOS and Android development,3,1
+1,Database Administration,ডাটাবেস প্রশাসন,database-administration,Database management and optimization,4,1
+1,Network & Security,নেটওয়ার্ক ও নিরাপত্তা,network-security,Network administration and cybersecurity,5,1
+1,Data Science & AI,ডাটা সাইন্স ও এআই,data-science-ai,Data analysis machine learning AI,6,1
+1,DevOps & Cloud,ডেভঅপস ও ক্লাউড,devops-cloud,Cloud computing and DevOps engineering,7,1
+1,UI/UX Design,ইউআই/ইউএক্স ডিজাইন,ui-ux-design,User interface and experience design,8,1
+,Healthcare,স্বাস্থ্যসেবা,healthcare,Medical and healthcare professionals,2,1
+9,Nursing,নার্সিং,nursing,Registered nurses and nursing staff,1,1
+9,Medical Practitioners,চিকিৎসক,medical-practitioners,Doctors physicians surgeons,2,1
+9,Allied Health,সহযোগী স্বাস্থ্য,allied-health,Paramedics therapists technicians,3,1
+9,Pharmacy,ফার্মেসি,pharmacy,Pharmacists and pharmaceutical staff,4,1
+9,Healthcare Administration,স্বাস্থ্যসেবা প্রশাসন,healthcare-administration,Hospital and clinic management,5,1
+,Engineering,প্রকৌশল,engineering,Engineering professionals across disciplines,3,1
+15,Civil Engineering,পুরকৌশল,civil-engineering,Construction and infrastructure engineering,1,1
+15,Mechanical Engineering,যন্ত্র প্রকৌশল,mechanical-engineering,Mechanical systems and machinery,2,1
+15,Electrical Engineering,বৈদ্যুতিক প্রকৌশল,electrical-engineering,Electrical and electronics engineering,3,1
+15,Chemical Engineering,রাসায়নিক প্রকৌশল,chemical-engineering,Chemical processes and production,4,1
+15,Industrial Engineering,শিল্প প্রকৌশল,industrial-engineering,Process optimization and manufacturing,5,1
+15,Environmental Engineering,পরিবেশ প্রকৌশল,environmental-engineering,Environmental protection and sustainability,6,1
+,Business & Management,ব্যবসা ও ব্যবস্থাপনা,business-management,Business administration and management,4,1
+21,Executive Management,নির্বাহী ব্যবস্থাপনা,executive-management,CEO COO senior leadership roles,1,1
+21,Project Management,প্রকল্প ব্যবস্থাপনা,project-management,Project managers and coordinators,2,1
+21,Operations Management,পরিচালন ব্যবস্থাপনা,operations-management,Operations and process management,3,1
+21,Human Resources,মানব সম্পদ,human-resources,HR recruitment and talent management,4,1
+21,Business Analysis,ব্যবসা বিশ্লেষণ,business-analysis,Business analysts and consultants,5,1
+,Finance & Accounting,অর্থ ও হিসাববিজ্ঞান,finance-accounting,Financial and accounting professionals,5,1
+26,Accounting,হিসাববিজ্ঞান,accounting,Accountants and bookkeepers,1,1
+26,Financial Analysis,আর্থিক বিশ্লেষণ,financial-analysis,Financial analysts and planners,2,1
+26,Investment Banking,বিনিয়োগ ব্যাংকিং,investment-banking,Investment bankers and traders,3,1
+26,Auditing,অডিটিং,auditing,Internal and external auditors,4,1
+26,Tax Consulting,কর পরামর্শ,tax-consulting,Tax advisors and consultants,5,1
+,Sales & Marketing,বিক্রয় ও বিপণন,sales-marketing,Sales and marketing professionals,6,1
+31,Digital Marketing,ডিজিটাল মার্কেটিং,digital-marketing,Online marketing and SEO specialists,1,1
+31,Sales Management,বিক্রয় ব্যবস্থাপনা,sales-management,Sales managers and executives,2,1
+31,Brand Management,ব্র্যান্ড ব্যবস্থাপনা,brand-management,Brand managers and strategists,3,1
+31,Market Research,বাজার গবেষণা,market-research,Market analysts and researchers,4,1
+31,Customer Success,গ্রাহক সাফল্য,customer-success,Customer service and support,5,1
+,Hospitality & Tourism,আতিথেয়তা ও পর্যটন,hospitality-tourism,Hotel restaurant and tourism jobs,7,1
+36,Hotel Management,হোটেল ব্যবস্থাপনা,hotel-management,Hotel managers and operations,1,1
+36,Food & Beverage,খাদ্য ও পানীয়,food-beverage,Restaurant chefs and F&B staff,2,1
+36,Travel & Tourism,ভ্রমণ ও পর্যটন,travel-tourism,Tour operators and travel agents,3,1
+36,Event Management,ইভেন্ট ব্যবস্থাপনা,event-management,Event planners and coordinators,4,1
+,Construction & Trades,নির্মাণ ও কারিগরি,construction-trades,Construction and skilled trades,8,1
+40,Construction Management,নির্মাণ ব্যবস্থাপনা,construction-management,Construction managers and supervisors,1,1
+40,Carpentry,সূত্রধর,carpentry,Carpenters and woodworkers,2,1
+40,Plumbing,প্লাম্বিং,plumbing,Plumbers and pipefitters,3,1
+40,Electrical Trades,বৈদ্যুতিক ব্যবসা,electrical-trades,Electricians and technicians,4,1
+40,Welding,ওয়েল্ডিং,welding,Welders and metal fabricators,5,1
+40,HVAC,এইচভিএসি,hvac,Heating ventilation and air conditioning,6,1
+,Education & Training,শিক্ষা ও প্রশিক্ষণ,education-training,Teaching and educational roles,9,1
+46,School Teaching,স্কুল শিক্ষকতা,school-teaching,Primary and secondary teachers,1,1
+46,Higher Education,উচ্চশিক্ষা,higher-education,University professors and lecturers,2,1
+46,Corporate Training,কর্পোরেট প্রশিক্ষণ,corporate-training,Corporate trainers and coaches,3,1
+46,Special Education,বিশেষ শিক্ষা,special-education,Special needs educators,4,1
+,Transportation & Logistics,পরিবহন ও সরবরাহ,transportation-logistics,Transport and supply chain jobs,10,1
+50,Driving,চালনা,driving,Professional drivers and operators,1,1
+50,Supply Chain Management,সাপ্লাই চেইন ব্যবস্থাপনা,supply-chain-management,Supply chain and logistics managers,2,1
+50,Warehouse Operations,গুদাম পরিচালনা,warehouse-operations,Warehouse staff and supervisors,3,1
+50,Freight & Shipping,মালবাহী ও শিপিং,freight-shipping,Freight coordinators and shippers,4,1
+,Legal,আইনি,legal,Legal professionals and services,11,1
+54,Lawyers & Attorneys,আইনজীবী,lawyers-attorneys,Legal practitioners and advocates,1,1
+54,Paralegals,প্যারালিগাল,paralegals,Legal assistants and paralegals,2,1
+54,Legal Consulting,আইনি পরামর্শ,legal-consulting,Legal consultants and advisors,3,1
+,Agriculture,কৃষি,agriculture,Agricultural and farming jobs,12,1
+57,Farm Management,খামার ব্যবস্থাপনা,farm-management,Farm managers and supervisors,1,1
+57,Crop Production,ফসল উৎপাদন,crop-production,Crop farmers and cultivators,2,1
+57,Animal Husbandry,পশুপালন,animal-husbandry,Livestock and poultry farmers,3,1
+57,Agricultural Technology,কৃষি প্রযুক্তি,agricultural-technology,Agricultural technicians and scientists,4,1
+,Manufacturing,উৎপাদন,manufacturing,Manufacturing and production jobs,13,1
+61,Production Management,উৎপাদন ব্যবস্থাপনা,production-management,Production managers and supervisors,1,1
+61,Quality Control,গুণমান নিয়ন্ত্রণ,quality-control,Quality assurance and inspectors,2,1
+61,Machine Operation,যন্ত্র পরিচালনা,machine-operation,Machine operators and technicians,3,1
+61,Assembly Line,সমাবেশ লাইন,assembly-line,Assembly workers and technicians,4,1
+,Media & Communications,মিডিয়া ও যোগাযোগ,media-communications,Media journalism and communications,14,1
+65,Journalism,সাংবাদিকতা,journalism,Reporters and journalists,1,1
+65,Content Creation,কন্টেন্ট তৈরি,content-creation,Content writers and creators,2,1
+65,Broadcasting,সম্প্রচার,broadcasting,TV and radio broadcasters,3,1
+65,Public Relations,জনসংযোগ,public-relations,PR specialists and communications,4,1
+,Retail & Customer Service,খুচরা ও গ্রাহক সেবা,retail-customer-service,Retail sales and customer service,15,1
+69,Retail Management,খুচরা ব্যবস্থাপনা,retail-management,Store managers and supervisors,1,1
+69,Sales Associates,বিক্রয় সহযোগী,sales-associates,Sales staff and representatives,2,1
+69,Customer Service,গ্রাহক সেবা,customer-service,Customer support representatives,3,1
+69,Cashiers,ক্যাশিয়ার,cashiers,Cashiers and checkout operators,4,1

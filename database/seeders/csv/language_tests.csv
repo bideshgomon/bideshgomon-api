@@ -1,0 +1,26 @@
+language_id,name,name_bn,code,min_score,max_score,score_type,description,is_active
+1,IELTS,আইইএলটিএস,IELTS,0,9,band,"International English Language Testing System - Academic and General Training",1
+1,TOEFL iBT,টোফেল আইবিটি,TOEFL_IBT,0,120,numeric,"Test of English as a Foreign Language - Internet Based Test",1
+1,PTE Academic,পিটিই একাডেমিক,PTE,10,90,numeric,"Pearson Test of English Academic",1
+1,Cambridge English,ক্যামব্রিজ ইংরেজি,CAMBRIDGE,100,230,numeric,"Cambridge Assessment English - Various levels",1
+1,Duolingo English Test,ডুওলিংগো ইংলিশ টেস্ট,DUOLINGO,10,160,numeric,"Duolingo English Test for international students",1
+1,TOEIC,টোইক,TOEIC,10,990,numeric,"Test of English for International Communication",1
+2,BCST,বিসিএসটি,BCST,0,100,percentage,"Bengali Competency Standardized Test",1
+6,DELF,ডেলফ,DELF,A1,C2,level,"Diplôme d'études en langue française",1
+6,DALF,ডালফ,DALF,C1,C2,level,"Diplôme approfondi de langue française",1
+6,TCF,টিসিএফ,TCF,100,699,numeric,"Test de connaissance du français",1
+7,TestDaF,টেস্টড্যাফ,TESTDAF,TDN3,TDN5,level,"Test Deutsch als Fremdsprache",1
+7,Goethe-Zertifikat,গোয়েথে-জার্টিফিকাট,GOETHE,A1,C2,level,"Goethe Institute German Language Certificate",1
+7,DSH,ডিএসএইচ,DSH,DSH1,DSH3,level,"Deutsche Sprachprüfung für den Hochschulzugang",1
+8,JLPT,জেএলপিটি,JLPT,N5,N1,level,"Japanese Language Proficiency Test",1
+8,NAT-TEST,ন্যাট-টেস্ট,NAT,5,1,level,"Nihongo Achievement Test",1
+9,TOPIK,টপিক,TOPIK,1,6,level,"Test of Proficiency in Korean",1
+10,Hindi Prajna,হিন্দি প্রজ্ঞা,PRAJNA,Pravesh,Kovid,level,"Certificate in Hindi Language by Hindi Vidya Pracharak Samiti",1
+12,TORFL,টরফেল,TORFL,TBL,TFU,level,"Test of Russian as a Foreign Language",1
+13,CELPE-Bras,সেলপে-ব্রাস,CELPE_BRAS,Intermediate,Advanced,level,"Certificado de Proficiência em Língua Portuguesa para Estrangeiros",1
+14,CELI,সেলি,CELI,1,5,level,"Certificato di Conoscenza della Lingua Italiana",1
+14,CILS,সিলস,CILS,A1,C2,level,"Certificazione di Italiano come Lingua Straniera",1
+15,YÖS,ইওএস,YOS,0,100,numeric,"Yabancı Uyruklu Öğrenci Sınavı - Turkish Proficiency",1
+4,HSK,এইচএসকে,HSK,1,6,level,"Hanyu Shuiping Kaoshi - Chinese Proficiency Test",1
+23,MSA,এমএসএ,MSA,1,12,level,"Malay Language Proficiency Test",1
+20,CUTFL,কিউটিএফএল,CUTFL,1,6,level,"Chulalongkorn University Test of Thai as a Foreign Language",1

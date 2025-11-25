@@ -6,6 +6,7 @@ use App\Models\Country;
 use App\Models\TravelInsuranceBooking;
 use App\Models\TravelInsurancePackage;
 use App\Services\WalletService;
+use App\Traits\CreatesServiceApplications;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,6 +14,8 @@ use Inertia\Response;
 
 class TravelInsuranceController extends Controller
 {
+    use CreatesServiceApplications;
+
     protected WalletService $walletService;
 
     public function __construct(WalletService $walletService)
@@ -149,6 +152,22 @@ class TravelInsuranceController extends Controller
                 'policy_number' => 'POL' . date('Ymd') . str_pad($booking->id, 6, '0', STR_PAD_LEFT),
                 'policy_issued_at' => now(),
             ]);
+
+            // 🔥 PLUGIN SYSTEM: Create ServiceApplication for agency assignment
+            $this->createServiceApplicationFor(
+                $booking,
+                'travel-insurance',
+                [
+                    'package_name' => $package->name,
+                    'destination_country_id' => $validated['destination_country_id'],
+                    'trip_start_date' => $validated['trip_start_date'],
+                    'trip_end_date' => $validated['trip_end_date'],
+                    'duration_days' => $duration,
+                    'travelers_count' => $travelersCount,
+                    'total_amount' => $totalAmount,
+                    'policy_number' => $booking->policy_number,
+                ]
+            );
 
             return redirect()->route('travel-insurance.my-bookings')
                 ->with('success', "Booking confirmed! Policy number: {$booking->policy_number}");

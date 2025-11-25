@@ -1,0 +1,89 @@
+skill_category_id,name,name_bn,slug,description,is_active
+1,Programming,প্রোগ্রামিং,programming,Software development and coding,1
+1,Web Development,ওয়েব ডেভেলপমেন্ট,web-development,Building websites and web applications,1
+1,Mobile Development,মোবাইল ডেভেলপমেন্ট,mobile-development,iOS and Android app development,1
+1,Database Management,ডাটাবেস ব্যবস্থাপনা,database-management,Database design and administration,1
+1,Cloud Computing,ক্লাউড কম্পিউটিং,cloud-computing,AWS Azure Google Cloud expertise,1
+1,Cybersecurity,সাইবার নিরাপত্তা,cybersecurity,Information security and ethical hacking,1
+1,Data Science,ডাটা সাইন্স,data-science,Data analysis and machine learning,1
+1,DevOps,ডেভঅপস,devops,CI/CD automation and infrastructure,1
+1,UI/UX Design,ইউআই/ইউএক্স ডিজাইন,ui-ux-design,User interface and experience design,1
+1,Network Administration,নেটওয়ার্ক প্রশাসন,network-administration,Network setup and maintenance,1
+2,English,ইংরেজি,english,English language proficiency,1
+2,Arabic,আরবি,arabic,Arabic language proficiency,1
+2,Chinese,চীনা,chinese,Mandarin/Cantonese proficiency,1
+2,French,ফরাসি,french,French language proficiency,1
+2,German,জার্মান,german,German language proficiency,1
+2,Spanish,স্পেনীয়,spanish,Spanish language proficiency,1
+2,Japanese,জাপানি,japanese,Japanese language proficiency,1
+2,Korean,কোরিয়ান,korean,Korean language proficiency,1
+3,Project Management,প্রকল্প ব্যবস্থাপনা,project-management,PMP Agile Scrum methodologies,1
+3,Leadership,নেতৃত্ব,leadership,Team leadership and management,1
+3,Strategic Planning,কৌশলগত পরিকল্পনা,strategic-planning,Business strategy and planning,1
+3,Operations Management,পরিচালন ব্যবস্থাপনা,operations-management,Operational excellence and efficiency,1
+3,Human Resources,মানব সম্পদ,human-resources,HR management and recruitment,1
+3,Supply Chain Management,সাপ্লাই চেইন ব্যবস্থাপনা,supply-chain-management,Logistics and supply chain,1
+4,Nursing,নার্সিং,nursing,Patient care and nursing skills,1
+4,Medical Assistant,চিকিৎসা সহকারী,medical-assistant,Clinical support and assistance,1
+4,Pharmacy,ফার্মেসি,pharmacy,Pharmaceutical knowledge and dispensing,1
+4,Physical Therapy,ফিজিক্যাল থেরাপি,physical-therapy,Rehabilitation and physical therapy,1
+4,Laboratory Technician,পরীক্ষাগার প্রযুক্তিবিদ,laboratory-technician,Medical lab testing and analysis,1
+4,Radiography,রেডিওগ্রাফি,radiography,Medical imaging and radiology,1
+5,Mechanical Engineering,যন্ত্র প্রকৌশল,mechanical-engineering,Mechanical systems and machinery,1
+5,Electrical Engineering,বৈদ্যুতিক প্রকৌশল,electrical-engineering,Electrical systems and circuits,1
+5,Civil Engineering,পুরকৌশল,civil-engineering,Construction and infrastructure,1
+5,Chemical Engineering,রাসায়নিক প্রকৌশল,chemical-engineering,Chemical processes and production,1
+5,Industrial Engineering,শিল্প প্রকৌশল,industrial-engineering,Process optimization and efficiency,1
+5,AutoCAD,অটোক্যাড,autocad,Computer-aided design software,1
+6,Graphic Design,গ্রাফিক ডিজাইন,graphic-design,Visual design and branding,1
+6,Video Editing,ভিডিও এডিটিং,video-editing,Video production and editing,1
+6,Photography,ফটোগ্রাফি,photography,Professional photography skills,1
+6,Animation,অ্যানিমেশন,animation,2D/3D animation and motion graphics,1
+6,Content Writing,কন্টেন্ট রাইটিং,content-writing,Creative and technical writing,1
+6,Adobe Photoshop,অ্যাডোবি ফটোশপ,adobe-photoshop,Photo editing and manipulation,1
+6,Adobe Illustrator,অ্যাডোবি ইলাস্ট্রেটর,adobe-illustrator,Vector graphics and illustration,1
+7,Accounting,হিসাববিজ্ঞান,accounting,Financial accounting and bookkeeping,1
+7,Financial Analysis,আর্থিক বিশ্লেষণ,financial-analysis,Financial data analysis and reporting,1
+7,Taxation,কর,taxation,Tax preparation and compliance,1
+7,Auditing,অডিটিং,auditing,Internal and external auditing,1
+7,QuickBooks,কুইকবুকস,quickbooks,Accounting software proficiency,1
+7,Excel,এক্সেল,excel,Advanced spreadsheet skills,1
+8,Digital Marketing,ডিজিটাল মার্কেটিং,digital-marketing,Online marketing strategies,1
+8,Social Media Marketing,সোশ্যাল মিডিয়া মার্কেটিং,social-media-marketing,Social platform marketing,1
+8,SEO,এসইও,seo,Search engine optimization,1
+8,Content Marketing,কন্টেন্ট মার্কেটিং,content-marketing,Content strategy and creation,1
+8,Sales Management,বিক্রয় ব্যবস্থাপনা,sales-management,Sales team leadership,1
+8,Customer Service,গ্রাহক সেবা,customer-service,Customer support and relations,1
+9,Legal Research,আইনি গবেষণা,legal-research,Legal research and analysis,1
+9,Contract Law,চুক্তি আইন,contract-law,Contract drafting and review,1
+9,Corporate Law,কর্পোরেট আইন,corporate-law,Business and corporate legal matters,1
+9,Immigration Law,অভিবাসন আইন,immigration-law,Immigration legal expertise,1
+10,Teaching,শিক্ষকতা,teaching,Classroom instruction and pedagogy,1
+10,Curriculum Development,পাঠ্যক্রম উন্নয়ন,curriculum-development,Educational program design,1
+10,Online Teaching,অনলাইন শিক্ষকতা,online-teaching,Virtual instruction and e-learning,1
+10,Training & Development,প্রশিক্ষণ ও উন্নয়ন,training-development,Corporate training and coaching,1
+11,Hotel Management,হোটেল ব্যবস্থাপনা,hotel-management,Hotel operations and management,1
+11,Food & Beverage Service,খাদ্য ও পানীয় সেবা,food-beverage-service,Restaurant and catering service,1
+11,Housekeeping,হাউসকিপিং,housekeeping,Hotel housekeeping management,1
+11,Tour Guide,ট্যুর গাইড,tour-guide,Tourist guiding and coordination,1
+11,Chef,শেফ,chef,Professional cooking and culinary arts,1
+12,Carpentry,সূত্রধর,carpentry,Woodworking and furniture making,1
+12,Plumbing,প্লাম্বিং,plumbing,Plumbing installation and repair,1
+12,Electrical Work,বৈদ্যুতিক কাজ,electrical-work,Electrical installation and maintenance,1
+12,Welding,ওয়েল্ডিং,welding,Metal welding and fabrication,1
+12,Masonry,রাজমিস্ত্রি,masonry,Bricklaying and stonework,1
+12,Painting,পেইন্টিং,painting,Professional painting and finishing,1
+13,Truck Driving,ট্রাক চালনা,truck-driving,Heavy vehicle driving,1
+13,Forklift Operation,ফর্কলিফট পরিচালনা,forklift-operation,Warehouse equipment operation,1
+13,Warehouse Management,গুদাম ব্যবস্থাপনা,warehouse-management,Inventory and warehouse operations,1
+13,Freight Forwarding,মালবাহী ফরওয়ার্ডিং,freight-forwarding,International shipping coordination,1
+14,Crop Cultivation,ফসল চাষ,crop-cultivation,Farming and crop production,1
+14,Animal Husbandry,পশুপালন,animal-husbandry,Livestock management,1
+14,Agricultural Machinery,কৃষি যন্ত্রপাতি,agricultural-machinery,Farm equipment operation,1
+14,Organic Farming,জৈব চাষ,organic-farming,Sustainable farming practices,1
+15,Communication,যোগাযোগ,communication,Effective verbal and written communication,1
+15,Time Management,সময় ব্যবস্থাপনা,time-management,Prioritization and productivity,1
+15,Problem Solving,সমস্যা সমাধান,problem-solving,Critical thinking and solutions,1
+15,Teamwork,দলগত কাজ,teamwork,Collaboration and cooperation,1
+15,Adaptability,অভিযোজন ক্ষমতা,adaptability,Flexibility and change management,1
+15,Work Ethic,কর্ম নীতি,work-ethic,Professionalism and reliability,1

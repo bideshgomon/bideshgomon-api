@@ -225,7 +225,7 @@
             <div class="section-title">Skills</div>
             <div class="skills-grid">
                 @foreach($cv->skills as $skill)
-                    <span class="skill-tag">{{ $skill['skill'] }} ({{ ucfirst($skill['proficiency']) }})</span>
+                    <span class="skill-tag">{{ $skill['name'] ?? $skill['skill'] ?? '' }} @if(!empty($skill['level']) || !empty($skill['proficiency']))({{ ucfirst($skill['level'] ?? $skill['proficiency']) }})@endif</span>
                 @endforeach
             </div>
         </div>
@@ -253,7 +253,7 @@
             @foreach($cv->certifications as $cert)
                 <div class="certification-item">
                     <div class="cert-name">{{ $cert['name'] }}</div>
-                    <div class="cert-org">{{ $cert['organization'] }}</div>
+                    <div class="cert-org">{{ $cert['issuing_organization'] ?? $cert['organization'] ?? '' }}</div>
                     <div class="cert-dates">
                         Issued: {{ date('M Y', strtotime($cert['issue_date'])) }}
                         @if(!empty($cert['expiry_date']))

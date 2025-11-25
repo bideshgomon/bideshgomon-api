@@ -1,0 +1,11 @@
+name,slug,description,icon,color,order,is_active
+Travel & Tourism,travel-tourism,Tips and guides for travelers,airplane,blue,1,1
+Immigration News,immigration-news,Latest updates on immigration policies,newspaper,green,2,1
+Career Advice,career-advice,Job search and career development tips,briefcase,purple,3,1
+Education,education,Study abroad and education opportunities,academic-cap,orange,4,1
+Visa Guidelines,visa-guidelines,Visa application processes and requirements,document-check,red,5,1
+Success Stories,success-stories,Real stories from our clients,star,yellow,6,1
+Country Guides,country-guides,Detailed guides about different countries,globe,indigo,7,1
+Life Abroad,life-abroad,Living and settling in foreign countries,home,pink,8,1
+News & Updates,news-updates,Latest news and platform updates,bell,gray,9,1
+Technology,technology,Tech tips for travelers and migrants,chip,cyan,10,1

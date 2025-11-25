@@ -1,0 +1,43 @@
+code,name,symbol,exchange_rate_to_bdt,is_active
+BDT,Bangladeshi Taka,৳,1.000000,1
+USD,US Dollar,$,110.500000,1
+EUR,Euro,€,120.750000,1
+GBP,British Pound,£,140.250000,1
+CAD,Canadian Dollar,C$,82.000000,1
+AUD,Australian Dollar,A$,73.500000,1
+JPY,Japanese Yen,¥,0.750000,1
+CNY,Chinese Yuan,¥,15.300000,1
+INR,Indian Rupee,₹,1.320000,1
+SGD,Singapore Dollar,S$,82.800000,1
+MYR,Malaysian Ringgit,RM,24.800000,1
+THB,Thai Baht,฿,3.150000,1
+AED,UAE Dirham,د.إ,30.100000,1
+SAR,Saudi Riyal,﷼,29.450000,1
+QAR,Qatari Riyal,﷼,30.350000,1
+KWD,Kuwaiti Dinar,د.ك,361.200000,1
+OMR,Omani Rial,﷼,287.400000,1
+BHD,Bahraini Dinar,د.ب,293.100000,1
+TRY,Turkish Lira,₺,3.450000,1
+KRW,South Korean Won,₩,0.084000,1
+SEK,Swedish Krona,kr,10.650000,1
+NOK,Norwegian Krone,kr,10.450000,1
+DKK,Danish Krone,kr,16.200000,1
+CHF,Swiss Franc,Fr,127.300000,1
+PLN,Polish Zloty,zł,27.850000,1
+NZD,New Zealand Dollar,NZ$,68.200000,1
+ZAR,South African Rand,R,6.150000,1
+BRL,Brazilian Real,R$,22.350000,1
+MXN,Mexican Peso,Mex$,6.450000,1
+RUB,Russian Ruble,₽,1.180000,1
+PKR,Pakistani Rupee,₨,0.395000,1
+NPR,Nepalese Rupee,रू,0.825000,1
+LKR,Sri Lankan Rupee,රු,0.360000,1
+IDR,Indonesian Rupiah,Rp,0.007000,1
+PHP,Philippine Peso,₱,1.980000,1
+VND,Vietnamese Dong,₫,0.004350,1
+HKD,Hong Kong Dollar,HK$,14.150000,1
+ILS,Israeli Shekel,₪,30.800000,1
+EGP,Egyptian Pound,E£,2.250000,1
+MAD,Moroccan Dirham,د.م.,11.200000,1
+KES,Kenyan Shilling,KSh,0.850000,1
+NGN,Nigerian Naira,₦,0.070000,1

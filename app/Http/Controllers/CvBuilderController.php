@@ -56,9 +56,14 @@ class CvBuilderController extends Controller
             'profile',
             'educations',
             'workExperiences',
+            'skills',
             'languages',
+            'phoneNumbers',
             'wallet'
         ]);
+
+        // Get user profile for additional data
+        $userProfile = $user->profile;
 
         // Transform education data for CV format
         $educationData = $user->educations->map(function ($edu) {
@@ -86,13 +91,52 @@ class CvBuilderController extends Controller
             ];
         })->toArray();
 
+        // Transform skills data
+        $skillsData = $user->skills->map(function ($skill) {
+            return [
+                'name' => $skill->name ?? '',
+                'level' => strtolower($skill->pivot->proficiency_level ?? 'intermediate'),
+            ];
+        })->toArray();
+
         // Transform languages data
         $languagesData = $user->languages->map(function ($lang) {
             return [
-                'language' => $lang->language ?? '',
-                'proficiency' => strtolower($lang->proficiency ?? 'intermediate'),
+                'language' => $lang->language->name ?? $lang->language ?? '',
+                'proficiency' => strtolower($lang->proficiency_level ?? 'intermediate'),
             ];
         })->toArray();
+
+        // Get certifications from profile
+        $certificationsData = [];
+        if ($userProfile && $userProfile->certifications) {
+            $certificationsData = is_array($userProfile->certifications) 
+                ? $userProfile->certifications 
+                : json_decode($userProfile->certifications, true) ?? [];
+        }
+
+        // Primary phone number
+        $primaryPhone = $user->phoneNumbers->where('is_primary', true)->first();
+        $phoneNumber = '';
+        if ($primaryPhone) {
+            $phoneNumber = $primaryPhone->phone_number;
+        } elseif ($user->phoneNumbers->isNotEmpty()) {
+            // If no primary phone, get the first phone number
+            $phoneNumber = $user->phoneNumbers->first()->phone_number;
+        }
+
+        // Pre-fill data from profile
+        $profileData = [
+            'full_name' => $userProfile ? trim(($userProfile->first_name ?? '') . ' ' . ($userProfile->middle_name ?? '') . ' ' . ($userProfile->last_name ?? '')) : $user->name,
+            'email' => $user->email,
+            'phone' => $phoneNumber,
+            'address' => $userProfile ? ($userProfile->present_address_line ?? '') : '',
+            'city' => $userProfile ? ($userProfile->present_district ?? '') : '',
+            'country_id' => $userProfile ? ($userProfile->country_id ?? null) : null,
+            'linkedin_url' => $userProfile && $userProfile->social_links ? ($userProfile->social_links['linkedin'] ?? '') : '',
+            'website_url' => $userProfile && $userProfile->social_links ? ($userProfile->social_links['website'] ?? '') : '',
+            'professional_summary' => $userProfile ? ($userProfile->bio ?? '') : '',
+        ];
 
         $countries = Country::orderBy('name')->get();
 
@@ -100,9 +144,12 @@ class CvBuilderController extends Controller
             'template' => $template,
             'user' => $user,
             'countries' => $countries,
+            'profileData' => $profileData,
             'profileEducation' => $educationData,
             'profileExperience' => $experienceData,
+            'profileSkills' => $skillsData,
             'profileLanguages' => $languagesData,
+            'profileCertifications' => $certificationsData,
         ]);
     }
 
@@ -287,13 +334,17 @@ class CvBuilderController extends Controller
         // Set paper size and orientation
         $pdf->setPaper('A4', 'portrait');
         
+        // Set options for better rendering
+        $pdf->setOption('isHtml5ParserEnabled', true);
+        $pdf->setOption('isRemoteEnabled', true);
+        
         // Increment download count
         $cv->incrementDownloadCount();
         
         // Generate filename
         $filename = Str::slug($cv->title) . '-' . date('Y-m-d') . '.pdf';
         
-        // Download PDF
+        // Download PDF with proper headers
         return $pdf->download($filename);
     }
 }

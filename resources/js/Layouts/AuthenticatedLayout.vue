@@ -76,6 +76,17 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                 >
                                     Dashboard
                                 </NavLink>
+                                    
+                                    <!-- Plugin System: Services Marketplace -->
+                                    <NavLink :href="route('services.index')" :active="route().current('services.*')">
+                                        🔌 Services
+                                    </NavLink>
+                                    
+                                    <!-- Plugin System: My Applications -->
+                                    <NavLink :href="route('user.applications.index')" :active="route().current('user.applications.*')">
+                                        📋 My Applications
+                                    </NavLink>
+                                    
                                     <NavLink :href="route('documents.index')" :active="route().current('documents.*')">
                                         Documents
                                     </NavLink>
@@ -88,19 +99,18 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                         </span>
                                     </NavLink>
                                 
-                                <!-- Services Dropdown -->
+                                <!-- Legacy Services Dropdown (Keep for backward compatibility) -->
                                 <div class="relative">
                                     <Dropdown align="left" width="48">
                                         <template #trigger>
                                             <button class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out h-16">
-                                                Services
+                                                Legacy
                                                 <svg class="ml-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
                                             </button>
                                         </template>
                                         <template #content>
                                             <DropdownLink :href="route('flight-requests.create')">✈️ Flight Requests</DropdownLink>
                                             <DropdownLink :href="route('hotels.index')">🏨 Hotel Bookings</DropdownLink>
-                                            <!-- Visa Services removed - use bgproject's dedicated tourist-visa system -->
                                             <DropdownLink :href="route('translation.index')">🌐 Translation</DropdownLink>
                                         </template>
                                     </Dropdown>

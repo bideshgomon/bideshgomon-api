@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { useForm } from '@inertiajs/vue3'
-import { COUNTRIES } from '@/Constants/profileData'
+import { useForm, router } from '@inertiajs/vue3'
+import axios from 'axios'
 
 // Import components
 import Modal from '@/Components/Modal.vue'
@@ -17,6 +17,7 @@ import { BriefcaseIcon, PlusIcon, PencilSquareIcon, TrashIcon } from '@heroicons
 
 const props = defineProps({
   workExperiences: Array,
+  countries: Array,
 })
 
 // State
@@ -27,7 +28,7 @@ const isEditMode = ref(false)
 const currentWorkId = ref(null)
 
 // Form
-const form = useForm({
+const form = ref({
   company_name: '',
   job_title: '',
   employment_type: '',
@@ -42,6 +43,9 @@ const form = useForm({
   salary_range: '',
   reason_for_leaving: '',
 })
+
+const formErrors = ref({})
+const isProcessing = ref(false)
 
 // Define employment types locally
 const employmentTypes = [
@@ -70,7 +74,7 @@ const jobCategories = [
   'Other'
 ]
 
-const countries = COUNTRIES || ['Bangladesh', 'Saudi Arabia', 'UAE', 'Qatar', 'Kuwait', 'Oman', 'Malaysia', 'Singapore']
+const countries = computed(() => props.countries ? props.countries.map(c => c.name) : [])
 
 // Fetch work experiences
 const fetchWorkExperiences = async () => {
@@ -96,61 +100,99 @@ const openModal = (work = null) => {
   if (work) {
     isEditMode.value = true
     currentWorkId.value = work.id
-    form.company_name = work.company_name || ''
-    form.job_title = work.job_title || ''
-    form.employment_type = work.employment_type || ''
-    form.job_category = work.job_category || ''
-    form.start_date = work.start_date || ''
-    form.end_date = work.end_date || ''
-    form.is_current_employment = work.is_current_employment || false
-    form.country = work.country || 'Bangladesh'
-    form.city = work.city || ''
-    form.responsibilities = work.responsibilities || ''
-    form.achievements = work.achievements || ''
-    form.salary_range = work.salary_range || ''
-    form.reason_for_leaving = work.reason_for_leaving || ''
+    form.value = {
+      company_name: work.company_name || '',
+      job_title: work.job_title || '',
+      employment_type: work.employment_type || '',
+      job_category: work.job_category || '',
+      start_date: work.start_date ? work.start_date.substring(0, 10) : '',
+      end_date: work.end_date ? work.end_date.substring(0, 10) : '',
+      is_current_employment: work.is_current_employment || false,
+      country: work.country || 'Bangladesh',
+      city: work.city || '',
+      responsibilities: work.responsibilities || '',
+      achievements: work.achievements || '',
+      salary_range: work.salary_range || '',
+      reason_for_leaving: work.reason_for_leaving || '',
+    }
   } else {
     isEditMode.value = false
     currentWorkId.value = null
-    form.reset()
-    form.country = 'Bangladesh'
+    form.value = {
+      company_name: '',
+      job_title: '',
+      employment_type: '',
+      job_category: '',
+      start_date: '',
+      end_date: '',
+      is_current_employment: false,
+      country: 'Bangladesh',
+      city: '',
+      responsibilities: '',
+      achievements: '',
+      salary_range: '',
+      reason_for_leaving: '',
+    }
   }
+  formErrors.value = {}
   showModal.value = true
 }
 
 // Close modal
 const closeModal = () => {
   showModal.value = false
-  form.reset()
-  form.clearErrors()
+  form.value = {
+    company_name: '',
+    job_title: '',
+    employment_type: '',
+    job_category: '',
+    start_date: '',
+    end_date: '',
+    is_current_employment: false,
+    country: 'Bangladesh',
+    city: '',
+    responsibilities: '',
+    achievements: '',
+    salary_range: '',
+    reason_for_leaving: '',
+  }
+  formErrors.value = {}
 }
 
 // Submit form
-const submit = () => {
-  const url = isEditMode.value
-    ? route('api.profile.work-experience.update', currentWorkId.value)
-    : route('api.profile.work-experience.store')
+const submit = async () => {
+  isProcessing.value = true
+  formErrors.value = {}
 
-  const method = isEditMode.value ? 'put' : 'post'
-
-  form[method](url, {
-    preserveScroll: true,
-    onSuccess: () => {
-      closeModal()
-      fetchWorkExperiences()
-    },
-  })
+  try {
+    if (isEditMode.value) {
+      await axios.put(route('api.profile.work-experience.update', currentWorkId.value), form.value)
+    } else {
+      await axios.post(route('api.profile.work-experience.store'), form.value)
+    }
+    
+    closeModal()
+    router.reload({ only: ['workExperiences'] })
+  } catch (error) {
+    if (error.response && error.response.data.errors) {
+      formErrors.value = error.response.data.errors
+    } else {
+      console.error('Form submission error:', error)
+    }
+  } finally {
+    isProcessing.value = false
+  }
 }
 
 // Delete work experience
-const deleteWork = (id) => {
+const deleteWork = async (id) => {
   if (confirm('Are you sure you want to delete this work experience?')) {
-    form.delete(route('api.profile.work-experience.destroy', id), {
-      preserveScroll: true,
-      onSuccess: () => {
-        fetchWorkExperiences()
-      },
-    })
+    try {
+      await axios.delete(route('api.profile.work-experience.destroy', id))
+      router.reload({ only: ['workExperiences'] })
+    } catch (error) {
+      console.error('Delete error:', error)
+    }
   }
 }
 
@@ -204,7 +246,7 @@ const sortedWorkList = computed(() => {
           @click="openModal()"
           class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
         >
-          <PlusIcon class="h-5 w-5" />
+          <PlusIcon class="h-6 w-6 md:h-7 md:w-7" />
           <span>ADD EXPERIENCE</span>
         </button>
       </div>
@@ -217,12 +259,12 @@ const sortedWorkList = computed(() => {
     </div>
 
     <div v-else-if="sortedWorkList.length === 0" class="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-      <BriefcaseIcon class="mx-auto h-12 w-12 text-gray-400" />
+      <BriefcaseIcon class="mx-auto h-16 w-16 md:h-20 md:w-20 text-gray-400" />
       <h3 class="mt-2 text-sm font-medium text-gray-900">No work experience</h3>
       <p class="mt-1 text-sm text-gray-500">Get started by adding your first work experience.</p>
       <div class="mt-6">
-        <SecondaryButton @click="openModal()">
-          <PlusIcon class="h-5 w-5 mr-2" />
+        <SecondaryButton @click="openModal()" class="w-full sm:w-auto py-3 px-6 text-base touch-manipulation justify-center" style="min-height: 48px">
+          <PlusIcon class="h-5 w-5 md:h-6 md:w-6 mr-2" />
           Add Work Experience
         </SecondaryButton>
       </div>
@@ -239,7 +281,7 @@ const sortedWorkList = computed(() => {
           <div class="flex items-start justify-between gap-3 mb-2">
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-1">
-                <BriefcaseIcon class="w-5 h-5 text-indigo-600 dark:text-indigo-400 flex-shrink-0" />
+                <BriefcaseIcon class="w-6 h-6 md:w-7 md:h-7 text-indigo-600 dark:text-indigo-400 flex-shrink-0" />
                 <h3 class="text-base font-bold text-gray-900 dark:text-white truncate">{{ work.job_title }}</h3>
               </div>
               <p class="text-sm font-semibold text-indigo-600 dark:text-indigo-400">{{ work.company_name }}</p>
@@ -358,24 +400,24 @@ const sortedWorkList = computed(() => {
               <InputLabel for="company_name" value="Company Name *" />
               <TextInput
                 id="company_name"
-                v-model="form.company_name"
+                v-model="form.value.company_name"
                 type="text"
                 class="mt-1 block w-full"
                 required
               />
-              <InputError class="mt-2" :message="form.errors.company_name" />
+              <InputError class="mt-2" :message="formErrors.company_name" />
             </div>
 
             <div>
               <InputLabel for="job_title" value="Job Title *" />
               <TextInput
                 id="job_title"
-                v-model="form.job_title"
+                v-model="form.value.job_title"
                 type="text"
                 class="mt-1 block w-full"
                 required
               />
-              <InputError class="mt-2" :message="form.errors.job_title" />
+              <InputError class="mt-2" :message="formErrors.job_title" />
             </div>
           </div>
 
@@ -385,26 +427,26 @@ const sortedWorkList = computed(() => {
               <InputLabel for="employment_type" value="Employment Type" />
               <select
                 id="employment_type"
-                v-model="form.employment_type"
+                v-model="form.value.employment_type"
                 class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
               >
                 <option value="">Select Type</option>
                 <option v-for="type in employmentTypes" :key="type" :value="type">{{ type }}</option>
               </select>
-              <InputError class="mt-2" :message="form.errors.employment_type" />
+              <InputError class="mt-2" :message="formErrors.employment_type" />
             </div>
 
             <div>
               <InputLabel for="job_category" value="Job Category" />
               <select
                 id="job_category"
-                v-model="form.job_category"
+                v-model="form.value.job_category"
                 class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
               >
                 <option value="">Select Category</option>
                 <option v-for="category in jobCategories" :key="category" :value="category">{{ category }}</option>
               </select>
-              <InputError class="mt-2" :message="form.errors.job_category" />
+              <InputError class="mt-2" :message="formErrors.job_category" />
             </div>
           </div>
 
@@ -414,23 +456,23 @@ const sortedWorkList = computed(() => {
               <InputLabel for="start_date" value="Start Date *" />
               <DateInput
                 id="start_date"
-                v-model="form.start_date"
+                v-model="form.value.start_date"
                 class="mt-1 block w-full"
                 required
               />
-              <InputError class="mt-2" :message="form.errors.start_date" />
+              <InputError class="mt-2" :message="formErrors.start_date" />
             </div>
 
             <div>
               <InputLabel for="end_date" :value="form.is_current_employment ? 'End Date (Optional)' : 'End Date *'" />
               <DateInput
                 id="end_date"
-                v-model="form.end_date"
+                v-model="form.value.end_date"
                 class="mt-1 block w-full"
                 :disabled="form.is_current_employment"
                 :required="!form.is_current_employment"
               />
-              <InputError class="mt-2" :message="form.errors.end_date" />
+              <InputError class="mt-2" :message="formErrors.end_date" />
             </div>
           </div>
 
@@ -438,8 +480,8 @@ const sortedWorkList = computed(() => {
           <div class="flex items-center">
             <Checkbox
               id="is_current_employment"
-              v-model:checked="form.is_current_employment"
-              @update:checked="val => { if (val) form.end_date = '' }"
+              v-model:checked="form.value.is_current_employment"
+              @update:checked="val => { if (val) form.value.end_date = '' }"
             />
             <InputLabel for="is_current_employment" value="I currently work here" class="ml-2" />
           </div>
@@ -450,24 +492,24 @@ const sortedWorkList = computed(() => {
               <InputLabel for="country" value="Country *" />
               <select
                 id="country"
-                v-model="form.country"
+                v-model="form.value.country"
                 class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                 required
               >
                 <option v-for="country in countries" :key="country" :value="country">{{ country }}</option>
               </select>
-              <InputError class="mt-2" :message="form.errors.country" />
+              <InputError class="mt-2" :message="formErrors.country" />
             </div>
 
             <div>
               <InputLabel for="city" value="City" />
               <TextInput
                 id="city"
-                v-model="form.city"
+                v-model="form.value.city"
                 type="text"
                 class="mt-1 block w-full"
               />
-              <InputError class="mt-2" :message="form.errors.city" />
+              <InputError class="mt-2" :message="formErrors.city" />
             </div>
           </div>
 
@@ -476,12 +518,12 @@ const sortedWorkList = computed(() => {
             <InputLabel for="responsibilities" value="Key Responsibilities" />
             <textarea
               id="responsibilities"
-              v-model="form.responsibilities"
+              v-model="form.value.responsibilities"
               rows="3"
               class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
               placeholder="Describe your main responsibilities and duties..."
             ></textarea>
-            <InputError class="mt-2" :message="form.errors.responsibilities" />
+            <InputError class="mt-2" :message="formErrors.responsibilities" />
           </div>
 
           <!-- Achievements -->
@@ -489,12 +531,12 @@ const sortedWorkList = computed(() => {
             <InputLabel for="achievements" value="Achievements & Accomplishments" />
             <textarea
               id="achievements"
-              v-model="form.achievements"
+              v-model="form.value.achievements"
               rows="2"
               class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
               placeholder="Notable achievements, awards, or accomplishments..."
             ></textarea>
-            <InputError class="mt-2" :message="form.errors.achievements" />
+            <InputError class="mt-2" :message="formErrors.achievements" />
           </div>
 
           <!-- Salary Range & Reason for Leaving -->
@@ -503,34 +545,34 @@ const sortedWorkList = computed(() => {
               <InputLabel for="salary_range" value="Salary Range (Optional)" />
               <TextInput
                 id="salary_range"
-                v-model="form.salary_range"
+                v-model="form.value.salary_range"
                 type="text"
                 class="mt-1 block w-full"
                 placeholder="e.g., 50,000 - 60,000 BDT"
               />
-              <InputError class="mt-2" :message="form.errors.salary_range" />
+              <InputError class="mt-2" :message="formErrors.salary_range" />
             </div>
 
             <div v-if="!form.is_current_employment">
               <InputLabel for="reason_for_leaving" value="Reason for Leaving" />
               <TextInput
                 id="reason_for_leaving"
-                v-model="form.reason_for_leaving"
+                v-model="form.value.reason_for_leaving"
                 type="text"
                 class="mt-1 block w-full"
                 placeholder="e.g., Career growth"
               />
-              <InputError class="mt-2" :message="form.errors.reason_for_leaving" />
+              <InputError class="mt-2" :message="formErrors.reason_for_leaving" />
             </div>
           </div>
 
           <!-- Actions -->
           <div class="flex items-center justify-end gap-4 mt-6 pt-4 border-t">
-            <SecondaryButton @click="closeModal" type="button">
+            <SecondaryButton @click="closeModal" type="button" class="w-full sm:w-auto py-3 px-6 text-base touch-manipulation justify-center" style="min-height: 48px">
               Cancel
             </SecondaryButton>
-            <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-              {{ isEditMode ? 'Update' : 'Save' }} Work Experience
+            <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="isProcessing" class="w-full sm:w-auto py-3 px-6 text-base touch-manipulation justify-center" style="min-height: 48px">
+              {{ editingId ? 'Update' : 'Save' }} Experience
             </PrimaryButton>
           </div>
         </form>
@@ -538,3 +580,4 @@ const sortedWorkList = computed(() => {
     </Modal>
   </section>
 </template>
+

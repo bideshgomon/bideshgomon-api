@@ -7,7 +7,7 @@ export function useProfileCompletion(user, userProfile) {
         const sections = {}
 
         // Basic Information (20 points)
-        sections.basic = { completed: 0, total: 4, items: [] }
+        sections.basic = { completed: 0, total: 3, items: [] }
         if (user.value?.name) {
             sections.basic.completed++
             sections.basic.items.push('Name')
@@ -16,15 +16,11 @@ export function useProfileCompletion(user, userProfile) {
             sections.basic.completed++
             sections.basic.items.push('Email')
         }
-        if (userProfile.value?.phone) {
-            sections.basic.completed++
-            sections.basic.items.push('Phone')
-        }
         if (userProfile.value?.bio) {
             sections.basic.completed++
             sections.basic.items.push('Bio')
         }
-        sections.basic.total = 4
+        sections.basic.total = 3
 
         // Profile Details (25 points)
         sections.profile = { completed: 0, total: 5, items: [] }

@@ -1,7 +1,8 @@
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
-import { useForm } from '@inertiajs/vue3'
-import { DEGREE_TYPES, FIELDS_OF_STUDY, COUNTRIES } from '@/Constants/profileData'
+import { useForm, router } from '@inertiajs/vue3'
+import axios from 'axios'
+import { FIELDS_OF_STUDY } from '@/Constants/profileData'
 
 // Import necessary components
 import Modal from '@/Components/Modal.vue'
@@ -20,20 +21,18 @@ const props = defineProps({
   degrees: Array,
   fieldsOfStudy: Array,
   universities: Array,
+  countries: Array,
 })
 
-// Use constants if props not provided
-const degreesList = computed(() => props.degrees && props.degrees.length > 0 
-  ? props.degrees 
-  : DEGREE_TYPES.map(d => ({ id: d, name: d }))
-)
+// Use database data from props
+const degreesList = computed(() => props.degrees || [])
 
 const fieldsOfStudyList = computed(() => props.fieldsOfStudy && props.fieldsOfStudy.length > 0 
   ? props.fieldsOfStudy 
   : FIELDS_OF_STUDY.map(f => ({ id: f, name: f }))
 )
 
-const countriesList = computed(() => COUNTRIES)
+const countriesList = computed(() => props.countries || [])
 
 // Collapsible state
 const isOpen = ref(true)
@@ -49,7 +48,7 @@ const isEditMode = ref(false)
 const currentEducationId = ref(null)
 
 // --- Form Definition ---
-const form = useForm({
+const form = ref({
   institution_name: '',
   degree: '',
   field_of_study: '',
@@ -64,6 +63,9 @@ const form = useForm({
   honors_awards: '',
 })
 
+const formErrors = ref({})
+const isProcessing = ref(false)
+
 // --- Duplicate Detection Logic ---
 const duplicateWarning = ref('')
 const potentialDuplicate = ref(null)
@@ -73,10 +75,10 @@ const norm = (val) => (val || '').toString().trim().toLowerCase()
 
 // Build a signature for current form state (only fields relevant to uniqueness)
 const currentSignature = computed(() => {
-  if (!form.start_date) return null
-  const degreePart = norm(form.degree)
-  const instPart = norm(form.institution_name)
-  return `${degreePart}::${instPart}::${form.start_date}`
+  if (!form.value.start_date) return null
+  const degreePart = norm(form.value.degree)
+  const instPart = norm(form.value.institution_name)
+  return `${degreePart}::${instPart}::${form.value.start_date}`
 })
 
 const existingSignatures = computed(() => {
@@ -110,36 +112,42 @@ const fetchEducation = async () => {
 
 // --- Modal Controls ---
 const openAddModal = () => {
-  form.reset()
+  form.value = {
+    institution_name: '',
+    degree: '',
+    field_of_study: '',
+    start_date: '',
+    end_date: '',
+    country: '',
+    city: '',
+    is_completed: false,
+    gpa_or_grade: '',
+    language_of_instruction: '',
+    courses_completed: '',
+    honors_awards: '',
+  }
+  formErrors.value = {}
   isEditMode.value = false
   currentEducationId.value = null
   showModal.value = true
 }
 
 const openEditModal = (education) => {
-  form.institution_name = education.institution_name || ''
-  form.degree = education.degree || ''
-  form.field_of_study = education.field_of_study || ''
-  form.start_date = education.start_date || ''
-  form.end_date = education.end_date || ''
-  form.country = education.country || ''
-  form.city = education.city || ''
-  form.is_completed = education.is_completed || false
-  form.gpa_or_grade = education.gpa_or_grade || ''
-  form.language_of_instruction = education.language_of_instruction || ''
-  form.courses_completed = education.courses_completed || ''
-  form.honors_awards = education.honors_awards || ''
-  form.start_date = education.start_date ? education.start_date.substring(0, 10) : null
-  form.end_date = education.end_date ? education.end_date.substring(0, 10) : null
-  form.is_current = education.is_current || false
-  form.result = education.result || ''
-  form.grade = education.grade || ''
-  form.description = education.description || ''
-
-  // Auto-detect if it's a custom institution (not in universities list)
-  const isInList = universities.value?.some(u => u.name === education.institution_name)
-  useCustomInstitution.value = !isInList
-
+  form.value = {
+    institution_name: education.institution_name || '',
+    degree: education.degree || '',
+    field_of_study: education.field_of_study || '',
+    start_date: education.start_date ? education.start_date.substring(0, 10) : '',
+    end_date: education.end_date ? education.end_date.substring(0, 10) : '',
+    country: education.country || '',
+    city: education.city || '',
+    is_completed: education.is_completed || false,
+    gpa_or_grade: education.gpa_or_grade || '',
+    language_of_instruction: education.language_of_instruction || '',
+    courses_completed: education.courses_completed || '',
+    honors_awards: education.honors_awards || '',
+  }
+  formErrors.value = {}
   isEditMode.value = true
   currentEducationId.value = education.id
   showModal.value = true
@@ -147,46 +155,66 @@ const openEditModal = (education) => {
 
 const closeModal = () => {
   showModal.value = false
-  form.reset()
-  form.clearErrors()
+  form.value = {
+    institution_name: '',
+    degree: '',
+    field_of_study: '',
+    start_date: '',
+    end_date: '',
+    country: '',
+    city: '',
+    is_completed: false,
+    gpa_or_grade: '',
+    language_of_instruction: '',
+    courses_completed: '',
+    honors_awards: '',
+  }
+  formErrors.value = {}
 }
 
 // --- Form Submission ---
-const submit = () => {
+const submit = async () => {
   if (duplicateWarning.value) {
-    // Soft block with confirm dialog
-    const proceed = window.confirm(duplicateWarning.value + '\n\nSubmit anyway? (Duplicate will be rejected by server)')
+    const proceed = window.confirm(duplicateWarning.value + '\n\nSubmit anyway?')
     if (!proceed) return
   }
-  if (form.is_current) {
-    form.end_date = null
+  
+  if (form.value.is_completed === false) {
+    form.value.end_date = null
   }
 
-  const options = {
-    preserveScroll: true,
-    onSuccess: () => {
-      closeModal()
-      // Inertia should automatically update the props.
-    },
-    onError: (errors) => {
-      console.error('Form submission error:', errors)
-    },
-  }
+  isProcessing.value = true
+  formErrors.value = {}
 
-  if (isEditMode.value) {
-    form.put(route('profile.education.update', currentEducationId.value), options)
-  } else {
-    form.post(route('profile.education.store'), options)
+  try {
+    if (isEditMode.value) {
+      await axios.put(route('profile.education.update', currentEducationId.value), form.value)
+    } else {
+      await axios.post(route('profile.education.store'), form.value)
+    }
+    
+    closeModal()
+    router.reload({ only: ['educations'] })
+  } catch (error) {
+    if (error.response && error.response.data.errors) {
+      formErrors.value = error.response.data.errors
+    } else {
+      console.error('Form submission error:', error)
+    }
+  } finally {
+    isProcessing.value = false
   }
 }
 
 // --- Delete ---
-const deleteForm = useForm({})
-const confirmDelete = (educationId) => {
+const confirmDelete = async (educationId) => {
   if (window.confirm('Are you sure you want to delete this education record?')) {
-    deleteForm.delete(route('profile.education.destroy', educationId), {
-      preserveScroll: true,
-    })
+    try {
+      await axios.delete(route('profile.education.destroy', educationId))
+      router.reload({ only: ['educations'] })
+    } catch (error) {
+      console.error('Delete error:', error)
+    }
   }
 }
 
@@ -221,7 +249,7 @@ const formatDate = (dateString) => {
           @click="openAddModal"
           class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
         >
-          <PlusIcon class="h-5 w-5" />
+          <PlusIcon class="w-5 h-5 md:w-6 md:h-6" />
           <span>ADD EDUCATION</span>
         </button>
       </div>
@@ -235,12 +263,12 @@ const formatDate = (dateString) => {
 
     <!-- Empty State -->
     <div v-else-if="!educationList || educationList.length === 0" class="text-center py-12 bg-gray-50 dark:bg-gray-900/50 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700">
-      <AcademicCapIcon class="mx-auto h-12 w-12 text-gray-400" />
+      <AcademicCapIcon class="mx-auto h-16 w-16 md:h-20 md:w-20 text-gray-400" />
       <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No education records</h3>
       <p class="mt-1 text-sm text-gray-500">Get started by adding your first qualification</p>
       <div class="mt-6">
-        <SecondaryButton @click="openAddModal">
-          <PlusIcon class="h-5 w-5 mr-2" />
+        <SecondaryButton @click="openAddModal" class="w-full sm:w-auto py-3 px-6 text-base touch-manipulation justify-center" style="min-height: 48px">
+          <PlusIcon class="w-5 h-5 md:w-6 md:h-6 mr-2" />
           Add Education
         </SecondaryButton>
       </div>
@@ -261,7 +289,7 @@ const formatDate = (dateString) => {
           <div class="flex items-start justify-between gap-3 mb-3">
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-1">
-                <AcademicCapIcon class="w-5 h-5 text-purple-600 dark:text-purple-400 flex-shrink-0" />
+                <AcademicCapIcon class="w-6 h-6 md:w-7 md:h-7 text-purple-600 dark:text-purple-400 flex-shrink-0" />
                 <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white truncate">
                   {{ edu.degree_name || edu.custom_degree || 'Degree' }}
                 </h3>
@@ -348,8 +376,8 @@ const formatDate = (dateString) => {
     <Modal :show="showModal" @close="closeModal">
       <div class="p-6 bg-white dark:bg-gray-800">
         <div class="flex items-center gap-3 mb-6">
-          <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-            <AcademicCapIcon class="w-6 h-6 text-purple-600 dark:text-purple-400" />
+          <div class="w-12 h-12 md:w-14 md:h-14 bg-purple-100 dark:bg-purple-900/30 rounded-lg md:rounded-xl flex items-center justify-center">
+            <AcademicCapIcon class="w-7 h-7 md:w-8 md:h-8 text-purple-600 dark:text-purple-400" />
           </div>
           <h2 class="text-xl font-bold text-gray-900 dark:text-white">
             {{ isEditMode ? 'Edit Education Record' : 'Add New Education' }}
@@ -366,16 +394,16 @@ const formatDate = (dateString) => {
             <InputLabel for="institution_name" value="Institute / University *" />
             <TextInput
               id="institution_name"
-              v-model="form.institution_name"
+              v-model="form.value.institution_name"
               type="text"
-              class="mt-1 block w-full"
+              class="mt-1 block w-full py-3 px-4 text-base rounded-lg touch-manipulation"
               placeholder="e.g., University of Dhaka, BUET, Harvard University, NSU"
               required
             />
             <p class="mt-1 text-xs text-gray-500">
               Enter the full name of your educational institution
             </p>
-            <InputError class="mt-2" :message="form.errors?.institution_name" />
+            <InputError class="mt-2" :message="formErrors.institution_name?.[0]" />
           </div>
 
           <!-- Degree Level and Degree -->
@@ -384,8 +412,8 @@ const formatDate = (dateString) => {
               <InputLabel for="degree" value="Degree / Qualification *" />
               <select 
                 id="degree" 
-                v-model="form.degree" 
-                class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                v-model="form.value.degree" 
+                class="mt-1 block w-full py-3 px-4 text-base rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 shadow-sm touch-manipulation"
                 required
               >
                 <option value="">Select Degree</option>
@@ -396,12 +424,12 @@ const formatDate = (dateString) => {
               <p class="mt-1 text-xs text-gray-500">
                 e.g., Bachelor of Science, MBA, Diploma
               </p>
-              <InputError class="mt-2" :message="form.errors?.degree" />
+              <InputError class="mt-2" :message="formErrors.degree?.[0]" />
             </div>
 
             <div>
               <InputLabel for="field_of_study" value="Field of Study" />
-                <select id="field_of_study" v-model="form.field_of_study" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                <select id="field_of_study" v-model="form.value.field_of_study" class="mt-1 block w-full py-3 px-4 text-base rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 shadow-sm touch-manipulation">
                   <option value="">
                     Select Field of Study
                   </option>
@@ -409,7 +437,7 @@ const formatDate = (dateString) => {
                     {{ field.name }}
                 </option>
               </select>
-              <InputError class="mt-2" :message="form.errors?.field_of_study" />
+                <InputError class="mt-2" :message="formErrors.field_of_study?.[0]" />
             </div>
           </div>
 
@@ -418,15 +446,15 @@ const formatDate = (dateString) => {
             <InputLabel for="gpa_or_grade" value="Result / Grade" />
             <TextInput
               id="gpa_or_grade"
-              v-model="form.gpa_or_grade"
+              v-model="form.value.gpa_or_grade"
               type="text"
-              class="mt-1 block w-full"
+              class="mt-1 block w-full py-3 px-4 text-base rounded-lg touch-manipulation"
               placeholder="e.g., CGPA: 3.8/4.0, First Class, 85%"
             />
             <p class="mt-1 text-xs text-gray-500">
               Your grade, CGPA, percentage, or class (e.g., "CGPA: 3.8/4.0", "First Class", "85%")
             </p>
-            <InputError class="mt-2" :message="form.errors?.gpa_or_grade" />
+            <InputError class="mt-2" :message="formErrors.gpa_or_grade?.[0]" />
           </div>
 
           <!-- Dates -->
@@ -435,24 +463,24 @@ const formatDate = (dateString) => {
               <InputLabel for="start_date" value="Start Date *" />
               <DateInput
                 id="start_date"
-                v-model="form.start_date"
+                v-model="form.value.start_date"
                 class="mt-1 block w-full"
                 required
               />
-              <InputError class="mt-2" :message="form.errors?.start_date" />
+              <InputError class="mt-2" :message="formErrors.start_date?.[0]" />
             </div>
             <div>
               <InputLabel for="end_date" value="End Date" />
               <DateInput
                 id="end_date"
-                v-model="form.end_date"
+                v-model="form.value.end_date"
                 class="mt-1 block w-full"
-                :disabled="form.currently_studying"
+                :disabled="form.value.currently_studying"
               />
               <p class="mt-1 text-xs text-gray-500">
                 Leave empty if currently studying
               </p>
-              <InputError class="mt-2" :message="form.errors?.end_date" />
+              <InputError class="mt-2" :message="formErrors.end_date?.[0]" />
             </div>
           </div>
 
@@ -460,7 +488,7 @@ const formatDate = (dateString) => {
           <div class="flex items-center">
             <Checkbox
               id="is_completed"
-              v-model:checked="form.is_completed"
+              v-model:checked="form.value.is_completed"
             />
             <InputLabel for="is_completed" value="I have completed this education" class="ml-2 cursor-pointer" />
           </div>
@@ -471,33 +499,33 @@ const formatDate = (dateString) => {
               <InputLabel for="country" value="Country" />
               <TextInput
                 id="country"
-                v-model="form.country"
+                v-model="form.value.country"
                 type="text"
-                class="mt-1 block w-full"
+                class="mt-1 block w-full py-3 px-4 text-base rounded-lg touch-manipulation"
                 placeholder="Bangladesh, USA, UK, etc."
               />
-              <InputError class="mt-2" :message="form.errors?.country" />
+              <InputError class="mt-2" :message="formErrors.country?.[0]" />
             </div>
             <div>
               <InputLabel for="city" value="City" />
               <TextInput
                 id="city"
-                v-model="form.city"
+                v-model="form.value.city"
                 type="text"
-                class="mt-1 block w-full"
+                class="mt-1 block w-full py-3 px-4 text-base rounded-lg touch-manipulation"
                 placeholder="Dhaka, Boston, London, etc."
               />
-              <InputError class="mt-2" :message="form.errors?.city" />
+              <InputError class="mt-2" :message="formErrors.city?.[0]" />
             </div>
           </div>
 
           <!-- Actions -->
-          <div class="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <SecondaryButton type="button" @click="closeModal">
+          <div class="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <SecondaryButton type="button" @click="closeModal" class="w-full sm:w-auto py-3 px-6 text-base touch-manipulation justify-center" style="min-height: 48px">
               Cancel
             </SecondaryButton>
-            <PrimaryButton :disabled="form.processing">
-              <span v-if="form.processing">Saving...</span>
+            <PrimaryButton :disabled="isProcessing" class="w-full sm:w-auto py-3 px-6 text-base touch-manipulation justify-center" style="min-height: 48px">
+              <span v-if="isProcessing">Saving...</span>
               <span v-else>{{ isEditMode ? 'Update Education' : 'Save Education' }}</span>
             </PrimaryButton>
           </div>

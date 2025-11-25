@@ -1,0 +1,9 @@
+name,slug,icon,description,color,sort_order,is_active
+Visa Services,visa-services,passport,Visa application and processing services,blue,1,1
+Education Services,education-services,academic-cap,University admissions and education counseling,green,2,1
+Job Placement,job-placement,briefcase,Employment and job search assistance,purple,3,1
+Travel Services,travel-services,airplane,Flight booking hotel and travel packages,orange,4,1
+Immigration Consulting,immigration-consulting,globe-alt,Immigration and settlement consultation,red,5,1
+Document Services,document-services,document-text,Document attestation and translation,yellow,6,1
+Insurance Services,insurance-services,shield-check,Travel and health insurance packages,indigo,7,1
+Healthcare Services,healthcare-services,heart,Medical checkups and health certificates,pink,8,1

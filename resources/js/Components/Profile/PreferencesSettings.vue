@@ -186,11 +186,9 @@
                         v-model="form.language"
                         class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                     >
-                        <option value="en">🇬🇧 English</option>
-                        <option value="bn">🇧🇩 বাংলা (Bengali)</option>
-                        <option value="ar">🇸🇦 العربية (Arabic)</option>
-                        <option value="hi">🇮🇳 हिन्दी (Hindi)</option>
-                        <option value="ur">🇵🇰 اردو (Urdu)</option>
+                        <option v-for="language in languages" :key="language.id" :value="language.id">
+                            {{ language.name }}
+                        </option>
                     </select>
                 </div>
 
@@ -218,12 +216,9 @@
                         v-model="form.currency"
                         class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                     >
-                        <option value="BDT">🇧🇩 BDT - Bangladeshi Taka</option>
-                        <option value="USD">🇺🇸 USD - US Dollar</option>
-                        <option value="EUR">🇪🇺 EUR - Euro</option>
-                        <option value="GBP">🇬🇧 GBP - British Pound</option>
-                        <option value="SAR">🇸🇦 SAR - Saudi Riyal</option>
-                        <option value="AED">🇦🇪 AED - UAE Dirham</option>
+                        <option v-for="currency in currencies" :key="currency.id" :value="currency.code">
+                            {{ currency.symbol }} {{ currency.code }} - {{ currency.name }}
+                        </option>
                     </select>
                 </div>
             </div>
@@ -299,7 +294,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, computed } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import {
     GlobeAltIcon,
@@ -315,37 +310,70 @@ const props = defineProps({
     userProfile: {
         type: Object,
         required: true
+    },
+    countries: {
+        type: Array,
+        default: () => []
+    },
+    serviceCategories: {
+        type: Array,
+        default: () => []
+    },
+    currencies: {
+        type: Array,
+        default: () => []
+    },
+    languages: {
+        type: Array,
+        default: () => []
     }
 });
 
 const customDestination = ref('');
 
-const popularDestinations = [
-    '🇸🇦 Saudi Arabia',
-    '🇦🇪 UAE',
-    '🇶🇦 Qatar',
-    '🇴🇲 Oman',
-    '🇰🇼 Kuwait',
-    '🇧🇭 Bahrain',
-    '🇲🇾 Malaysia',
-    '🇸🇬 Singapore',
-    '🇬🇧 UK',
-    '🇺🇸 USA',
-    '🇨🇦 Canada',
-    '🇦🇺 Australia'
-];
+// Use countries from database
+const popularDestinations = computed(() => {
+    if (!props.countries || props.countries.length === 0) return [];
+    
+    // Get top popular countries for migration/work
+    const popularCountryNames = [
+        'Saudi Arabia', 'United Arab Emirates', 'UAE', 'Qatar', 'Oman', 
+        'Kuwait', 'Bahrain', 'Malaysia', 'Singapore', 
+        'United Kingdom', 'UK', 'United States', 'USA', 'Canada', 'Australia'
+    ];
+    
+    return props.countries
+        .filter(c => popularCountryNames.some(name => 
+            c.name.toLowerCase().includes(name.toLowerCase()) || 
+            name.toLowerCase().includes(c.name.toLowerCase())
+        ))
+        .map(c => c.name)
+        .slice(0, 12);
+});
 
-const availableServices = [
-    { emoji: '✈️', label: 'Visa Processing', value: 'visa_processing' },
-    { emoji: '🎫', label: 'Air Ticketing', value: 'air_ticketing' },
-    { emoji: '🏨', label: 'Hotel Booking', value: 'hotel_booking' },
-    { emoji: '💼', label: 'Job Placement', value: 'job_placement' },
-    { emoji: '🎓', label: 'Education', value: 'education' },
-    { emoji: '🚗', label: 'Transport', value: 'transport' },
-    { emoji: '🏥', label: 'Medical', value: 'medical' },
-    { emoji: '🕌', label: 'Hajj & Umrah', value: 'hajj_umrah' },
-    { emoji: '📋', label: 'Documentation', value: 'documentation' }
-];
+// Map Font Awesome icons to emojis
+const iconToEmoji = {
+    'fa-passport': '✈️',
+    'fa-plane': '🎫',
+    'fa-graduation-cap': '🎓',
+    'fa-briefcase': '💼',
+    'fa-file-alt': '📋',
+    'fa-ellipsis-h': '⚙️',
+    'fa-hotel': '🏨',
+    'fa-car': '🚗',
+    'fa-medkit': '🏥'
+};
+
+// Use service categories from database
+const availableServices = computed(() => {
+    if (!props.serviceCategories || props.serviceCategories.length === 0) return [];
+    
+    return props.serviceCategories.map(service => ({
+        emoji: iconToEmoji[service.icon] || '📋',
+        label: service.name,
+        value: service.id.toString()
+    }));
+});
 
 const communicationMethods = [
     {

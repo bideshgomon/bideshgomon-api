@@ -185,12 +185,12 @@ onMounted(() => {
             </div>
 
             <div v-else-if="travelHistory.length === 0" class="text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
-                <GlobeAltIcon class="mx-auto h-12 w-12 text-gray-400" />
+                <GlobeAltIcon class="mx-auto h-16 w-16 md:h-20 md:w-20 text-gray-400" />
                 <h3 class="mt-2 text-sm font-medium text-gray-900">No travel history</h3>
                 <p class="mt-1 text-sm text-gray-500">Get started by adding your first travel record</p>
                 <div class="mt-6">
                     <SecondaryButton @click="openAddModal">
-                        <PlusIcon class="w-4 h-4 mr-2" />
+                        <PlusIcon class="w-5 h-5 md:w-6 md:h-6 mr-2" />
                         Add Your First Travel
                     </SecondaryButton>
                 </div>
@@ -207,7 +207,7 @@ onMounted(() => {
                         <div class="flex items-start justify-between gap-3 mb-3">
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2 mb-1">
-                                    <GlobeAltIcon class="w-5 h-5 text-emerald-600 flex-shrink-0" />
+                                    <GlobeAltIcon class="w-6 h-6 md:w-7 md:h-7 text-emerald-600 flex-shrink-0" />
                                     <h3 class="text-base sm:text-lg font-bold text-gray-900 truncate">
                                         {{ travel.country }}
                                     </h3>
@@ -264,7 +264,7 @@ onMounted(() => {
                                 @click="deleteTravel(travel.id)"
                                 class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-red-300 text-red-600 hover:bg-red-50 rounded-lg font-medium text-sm transition-colors"
                             >
-                                <TrashIcon class="h-4 w-4" />
+                                <TrashIcon class="h-5 w-5" />
                                 <span>Delete</span>
                             </button>
                         </div>

@@ -6,12 +6,15 @@ use App\Models\FlightRoute;
 use App\Models\FlightBooking;
 use App\Models\Country;
 use App\Services\WalletService;
+use App\Traits\CreatesServiceApplications;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class FlightBookingController extends Controller
 {
+    use CreatesServiceApplications;
     protected WalletService $walletService;
 
     public function __construct(WalletService $walletService)
@@ -257,6 +260,23 @@ class FlightBookingController extends Controller
 
             // Increment route booking counter
             $route->incrementBookings();
+
+            // Create ServiceApplication for agency processing
+            $this->createServiceApplicationFor(
+                $booking,
+                'flight-booking',
+                [
+                    'origin_city' => $route->origin_city,
+                    'destination_city' => $route->destination_city,
+                    'origin_code' => $route->origin_airport_code,
+                    'destination_code' => $route->destination_airport_code,
+                    'travel_date' => $validated['travel_date'],
+                    'flight_class' => $validated['flight_class'],
+                    'passengers_count' => $validated['passengers_count'],
+                    'total_amount' => $totalAmount,
+                    'pnr_number' => 'PNR' . strtoupper(substr(md5($booking->id . time()), 0, 6)),
+                ]
+            );
 
             DB::commit();
 

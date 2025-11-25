@@ -1,0 +1,16 @@
+name,name_bn,slug,description,order,is_active
+Information Technology,তথ্য প্রযুক্তি,information-technology,IT and Computer Science related skills,1,1
+Languages,ভাষা,languages,Foreign language proficiency and communication skills,2,1
+Business & Management,ব্যবসা ও ব্যবস্থাপনা,business-management,Business administration and management skills,3,1
+Healthcare,স্বাস্থ্যসেবা,healthcare,Medical and healthcare related skills,4,1
+Engineering,প্রকৌশল,engineering,Engineering and technical skills,5,1
+Design & Creative,ডিজাইন ও সৃজনশীল,design-creative,Design and creative arts skills,6,1
+Finance & Accounting,অর্থ ও হিসাববিজ্ঞান,finance-accounting,Financial and accounting expertise,7,1
+Marketing & Sales,বিপণন ও বিক্রয়,marketing-sales,Marketing and sales related skills,8,1
+Legal,আইনি,legal,Legal and compliance skills,9,1
+Education & Training,শিক্ষা ও প্রশিক্ষণ,education-training,Teaching and training capabilities,10,1
+Hospitality & Tourism,আতিথেয়তা ও পর্যটন,hospitality-tourism,Hotel and tourism industry skills,11,1
+Construction & Trades,নির্মাণ ও কারিগরি,construction-trades,Construction and skilled trades,12,1
+Transportation & Logistics,পরিবহন ও সরবরাহ,transportation-logistics,Transportation and supply chain management,13,1
+Agriculture,কৃষি,agriculture,Agricultural and farming skills,14,1
+Personal Skills,ব্যক্তিগত দক্ষতা,personal-skills,Soft skills and personal development,15,1

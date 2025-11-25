@@ -2,6 +2,7 @@
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
+import Pagination from '@/Components/Pagination.vue';
 import {
     UsersIcon,
     MagnifyingGlassIcon,
@@ -143,7 +144,7 @@ const canImpersonate = (user) => {
     if (!isAdmin.value) return false;
     if (impersonating.value) return false; // Already impersonating someone
     // Do not impersonate admins (policy)
-    return user.role !== 'admin';
+    return user.role?.slug !== 'admin';
 };
 
 const impersonateUser = (user) => {
@@ -420,10 +421,10 @@ const impersonateUser = (user) => {
                                         <span
                                             :class="[
                                                 'px-3 py-1 rounded-full text-xs font-semibold',
-                                                user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800',
+                                                user.role?.slug === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800',
                                             ]"
                                         >
-                                            {{ user.role }}
+                                            {{ user.role?.name || 'N/A' }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4">
@@ -480,24 +481,8 @@ const impersonateUser = (user) => {
                     </div>
 
                     <!-- Pagination -->
-                    <div v-if="users.links.length > 3" class="bg-gray-50 px-6 py-4 border-t border-gray-200">
-                        <div class="flex flex-wrap items-center justify-center gap-2">
-                            <component
-                                v-for="(link, index) in users.links"
-                                :key="index"
-                                :is="link.url ? Link : 'span'"
-                                :href="link.url || undefined"
-                                :class="[
-                                    'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
-                                    link.active
-                                        ? 'bg-blue-600 text-white'
-                                        : link.url
-                                        ? 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
-                                        : 'bg-gray-100 text-gray-400 cursor-not-allowed',
-                                ]"
-                                v-html="link.label"
-                            />
-                        </div>
+                    <div class="bg-gray-50 px-6 py-4 border-t border-gray-200">
+                        <Pagination :links="users.links" />
                     </div>
                 </div>
             </div>

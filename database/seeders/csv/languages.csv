@@ -1,0 +1,36 @@
+name,name_bn,code,native_name,is_active
+English,ইংরেজি,en,English,1
+Bengali,বাংলা,bn,বাংলা,1
+Arabic,আরবি,ar,العربية,1
+Mandarin Chinese,ম্যান্ডারিন চীনা,zh,中文,1
+Spanish,স্পেনীয়,es,Español,1
+French,ফরাসি,fr,Français,1
+German,জার্মান,de,Deutsch,1
+Japanese,জাপানি,ja,日本語,1
+Korean,কোরিয়ান,ko,한국어,1
+Hindi,হিন্দি,hi,हिन्दी,1
+Urdu,উর্দু,ur,اردو,1
+Russian,রুশ,ru,Русский,1
+Portuguese,পর্তুগিজ,pt,Português,1
+Italian,ইতালীয়,it,Italiano,1
+Turkish,তুর্কি,tr,Türkçe,1
+Dutch,ডাচ,nl,Nederlands,1
+Swedish,সুইডিশ,sv,Svenska,1
+Polish,পোলিশ,pl,Polski,1
+Greek,গ্রীক,el,Ελληνικά,1
+Thai,থাই,th,ไทย,1
+Vietnamese,ভিয়েতনামিজ,vi,Tiếng Việt,1
+Indonesian,ইন্দোনেশীয়,id,Bahasa Indonesia,1
+Malay,মালয়,ms,Bahasa Melayu,1
+Persian,পারসিক,fa,فارسی,1
+Hebrew,হিব্রু,he,עברית,1
+Filipino,ফিলিপিনো,tl,Tagalog,1
+Tamil,তামিল,ta,தமிழ்,1
+Telugu,তেলেগু,te,తెలుగు,1
+Marathi,মারাঠি,mr,मराठी,1
+Gujarati,গুজরাটি,gu,ગુજરાતી,1
+Punjabi,পাঞ্জাবি,pa,ਪੰਜਾਬੀ,1
+Nepali,নেপালি,ne,नेपाली,1
+Sinhala,সিংহলী,si,සිංහල,1
+Burmese,বর্মি,my,မြန်မာ,1
+Khmer,খেমের,km,ខ្មែរ,1

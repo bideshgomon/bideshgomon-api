@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Hotel;
 use App\Models\HotelRoom;
 use App\Models\HotelBooking;
+use App\Traits\CreatesServiceApplications;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class HotelBookingController extends Controller
 {
+    use CreatesServiceApplications;
     /**
      * Display hotel search page with filters
      */
@@ -203,36 +207,66 @@ class HotelBookingController extends Controller
         $serviceCharge = 500;
         $totalAmount = $subtotal + $taxAmount + $serviceCharge;
 
-        // Create booking
-        $booking = HotelBooking::create([
-            'user_id' => Auth::id(),
-            'hotel_id' => $validated['hotel_id'],
-            'hotel_room_id' => $validated['hotel_room_id'],
-            'check_in_date' => $validated['check_in_date'],
-            'check_out_date' => $validated['check_out_date'],
-            'nights' => $nights,
-            'rooms_count' => $validated['rooms_count'],
-            'adults_count' => $validated['adults_count'],
-            'children_count' => $validated['children_count'] ?? 0,
-            'guests' => $validated['guests'],
-            'guest_name' => $validated['guest_name'],
-            'guest_email' => $validated['guest_email'],
-            'guest_phone' => $validated['guest_phone'],
-            'special_requests' => $validated['special_requests'],
-            'room_price_per_night' => $pricePerNight,
-            'subtotal' => $subtotal,
-            'tax_amount' => $taxAmount,
-            'service_charge' => $serviceCharge,
-            'total_amount' => $totalAmount,
-            'payment_method' => 'wallet',
-            'payment_status' => 'pending',
-            'status' => 'pending',
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-        ]);
+        // Create booking within transaction
+        DB::beginTransaction();
+        
+        try {
+            $booking = HotelBooking::create([
+                'user_id' => Auth::id(),
+                'hotel_id' => $validated['hotel_id'],
+                'hotel_room_id' => $validated['hotel_room_id'],
+                'check_in_date' => $validated['check_in_date'],
+                'check_out_date' => $validated['check_out_date'],
+                'nights' => $nights,
+                'rooms_count' => $validated['rooms_count'],
+                'adults_count' => $validated['adults_count'],
+                'children_count' => $validated['children_count'] ?? 0,
+                'guests' => $validated['guests'],
+                'guest_name' => $validated['guest_name'],
+                'guest_email' => $validated['guest_email'],
+                'guest_phone' => $validated['guest_phone'],
+                'special_requests' => $validated['special_requests'],
+                'room_price_per_night' => $pricePerNight,
+                'subtotal' => $subtotal,
+                'tax_amount' => $taxAmount,
+                'service_charge' => $serviceCharge,
+                'total_amount' => $totalAmount,
+                'payment_method' => 'wallet',
+                'payment_status' => 'pending',
+                'status' => 'pending',
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
 
-        return redirect()->route('hotel-bookings.payment', $booking)
-            ->with('success', 'Booking created successfully. Please complete payment.');
+            // Create ServiceApplication for agency commission tracking
+            $hotel = Hotel::find($validated['hotel_id']);
+            $this->createServiceApplicationFor(
+                $booking,
+                'hotel-booking',
+                [
+                    'hotel_name' => $hotel->name,
+                    'hotel_city' => $hotel->city,
+                    'room_type' => $room->room_type,
+                    'check_in_date' => $validated['check_in_date'],
+                    'check_out_date' => $validated['check_out_date'],
+                    'nights' => $nights,
+                    'rooms_count' => $validated['rooms_count'],
+                    'adults_count' => $validated['adults_count'],
+                    'children_count' => $validated['children_count'] ?? 0,
+                    'total_amount' => $totalAmount,
+                ]
+            );
+
+            DB::commit();
+
+            return redirect()->route('hotel-bookings.payment', $booking)
+                ->with('success', 'Booking created successfully. Please complete payment.');
+                
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Hotel booking failed', ['error' => $e->getMessage()]);
+            return back()->with('error', 'Booking failed. Please try again.');
+        }
     }
 
     /**

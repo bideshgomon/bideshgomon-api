@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useForm } from '@inertiajs/vue3'
 import InputLabel from '@/Components/InputLabel.vue'
 import TextInput from '@/Components/TextInput.vue'
@@ -70,6 +70,13 @@ const form = useForm({
   // Liabilities
   liabilities_amount: props.userProfile?.liabilities_amount_bdt || '',
   liabilities_details: props.userProfile?.liabilities_details || '',
+})
+
+// Auto-calculate annual income from monthly income
+watch(() => form.monthly_income, (newValue) => {
+  if (newValue && !isNaN(newValue)) {
+    form.annual_income = (parseFloat(newValue) * 12).toFixed(2)
+  }
 })
 
 // Calculate net worth
@@ -191,13 +198,13 @@ const submitForm = () => {
           <div>
             <span class="text-gray-500 dark:text-gray-400">Monthly Income:</span>
             <p class="font-semibold text-gray-900 dark:text-white mt-0.5">
-              {{ showIncome ? `$${form.monthly_income}` : maskAmount(form.monthly_income) }}
+              {{ showIncome ? `৳ ${form.monthly_income}` : maskAmount(form.monthly_income) }}
             </p>
           </div>
           <div>
             <span class="text-gray-500 dark:text-gray-400">Annual Income:</span>
             <p class="font-semibold text-gray-900 dark:text-white mt-0.5">
-              {{ showIncome ? `$${form.annual_income}` : maskAmount(form.annual_income) }}
+              {{ showIncome ? `৳ ${form.annual_income}` : maskAmount(form.annual_income) }}
             </p>
           </div>
         </div>
@@ -227,7 +234,7 @@ const submitForm = () => {
           <div class="flex justify-between items-center py-2">
             <span class="text-gray-500 dark:text-gray-400">Current Balance:</span>
             <span class="font-semibold text-green-600 dark:text-green-400">
-              {{ showBankDetails ? `$${form.bank_balance}` : maskAmount(form.bank_balance) }}
+              {{ showBankDetails ? `৳ ${form.bank_balance}` : maskAmount(form.bank_balance) }}
             </span>
           </div>
         </div>
@@ -364,7 +371,7 @@ const submitForm = () => {
               </div>
 
               <div>
-                <InputLabel for="monthly_income" value="Monthly Income (USD)" />
+                <InputLabel for="monthly_income" value="Monthly Income (৳ BDT)" />
                 <TextInput
                   id="monthly_income"
                   v-model="form.monthly_income"
@@ -372,22 +379,26 @@ const submitForm = () => {
                   step="0.01"
                   class="mt-1 block w-full"
                   style="font-size: 16px"
-                  placeholder="5000.00"
+                  placeholder="50000.00"
                 />
                 <InputError class="mt-2" :message="form.errors.monthly_income" />
               </div>
 
               <div>
-                <InputLabel for="annual_income" value="Annual Income (USD)" />
-                <TextInput
-                  id="annual_income"
-                  v-model="form.annual_income"
-                  type="number"
-                  step="0.01"
-                  class="mt-1 block w-full"
-                  style="font-size: 16px"
-                  placeholder="60000.00"
-                />
+                <InputLabel for="annual_income" value="Annual Income (৳ BDT)" />
+                <div class="relative">
+                  <TextInput
+                    id="annual_income"
+                    v-model="form.annual_income"
+                    type="number"
+                    step="0.01"
+                    class="mt-1 block w-full"
+                    style="font-size: 16px"
+                    placeholder="600000.00"
+                    readonly
+                  />
+                  <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 dark:text-gray-400">Auto-calculated</span>
+                </div>
                 <InputError class="mt-2" :message="form.errors.annual_income" />
               </div>
             </div>
@@ -440,7 +451,7 @@ const submitForm = () => {
               </div>
 
               <div>
-                <InputLabel for="bank_balance" value="Current Balance (USD)" />
+                <InputLabel for="bank_balance" value="Current Balance (৳ BDT)" />
                 <TextInput
                   id="bank_balance"
                   v-model="form.bank_balance"
@@ -448,7 +459,7 @@ const submitForm = () => {
                   step="0.01"
                   class="mt-1 block w-full"
                   style="font-size: 16px"
-                  placeholder="25000.00"
+                  placeholder="2500000.00"
                 />
                 <InputError class="mt-2" :message="form.errors.bank_balance" />
               </div>

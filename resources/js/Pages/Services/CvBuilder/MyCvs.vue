@@ -23,15 +23,15 @@ const deleteCv = (id) => {
     <AuthenticatedLayout>
         <!-- Header with gradient -->
         <div class="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 text-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div class="flex items-center justify-between">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
-                        <h1 class="text-2xl font-bold">My CVs</h1>
-                        <p class="mt-1 text-blue-100">Manage and download your CVs</p>
+                        <h1 class="text-xl sm:text-2xl font-bold">My CVs</h1>
+                        <p class="mt-1 text-sm sm:text-base text-blue-100">Manage and download your CVs</p>
                     </div>
                     <Link 
                         :href="route('cv-builder.index')"
-                        class="flex items-center space-x-2 bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors font-medium"
+                        class="flex items-center justify-center space-x-2 bg-white text-blue-600 px-4 py-2.5 rounded-lg hover:bg-blue-50 transition-colors font-medium text-sm w-full sm:w-auto"
                     >
                         <PlusIcon class="h-5 w-5" />
                         <span>Create New CV</span>
@@ -39,18 +39,18 @@ const deleteCv = (id) => {
                 </div>
 
                 <!-- Quick Stats -->
-                <div class="mt-6 grid grid-cols-3 gap-4">
-                    <div class="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-3">
-                        <div class="text-2xl font-bold">{{ cvs.total }}</div>
-                        <div class="text-xs text-blue-100">Total CVs</div>
+                <div class="mt-6 grid grid-cols-3 gap-2 sm:gap-4">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg px-2 sm:px-4 py-3">
+                        <div class="text-xl sm:text-2xl font-bold">{{ cvs.total }}</div>
+                        <div class="text-[10px] sm:text-xs text-blue-100">Total CVs</div>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-3">
-                        <div class="text-2xl font-bold">{{ cvs.data.reduce((sum, cv) => sum + cv.view_count, 0) }}</div>
-                        <div class="text-xs text-blue-100">Total Views</div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg px-2 sm:px-4 py-3">
+                        <div class="text-xl sm:text-2xl font-bold">{{ cvs.data.reduce((sum, cv) => sum + cv.view_count, 0) }}</div>
+                        <div class="text-[10px] sm:text-xs text-blue-100">Total Views</div>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-3">
-                        <div class="text-2xl font-bold">{{ cvs.data.reduce((sum, cv) => sum + cv.download_count, 0) }}</div>
-                        <div class="text-xs text-blue-100">Downloads</div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg px-2 sm:px-4 py-3">
+                        <div class="text-xl sm:text-2xl font-bold">{{ cvs.data.reduce((sum, cv) => sum + cv.download_count, 0) }}</div>
+                        <div class="text-[10px] sm:text-xs text-blue-100">Downloads</div>
                     </div>
                 </div>
             </div>
@@ -62,10 +62,10 @@ const deleteCv = (id) => {
                 <div 
                     v-for="cv in cvs.data" 
                     :key="cv.id"
-                    class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all"
+                    class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-all"
                 >
-                    <div class="flex items-start justify-between">
-                        <div class="flex-1 min-w-0">
+                    <div class="flex flex-col lg:flex-row items-start gap-4">
+                        <div class="flex-1 min-w-0 w-full">
                             <div class="flex items-center space-x-3 mb-2">
                                 <div 
                                     class="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -76,13 +76,13 @@ const deleteCv = (id) => {
                                     <DocumentTextIcon class="h-6 w-6 text-white" />
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <h3 class="text-lg font-semibold text-gray-900 truncate">{{ cv.title }}</h3>
-                                    <p class="text-sm text-gray-500">{{ cv.cv_template.name }}</p>
+                                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 truncate">{{ cv.title }}</h3>
+                                    <p class="text-xs sm:text-sm text-gray-500">{{ cv.cv_template.name }}</p>
                                 </div>
                             </div>
 
                             <!-- Stats -->
-                            <div class="flex items-center space-x-6 text-sm text-gray-600 mt-3">
+                            <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs sm:text-sm text-gray-600 mt-3">
                                 <div class="flex items-center space-x-1">
                                     <EyeIcon class="h-4 w-4" />
                                     <span>{{ cv.view_count }} views</span>
@@ -97,7 +97,7 @@ const deleteCv = (id) => {
                             </div>
 
                             <!-- Data Summary -->
-                            <div class="flex items-center space-x-4 mt-3 text-xs text-gray-500">
+                            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 text-xs text-gray-500">
                                 <span v-if="cv.education && cv.education.length > 0">
                                     {{ cv.education.length }} Education {{ cv.education.length === 1 ? 'entry' : 'entries' }}
                                 </span>
@@ -114,33 +114,33 @@ const deleteCv = (id) => {
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="flex flex-col space-y-2 ml-4">
+                        <div class="grid grid-cols-2 lg:grid-cols-1 gap-2 w-full lg:w-auto lg:min-w-[140px]">
                             <Link 
                                 :href="route('cv-builder.preview', cv.id)"
-                                class="flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                                class="flex items-center justify-center space-x-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                             >
                                 <EyeIcon class="h-4 w-4" />
                                 <span>Preview</span>
                             </Link>
                             <Link 
                                 :href="route('cv-builder.edit', cv.id)"
-                                class="flex items-center justify-center space-x-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
+                                class="flex items-center justify-center space-x-2 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
                             >
                                 <PencilIcon class="h-4 w-4" />
                                 <span>Edit</span>
                             </Link>
-                            <Link 
+                            <a 
                                 :href="route('cv-builder.download', cv.id)"
-                                class="flex items-center justify-center space-x-2 px-4 py-2 border border-emerald-300 text-emerald-700 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors text-sm font-medium"
+                                class="flex items-center justify-center space-x-2 px-4 py-2.5 border border-emerald-300 text-emerald-700 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors text-sm font-medium"
                             >
                                 <ArrowDownTrayIcon class="h-4 w-4" />
                                 <span>Download</span>
-                            </Link>
+                            </a>
                             <Link 
                                 :href="route('cv-builder.destroy', cv.id)"
                                 method="delete"
                                 as="button"
-                                class="flex items-center justify-center space-x-2 px-4 py-2 border border-red-300 text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium"
+                                class="flex items-center justify-center space-x-2 px-4 py-2.5 border border-red-300 text-red-700 bg-red-50 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium"
                                 @click.prevent="deleteCv(cv.id)"
                             >
                                 <TrashIcon class="h-4 w-4" />
@@ -170,17 +170,17 @@ const deleteCv = (id) => {
                 <Link 
                     v-if="cvs.prev_page_url"
                     :href="cvs.prev_page_url"
-                    class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    class="px-3 sm:px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm"
                 >
                     Previous
                 </Link>
-                <div class="px-4 py-2 text-gray-700">
+                <div class="px-2 sm:px-4 py-2 text-gray-700 text-sm">
                     Page {{ cvs.current_page }} of {{ cvs.last_page }}
                 </div>
                 <Link 
                     v-if="cvs.next_page_url"
                     :href="cvs.next_page_url"
-                    class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    class="px-3 sm:px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm"
                 >
                     Next
                 </Link>

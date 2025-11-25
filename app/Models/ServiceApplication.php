@@ -4,45 +4,46 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ServiceApplication extends Model
 {
-    use SoftDeletes;
-
     protected $fillable = [
         'user_id',
         'service_module_id',
+        'agency_id',
+        'tourist_visa_id',
         'application_number',
         'status',
-        'form_data',
-        'documents',
-        'timeline',
-        'assigned_to',
-        'assigned_role',
-        'amount',
-        'payment_status',
-        'payment_method',
-        'payment_date',
-        'transaction_id',
-        'admin_notes',
-        'user_notes',
-        'priority',
-        'expected_completion_date',
-        'completed_at',
+        'application_data',
+        'notes',
+        'quoted_amount',
+        'service_fee',
+        'platform_commission',
+        'agency_earnings',
+        'processing_time_days',
+        'special_notes',
+        'rejection_reason',
         'submitted_at',
+        'assigned_at',
+        'quoted_at',
+        'accepted_at',
+        'completed_at',
+        'timeline',
         'reviewed_at',
     ];
 
     protected $casts = [
-        'form_data' => 'array',
-        'documents' => 'array',
+        'application_data' => 'array',
         'timeline' => 'array',
-        'amount' => 'decimal:2',
-        'payment_date' => 'datetime',
-        'expected_completion_date' => 'date',
-        'completed_at' => 'datetime',
+        'quoted_amount' => 'decimal:2',
+        'service_fee' => 'decimal:2',
+        'platform_commission' => 'decimal:2',
+        'agency_earnings' => 'decimal:2',
         'submitted_at' => 'datetime',
+        'assigned_at' => 'datetime',
+        'quoted_at' => 'datetime',
+        'accepted_at' => 'datetime',
+        'completed_at' => 'datetime',
         'reviewed_at' => 'datetime',
     ];
 
@@ -86,17 +87,33 @@ class ServiceApplication extends Model
     }
 
     /**
-     * Get the assigned user (agent/consultant)
+     * Get all quotes for this application
      */
-    public function assignedTo(): BelongsTo
+    public function quotes()
     {
-        return $this->belongsTo(User::class, 'assigned_to');
+        return $this->hasMany(ServiceQuote::class);
+    }
+
+    /**
+     * Get the assigned agency
+     */
+    public function assignedAgency(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'agency_id');
+    }
+
+    /**
+     * Get the linked tourist visa record (if applicable)
+     */
+    public function touristVisa(): BelongsTo
+    {
+        return $this->belongsTo(TouristVisa::class);
     }
 
     /**
      * Update status with timeline tracking
      */
-    public function updateStatus(string $newStatus, string $note = null): void
+    public function updateStatus(string $newStatus, ?string $note = null): void
     {
         $oldStatus = $this->status;
         $this->status = $newStatus;
@@ -108,7 +125,7 @@ class ServiceApplication extends Model
             'from' => $oldStatus,
             'note' => $note,
             'changed_at' => now()->toISOString(),
-            'changed_by' => auth()->id(),
+            'changed_by' => auth()->id(), // @phpstan-ignore-line
         ];
         $this->timeline = $timeline;
 

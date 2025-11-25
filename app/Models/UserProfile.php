@@ -20,7 +20,6 @@ class UserProfile extends Model
         // Profile fields
         'bio',
         'avatar',
-        'phone',
         'dob',
         'gender',
         'nationality',

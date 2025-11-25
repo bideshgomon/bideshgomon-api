@@ -1,0 +1,52 @@
+city_id,name,name_bn,iata_code,icao_code,latitude,longitude,is_international,is_active
+1,Hazrat Shahjalal International Airport,হযরত শাহজালাল আন্তর্জাতিক বিমানবন্দর,DAC,VGHS,23.8433,90.3978,1,1
+2,Shah Amanat International Airport,শাহ আমানত আন্তর্জাতিক বিমানবন্দর,CGP,VGEG,22.2496,91.8133,1,1
+3,Osmani International Airport,ওসমানী আন্তর্জাতিক বিমানবন্দর,ZYL,VGSY,24.9633,91.8667,1,1
+6,Cox's Bazar Airport,কক্সবাজার বিমানবন্দর,CXB,VGCB,21.4522,91.9639,0,1
+7,John F. Kennedy International Airport,জন এফ কেনেডি আন্তর্জাতিক বিমানবন্দর,JFK,KJFK,40.6413,-73.7781,1,1
+7,LaGuardia Airport,লাগার্ডিয়া বিমানবন্দর,LGA,KLGA,40.7769,-73.8740,0,1
+8,Los Angeles International Airport,লস এঞ্জেলেস আন্তর্জাতিক বিমানবন্দর,LAX,KLAX,33.9416,-118.4085,1,1
+9,Washington Dulles International Airport,ওয়াশিংটন ডুলেস আন্তর্জাতিক বিমানবন্দর,IAD,KIAD,38.9531,-77.4565,1,1
+10,O'Hare International Airport,ও'হেয়ার আন্তর্জাতিক বিমানবন্দর,ORD,KORD,41.9742,-87.9073,1,1
+11,San Francisco International Airport,সান ফ্রান্সিসকো আন্তর্জাতিক বিমানবন্দর,SFO,KSFO,37.6213,-122.3790,1,1
+12,London Heathrow Airport,লন্ডন হিথরো বিমানবন্দর,LHR,EGLL,51.4700,-0.4543,1,1
+12,London Gatwick Airport,লন্ডন গ্যাটউইক বিমানবন্দর,LGW,EGKK,51.1537,-0.1821,1,1
+13,Manchester Airport,ম্যানচেস্টার বিমানবন্দর,MAN,EGCC,53.3537,-2.2750,1,1
+15,Edinburgh Airport,এডিনবরা বিমানবন্দর,EDI,EGPH,55.9500,-3.3725,1,1
+16,Toronto Pearson International Airport,টরন্টো পিয়ারসন আন্তর্জাতিক বিমানবন্দর,YYZ,CYYZ,43.6777,-79.6248,1,1
+17,Vancouver International Airport,ভ্যাঙ্কুভার আন্তর্জাতিক বিমানবন্দর,YVR,CYVR,49.1939,-123.1844,1,1
+18,Ottawa Macdonald-Cartier International Airport,অটোয়া ম্যাকডোনাল্ড-কার্টিয়ার আন্তর্জাতিক বিমানবন্দর,YOW,CYOW,45.3225,-75.6692,1,1
+20,Sydney Kingsford Smith Airport,সিডনি কিংসফোর্ড স্মিথ বিমানবন্দর,SYD,YSSY,-33.9399,151.1753,1,1
+21,Melbourne Airport,মেলবোর্ন বিমানবন্দর,MEL,YMML,-37.6733,144.8433,1,1
+23,Brisbane Airport,ব্রিসবেন বিমানবন্দর,BNE,YBBN,-27.3942,153.1218,1,1
+24,Berlin Brandenburg Airport,বার্লিন ব্র্যান্ডেনবার্গ বিমানবন্দর,BER,EDDB,52.3667,13.5033,1,1
+25,Munich Airport,মিউনিখ বিমানবন্দর,MUC,EDDM,48.3538,11.7861,1,1
+26,Frankfurt Airport,ফ্র্যাঙ্কফুর্ট বিমানবন্দর,FRA,EDDF,50.0379,8.5622,1,1
+27,Charles de Gaulle Airport,শার্ল দ্য গল বিমানবন্দর,CDG,LFPG,49.0097,2.5479,1,1
+30,Indira Gandhi International Airport,ইন্দিরা গান্ধী আন্তর্জাতিক বিমানবন্দর,DEL,VIDP,28.5562,77.1000,1,1
+31,Chhatrapati Shivaji Maharaj International Airport,ছত্রপতি শিবাজী মহারাজ আন্তর্জাতিক বিমানবন্দর,BOM,VABB,19.0896,72.8656,1,1
+32,Kempegowda International Airport,কেম্পেগোড়া আন্তর্জাতিক বিমানবন্দর,BLR,VOBL,13.1979,77.7063,1,1
+34,Netaji Subhas Chandra Bose International Airport,নেতাজী সুভাষচন্দ্র বসু আন্তর্জাতিক বিমানবন্দর,CCU,VECC,22.6547,88.4467,1,1
+35,Beijing Capital International Airport,বেইজিং ক্যাপিটাল আন্তর্জাতিক বিমানবন্দর,PEK,ZBAA,40.0799,116.6031,1,1
+36,Shanghai Pudong International Airport,সাংহাই পুডং আন্তর্জাতিক বিমানবন্দর,PVG,ZSPD,31.1443,121.8083,1,1
+38,Tokyo Narita International Airport,টোকিও নারিতা আন্তর্জাতিক বিমানবন্দর,NRT,RJAA,35.7720,140.3929,1,1
+38,Tokyo Haneda Airport,টোকিও হানেদা বিমানবন্দর,HND,RJTT,35.5494,139.7798,1,1
+39,Kansai International Airport,কানসাই আন্তর্জাতিক বিমানবন্দর,KIX,RJBB,34.4347,135.2440,1,1
+41,Incheon International Airport,ইনচিওন আন্তর্জাতিক বিমানবন্দর,ICN,RKSI,37.4602,126.4407,1,1
+42,Singapore Changi Airport,সিঙ্গাপুর চাঙ্গি বিমানবন্দর,SIN,WSSS,1.3644,103.9915,1,1
+43,Kuala Lumpur International Airport,কুয়ালালামপুর আন্তর্জাতিক বিমানবন্দর,KUL,WMKK,2.7456,101.7099,1,1
+45,Suvarnabhumi Airport,সুবর্ণভূমি বিমানবন্দর,BKK,VTBS,13.6900,100.7501,1,1
+47,Dubai International Airport,দুবাই আন্তর্জাতিক বিমানবন্দর,DXB,OMDB,25.2532,55.3657,1,1
+48,Abu Dhabi International Airport,আবুধাবি আন্তর্জাতিক বিমানবন্দর,AUH,OMAA,24.4330,54.6511,1,1
+49,King Khalid International Airport,কিং খালিদ আন্তর্জাতিক বিমানবন্দর,RUH,OERK,24.9576,46.6988,1,1
+50,King Abdulaziz International Airport,কিং আবদুলআজিজ আন্তর্জাতিক বিমানবন্দর,JED,OEJN,21.6796,39.1565,1,1
+51,Hamad International Airport,হামাদ আন্তর্জাতিক বিমানবন্দর,DOH,OTHH,25.2731,51.6080,1,1
+52,Kuwait International Airport,কুয়েত আন্তর্জাতিক বিমানবন্দর,KWI,OKBK,29.2267,47.9689,1,1
+53,Leonardo da Vinci-Fiumicino Airport,লিওনার্দো দা ভিঞ্চি-ফিউমিচিনো বিমানবন্দর,FCO,LIRF,41.8003,12.2389,1,1
+54,Milan Malpensa Airport,মিলান মালপেনসা বিমানবন্দর,MXP,LIMC,45.6306,8.7281,1,1
+55,Adolfo Suárez Madrid-Barajas Airport,আদোলফো সুয়ারেজ মাদ্রিদ-বারাহাস বিমানবন্দর,MAD,LEMD,40.4983,-3.5676,1,1
+56,Barcelona-El Prat Airport,বার্সেলোনা-এল প্র্যাট বিমানবন্দর,BCN,LEBL,41.2974,2.0833,1,1
+57,Amsterdam Airport Schiphol,আমস্টারডাম এয়ারপোর্ট স্কিফোল,AMS,EHAM,52.3105,4.7683,1,1
+58,Stockholm Arlanda Airport,স্টকহোম আরল্যান্ডা বিমানবন্দর,ARN,ESSA,59.6519,17.9186,1,1
+59,Copenhagen Airport,কোপেনহেগেন বিমানবন্দর,CPH,EKCH,55.6180,12.6506,1,1
+60,Zurich Airport,জুরিখ বিমানবন্দর,ZRH,LSZH,47.4647,8.5492,1,1

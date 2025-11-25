@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AgencyCountryAssignment;
+use App\Models\Country;
+use App\Models\ServiceModule;
 use App\Models\VisaRequirement;
+use App\Models\VisaType;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -69,24 +72,27 @@ class AgencyAssignmentController extends Controller
             ->orderBy('name')
             ->get(['id', 'name', 'email']);
 
-        // Get available countries from visa requirements
-        $countries = VisaRequirement::select('country', 'country_code', 'visa_type')
-            ->distinct()
-            ->orderBy('country')
-            ->get()
-            ->groupBy('country')
-            ->map(function ($items, $country) {
-                return [
-                    'country' => $country,
-                    'country_code' => $items->first()->country_code,
-                    'visa_types' => $items->pluck('visa_type')->unique()->values()->toArray(),
-                ];
-            })
-            ->values();
+        // Get all service modules
+        $serviceModules = ServiceModule::where('is_active', true)
+            ->with('category')
+            ->orderBy('name')
+            ->get(['id', 'name', 'slug', 'service_category_id', 'service_type']);
+
+        // Get all active countries
+        $countries = Country::where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name', 'iso_code_2', 'iso_code_3']);
+
+        // Get all active visa types
+        $visaTypes = VisaType::where('is_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name', 'slug']);
 
         return Inertia::render('Admin/AgencyAssignments/Create', [
             'agencies' => $agencies,
+            'serviceModules' => $serviceModules,
             'countries' => $countries,
+            'visaTypes' => $visaTypes,
         ]);
     }
 
@@ -97,9 +103,13 @@ class AgencyAssignmentController extends Controller
     {
         $validated = $request->validate([
             'agency_id' => 'required|exists:users,id',
-            'country' => 'required|string|max:255',
-            'country_code' => 'required|string|max:3',
-            'visa_type' => 'required|string|max:255',
+            'service_module_id' => 'required|exists:service_modules,id',
+            'country_id' => 'nullable|exists:countries,id',
+            'country' => 'nullable|string|max:255',
+            'country_code' => 'nullable|string|max:3',
+            'visa_type_id' => 'nullable|exists:visa_types,id',
+            'visa_type' => 'nullable|string|max:255',
+            'assignment_scope' => 'required|in:global,country_specific,visa_specific',
             'platform_commission_rate' => 'required|numeric|min:0|max:100',
             'commission_type' => 'required|in:percentage,fixed',
             'fixed_commission_amount' => 'nullable|numeric|min:0',
@@ -109,13 +119,26 @@ class AgencyAssignmentController extends Controller
             'assignment_notes' => 'nullable|string',
         ]);
 
+        // Set country name and code if country_id provided
+        if ($validated['country_id']) {
+            $country = Country::find($validated['country_id']);
+            $validated['country'] = $country->name;
+            $validated['country_code'] = $country->iso_code_2;
+        }
+
+        // Set visa type name if visa_type_id provided
+        if ($validated['visa_type_id']) {
+            $visaType = VisaType::find($validated['visa_type_id']);
+            $validated['visa_type'] = $visaType->name;
+        }
+
         $validated['assigned_by'] = auth()->id();
         $validated['assigned_at'] = now();
 
         $assignment = AgencyCountryAssignment::create($validated);
 
-        // Update visa requirements for this country to assign to agency
-        if ($request->boolean('auto_assign_requirements', true)) {
+        // Auto-assign existing visa requirements if applicable
+        if ($request->boolean('auto_assign_requirements', true) && $validated['country'] && $validated['visa_type']) {
             VisaRequirement::where('country', $validated['country'])
                 ->where('visa_type', $validated['visa_type'])
                 ->whereNull('managed_by_agency')
@@ -129,7 +152,7 @@ class AgencyAssignmentController extends Controller
 
         return redirect()
             ->route('admin.agency-assignments.show', $assignment)
-            ->with('success', 'Agency assigned to country successfully!');
+            ->with('success', 'Agency assigned to service successfully!');
     }
 
     /**

@@ -31,28 +31,28 @@ const categoryIcons = {
     <AuthenticatedLayout>
         <!-- Header with gradient -->
         <div class="bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 text-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h1 class="text-2xl font-bold">CV Builder</h1>
-                        <p class="mt-1 text-emerald-100">Create professional CVs in minutes</p>
+                        <h1 class="text-xl sm:text-2xl font-bold">CV Builder</h1>
+                        <p class="mt-1 text-sm sm:text-base text-emerald-100">Create professional CVs in minutes</p>
                     </div>
-                    <DocumentTextIcon class="h-16 w-16 text-emerald-200 opacity-50" />
+                    <DocumentTextIcon class="h-12 w-12 sm:h-16 sm:w-16 text-emerald-200 opacity-50" />
                 </div>
 
                 <!-- Quick Stats -->
-                <div class="mt-6 grid grid-cols-3 gap-4">
-                    <div class="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-3">
-                        <div class="text-2xl font-bold">{{ Object.keys(templates).reduce((sum, key) => sum + templates[key].length, 0) }}</div>
-                        <div class="text-xs text-emerald-100">Templates</div>
+                <div class="mt-6 grid grid-cols-3 gap-2 sm:gap-4">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg px-2 sm:px-4 py-3">
+                        <div class="text-xl sm:text-2xl font-bold">{{ Object.keys(templates).reduce((sum, key) => sum + templates[key].length, 0) }}</div>
+                        <div class="text-[10px] sm:text-xs text-emerald-100">Templates</div>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-3">
-                        <div class="text-2xl font-bold">{{ userCvs.length }}</div>
-                        <div class="text-xs text-emerald-100">My CVs</div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg px-2 sm:px-4 py-3">
+                        <div class="text-xl sm:text-2xl font-bold">{{ userCvs.length }}</div>
+                        <div class="text-[10px] sm:text-xs text-emerald-100">My CVs</div>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-3">
-                        <div class="text-2xl font-bold">3</div>
-                        <div class="text-xs text-emerald-100">Free</div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-lg px-2 sm:px-4 py-3">
+                        <div class="text-xl sm:text-2xl font-bold">3</div>
+                        <div class="text-[10px] sm:text-xs text-emerald-100">Free</div>
                     </div>
                 </div>
             </div>
@@ -60,14 +60,14 @@ const categoryIcons = {
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
             <!-- My CVs Section (if any) -->
-            <div v-if="userCvs.length > 0" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div v-if="userCvs.length > 0" class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-semibold text-gray-900">My CVs</h2>
+                    <h2 class="text-base sm:text-lg font-semibold text-gray-900">My CVs</h2>
                     <Link :href="route('cv-builder.my-cvs')" class="text-sm text-emerald-600 hover:text-emerald-700">
                         View All →
                     </Link>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                     <Link 
                         v-for="cv in userCvs.slice(0, 3)" 
                         :key="cv.id"
@@ -89,9 +89,9 @@ const categoryIcons = {
             </div>
 
             <!-- Why Use CV Builder -->
-            <div class="bg-gradient-to-r from-blue-50 to-emerald-50 rounded-lg p-6 border border-blue-100">
-                <h2 class="text-lg font-semibold text-gray-900 mb-3">Why Use Our CV Builder?</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-gradient-to-r from-blue-50 to-emerald-50 rounded-lg p-4 sm:p-6 border border-blue-100">
+                <h2 class="text-base sm:text-lg font-semibold text-gray-900 mb-3">Why Use Our CV Builder?</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
                     <div class="flex items-start space-x-3">
                         <SparklesIcon class="h-5 w-5 text-emerald-600 flex-shrink-0 mt-0.5" />
                         <div>
@@ -118,13 +118,13 @@ const categoryIcons = {
 
             <!-- Templates by Category -->
             <div v-for="(categoryTemplates, category) in templates" :key="category" class="space-y-4">
-                <div class="flex items-center space-x-3">
-                    <span class="text-3xl">{{ categoryIcons[category] }}</span>
-                    <h2 class="text-xl font-bold text-gray-900">{{ categoryNames[category] }}</h2>
-                    <span class="text-sm text-gray-500">({{ categoryTemplates.length }} templates)</span>
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <span class="text-2xl sm:text-3xl">{{ categoryIcons[category] }}</span>
+                    <h2 class="text-lg sm:text-xl font-bold text-gray-900">{{ categoryNames[category] }}</h2>
+                    <span class="text-xs sm:text-sm text-gray-500">({{ categoryTemplates.length }} templates)</span>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     <div 
                         v-for="template in categoryTemplates" 
                         :key="template.id"
@@ -132,7 +132,7 @@ const categoryIcons = {
                     >
                         <!-- Template Preview (placeholder) -->
                         <div 
-                            class="h-48 relative overflow-hidden"
+                            class="h-40 sm:h-48 relative overflow-hidden"
                             :style="{ background: `linear-gradient(135deg, ${template.color_scheme.primary} 0%, ${template.color_scheme.secondary} 100%)` }"
                         >
                             <div class="absolute inset-0 flex items-center justify-center">
@@ -154,27 +154,27 @@ const categoryIcons = {
                         </div>
 
                         <!-- Template Info -->
-                        <div class="p-4">
-                            <h3 class="font-semibold text-gray-900 text-lg mb-2">{{ template.name }}</h3>
-                            <p class="text-sm text-gray-600 mb-4 line-clamp-2">{{ template.description }}</p>
+                        <div class="p-3 sm:p-4">
+                            <h3 class="font-semibold text-gray-900 text-base sm:text-lg mb-2">{{ template.name }}</h3>
+                            <p class="text-xs sm:text-sm text-gray-600 mb-4 line-clamp-2">{{ template.description }}</p>
 
                             <!-- Price -->
                             <div class="flex items-center justify-between mb-4">
                                 <div>
-                                    <span v-if="template.is_premium" class="text-2xl font-bold text-gray-900">
+                                    <span v-if="template.is_premium" class="text-xl sm:text-2xl font-bold text-gray-900">
                                         ৳{{ template.price }}
                                     </span>
-                                    <span v-else class="text-2xl font-bold text-emerald-600">
+                                    <span v-else class="text-xl sm:text-2xl font-bold text-emerald-600">
                                         FREE
                                     </span>
                                 </div>
-                                <div class="text-xs text-gray-500">
+                                <div class="text-[10px] sm:text-xs text-gray-500">
                                     {{ template.download_count }} downloads
                                 </div>
                             </div>
 
                             <!-- Actions -->
-                            <div class="flex space-x-2">
+                            <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                                 <Link
                                     :href="route('cv-builder.create', { template: template.id })"
                                     class="flex-1 bg-emerald-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-emerald-700 transition-colors text-center text-sm"

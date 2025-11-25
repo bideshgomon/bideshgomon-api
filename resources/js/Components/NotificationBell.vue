@@ -17,6 +17,11 @@ const fetchNotifications = async () => {
   if (!isAuthenticated.value) {return}
 
   try {
+    // Check if route exists
+    if (!route().has('api.notifications.recent')) {
+      return
+    }
+    
     // Get CSRF cookie first for session-based auth
     await axios.get('/sanctum/csrf-cookie').catch(() => {})
     
@@ -36,6 +41,11 @@ const fetchUnreadCount = async () => {
   if (!isAuthenticated.value) {return}
 
   try {
+    // Check if route exists
+    if (!route().has('api.notifications.unread-count')) {
+      return
+    }
+    
     // Get CSRF cookie first for session-based auth
     await axios.get('/sanctum/csrf-cookie').catch(() => {})
     
@@ -54,6 +64,11 @@ const fetchUnreadCount = async () => {
 }
 
 const markAsRead = async (id) => {
+  // Check if route exists
+  if (!route().has('api.notifications.mark-read')) {
+    return
+  }
+  
   try {
     // Initialize Sanctum CSRF cookie for SPA authentication
     await axios.get('/sanctum/csrf-cookie')
@@ -66,6 +81,11 @@ const markAsRead = async (id) => {
 }
 
 const markAllAsRead = async () => {
+  // Check if route exists
+  if (!route().has('api.notifications.mark-all-read')) {
+    return
+  }
+  
   loading.value = true
   try {
     // Initialize Sanctum CSRF cookie for SPA authentication

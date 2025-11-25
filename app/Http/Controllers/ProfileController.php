@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -95,7 +96,7 @@ class ProfileController extends Controller
         // Ensure we have fresh profile data and log for debugging
         if ($user->profile) {
             $user->profile->refresh();
-            \Log::info('Profile edit returning', [
+            Log::info('Profile edit returning', [
                 'user_id' => $user->id,
                 'profile_names' => $user->profile->only(['first_name','middle_name','last_name','name_as_per_passport'])
             ]);
@@ -117,6 +118,10 @@ class ProfileController extends Controller
             'travelHistory' => $user->travelHistory,
             'phoneNumbers' => $user->phoneNumbers,
             'divisions' => get_bd_divisions(),
+            'countries' => \App\Models\Country::where('is_active', true)->orderBy('name')->get(['id', 'name', 'nationality']),
+            'degrees' => \App\Models\Degree::where('is_active', true)->orderBy('name')->get(['id', 'name']),
+            'serviceCategories' => \App\Models\ServiceCategory::where('is_active', true)->orderBy('name')->get(['id', 'name', 'icon']),
+            'currencies' => \App\Models\Currency::where('is_active', true)->orderBy('code')->get(['id', 'code', 'name', 'symbol']),
             'profileCompletion' => $user->getProfileCompletionDetails(),
             'section' => $request->query('section'), // Pass section from query parameter
         ]);
@@ -125,7 +130,7 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        \Log::info('Profile update started', [
+        Log::info('Profile update started', [
             'user_id' => $request->user()->id,
             'input' => $request->all()
         ]);
@@ -148,7 +153,7 @@ class ProfileController extends Controller
         
         $profile = $request->user()->profile;
         
-        \Log::info('Profile before update', ['profile' => $profile->toArray()]);
+        Log::info('Profile before update', ['profile' => $profile->toArray()]);
         
         $profile->update([
             'first_name' => $request->input('first_name'),
@@ -157,7 +162,7 @@ class ProfileController extends Controller
             'name_as_per_passport' => $request->input('name_as_per_passport'),
         ]);
 
-        \Log::info('Profile after update', ['profile' => $profile->fresh()->toArray()]);
+        Log::info('Profile after update', ['profile' => $profile->fresh()->toArray()]);
 
         // Also update the user's name field for backward compatibility
         $fullName = trim(implode(' ', array_filter([
@@ -170,7 +175,7 @@ class ProfileController extends Controller
             $request->user()->update(['name' => $fullName]);
         }
 
-        \Log::info('Profile update completed successfully');
+        Log::info('Profile update completed successfully');
 
         return Redirect::route('profile.edit', ['section' => 'basic'])
             ->with('status', 'profile-updated');
@@ -183,7 +188,6 @@ class ProfileController extends Controller
     {
         $validated = $request->validate([
             'bio' => ['nullable', 'string', 'max:500'],
-            'phone' => ['nullable', 'string', 'max:20'],
             'dob' => ['nullable', 'date', 'before:today'],
             'gender' => ['nullable', 'in:male,female,other'],
             'nationality' => ['nullable', 'string', 'max:100'],

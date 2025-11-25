@@ -10,9 +10,13 @@ class AgencyCountryAssignment extends Model
 {
     protected $fillable = [
         'agency_id',
+        'service_module_id',
         'country',
         'country_code',
+        'country_id',
         'visa_type',
+        'visa_type_id',
+        'assignment_scope',
         'platform_commission_rate',
         'commission_type',
         'fixed_commission_amount',
@@ -48,6 +52,30 @@ class AgencyCountryAssignment extends Model
     public function agency(): BelongsTo
     {
         return $this->belongsTo(User::class, 'agency_id');
+    }
+
+    /**
+     * Get the service module this assignment is for.
+     */
+    public function serviceModule(): BelongsTo
+    {
+        return $this->belongsTo(ServiceModule::class);
+    }
+
+    /**
+     * Get the country (new FK relationship).
+     */
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class);
+    }
+
+    /**
+     * Get the visa type (new FK relationship).
+     */
+    public function visaType(): BelongsTo
+    {
+        return $this->belongsTo(VisaType::class);
     }
 
     /**

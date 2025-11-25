@@ -53,7 +53,7 @@ const editingLanguage = ref(null)
 
 const form = useForm({
   id: null, // For editing
-  language_id: '',
+  language_id: null,
   proficiency_level: '',
   language_test_id: null, // NEW: Test type (IELTS, TOEFL, etc.)
   overall_score: null, // NEW: Overall band/score
@@ -247,7 +247,7 @@ const formatDate = dateString => {
           @click="openEditModal(null)"
           class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
         >
-          <PlusIcon class="h-5 w-5" />
+          <PlusIcon class="h-6 w-6 md:h-7 md:w-7" />
           <span>ADD LANGUAGE</span>
         </button>
       </div>
@@ -258,7 +258,7 @@ const formatDate = dateString => {
       v-if="!userLanguages || userLanguages.length === 0"
       class="text-center py-12 bg-gray-50 dark:bg-gray-800/50 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700"
     >
-      <GlobeAltIcon class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-600" />
+      <GlobeAltIcon class="mx-auto h-16 w-16 md:h-20 md:w-20 text-gray-400 dark:text-gray-600" />
       <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">
         No languages added yet
       </h3>
@@ -266,8 +266,8 @@ const formatDate = dateString => {
         Start adding languages you speak
       </p>
       <div class="mt-6">
-        <SecondaryButton @click="openEditModal(null)">
-          <PlusIcon class="w-4 h-4 mr-2" />
+        <SecondaryButton @click="openEditModal(null)" class="w-full sm:w-auto py-3 px-6 text-base touch-manipulation justify-center" style="min-height: 48px">
+          <PlusIcon class="h-5 w-5 md:h-6 md:w-6 mr-2" />
           Add Language
         </SecondaryButton>
       </div>
@@ -285,7 +285,7 @@ const formatDate = dateString => {
           <div class="flex items-start justify-between gap-3 mb-3">
             <div class="flex-1 min-w-0">
               <div class="flex items-center gap-2 mb-1">
-                <GlobeAltIcon class="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                <GlobeAltIcon class="w-6 h-6 md:w-7 md:h-7 text-blue-600 dark:text-blue-400 flex-shrink-0" />
                 <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white truncate">
                   {{ getLanguageName(lang.language_id) }}
                 </h3>
@@ -469,8 +469,8 @@ const formatDate = dateString => {
                 class="mt-1 block w-full border-gray-300 dark:border-gray-600 focus:border-cyan-500 focus:ring-cyan-500 rounded-lg dark:bg-gray-700 dark:text-white"
               >
                 <option :value="null">No test taken / Not applicable</option>
-                <optgroup v-if="languageTests && languageTests.length > 0" label="Available Tests">
-                  <option v-for="test in languageTests" :key="test.id" :value="test.id">
+                <optgroup v-if="languageTestsList && languageTestsList.length > 0" label="Available Tests">
+                  <option v-for="test in languageTestsList" :key="test.id" :value="test.id">
                     {{ test.name }}
                   </option>
                 </optgroup>
@@ -567,7 +567,7 @@ const formatDate = dateString => {
             <div v-if="form.language_test_id" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <InputLabel for="test_date" value="Test Date" />
-                <TextInput type="date" id="test_date" v-model="form.test_date" class="mt-1 block w-full" />
+                <TextInput type="date" id="test_date" v-model="form.test_date" class="mt-1 block w-full py-3 px-4 text-base rounded-lg touch-manipulation" />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                   When did you take the test?
                 </p>
@@ -576,7 +576,7 @@ const formatDate = dateString => {
 
               <div>
                 <InputLabel for="expiry_date" value="Expiry Date" />
-                <TextInput type="date" id="expiry_date" v-model="form.expiry_date" class="mt-1 block w-full" />
+                <TextInput type="date" id="expiry_date" v-model="form.expiry_date" class="mt-1 block w-full py-3 px-4 text-base rounded-lg touch-manipulation" />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                   When does the certificate expire?
                 </p>
@@ -665,7 +665,7 @@ const formatDate = dateString => {
       </p>
 
       <div class="flex justify-end gap-4">
-        <SecondaryButton type="button" @click="closeDeleteModal"> Cancel </SecondaryButton>
+        <SecondaryButton type="button" @click="closeDeleteModal" class="w-full sm:w-auto py-3 px-6 text-base touch-manipulation justify-center" style="min-height: 48px"> Cancel </SecondaryButton>
         <DangerButton @click="deleteLanguage"> Delete Entry </DangerButton>
       </div>
     </div>

@@ -35,7 +35,7 @@ const sections = [
         name: 'Basic Information',
         icon: UserCircleIcon,
         color: 'blue',
-        fields: ['first_name', 'last_name', 'phone', 'dob', 'gender'],
+        fields: ['first_name', 'last_name', 'dob', 'gender'],
         weight: 15
     },
     {

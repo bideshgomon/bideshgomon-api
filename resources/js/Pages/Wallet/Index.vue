@@ -15,7 +15,7 @@ import {
 
 const props = defineProps({
     wallet: Object,
-    balance: Number,
+    balance: [Number, String], // Can be Number or String from database
     formattedBalance: String,
     recentTransactions: Array,
 });
@@ -223,11 +223,12 @@ const submitWithdraw = () => {
         <!-- Add Funds Modal -->
         <div
             v-if="showAddFunds"
-            class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end sm:items-center justify-center p-4"
+            class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
             @click.self="showAddFunds = false"
         >
-            <div class="bg-white rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md p-6 animate-slide-up">
-                <h3 class="text-2xl font-bold text-gray-900 mb-6">Add Funds</h3>
+            <div class="bg-white rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md max-h-[85vh] sm:max-h-[90vh] overflow-y-auto animate-slide-up">
+                <div class="p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Add Funds</h3>
 
                 <form @submit.prevent="submitAddFunds" class="space-y-4">
                     <!-- Amount Input -->
@@ -258,34 +259,36 @@ const submitWithdraw = () => {
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="flex space-x-3 pt-4">
+                    <div class="flex space-x-3 pt-4 pb-2">
                         <button
                             type="button"
                             @click="showAddFunds = false"
-                            class="flex-1 py-4 bg-gray-100 text-gray-700 rounded-2xl font-semibold hover:bg-gray-200 transition-colors min-h-[48px]"
+                            class="flex-1 py-4 bg-gray-100 text-gray-700 rounded-2xl font-semibold hover:bg-gray-200 transition-colors min-h-[48px] touch-manipulation"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             :disabled="addFundsForm.processing"
-                            class="flex-1 py-4 bg-emerald-600 text-white rounded-2xl font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50 min-h-[48px]"
+                            class="flex-1 py-4 bg-emerald-600 text-white rounded-2xl font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50 min-h-[48px] touch-manipulation"
                         >
                             {{ addFundsForm.processing ? 'Processing...' : 'Continue' }}
                         </button>
                     </div>
                 </form>
+                </div>
             </div>
         </div>
 
         <!-- Withdraw Modal -->
         <div
             v-if="showWithdraw"
-            class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end sm:items-center justify-center p-4"
+            class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
             @click.self="showWithdraw = false"
         >
-            <div class="bg-white rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md p-6 animate-slide-up">
-                <h3 class="text-2xl font-bold text-gray-900 mb-6">Withdraw Funds</h3>
+            <div class="bg-white rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md max-h-[85vh] sm:max-h-[90vh] overflow-y-auto animate-slide-up">
+                <div class="p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Withdraw Funds</h3>
 
                 <form @submit.prevent="submitWithdraw" class="space-y-4">
                     <!-- Amount Input -->
@@ -329,23 +332,24 @@ const submitWithdraw = () => {
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="flex space-x-3 pt-4">
+                    <div class="flex space-x-3 pt-4 pb-2">
                         <button
                             type="button"
                             @click="showWithdraw = false"
-                            class="flex-1 py-4 bg-gray-100 text-gray-700 rounded-2xl font-semibold hover:bg-gray-200 transition-colors min-h-[48px]"
+                            class="flex-1 py-4 bg-gray-100 text-gray-700 rounded-2xl font-semibold hover:bg-gray-200 transition-colors min-h-[48px] touch-manipulation"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             :disabled="withdrawForm.processing"
-                            class="flex-1 py-4 bg-emerald-600 text-white rounded-2xl font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50 min-h-[48px]"
+                            class="flex-1 py-4 bg-emerald-600 text-white rounded-2xl font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50 min-h-[48px] touch-manipulation"
                         >
                             {{ withdrawForm.processing ? 'Processing...' : 'Withdraw' }}
                         </button>
                     </div>
                 </form>
+                </div>
             </div>
         </div>
     </AuthenticatedLayout>
@@ -365,5 +369,26 @@ const submitWithdraw = () => {
 
 .animate-slide-up {
     animation: slide-up 0.3s ease-out;
+}
+
+/* Ensure modals have proper spacing on mobile with notches */
+@media (max-width: 640px) {
+    /* Add extra bottom padding for mobile devices */
+    .max-h-\[85vh\] {
+        max-height: calc(85vh - env(safe-area-inset-bottom, 0px));
+    }
+}
+
+/* For very short screens, reduce modal height further */
+@media (max-height: 700px) {
+    .max-h-\[85vh\] {
+        max-height: 80vh;
+    }
+}
+
+@media (max-height: 600px) {
+    .max-h-\[85vh\] {
+        max-height: 75vh;
+    }
 }
 </style>

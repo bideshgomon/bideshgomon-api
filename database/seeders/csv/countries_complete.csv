@@ -1,0 +1,197 @@
+name,name_bn,iso_code_2,iso_code_3,phone_code,currency_code,flag_emoji,region,nationality,is_active
+Bangladesh,বাংলাদেশ,BD,BGD,+880,BDT,🇧🇩,Asia,Bangladeshi,1
+United States,যুক্তরাষ্ট্র,US,USA,+1,USD,🇺🇸,Americas,American,1
+United Kingdom,যুক্তরাজ্য,GB,GBR,+44,GBP,🇬🇧,Europe,British,1
+Canada,কানাডা,CA,CAN,+1,CAD,🇨🇦,Americas,Canadian,1
+Australia,অস্ট্রেলিয়া,AU,AUS,+61,AUD,🇦🇺,Oceania,Australian,1
+Germany,জার্মানি,DE,DEU,+49,EUR,🇩🇪,Europe,German,1
+France,ফ্রান্স,FR,FRA,+33,EUR,🇫🇷,Europe,French,1
+India,ভারত,IN,IND,+91,INR,🇮🇳,Asia,Indian,1
+China,চীন,CN,CHN,+86,CNY,🇨🇳,Asia,Chinese,1
+Japan,জাপান,JP,JPN,+81,JPY,🇯🇵,Asia,Japanese,1
+South Korea,দক্ষিণ কোরিয়া,KR,KOR,+82,KRW,🇰🇷,Asia,South Korean,1
+Singapore,সিঙ্গাপুর,SG,SGP,+65,SGD,🇸🇬,Asia,Singaporean,1
+Malaysia,মালয়েশিয়া,MY,MYS,+60,MYR,🇲🇾,Asia,Malaysian,1
+Thailand,থাইল্যান্ড,TH,THA,+66,THB,🇹🇭,Asia,Thai,1
+United Arab Emirates,সংযুক্ত আরব আমিরাত,AE,ARE,+971,AED,🇦🇪,Asia,Emirati,1
+Saudi Arabia,সৌদি আরব,SA,SAU,+966,SAR,🇸🇦,Asia,Saudi,1
+Qatar,কাতার,QA,QAT,+974,QAR,🇶🇦,Asia,Qatari,1
+Kuwait,কুয়েত,KW,KWT,+965,KWD,🇰🇼,Asia,Kuwaiti,1
+Oman,ওমান,OM,OMN,+968,OMR,🇴🇲,Asia,Omani,1
+Bahrain,বাহরাইন,BH,BHR,+973,BHD,🇧🇭,Asia,Bahraini,1
+Turkey,তুরস্ক,TR,TUR,+90,TRY,🇹🇷,Asia,Turkish,1
+Italy,ইতালি,IT,ITA,+39,EUR,🇮🇹,Europe,Italian,1
+Spain,স্পেন,ES,ESP,+34,EUR,🇪🇸,Europe,Spanish,1
+Netherlands,নেদারল্যান্ড,NL,NLD,+31,EUR,🇳🇱,Europe,Dutch,1
+Sweden,সুইডেন,SE,SWE,+46,SEK,🇸🇪,Europe,Swedish,1
+Norway,নরওয়ে,NO,NOR,+47,NOK,🇳🇴,Europe,Norwegian,1
+Denmark,ডেনমার্ক,DK,DNK,+45,DKK,🇩🇰,Europe,Danish,1
+Finland,ফিনল্যান্ড,FI,FIN,+358,EUR,🇫🇮,Europe,Finnish,1
+Switzerland,স্বিটজারল্যান্ড,CH,CHE,+41,CHF,🇨🇭,Europe,Swiss,1
+Austria,অস্ট্রিয়া,AT,AUT,+43,EUR,🇦🇹,Europe,Austrian,1
+Belgium,বেলজিয়াম,BE,BEL,+32,EUR,🇧🇪,Europe,Belgian,1
+Poland,পোল্যান্ড,PL,POL,+48,PLN,🇵🇱,Europe,Polish,1
+Portugal,পর্তুগাল,PT,PRT,+351,EUR,🇵🇹,Europe,Portuguese,1
+Ireland,আয়ারল্যান্ড,IE,IRL,+353,EUR,🇮🇪,Europe,Irish,1
+New Zealand,নিউজিল্যান্ড,NZ,NZL,+64,NZD,🇳🇿,Oceania,New Zealander,1
+South Africa,দক্ষিণ আফ্রিকা,ZA,ZAF,+27,ZAR,🇿🇦,Africa,South African,1
+Brazil,ব্রাজিল,BR,BRA,+55,BRL,🇧🇷,Americas,Brazilian,1
+Mexico,মেক্সিকো,MX,MEX,+52,MXN,🇲🇽,Americas,Mexican,1
+Argentina,আর্জেন্টিনা,AR,ARG,+54,ARS,🇦🇷,Americas,Argentinian,1
+Chile,চিলি,CL,CHL,+56,CLP,🇨🇱,Americas,Chilean,1
+Russia,রাশিয়া,RU,RUS,+7,RUB,🇷🇺,Europe,Russian,1
+Pakistan,পাকিস্তান,PK,PAK,+92,PKR,🇵🇰,Asia,Pakistani,1
+Nepal,নেপাল,NP,NPL,+977,NPR,🇳🇵,Asia,Nepali,1
+Sri Lanka,শ্রীলংকা,LK,LKA,+94,LKR,🇱🇰,Asia,Sri Lankan,1
+Maldives,মালদ্বীপ,MV,MDV,+960,MVR,🇲🇻,Asia,Maldivian,1
+Indonesia,ইন্দোনেশিয়া,ID,IDN,+62,IDR,🇮🇩,Asia,Indonesian,1
+Philippines,ফিলিপাইন,PH,PHL,+63,PHP,🇵🇭,Asia,Filipino,1
+Vietnam,ভিয়েতনাম,VN,VNM,+84,VND,🇻🇳,Asia,Vietnamese,1
+Hong Kong,হংকং,HK,HKG,+852,HKD,🇭🇰,Asia,Hong Konger,1
+Taiwan,তাইওয়ান,TW,TWN,+886,TWD,🇹🇼,Asia,Taiwanese,1
+Israel,ইসরায়েল,IL,ISR,+972,ILS,🇮🇱,Asia,Israeli,1
+Egypt,মিশর,EG,EGY,+20,EGP,🇪🇬,Africa,Egyptian,1
+Morocco,মরক্কো,MA,MAR,+212,MAD,🇲🇦,Africa,Moroccan,1
+Kenya,কেনিয়া,KE,KEN,+254,KES,🇰🇪,Africa,Kenyan,1
+Nigeria,নাইজেরিয়া,NG,NGA,+234,NGN,🇳🇬,Africa,Nigerian,1
+Ghana,ঘানা,GH,GHA,+233,GHS,🇬🇭,Africa,Ghanaian,1
+Czech Republic,চেক প্রজাতন্ত্র,CZ,CZE,+420,CZK,🇨🇿,Europe,Czech,1
+Greece,গ্রীস,GR,GRC,+30,EUR,🇬🇷,Europe,Greek,1
+Hungary,হাঙ্গেরি,HU,HUN,+36,HUF,🇭🇺,Europe,Hungarian,1
+Romania,রোমানিয়া,RO,ROU,+40,RON,🇷🇴,Europe,Romanian,1
+Ukraine,ইউক্রেন,UA,UKR,+380,UAH,🇺🇦,Europe,Ukrainian,1
+Croatia,ক্রোয়েশিয়া,HR,HRV,+385,HRK,🇭🇷,Europe,Croatian,1
+Bulgaria,বুলগেরিয়া,BG,BGR,+359,BGN,🇧🇬,Europe,Bulgarian,1
+Slovakia,স্লোভাকিয়া,SK,SVK,+421,EUR,🇸🇰,Europe,Slovak,1
+Lithuania,লিথুয়ানিয়া,LT,LTU,+370,EUR,🇱🇹,Europe,Lithuanian,1
+Latvia,লাটভিয়া,LV,LVA,+371,EUR,🇱🇻,Europe,Latvian,1
+Estonia,এস্তোনিয়া,EE,EST,+372,EUR,🇪🇪,Europe,Estonian,1
+Serbia,সার্বিয়া,RS,SRB,+381,RSD,🇷🇸,Europe,Serbian,1
+Slovenia,স্লোভেনিয়া,SI,SVN,+386,EUR,🇸🇮,Europe,Slovenian,1
+Iceland,আইসল্যান্ড,IS,ISL,+354,ISK,🇮🇸,Europe,Icelandic,1
+Luxembourg,লুক্সেমবার্গ,LU,LUX,+352,EUR,🇱🇺,Europe,Luxembourgish,1
+Malta,মাল্টা,MT,MLT,+356,EUR,🇲🇹,Europe,Maltese,1
+Cyprus,সাইপ্রাস,CY,CYP,+357,EUR,🇨🇾,Europe,Cypriot,1
+Jordan,জর্ডান,JO,JOR,+962,JOD,🇯🇴,Asia,Jordanian,1
+Lebanon,লেবানন,LB,LBN,+961,LBP,🇱🇧,Asia,Lebanese,1
+Iraq,ইরাক,IQ,IRQ,+964,IQD,🇮🇶,Asia,Iraqi,1
+Iran,ইরান,IR,IRN,+98,IRR,🇮🇷,Asia,Iranian,1
+Afghanistan,আফগানিস্তান,AF,AFG,+93,AFN,🇦🇫,Asia,Afghan,1
+Kazakhstan,কাজাখস্তান,KZ,KAZ,+7,KZT,🇰🇿,Asia,Kazakhstani,1
+Uzbekistan,উজবেকিস্তান,UZ,UZB,+998,UZS,🇺🇿,Asia,Uzbek,1
+Kyrgyzstan,কিরগিজস্তান,KG,KGZ,+996,KGS,🇰🇬,Asia,Kyrgyz,1
+Tajikistan,তাজিকিস্তান,TJ,TJK,+992,TJS,🇹🇯,Asia,Tajik,1
+Turkmenistan,তুর্কমেনিস্তান,TM,TKM,+993,TMT,🇹🇲,Asia,Turkmen,1
+Azerbaijan,আজারবাইজান,AZ,AZE,+994,AZN,🇦🇿,Asia,Azerbaijani,1
+Georgia,জর্জিয়া,GE,GEO,+995,GEL,🇬🇪,Asia,Georgian,1
+Armenia,আর্মেনিয়া,AM,ARM,+374,AMD,🇦🇲,Asia,Armenian,1
+Mongolia,মঙ্গোলিয়া,MN,MNG,+976,MNT,🇲🇳,Asia,Mongolian,1
+North Korea,উত্তর কোরিয়া,KP,PRK,+850,KPW,🇰🇵,Asia,North Korean,1
+Brunei,ব্রুনাই,BN,BRN,+673,BND,🇧🇳,Asia,Bruneian,1
+Cambodia,কম্বোডিয়া,KH,KHM,+855,KHR,🇰🇭,Asia,Cambodian,1
+Laos,লাওস,LA,LAO,+856,LAK,🇱🇦,Asia,Laotian,1
+Myanmar,মিয়ানমার,MM,MMR,+95,MMK,🇲🇲,Asia,Burmese,1
+Bhutan,ভুটান,BT,BTN,+975,BTN,🇧🇹,Asia,Bhutanese,1
+Timor-Leste,তিমুর-লেস্তে,TL,TLS,+670,USD,🇹🇱,Asia,Timorese,1
+Syria,সিরিয়া,SY,SYR,+963,SYP,🇸🇾,Asia,Syrian,1
+Yemen,ইয়েমেন,YE,YEM,+967,YER,🇾🇪,Asia,Yemeni,1
+Palestine,প্যালেস্টাইন,PS,PSE,+970,ILS,🇵🇸,Asia,Palestinian,1
+Colombia,কলম্বিয়া,CO,COL,+57,COP,🇨🇴,Americas,Colombian,1
+Peru,পেরু,PE,PER,+51,PEN,🇵🇪,Americas,Peruvian,1
+Venezuela,ভেনেজুয়েলা,VE,VEN,+58,VES,🇻🇪,Americas,Venezuelan,1
+Ecuador,ইকুয়েডর,EC,ECU,+593,USD,🇪🇨,Americas,Ecuadorian,1
+Bolivia,বলিভিয়া,BO,BOL,+591,BOB,🇧🇴,Americas,Bolivian,1
+Paraguay,প্যারাগুয়ে,PY,PRY,+595,PYG,🇵🇾,Americas,Paraguayan,1
+Uruguay,উরুগুয়ে,UY,URY,+598,UYU,🇺🇾,Americas,Uruguayan,1
+Costa Rica,কোস্টা রিকা,CR,CRI,+506,CRC,🇨🇷,Americas,Costa Rican,1
+Panama,পানামা,PA,PAN,+507,PAB,🇵🇦,Americas,Panamanian,1
+Cuba,কিউবা,CU,CUB,+53,CUP,🇨🇺,Americas,Cuban,1
+Dominican Republic,ডোমিনিকান রিপাবলিক,DO,DOM,+1-809,DOP,🇩🇴,Americas,Dominican,1
+Guatemala,গুয়াতেমালা,GT,GTM,+502,GTQ,🇬🇹,Americas,Guatemalan,1
+Honduras,হন্ডুরাস,HN,HND,+504,HNL,🇭🇳,Americas,Honduran,1
+Nicaragua,নিকারাগুয়া,NI,NIC,+505,NIO,🇳🇮,Americas,Nicaraguan,1
+El Salvador,এল সালভাদর,SV,SLV,+503,USD,🇸🇻,Americas,Salvadoran,1
+Jamaica,জ্যামাইকা,JM,JAM,+1-876,JMD,🇯🇲,Americas,Jamaican,1
+Trinidad and Tobago,ত্রিনিদাদ ও টোবাগো,TT,TTO,+1-868,TTD,🇹🇹,Americas,Trinidadian,1
+Barbados,বার্বাডোস,BB,BRB,+1-246,BBD,🇧🇧,Americas,Barbadian,1
+Bahamas,বাহামা,BS,BHS,+1-242,BSD,🇧🇸,Americas,Bahamian,1
+Belize,বেলিজ,BZ,BLZ,+501,BZD,🇧🇿,Americas,Belizean,1
+Guyana,গায়ানা,GY,GUY,+592,GYD,🇬🇾,Americas,Guyanese,1
+Suriname,সুরিনাম,SR,SUR,+597,SRD,🇸🇷,Americas,Surinamese,1
+Ethiopia,ইথিওপিয়া,ET,ETH,+251,ETB,🇪🇹,Africa,Ethiopian,1
+Tanzania,তানজানিয়া,TZ,TZA,+255,TZS,🇹🇿,Africa,Tanzanian,1
+Uganda,উগান্ডা,UG,UGA,+256,UGX,🇺🇬,Africa,Ugandan,1
+Algeria,আলজেরিয়া,DZ,DZA,+213,DZD,🇩🇿,Africa,Algerian,1
+Tunisia,তিউনিসিয়া,TN,TUN,+216,TND,🇹🇳,Africa,Tunisian,1
+Libya,লিবিয়া,LY,LBY,+218,LYD,🇱🇾,Africa,Libyan,1
+Sudan,সুদান,SD,SDN,+249,SDG,🇸🇩,Africa,Sudanese,1
+Somalia,সোমালিয়া,SO,SOM,+252,SOS,🇸🇴,Africa,Somali,1
+Rwanda,রুয়ান্ডা,RW,RWA,+250,RWF,🇷🇼,Africa,Rwandan,1
+Burundi,বুরুন্ডি,BI,BDI,+257,BIF,🇧🇮,Africa,Burundian,1
+Cameroon,ক্যামেরুন,CM,CMR,+237,XAF,🇨🇲,Africa,Cameroonian,1
+Senegal,সেনেগাল,SN,SEN,+221,XOF,🇸🇳,Africa,Senegalese,1
+Ivory Coast,আইভরি কোস্ট,CI,CIV,+225,XOF,🇨🇮,Africa,Ivorian,1
+Zimbabwe,জিম্বাবুয়ে,ZW,ZWE,+263,ZWL,🇿🇼,Africa,Zimbabwean,1
+Zambia,জাম্বিয়া,ZM,ZMB,+260,ZMW,🇿🇲,Africa,Zambian,1
+Mozambique,মোজাম্বিক,MZ,MOZ,+258,MZN,🇲🇿,Africa,Mozambican,1
+Madagascar,মাদাগাস্কার,MG,MDG,+261,MGA,🇲🇬,Africa,Malagasy,1
+Botswana,বতসোয়ানা,BW,BWA,+267,BWP,🇧🇼,Africa,Motswana,1
+Namibia,নামিবিয়া,NA,NAM,+264,NAD,🇳🇦,Africa,Namibian,1
+Mauritius,মরিশাস,MU,MUS,+230,MUR,🇲🇺,Africa,Mauritian,1
+Seychelles,সেশেলস,SC,SYC,+248,SCR,🇸🇨,Africa,Seychellois,1
+Angola,অ্যাঙ্গোলা,AO,AGO,+244,AOA,🇦🇴,Africa,Angolan,1
+Mali,মালি,ML,MLI,+223,XOF,🇲🇱,Africa,Malian,1
+Burkina Faso,বুর্কিনা ফাসো,BF,BFA,+226,XOF,🇧🇫,Africa,Burkinabé,1
+Niger,নাইজার,NE,NER,+227,XOF,🇳🇪,Africa,Nigerien,1
+Chad,চাদ,TD,TCD,+235,XAF,🇹🇩,Africa,Chadian,1
+Benin,বেনিন,BJ,BEN,+229,XOF,🇧🇯,Africa,Beninese,1
+Togo,টোগো,TG,TGO,+228,XOF,🇹🇬,Africa,Togolese,1
+Sierra Leone,সিয়েরা লিওন,SL,SLE,+232,SLL,🇸🇱,Africa,Sierra Leonean,1
+Liberia,লাইবেরিয়া,LR,LBR,+231,LRD,🇱🇷,Africa,Liberian,1
+Mauritania,মৌরিতানিয়া,MR,MRT,+222,MRU,🇲🇷,Africa,Mauritanian,1
+Gambia,গাম্বিয়া,GM,GMB,+220,GMD,🇬🇲,Africa,Gambian,1
+Guinea,গিনি,GN,GIN,+224,GNF,🇬🇳,Africa,Guinean,1
+Gabon,গ্যাবন,GA,GAB,+241,XAF,🇬🇦,Africa,Gabonese,1
+Congo (Brazzaville),কঙ্গো,CG,COG,+242,XAF,🇨🇬,Africa,Congolese,1
+Congo (Kinshasa),কঙ্গো (কিনশাসা),CD,COD,+243,CDF,🇨🇩,Africa,Congolese,1
+Fiji,ফিজি,FJ,FJI,+679,FJD,🇫🇯,Oceania,Fijian,1
+Papua New Guinea,পাপুয়া নিউ গিনি,PG,PNG,+675,PGK,🇵🇬,Oceania,Papua New Guinean,1
+Solomon Islands,সলোমন দ্বীপপুঞ্জ,SB,SLB,+677,SBD,🇸🇧,Oceania,Solomon Islander,1
+Vanuatu,ভানুয়াতু,VU,VUT,+678,VUV,🇻🇺,Oceania,Ni-Vanuatu,1
+Samoa,সামোয়া,WS,WSM,+685,WST,🇼🇸,Oceania,Samoan,1
+Tonga,টোঙ্গা,TO,TON,+676,TOP,🇹🇴,Oceania,Tongan,1
+Kiribati,কিরিবাতি,KI,KIR,+686,AUD,🇰🇮,Oceania,I-Kiribati,1
+Micronesia,মাইক্রোনেশিয়া,FM,FSM,+691,USD,🇫🇲,Oceania,Micronesian,1
+Palau,পালাউ,PW,PLW,+680,USD,🇵🇼,Oceania,Palauan,1
+Marshall Islands,মার্শাল দ্বীপপুঞ্জ,MH,MHL,+692,USD,🇲🇭,Oceania,Marshallese,1
+Nauru,নাউরু,NR,NRU,+674,AUD,🇳🇷,Oceania,Nauruan,1
+Tuvalu,তুভালু,TV,TUV,+688,AUD,🇹🇻,Oceania,Tuvaluan,1
+Vatican City,ভ্যাটিকান সিটি,VA,VAT,+379,EUR,🇻🇦,Europe,Vatican,1
+San Marino,সান মারিনো,SM,SMR,+378,EUR,🇸🇲,Europe,Sammarinese,1
+Monaco,মোনাকো,MC,MCO,+377,EUR,🇲🇨,Europe,Monégasque,1
+Liechtenstein,লিশটেনস্টাইন,LI,LIE,+423,CHF,🇱🇮,Europe,Liechtensteiner,1
+Andorra,অ্যান্ডোরা,AD,AND,+376,EUR,🇦🇩,Europe,Andorran,1
+Albania,আলবেনিয়া,AL,ALB,+355,ALL,🇦🇱,Europe,Albanian,1
+Bosnia and Herzegovina,বসনিয়া ও হার্জেগোভিনা,BA,BIH,+387,BAM,🇧🇦,Europe,Bosnian,1
+Kosovo,কসোভো,XK,XKX,+383,EUR,🇽🇰,Europe,Kosovar,1
+North Macedonia,উত্তর মেসিডোনিয়া,MK,MKD,+389,MKD,🇲🇰,Europe,Macedonian,1
+Montenegro,মন্টিনিগ্রো,ME,MNE,+382,EUR,🇲🇪,Europe,Montenegrin,1
+Moldova,মলদোভা,MD,MDA,+373,MDL,🇲🇩,Europe,Moldovan,1
+Belarus,বেলারুশ,BY,BLR,+375,BYN,🇧🇾,Europe,Belarusian,1
+Eritrea,ইরিত্রিয়া,ER,ERI,+291,ERN,🇪🇷,Africa,Eritrean,1
+Djibouti,জিবুতি,DJ,DJI,+253,DJF,🇩🇯,Africa,Djiboutian,1
+Comoros,কোমোরোস,KM,COM,+269,KMF,🇰🇲,Africa,Comorian,1
+Equatorial Guinea,নিরক্ষীয় গিনি,GQ,GNQ,+240,XAF,🇬🇶,Africa,Equatorial Guinean,1
+Central African Republic,মধ্য আফ্রিকান প্রজাতন্ত্র,CF,CAF,+236,XAF,🇨🇫,Africa,Central African,1
+South Sudan,দক্ষিণ সুদান,SS,SSD,+211,SSP,🇸🇸,Africa,South Sudanese,1
+Lesotho,লেসোথো,LS,LSO,+266,LSL,🇱🇸,Africa,Basotho,1
+Eswatini,এসওয়াতিনি,SZ,SWZ,+268,SZL,🇸🇿,Africa,Swazi,1
+Cape Verde,কেপ ভার্দে,CV,CPV,+238,CVE,🇨🇻,Africa,Cape Verdean,1
+Sao Tome and Principe,সাও টোমে ও প্রিন্সিপে,ST,STP,+239,STN,🇸🇹,Africa,Sao Tomean,1
+Guinea-Bissau,গিনি-বিসাউ,GW,GNB,+245,XOF,🇬🇼,Africa,Bissau-Guinean,1
+Saint Lucia,সেন্ট লুসিয়া,LC,LCA,+1-758,XCD,🇱🇨,Americas,Saint Lucian,1
+Saint Vincent and the Grenadines,সেন্ট ভিনসেন্ট ও গ্রেনাডাইনস,VC,VCT,+1-784,XCD,🇻🇨,Americas,Vincentian,1
+Grenada,গ্রেনাডা,GD,GRD,+1-473,XCD,🇬🇩,Americas,Grenadian,1
+Antigua and Barbuda,অ্যান্টিগুয়া ও বারবুডা,AG,ATG,+1-268,XCD,🇦🇬,Americas,Antiguan,1
+Dominica,ডোমিনিকা,DM,DMA,+1-767,XCD,🇩🇲,Americas,Dominican,1
+Saint Kitts and Nevis,সেন্ট কিটস ও নেভিস,KN,KNA,+1-869,XCD,🇰🇳,Americas,Kittitian,1

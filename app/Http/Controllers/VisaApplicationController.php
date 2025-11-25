@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\VisaApplication;
 use App\Models\VisaDocument;
+use App\Traits\CreatesServiceApplications;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -11,6 +12,7 @@ use Inertia\Inertia;
 class VisaApplicationController extends Controller
 {
     use AuthorizesRequests;
+    use CreatesServiceApplications;
 
     /**
      * Display visa types and countries
@@ -133,6 +135,38 @@ class VisaApplicationController extends Controller
         };
 
         $application = VisaApplication::create($validated);
+
+        // 🔥 PLUGIN SYSTEM: Create ServiceApplication for agency assignment
+        // Route different visa types to their respective services
+        $serviceSlug = match($validated['visa_type']) {
+            'work' => 'work-visa',
+            'student' => 'student-visa',
+            'business' => 'business-visa',
+            'medical' => 'medical-visa',
+            'transit' => 'transit-visa',
+            default => null, // Tourist and other types handled separately
+        };
+        
+        // Special handling for family visa type (if it exists as a field)
+        if (isset($validated['family_visa']) && $validated['family_visa']) {
+            $serviceSlug = 'family-visa';
+        }
+
+        if ($serviceSlug) {
+            $this->createServiceApplicationFor(
+                $application,
+                $serviceSlug,
+                [
+                    'visa_type' => $validated['visa_type'],
+                    'destination_country' => $validated['destination_country'],
+                    'destination_country_code' => $validated['destination_country_code'],
+                    'applicant_name' => $validated['applicant_name'],
+                    'intended_travel_date' => $validated['intended_travel_date'],
+                    'processing_type' => $validated['processing_type'],
+                    'total_amount' => $validated['total_amount'],
+                ]
+            );
+        }
 
         return redirect()->route('visa.show', $application)
             ->with('success', 'Visa application created successfully. Please upload required documents.');

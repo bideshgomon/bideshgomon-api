@@ -7,7 +7,6 @@ import { useForm } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import { useBangladeshFormat } from '@/Composables/useBangladeshFormat';
 import {
-    NATIONALITIES,
     GENDER_OPTIONS,
     BANGLADESH_DIVISIONS,
     BANGLADESH_DISTRICTS
@@ -16,6 +15,7 @@ import {
 const props = defineProps({
     userProfile: Object,
     divisions: Array,
+    countries: Array,
 });
 
 const { formatDateFromISO, parseDateToISO } = useBangladeshFormat();
@@ -23,9 +23,17 @@ const { formatDateFromISO, parseDateToISO } = useBangladeshFormat();
 // Display format for date (DD/MM/YYYY)
 const displayDob = ref(props.userProfile?.dob ? formatDateFromISO(props.userProfile.dob) : '');
 
+// Format dates to YYYY-MM-DD for date inputs
+const formatDateForInput = (dateStr) => {
+    if (!dateStr) return '';
+    // If it's already in YYYY-MM-DD format, return as is
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+    // If it's a full datetime, extract the date part
+    return dateStr.split(' ')[0];
+};
+
 const form = useForm({
     bio: props.userProfile?.bio || '',
-    phone: props.userProfile?.phone || '',
     dob: props.userProfile?.dob || '',
     gender: props.userProfile?.gender || '',
     nationality: props.userProfile?.nationality || 'Bangladeshi',
@@ -37,8 +45,8 @@ const form = useForm({
     permanent_district: props.userProfile?.permanent_district || '',
     nid: props.userProfile?.nid || '',
     passport_number: props.userProfile?.passport_number || '',
-    passport_issue_date: props.userProfile?.passport_issue_date || '',
-    passport_expiry_date: props.userProfile?.passport_expiry_date || '',
+    passport_issue_date: formatDateForInput(props.userProfile?.passport_issue_date),
+    passport_expiry_date: formatDateForInput(props.userProfile?.passport_expiry_date),
 });
 
 // Get districts based on selected division
@@ -77,38 +85,26 @@ const submit = () => {
 
 <template>
     <section>
-        <header>
-            <h2 class="text-lg font-medium text-gray-900">Profile Details</h2>
-            <p class="mt-1 text-sm text-gray-600">
+        <header class="mb-4 md:mb-6">
+            <h2 class="text-base md:text-lg font-semibold text-gray-900">Profile Details</h2>
+            <p class="mt-1 text-xs md:text-sm text-gray-600">
                 Complete your profile information with Bangladesh-specific details.
             </p>
         </header>
 
-        <form @submit.prevent="submit" class="mt-6 space-y-6">
+        <form @submit.prevent="submit" class="space-y-4 md:space-y-6">
+            <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg md:rounded-xl p-3 md:p-6 space-y-4 md:space-y-6">
             <!-- Bio -->
             <div>
-                <InputLabel for="bio" value="Bio" />
+                <InputLabel for="bio" value="Bio" class="text-sm md:text-base" />
                 <textarea
                     id="bio"
                     v-model="form.bio"
-                    class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                    class="mt-1 md:mt-2 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-lg shadow-sm text-base py-3 px-4 touch-manipulation"
                     rows="3"
                     placeholder="Tell us about yourself..."
                 />
                 <InputError class="mt-2" :message="form.errors.bio" />
-            </div>
-
-            <!-- Phone -->
-            <div>
-                <InputLabel for="phone" value="Phone Number" />
-                <TextInput
-                    id="phone"
-                    type="tel"
-                    class="mt-1 block w-full"
-                    v-model="form.phone"
-                    placeholder="+880 1XXX-XXXXXX"
-                />
-                <InputError class="mt-2" :message="form.errors.phone" />
             </div>
 
             <!-- Date of Birth & Gender -->
@@ -155,8 +151,8 @@ const submit = () => {
                     class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                 />
                 <datalist id="nationalities-list">
-                    <option v-for="nationality in NATIONALITIES" :key="nationality" :value="nationality">
-                        {{ nationality }}
+                    <option v-for="country in countries" :key="country.id" :value="country.nationality">
+                        {{ country.nationality }}
                     </option>
                 </datalist>
                 <InputError class="mt-2" :message="form.errors.nationality" />
@@ -322,20 +318,20 @@ const submit = () => {
 
             <div class="space-y-4">
                 <!-- Error Message -->
-                <div v-if="saveError" class="rounded-md bg-red-50 p-4">
+                <div v-if="saveError" class="rounded-md bg-red-50 p-3 md:p-4 text-sm md:text-base">
                     <div class="flex">
                         <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                            <svg class="h-4 w-4 md:h-5 md:w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
                             </svg>
                         </div>
                         <div class="ml-3">
-                            <h3 class="text-sm font-medium text-red-800">{{ saveError }}</h3>
+                            <h3 class="text-xs md:text-sm font-medium text-red-800">{{ saveError }}</h3>
                         </div>
                         <div class="ml-auto pl-3">
-                            <button @click="saveError = ''" class="inline-flex rounded-md bg-red-50 p-1.5 text-red-500 hover:bg-red-100">
+                            <button @click="saveError = ''" class="inline-flex rounded-md bg-red-50 p-1.5 text-red-500 hover:bg-red-100 touch-manipulation">
                                 <span class="sr-only">Dismiss</span>
-                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <svg class="h-4 w-4 md:h-5 md:w-5" viewBox="0 0 20 20" fill="currentColor">
                                     <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
                                 </svg>
                             </button>
@@ -343,7 +339,8 @@ const submit = () => {
                     </div>
                 </div>
 
-                <div class="flex items-center gap-4">
+                <!-- Desktop Save Button -->
+                <div class="hidden md:flex items-center gap-4">
                     <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
                     <Transition
                         enter-active-class="transition ease-in-out"
@@ -356,7 +353,34 @@ const submit = () => {
                         </p>
                     </Transition>
                 </div>
+                </div>
             </div>
         </form>
+        
+        <!-- Mobile Sticky Save Button -->
+        <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4 shadow-2xl z-30 safe-area-bottom">
+            <button
+                @click="submit"
+                :disabled="form.processing"
+                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg active:scale-98 transition-all touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base"
+            >
+                <svg v-if="form.processing" class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                {{ form.processing ? 'Saving...' : (form.recentlySuccessful ? '✓ Saved!' : 'Save Changes') }}
+            </button>
+        </div>
+        <!-- Mobile Spacer -->
+        <div class="md:hidden h-24"></div>
     </section>
 </template>
+
+<style scoped>
+.safe-area-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+</style>

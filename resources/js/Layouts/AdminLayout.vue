@@ -13,7 +13,10 @@ import {
   XMarkIcon,
   AcademicCapIcon,
   GlobeAltIcon,
+  LanguageIcon,
   MapIcon,
+  MapPinIcon,
+  PaperAirplaneIcon,
   UsersIcon,
   BriefcaseIcon,
   ClipboardDocumentListIcon,
@@ -31,7 +34,10 @@ import {
   BanknotesIcon,
   RectangleStackIcon,
   TableCellsIcon,
+  TagIcon,
   EnvelopeIcon,
+  ClipboardDocumentIcon,
+  MagnifyingGlassCircleIcon,
   ClockIcon,
   ChevronDownIcon,
   ChevronRightIcon,
@@ -44,6 +50,7 @@ import {
   MoonIcon,
   SunIcon,
   CommandLineIcon,
+  ArrowRightOnRectangleIcon,
 } from '@heroicons/vue/24/outline'
 
 const showingNavigationDropdown = ref(false)
@@ -113,7 +120,7 @@ const profileRoute = computed(() => {
   if (roleSlug === 'consultant') {
     return 'consultant.profile.show'
   }
-  return 'admin.profile.show'
+  return 'profile.edit'
 })
 
 const toggleSection = sectionName => {
@@ -258,20 +265,170 @@ const navigation = [
   //   section: 'content',
   // },
 
-  // SERVICES & MODULES
+  // PLUGIN SYSTEM - Service Applications & Quotes
   {
-    name: 'Service Management',
-    href: route('admin.services.index'),
-    icon: Cog6ToothIcon,
-    current: route().current('admin.services.*'),
-    section: 'services',
+    name: 'Service Applications',
+    href: route('service-applications.index'),
+    icon: ClipboardDocumentListIcon,
+    current: route().current('service-applications.*'),
+    section: 'plugin-system',
+    badge: '38',
+    description: 'Universal Plugin System - All Services',
   },
+  {
+    name: 'Service Quotes',
+    href: route('admin.service-quotes.index'),
+    icon: CurrencyDollarIcon,
+    current: route().current('admin.service-quotes.*'),
+    section: 'plugin-system',
+    description: 'Agency Quotes & Pricing',
+  },
+
+  // SERVICES & MODULES
   {
     name: 'Service Modules',
     href: route('admin.service-modules.index'),
     icon: RectangleStackIcon,
     current: route().current('admin.service-modules.*'),
     section: 'services',
+    badge: '38',
+    description: 'Configure 38 Active Services',
+  },
+  {
+    name: 'Service Management',
+    href: route('admin.services.index'),
+    icon: Cog6ToothIcon,
+    current: route().current('admin.services.*'),
+    section: 'services',
+    description: 'Legacy Service Management',
+  },
+
+  // DATA MANAGEMENT
+  {
+    name: 'Countries',
+    href: route('admin.data.countries.index'),
+    icon: GlobeAltIcon,
+    current: route().current('admin.data.countries.*'),
+    section: 'data',
+  },
+  {
+    name: 'Currencies',
+    href: route('admin.data.currencies.index'),
+    icon: BanknotesIcon,
+    current: route().current('admin.data.currencies.*'),
+    section: 'data',
+  },
+  {
+    name: 'Languages',
+    href: route('admin.data.languages.index'),
+    icon: LanguageIcon,
+    current: route().current('admin.data.languages.*'),
+    section: 'data',
+  },
+  {
+    name: 'Language Tests',
+    href: route('admin.data.language-tests.index'),
+    icon: AcademicCapIcon,
+    current: route().current('admin.data.language-tests.*'),
+    section: 'data',
+  },
+  {
+    name: 'Job Categories',
+    href: route('admin.data.job-categories.index'),
+    icon: BriefcaseIcon,
+    current: route().current('admin.data.job-categories.*'),
+    section: 'data',
+  },
+  {
+    name: 'Skill Categories',
+    href: route('admin.data.skill-categories.index'),
+    icon: FolderIcon,
+    current: route().current('admin.data.skill-categories.*'),
+    section: 'data',
+  },
+  {
+    name: 'Skills',
+    href: route('admin.data.skills.index'),
+    icon: AcademicCapIcon,
+    current: route().current('admin.data.skills.*'),
+    section: 'data',
+  },
+  {
+    name: 'Cities',
+    href: route('admin.data.cities.index'),
+    icon: MapPinIcon,
+    current: route().current('admin.data.cities.*'),
+    section: 'data',
+  },
+  {
+    name: 'Airports',
+    href: route('admin.data.airports.index'),
+    icon: PaperAirplaneIcon,
+    current: route().current('admin.data.airports.*'),
+    section: 'data',
+  },
+  {
+    name: 'Degrees',
+    href: route('admin.data.degrees.index'),
+    icon: AcademicCapIcon,
+    current: route().current('admin.data.degrees.*'),
+    section: 'data',
+  },
+  {
+    name: 'Service Categories',
+    href: route('admin.data.service-categories.index'),
+    icon: RectangleStackIcon,
+    current: route().current('admin.data.service-categories.*'),
+    section: 'data',
+  },
+  {
+    name: 'Blog Categories',
+    href: route('admin.data.blog-categories.index'),
+    icon: FolderIcon,
+    current: route().current('admin.data.blog-categories.*'),
+    section: 'data',
+  },
+  {
+    name: 'Blog Tags',
+    href: route('admin.data.blog-tags.index'),
+    icon: TagIcon,
+    current: route().current('admin.data.blog-tags.*'),
+    section: 'data',
+  },
+  {
+    name: 'Email Templates',
+    href: route('admin.data.email-templates.index'),
+    icon: EnvelopeIcon,
+    current: route().current('admin.data.email-templates.*'),
+    section: 'data',
+  },
+  {
+    name: 'CV Templates',
+    href: route('admin.data.cv-templates.index'),
+    icon: ClipboardDocumentIcon,
+    current: route().current('admin.data.cv-templates.*'),
+    section: 'data',
+  },
+  {
+    name: 'SEO Settings',
+    href: route('admin.data.seo-settings.index'),
+    icon: MagnifyingGlassCircleIcon,
+    current: route().current('admin.data.seo-settings.*'),
+    section: 'data',
+  },
+  {
+    name: 'Smart Suggestions',
+    href: route('admin.data.smart-suggestions.index'),
+    icon: SparklesIcon,
+    current: route().current('admin.data.smart-suggestions.*'),
+    section: 'data',
+  },
+  {
+    name: 'System Events',
+    href: route('admin.data.system-events.index'),
+    icon: ClockIcon,
+    current: route().current('admin.data.system-events.*'),
+    section: 'data',
   },
 
   // ADMIN TOOLS
@@ -326,16 +483,18 @@ const navigation = [
 // Navigation Sections Grouping - Clean Professional Structure
 // Dashboard is rendered separately at the top, so exclude it from sections
 const navigationSections = {
-  '👥 PEOPLE': navigation.filter(item => item.section === 'users'),
-  '💼 EDUCATION & JOBS': navigation.filter(item => item.section === 'jobs'),
-  '✈️ VISA & TRAVEL': navigation.filter(item => item.section === 'travel'),
-  '🏢 AGENCIES': navigation.filter(item => item.section === 'agencies'),
-  '💰 FINANCIAL': navigation.filter(item => item.section === 'financial'),
-  '📝 CONTENT': navigation.filter(item => item.section === 'content'),
-  '🛠️ SERVICES': navigation.filter(item => item.section === 'services'),
-  '🔧 TOOLS': navigation.filter(item => item.section === 'tools'),
-  '📊 ANALYTICS': navigation.filter(item => item.section === 'analytics'),
-  '⚙️ SETTINGS': navigation.filter(item => item.section === 'settings'),
+  '🔌 Plugin System': navigation.filter(item => item.section === 'plugin-system'),
+  '👥 People': navigation.filter(item => item.section === 'users'),
+  '💼 Education & Jobs': navigation.filter(item => item.section === 'jobs'),
+  '✈️ Visa & Travel': navigation.filter(item => item.section === 'travel'),
+  '🏢 Agencies': navigation.filter(item => item.section === 'agencies'),
+  '💰 Financial': navigation.filter(item => item.section === 'financial'),
+  '📝 Content': navigation.filter(item => item.section === 'content'),
+  '🛠️ Services': navigation.filter(item => item.section === 'services'),
+  '📊 Data Management': navigation.filter(item => item.section === 'data'),
+  '🔧 Tools': navigation.filter(item => item.section === 'tools'),
+  '📈 Analytics': navigation.filter(item => item.section === 'analytics'),
+  '⚙️ Settings': navigation.filter(item => item.section === 'settings'),
 }
 </script>
 
@@ -417,29 +576,25 @@ const navigationSections = {
       </div>
     </Teleport>
 
-    <div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+    <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
       <!-- Sidebar -->
       <nav
         :class="[
-          'fixed inset-y-0 left-0 z-50 hidden md:flex flex-col bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-r border-gray-200/50 dark:border-gray-700/50 shadow-2xl transition-all duration-300 ease-in-out',
+          'fixed inset-y-0 left-0 z-50 hidden md:flex flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out',
           sidebarCollapsed ? 'w-20' : 'w-64',
         ]"
       >
-        <!-- Logo Section - Stunning Gradient Header -->
-        <!-- Logo Section - Stunning Gradient Header -->
+        <!-- Logo Section -->
         <div
-          class="flex flex-shrink-0 items-center justify-between px-5 h-16 border-b border-gray-200/50 dark:border-gray-700/50 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-500 dark:via-purple-500 dark:to-pink-500"
+          class="flex flex-shrink-0 items-center justify-between px-4 h-16 border-b border-gray-200 dark:border-gray-700"
         >
           <Link :href="route('admin.dashboard')" class="flex items-center gap-3">
-            <div class="relative">
-              <div class="absolute inset-0 bg-white/20 rounded-xl blur-md"></div>
-              <div class="relative w-10 h-10 rounded-xl bg-white/90 dark:bg-white flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform">
-                <SparklesIcon class="w-6 h-6 text-indigo-600 dark:text-indigo-600" />
-              </div>
+            <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
+              <SparklesIcon class="w-5 h-5 text-white" />
             </div>
             <div v-if="!sidebarCollapsed" class="flex flex-col">
-              <span class="font-bold text-white text-base tracking-tight">BideshGomon</span>
-              <span class="text-xs text-white/80 font-medium">Admin Panel</span>
+              <span class="font-semibold text-gray-900 dark:text-white text-sm">BideshGomon</span>
+              <span class="text-xs text-gray-500 dark:text-gray-400">Admin</span>
             </div>
           </Link>
           
@@ -447,7 +602,7 @@ const navigationSections = {
           <button
             v-if="!sidebarCollapsed"
             @click="toggleSidebar"
-            class="p-1.5 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+            class="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
             title="Collapse Sidebar"
           >
             <ChevronDownIcon class="w-4 h-4 rotate-90" />
@@ -458,82 +613,77 @@ const navigationSections = {
         <button
           v-if="sidebarCollapsed"
           @click="toggleSidebar"
-          class="mx-auto mt-4 p-2 text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-all"
+          class="mx-auto mt-3 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
           title="Expand Sidebar"
         >
           <ChevronRightIcon class="w-5 h-5" />
         </button>
 
-        <!-- Navigation Sections - Beautiful Scrollable Area -->
+        <!-- Navigation Sections -->
         <div
-          class="flex flex-1 flex-col overflow-y-auto px-3 py-4 custom-scrollbar"
+          class="flex flex-1 flex-col overflow-y-auto px-3 py-4"
         >
-          <ul role="list" class="flex flex-1 flex-col gap-y-2">
+          <ul role="list" class="flex flex-1 flex-col gap-y-1">
             <!-- Dashboard - Standalone at Top -->
-            <li class="mb-3">
+            <li>
               <Link
                 :href="route('admin.dashboard')"
                 :class="[
                   route().current('admin.dashboard')
-                    ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/50 dark:shadow-indigo-500/30 scale-105'
-                    : 'text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gradient-to-r hover:from-white hover:to-indigo-50/50 dark:hover:from-gray-800 dark:hover:to-indigo-900/20 hover:shadow-md hover:scale-[1.02]',
-                  sidebarCollapsed ? 'justify-center px-3' : 'pl-3 pr-3',
-                  'group flex items-center gap-x-3 rounded-xl py-3 text-sm font-semibold transition-all duration-200',
+                    ? 'bg-indigo-600 text-white'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700',
+                  sidebarCollapsed ? 'justify-center px-3' : 'px-3',
+                  'group flex items-center gap-x-3 rounded-lg py-2 text-sm font-medium transition-colors',
                 ]"
                 :title="sidebarCollapsed ? 'Dashboard' : ''"
               >
                 <HomeIcon
                   :class="[
-                    'h-5 w-5 shrink-0 transition-all duration-200',
-                    'group-hover:scale-110 group-hover:rotate-3',
-                    route().current('admin.dashboard') ? 'text-white' : 'text-gray-500 dark:text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400',
+                    'h-5 w-5 shrink-0',
+                    route().current('admin.dashboard') ? 'text-white' : 'text-gray-400',
                   ]"
                 />
-                <span v-if="!sidebarCollapsed" class="flex-1">Dashboard</span>
-                <span
-                  v-if="route().current('admin.dashboard') && !sidebarCollapsed"
-                  class="w-2 h-2 bg-white rounded-full animate-pulse"
-                ></span>
+                <span v-if="!sidebarCollapsed">Dashboard</span>
               </Link>
             </li>
 
             <!-- Divider -->
-            <li class="mb-2">
-              <div class="h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-600 to-transparent"></div>
+            <li class="my-2">
+              <div class="h-px bg-gray-200 dark:bg-gray-700"></div>
             </li>
 
             <!-- Other Sections -->
             <li v-for="(items, sectionName) in navigationSections" :key="sectionName">
-              <div v-if="items.length > 0" class="mb-3">
-                <!-- Collapsible Section Header - Ultra Modern -->
+              <div v-if="items.length > 0" class="mb-2">
+                <!-- Collapsible Section Header -->
                 <button
                   v-if="!sidebarCollapsed"
-                  class="w-full flex items-center justify-between px-3 py-2.5 text-xs font-bold text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-purple-50/50 dark:hover:from-indigo-900/20 dark:hover:to-purple-900/20 rounded-xl transition-all backdrop-blur-sm group"
+                  class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
                   @click="toggleSection(sectionName)"
                 >
-                  <span class="uppercase tracking-wider group-hover:tracking-wide transition-all">{{ sectionName }}</span>
+                  <span class="uppercase tracking-wider">{{ sectionName }}</span>
                   <ChevronDownIcon
                     :class="[
-                      'w-4 h-4 transition-all duration-300 text-gray-400 dark:text-gray-500 group-hover:text-indigo-600 dark:group-hover:text-indigo-400',
+                      'w-4 h-4 transition-transform duration-200',
                       collapsedSections[sectionName] ? '-rotate-90' : 'rotate-0',
                     ]"
                   />
                 </button>
 
                 <!-- Divider for Collapsed View -->
-                <div v-if="sidebarCollapsed" class="h-px bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent my-2"></div>
+                <div v-if="sidebarCollapsed" class="h-px bg-gray-200 dark:bg-gray-700 my-2"></div>
 
-                <!-- Section Items - Stunning Cards with Animations -->
-                <ul v-show="!collapsedSections[sectionName]" role="list" class="space-y-1 mt-2">
+                <!-- Section Items -->
+                <ul v-show="!collapsedSections[sectionName]" role="list" class="space-y-1 mt-1">
                   <li v-for="item in items" :key="item.name">
                     <Link
                       :href="item.disabled ? '#' : item.href"
                       :class="[
                         item.current
-                          ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/50 dark:shadow-indigo-500/30 scale-105'
-                          : 'text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gradient-to-r hover:from-white hover:to-indigo-50/50 dark:hover:from-gray-800 dark:hover:to-indigo-900/20 hover:shadow-md hover:scale-[1.02]',
-                        sidebarCollapsed ? 'justify-center px-3' : 'pl-3 pr-3',
-                        'group flex items-center gap-x-3 rounded-xl py-3 text-sm font-medium transition-all duration-200',
+                          ? 'bg-indigo-600 text-white'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700',
+                        sidebarCollapsed ? 'justify-center px-3' : 'px-3',
+                        'group flex items-center gap-x-3 rounded-lg py-2 text-sm font-medium transition-colors',
                         item.disabled ? 'opacity-50 cursor-not-allowed' : '',
                       ]"
                       :aria-disabled="item.disabled"
@@ -543,22 +693,16 @@ const navigationSections = {
                       <component
                         :is="item.icon"
                         :class="[
-                          'h-5 w-5 shrink-0 transition-all duration-200',
-                          !item.disabled && 'group-hover:scale-110 group-hover:rotate-3',
-                          item.current ? 'text-white' : 'text-gray-500 dark:text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400',
+                          'h-5 w-5 shrink-0',
+                          item.current ? 'text-white' : 'text-gray-400',
                         ]"
                         aria-hidden="true"
                       />
                       <span v-if="!sidebarCollapsed" class="flex-1">{{ item.name }}</span>
-                      <!-- Active Indicator Dot -->
-                      <span
-                        v-if="item.current && !sidebarCollapsed"
-                        class="w-2 h-2 bg-white rounded-full animate-pulse"
-                      ></span>
                       <!-- Badge Count (if any) -->
                       <span
                         v-if="item.badge && !sidebarCollapsed"
-                        class="px-2 py-0.5 text-xs font-bold bg-white/20 text-white rounded-full"
+                        class="px-2 py-0.5 text-xs font-semibold bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 rounded-full"
                       >
                         {{ item.badge }}
                       </span>
@@ -570,65 +714,50 @@ const navigationSections = {
           </ul>
         </div>
 
-        <!-- Footer - Beautiful Gradient with System Status -->
-        <div class="flex-shrink-0 border-t border-gray-200/50 dark:border-gray-700/50 p-4 bg-gradient-to-br from-gray-50/90 via-blue-50/50 to-indigo-50/30 dark:from-gray-800/90 dark:via-indigo-900/20 dark:to-purple-900/10 backdrop-blur-md">
-          <div v-if="!sidebarCollapsed" class="space-y-3">
-            <!-- Logout Button -->
-            <Link
-              :href="route('logout')"
-              method="post"
-              as="button"
-              class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 hover:shadow-md transition-all group"
-            >
-              <ArrowRightOnRectangleIcon class="w-5 h-5 group-hover:scale-110 transition-transform" />
-              <span class="text-sm font-semibold">Logout</span>
-            </Link>
-            
-            <!-- System Status -->
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <div class="relative">
-                  <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                  <div class="absolute inset-0 w-2 h-2 bg-emerald-500 rounded-full animate-ping opacity-75"></div>
-                </div>
-                <p class="text-xs font-semibold text-gray-900 dark:text-white">All Systems Operational</p>
-              </div>
-            </div>
-            
-            <!-- Version & Dark Mode Toggle -->
-            <div class="flex items-center justify-between">
-              <p class="text-xs text-gray-500 dark:text-gray-400">v1.0.0 Beta</p>
+        <!-- Footer -->
+        <div class="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 p-3">
+          <div v-if="!sidebarCollapsed" class="space-y-2">
+            <!-- Dark Mode Toggle & Logout -->
+            <div class="flex items-center gap-2">
               <button
                 @click="toggleDarkMode"
-                class="p-2 text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white/50 dark:hover:bg-gray-700/50 rounded-lg transition-all transform hover:scale-110"
-                :title="darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+                class="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                :title="darkMode ? 'Light Mode' : 'Dark Mode'"
               >
                 <SunIcon v-if="darkMode" class="w-4 h-4" />
                 <MoonIcon v-else class="w-4 h-4" />
               </button>
+              <Link
+                :href="route('logout')"
+                method="post"
+                as="button"
+                class="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                title="Logout"
+              >
+                <ArrowRightOnRectangleIcon class="w-4 h-4" />
+              </Link>
             </div>
           </div>
           
           <!-- Collapsed View - Icons Only -->
-          <div v-else class="flex flex-col items-center gap-3">
+          <div v-else class="flex flex-col items-center gap-2">
+            <button
+              @click="toggleDarkMode"
+              class="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              :title="darkMode ? 'Light Mode' : 'Dark Mode'"
+            >
+              <SunIcon v-if="darkMode" class="w-4 h-4" />
+              <MoonIcon v-else class="w-4 h-4" />
+            </button>
             <Link
               :href="route('logout')"
               method="post"
               as="button"
-              class="p-2 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
+              class="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
               title="Logout"
             >
-              <ArrowRightOnRectangleIcon class="w-5 h-5" />
+              <ArrowRightOnRectangleIcon class="w-4 h-4" />
             </Link>
-            <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-            <button
-              @click="toggleDarkMode"
-              class="p-2 text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white/50 dark:hover:bg-gray-700/50 rounded-lg transition-all"
-              :title="darkMode ? 'Light Mode' : 'Dark Mode'"
-            >
-              <SunIcon v-if="darkMode" class="w-5 h-5" />
-              <MoonIcon v-else class="w-5 h-5" />
-            </button>
           </div>
         </div>
       </nav>
@@ -640,9 +769,9 @@ const navigationSections = {
           sidebarCollapsed ? 'md:pl-20' : 'md:pl-64',
         ]"
       >
-        <!-- Top Header Bar - Ultra Modern Glassmorphism -->
+        <!-- Top Header Bar -->
         <div
-          class="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200/50 dark:border-gray-700/50 bg-white/70 dark:bg-gray-900/70 backdrop-blur-2xl px-4 lg:px-8 shadow-lg"
+          class="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 lg:px-8"
         >
           <!-- Mobile Menu Button -->
           <button

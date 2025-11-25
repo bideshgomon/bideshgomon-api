@@ -15,7 +15,17 @@ import { ref } from 'vue';
 const props = defineProps({
     rewards: Object,
     filters: Object,
-    globalStats: Object,
+    globalStats: {
+        type: Object,
+        default: () => ({
+            totalRewards: 0,
+            pendingCount: 0,
+            pendingAmount: 0,
+            approvedCount: 0,
+            approvedAmount: 0,
+            totalAmount: 0
+        })
+    },
 });
 
 const { formatCurrency, formatDate, formatTime } = useBangladeshFormat();
@@ -285,18 +295,27 @@ const rejectReward = (rewardId) => {
                                     Showing {{ rewards.from }} to {{ rewards.to }} of {{ rewards.total }} rewards
                                 </div>
                                 <div class="flex space-x-2">
-                                    <Link 
-                                        v-for="link in rewards.links" 
-                                        :key="link.label"
-                                        :href="link.url"
-                                        :class="{
-                                            'bg-indigo-600 text-white': link.active,
-                                            'bg-white text-gray-700 hover:bg-gray-50': !link.active,
-                                            'opacity-50 cursor-not-allowed': !link.url
-                                        }"
-                                        class="px-3 py-2 border rounded-md text-sm"
-                                        v-html="link.label"
-                                    />
+                                    <template v-for="link in rewards.links" :key="link.label">
+                                        <Link 
+                                            v-if="link.url"
+                                            :href="link.url"
+                                            :class="{
+                                                'bg-indigo-600 text-white': link.active,
+                                                'bg-white text-gray-700 hover:bg-gray-50': !link.active
+                                            }"
+                                            class="px-3 py-2 border rounded-md text-sm"
+                                            v-html="link.label"
+                                        />
+                                        <span
+                                            v-else
+                                            :class="{
+                                                'bg-indigo-600 text-white': link.active,
+                                                'bg-white text-gray-700': !link.active
+                                            }"
+                                            class="px-3 py-2 border rounded-md text-sm opacity-50 cursor-not-allowed"
+                                            v-html="link.label"
+                                        />
+                                    </template>
                                 </div>
                             </div>
                         </div>

@@ -287,6 +287,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the user's tourist visa applications.
+     */
+    public function touristVisas(): HasMany
+    {
+        return $this->hasMany(TouristVisa::class);
+    }
+
+    /**
      * Get the user's translation requests.
      */
     public function translationRequests(): HasMany
@@ -316,6 +324,14 @@ class User extends Authenticatable
     public function hotelBookings(): HasMany
     {
         return $this->hasMany(HotelBooking::class);
+    }
+
+    /**
+     * Get the user's documents.
+     */
+    public function userDocuments(): HasMany
+    {
+        return $this->hasMany(UserDocument::class);
     }
 
     /**

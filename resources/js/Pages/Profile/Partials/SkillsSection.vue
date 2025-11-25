@@ -30,7 +30,7 @@ const selectedCategory = ref('All')
 const form = useForm({
     skill_id: '',
     proficiency_level: 'Intermediate',
-    years_of_experience: 0,
+    years_of_experience: '0',
 })
 
 // Proficiency levels
@@ -125,19 +125,44 @@ const closeModal = () => {
 
 const submit = () => {
     if (isEditMode.value) {
-        form.put(route('api.profile.skills.update', currentSkillId.value), {
-            onSuccess: () => {
+        form.processing = true
+        axios.put(route('api.profile.skills.update', currentSkillId.value), {
+            proficiency_level: form.proficiency_level,
+            years_of_experience: form.years_of_experience,
+        })
+            .then(() => {
+                form.processing = false
                 closeModal()
                 fetchUserSkills()
-            },
-        })
+            })
+            .catch(error => {
+                form.processing = false
+                if (error.response?.data?.errors) {
+                    Object.keys(error.response.data.errors).forEach(key => {
+                        form.errors[key] = error.response.data.errors[key][0]
+                    })
+                }
+            })
     } else {
-        form.post(route('api.profile.skills.store'), {
-            onSuccess: () => {
+        form.processing = true
+        axios.post(route('api.profile.skills.store'), {
+            skill_id: form.skill_id,
+            proficiency_level: form.proficiency_level,
+            years_of_experience: form.years_of_experience,
+        })
+            .then(() => {
+                form.processing = false
                 closeModal()
                 fetchUserSkills()
-            },
-        })
+            })
+            .catch(error => {
+                form.processing = false
+                if (error.response?.data?.errors) {
+                    Object.keys(error.response.data.errors).forEach(key => {
+                        form.errors[key] = error.response.data.errors[key][0]
+                    })
+                }
+            })
     }
 }
 
@@ -206,7 +231,7 @@ const getProficiencyColor = (level) => {
                 <p class="mt-1 text-sm text-gray-500">Get started by adding your first skill.</p>
                 <div class="mt-6">
                     <PrimaryButton @click="openModal()">
-                        <PlusIcon class="w-4 h-4 mr-2" />
+                        <PlusIcon class="w-5 h-5 md:w-6 md:h-6 mr-2" />
                         Add Your First Skill
                     </PrimaryButton>
                 </div>
@@ -249,16 +274,16 @@ const getProficiencyColor = (level) => {
                         <div class="flex gap-2">
                             <button
                                 @click="openModal(userSkill)"
-                                class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg font-medium text-sm transition-colors"
+                                class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg font-medium text-sm transition-colors touch-manipulation"
                             >
-                                <PencilSquareIcon class="h-4 w-4" />
+                                <PencilSquareIcon class="h-5 w-5" />
                                 <span>Edit</span>
                             </button>
                             <button
                                 @click="deleteSkill(userSkill.id)"
-                                class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-red-300 text-red-600 hover:bg-red-50 rounded-lg font-medium text-sm transition-colors"
+                                class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-red-300 text-red-600 hover:bg-red-50 rounded-lg font-medium text-sm transition-colors touch-manipulation"
                             >
-                                <TrashIcon class="h-4 w-4" />
+                                <TrashIcon class="h-5 w-5" />
                                 <span>Delete</span>
                             </button>
                         </div>
@@ -382,11 +407,11 @@ const getProficiencyColor = (level) => {
 
                     <!-- Actions -->
                     <div class="flex items-center justify-end gap-4 pt-4 border-t">
-                        <SecondaryButton @click="closeModal" type="button">
+                        <SecondaryButton @click="closeModal" type="button" class="w-full sm:w-auto py-3 px-6 text-base touch-manipulation justify-center" style="min-height: 48px">
                             Cancel
                         </SecondaryButton>
-                        <PrimaryButton :disabled="form.processing">
-                            {{ isEditMode ? 'Update' : 'Add' }} Skill
+                        <PrimaryButton :disabled="form.processing" class="w-full sm:w-auto py-3 px-6 text-base touch-manipulation justify-center" style="min-height: 48px">
+                            {{ editMode ? 'Update Skill' : 'Add Skill' }}
                         </PrimaryButton>
                     </div>
                 </form>
