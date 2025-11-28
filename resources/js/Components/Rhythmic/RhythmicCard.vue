@@ -56,7 +56,7 @@
         </p>
 
         <!-- Content slot -->
-        <div v-if="$slots.default" class="flex-1">
+        <div v-if="$slots.default" :class="['flex-1', contentColorClass]">
             <slot></slot>
         </div>
 
@@ -76,7 +76,7 @@ const props = defineProps({
     badge: String,
     variant: {
         type: String,
-        default: 'default', // ocean, sky, growth, sunrise, gold, heritage
+        default: 'default', // light, dark, gradient, ocean, sky, growth, sunrise, gold, heritage
     },
     size: {
         type: String,
@@ -116,9 +116,11 @@ const titleSizeClass = computed(() => {
 });
 
 const bgClass = computed(() => {
-    if (props.variant === 'default') return 'bg-white';
-    
     const variants = {
+        default: 'bg-white',
+        light: 'bg-white',
+        dark: 'bg-gray-900',
+        gradient: 'bg-gradient-to-br from-ocean-600 to-heritage-600',
         ocean: 'bg-gradient-to-br from-ocean-50 to-sky-50',
         sky: 'bg-gradient-to-br from-sky-50 to-blue-50',
         growth: 'bg-gradient-to-br from-growth-50 to-emerald-50',
@@ -132,6 +134,9 @@ const bgClass = computed(() => {
 const borderClass = computed(() => {
     const variants = {
         default: 'border border-gray-100',
+        light: 'border border-gray-200',
+        dark: 'border border-gray-700',
+        gradient: 'border-0',
         ocean: 'border border-ocean-200',
         sky: 'border border-sky-200',
         growth: 'border border-growth-200',
@@ -144,20 +149,26 @@ const borderClass = computed(() => {
 
 const iconBgClass = computed(() => {
     const variants = {
-        default: 'bg-gray-100',
-        ocean: 'bg-ocean-100',
-        sky: 'bg-sky-100',
-        growth: 'bg-growth-100',
-        sunrise: 'bg-sunrise-100',
-        gold: 'bg-gold-100',
-        heritage: 'bg-heritage-100',
+        default: 'bg-gray-100 text-gray-700',
+        light: 'bg-gray-100 text-gray-700',
+        dark: 'bg-gray-800 text-gray-200',
+        gradient: 'bg-white/20 text-white',
+        ocean: 'bg-ocean-100 text-ocean-700',
+        sky: 'bg-sky-100 text-sky-700',
+        growth: 'bg-growth-100 text-growth-700',
+        sunrise: 'bg-sunrise-100 text-sunrise-700',
+        gold: 'bg-gold-100 text-gold-700',
+        heritage: 'bg-heritage-100 text-heritage-700',
     };
     return variants[props.variant] || variants.default;
 });
 
 const titleColorClass = computed(() => {
     const variants = {
-        default: 'text-gray-900',
+        default: 'text-gray-900 dark:text-gray-100',
+        light: 'text-gray-900',
+        dark: 'text-white',
+        gradient: 'text-white',
         ocean: 'text-ocean-900',
         sky: 'text-sky-900',
         growth: 'text-growth-900',
@@ -169,18 +180,49 @@ const titleColorClass = computed(() => {
 });
 
 const descriptionClass = computed(() => {
-    return 'text-gray-600';
+    const variants = {
+        default: 'text-gray-600 dark:text-gray-400',
+        light: 'text-gray-600',
+        dark: 'text-gray-300',
+        gradient: 'text-white/90',
+        ocean: 'text-gray-600',
+        sky: 'text-gray-600',
+        growth: 'text-gray-600',
+        sunrise: 'text-gray-600',
+        gold: 'text-gray-600',
+        heritage: 'text-gray-600',
+    };
+    return variants[props.variant] || variants.default;
 });
 
 const badgeClass = computed(() => {
     const variants = {
         default: 'bg-gray-100 text-gray-700',
+        light: 'bg-gray-100 text-gray-700',
+        dark: 'bg-gray-700 text-gray-200',
+        gradient: 'bg-white/20 text-white',
         ocean: 'bg-ocean-100 text-ocean-700',
         sky: 'bg-sky-100 text-sky-700',
         growth: 'bg-growth-100 text-growth-700',
         sunrise: 'bg-sunrise-100 text-sunrise-700',
         gold: 'bg-gold-100 text-gold-700',
         heritage: 'bg-heritage-100 text-heritage-700',
+    };
+    return variants[props.variant] || variants.default;
+});
+
+const contentColorClass = computed(() => {
+    const variants = {
+        default: 'text-gray-900 dark:text-gray-100',
+        light: 'text-gray-900',
+        dark: 'text-gray-100',
+        gradient: 'text-white',
+        ocean: 'text-gray-900',
+        sky: 'text-gray-900',
+        growth: 'text-gray-900',
+        sunrise: 'text-gray-900',
+        gold: 'text-gray-900',
+        heritage: 'text-gray-900',
     };
     return variants[props.variant] || variants.default;
 });
