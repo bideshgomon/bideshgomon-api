@@ -3,6 +3,9 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
+import FlowButton from '@/Components/Rhythmic/FlowButton.vue';
+import { DocumentTextIcon } from '@heroicons/vue/24/solid';
 import { useForm } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import { useBangladeshFormat } from '@/Composables/useBangladeshFormat';
@@ -82,15 +85,20 @@ const submit = () => {
 
 <template>
     <section>
-        <header class="mb-4 md:mb-6">
-            <h2 class="text-base md:text-lg font-semibold text-gray-900">Profile Details</h2>
-            <p class="mt-1 text-xs md:text-sm text-gray-600">
-                Complete your profile information with Bangladesh-specific details.
-            </p>
+        <header class="mb-6">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-growth-500 flex items-center justify-center shadow-rhythmic-md">
+                    <DocumentTextIcon class="h-6 w-6 text-white" />
+                </div>
+                <div>
+                    <h2 class="font-display font-bold text-xl text-gray-800">Profile Details</h2>
+                    <p class="text-xs text-gray-500">Bangladesh-specific information</p>
+                </div>
+            </div>
         </header>
 
-        <form @submit.prevent="submit" class="space-y-4 md:space-y-6">
-            <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg md:rounded-xl p-3 md:p-6 space-y-4 md:space-y-6">
+        <form @submit.prevent="submit" class="space-y-rhythm-md">
+            <RhythmicCard variant="light" class="space-y-rhythm-md">
             <!-- Bio -->
             <div>
                 <InputLabel for="bio" value="Bio" class="text-sm md:text-base" />
@@ -295,21 +303,27 @@ const submit = () => {
                 </div>
 
                 <!-- Desktop Save Button -->
-                <div class="hidden md:flex items-center gap-4">
-                    <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                <div class="hidden md:flex items-center gap-4 mt-rhythm-lg">
+                    <FlowButton 
+                        type="submit"
+                        :disabled="form.processing"
+                        :loading="form.processing"
+                    >
+                        Save Changes
+                    </FlowButton>
                     <Transition
                         enter-active-class="transition ease-in-out"
                         enter-from-class="opacity-0"
                         leave-active-class="transition ease-in-out"
                         leave-to-class="opacity-0"
                     >
-                        <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">
-                            ✓ Saved successfully.
+                        <p v-if="form.recentlySuccessful" class="text-sm text-green-600 font-medium">
+                            ✓ Saved successfully!
                         </p>
                     </Transition>
                 </div>
                 </div>
-            </div>
+            </RhythmicCard>
         </form>
         
         <!-- Mobile Sticky Save Button -->
