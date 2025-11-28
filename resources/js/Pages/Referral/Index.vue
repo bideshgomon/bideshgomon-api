@@ -1,6 +1,9 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
+import StatusBadge from '@/Components/Rhythmic/StatusBadge.vue';
+import FlowButton from '@/Components/Rhythmic/FlowButton.vue';
 import { ClipboardDocumentIcon, UserGroupIcon, CurrencyDollarIcon, ClockIcon } from '@heroicons/vue/24/outline';
 import { useBangladeshFormat } from '@/Composables/useBangladeshFormat';
 import { ref } from 'vue';
@@ -39,89 +42,80 @@ const copyToClipboard = () => {
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <!-- Referral Code Card -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Your Referral Code</h3>
-                        <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg p-6 text-white">
-                            <div class="text-center">
-                                <p class="text-sm mb-2">Share this code with friends and earn rewards!</p>
-                                <p class="text-4xl font-bold tracking-wider mb-4">{{ referralCode }}</p>
-                                <div class="flex items-center justify-center space-x-2">
-                                    <input 
-                                        type="text" 
-                                        :value="referralLink" 
-                                        readonly 
-                                        class="bg-white/20 border-white/30 text-white placeholder-white/50 px-4 py-2 rounded flex-1 max-w-md"
-                                    />
-                                    <button 
-                                        @click="copyToClipboard"
-                                        class="bg-white text-indigo-600 px-4 py-2 rounded font-medium hover:bg-indigo-50 transition flex items-center space-x-2"
-                                    >
+                <RhythmicCard variant="gradient" size="xl" class="animate-fadeInUp">
+                    <template #default>
+                        <h3 class="text-lg font-medium text-white mb-4">Your Referral Code</h3>
+                        <div class="text-center">
+                            <p class="text-sm text-white/90 mb-2">Share this code with friends and earn rewards!</p>
+                            <p class="text-4xl font-bold tracking-wider mb-4 text-white">{{ referralCode }}</p>
+                            <div class="flex items-center justify-center space-x-2">
+                                <input 
+                                    type="text" 
+                                    :value="referralLink" 
+                                    readonly 
+                                    class="bg-white/20 border-white/30 text-white placeholder-white/50 px-4 py-2 rounded flex-1 max-w-md"
+                                />
+                                <FlowButton
+                                    @click="copyToClipboard"
+                                    variant="white-outline"
+                                    size="md"
+                                >
+                                    <template #icon-left>
                                         <ClipboardDocumentIcon class="h-5 w-5" />
-                                        <span>{{ copied ? 'Copied!' : 'Copy' }}</span>
-                                    </button>
-                                </div>
+                                    </template>
+                                    {{ copied ? 'Copied!' : 'Copy' }}
+                                </FlowButton>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </template>
+                </RhythmicCard>
 
                 <!-- Stats Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 bg-indigo-500 rounded-md p-3">
-                                    <UserGroupIcon class="h-6 w-6 text-white" />
-                                </div>
-                                <div class="ml-4">
-                                    <p class="text-sm font-medium text-gray-500">Total Referrals</p>
-                                    <p class="text-2xl font-semibold text-gray-900">{{ stats.totalReferrals }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <RhythmicCard variant="ocean" size="md" class="animate-fadeIn" style="animation-delay: 100ms;">
+                        <template #icon>
+                            <UserGroupIcon class="h-6 w-6" />
+                        </template>
+                        <template #default>
+                            <p class="text-sm font-medium mb-1">Total Referrals</p>
+                            <p class="text-2xl font-semibold">{{ stats.totalReferrals }}</p>
+                        </template>
+                    </RhythmicCard>
 
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 bg-green-500 rounded-md p-3">
-                                    <CurrencyDollarIcon class="h-6 w-6 text-white" />
-                                </div>
-                                <div class="ml-4">
-                                    <p class="text-sm font-medium text-gray-500">Total Earnings</p>
-                                    <p class="text-2xl font-semibold text-gray-900">{{ formatCurrency(stats.totalEarnings) }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <RhythmicCard variant="growth" size="md" class="animate-fadeIn" style="animation-delay: 200ms;">
+                        <template #icon>
+                            <CurrencyDollarIcon class="h-6 w-6" />
+                        </template>
+                        <template #default>
+                            <p class="text-sm font-medium mb-1">Total Earnings</p>
+                            <p class="text-2xl font-semibold">{{ formatCurrency(stats.totalEarnings) }}</p>
+                        </template>
+                    </RhythmicCard>
 
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6">
-                            <div class="flex items-center">
-                                <div class="flex-shrink-0 bg-yellow-500 rounded-md p-3">
-                                    <ClockIcon class="h-6 w-6 text-white" />
-                                </div>
-                                <div class="ml-4">
-                                    <p class="text-sm font-medium text-gray-500">Pending Rewards</p>
-                                    <p class="text-2xl font-semibold text-gray-900">{{ formatCurrency(stats.pendingRewards) }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <RhythmicCard variant="gold" size="md" class="animate-fadeIn" style="animation-delay: 300ms;">
+                        <template #icon>
+                            <ClockIcon class="h-6 w-6" />
+                        </template>
+                        <template #default>
+                            <p class="text-sm font-medium mb-1">Pending Rewards</p>
+                            <p class="text-2xl font-semibold">{{ formatCurrency(stats.pendingRewards) }}</p>
+                        </template>
+                    </RhythmicCard>
                 </div>
 
                 <!-- Recent Referrals -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-medium text-gray-900">Recent Referrals</h3>
-                            <Link 
-                                :href="route('referral.referrals')" 
-                                class="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
+                <RhythmicCard variant="light" size="lg" class="animate-fadeIn" style="animation-delay: 400ms;">
+                    <template #default>
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-medium">Recent Referrals</h3>
+                            <FlowButton 
+                                :href="route('referral.referrals')"
+                                variant="secondary"
+                                size="sm"
+                                as="Link"
                             >
                                 View All
-                            </Link>
+                            </FlowButton>
                         </div>
                         
                         <div v-if="referrals.length > 0" class="overflow-x-auto">
@@ -146,15 +140,7 @@ const copyToClipboard = () => {
                                             {{ formatDate(referral.created_at) }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <span 
-                                                :class="{
-                                                    'bg-green-100 text-green-800': referral.is_completed,
-                                                    'bg-yellow-100 text-yellow-800': !referral.is_completed
-                                                }"
-                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
-                                            >
-                                                {{ referral.is_completed ? 'Completed' : 'Pending' }}
-                                            </span>
+                                            <StatusBadge :status="referral.is_completed ? 'completed' : 'pending'" />
                                         </td>
                                     </tr>
                                 </tbody>
@@ -164,20 +150,22 @@ const copyToClipboard = () => {
                             <UserGroupIcon class="mx-auto h-12 w-12 text-gray-400" />
                             <p class="mt-2">No referrals yet. Share your code to get started!</p>
                         </div>
-                    </div>
-                </div>
+                    </template>
+                </RhythmicCard>
 
                 <!-- Recent Rewards -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-medium text-gray-900">Recent Rewards</h3>
-                            <Link 
-                                :href="route('referral.rewards')" 
-                                class="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
+                <RhythmicCard variant="light" size="lg" class="animate-fadeIn" style="animation-delay: 500ms;">
+                    <template #default>
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-medium">Recent Rewards</h3>
+                            <FlowButton 
+                                :href="route('referral.rewards')"
+                                variant="secondary"
+                                size="sm"
+                                as="Link"
                             >
                                 View All
-                            </Link>
+                            </FlowButton>
                         </div>
                         
                         <div v-if="recentRewards.length > 0" class="space-y-4">
@@ -192,17 +180,8 @@ const copyToClipboard = () => {
                                     <p class="text-xs text-gray-400">{{ formatDate(reward.created_at) }} at {{ formatTime(reward.created_at) }}</p>
                                 </div>
                                 <div class="text-right">
-                                    <p class="text-sm font-semibold text-gray-900">{{ formatCurrency(reward.amount) }}</p>
-                                    <span 
-                                        :class="{
-                                            'bg-green-100 text-green-800': reward.status === 'approved' || reward.status === 'paid',
-                                            'bg-yellow-100 text-yellow-800': reward.status === 'pending',
-                                            'bg-red-100 text-red-800': reward.status === 'rejected'
-                                        }"
-                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
-                                    >
-                                        {{ reward.status.charAt(0).toUpperCase() + reward.status.slice(1) }}
-                                    </span>
+                                    <p class="text-sm font-semibold">{{ formatCurrency(reward.amount) }}</p>
+                                    <StatusBadge :status="reward.status" />
                                 </div>
                             </div>
                         </div>
@@ -210,8 +189,8 @@ const copyToClipboard = () => {
                             <CurrencyDollarIcon class="mx-auto h-12 w-12 text-gray-400" />
                             <p class="mt-2">No rewards yet. Refer friends to earn rewards!</p>
                         </div>
-                    </div>
-                </div>
+                    </template>
+                </RhythmicCard>
             </div>
         </div>
     </AuthenticatedLayout>
