@@ -49,9 +49,32 @@
                             <!-- Service Module Selection -->
                             <div>
                                 <h3 class="text-lg font-medium text-gray-900 mb-4">Select Service</h3>
+                                
+                                <!-- Enable Multiple Service Selection -->
+                                <div class="mb-4">
+                                    <div class="flex items-start">
+                                        <div class="flex items-center h-5">
+                                            <input 
+                                                v-model="enableMultipleServices"
+                                                type="checkbox"
+                                                class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                            />
+                                        </div>
+                                        <div class="ml-3">
+                                            <label class="font-medium text-gray-900">Assign multiple services at once</label>
+                                            <p class="text-sm text-gray-500">Select multiple services to create bulk assignments with same settings</p>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Service Module *</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        {{ enableMultipleServices ? 'Service Modules *' : 'Service Module *' }}
+                                    </label>
+                                    
+                                    <!-- Single Service Selection -->
                                     <select 
+                                        v-if="!enableMultipleServices"
                                         v-model="selectedServiceModule"
                                         @change="onServiceModuleChange"
                                         required
@@ -62,6 +85,26 @@
                                             {{ module.name }} ({{ module.service_type }})
                                         </option>
                                     </select>
+                                    
+                                    <!-- Multiple Service Selection -->
+                                    <div v-else class="border border-gray-300 rounded-md max-h-60 overflow-y-auto p-3 bg-white">
+                                        <div v-for="module in serviceModules" :key="module.id" class="flex items-center mb-2">
+                                            <input 
+                                                :id="'service-' + module.id"
+                                                v-model="selectedServiceModules"
+                                                :value="module.id"
+                                                type="checkbox"
+                                                class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                            />
+                                            <label :for="'service-' + module.id" class="ml-2 text-sm text-gray-700">
+                                                {{ module.name }} <span class="text-gray-500">({{ module.service_type }})</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <p v-if="enableMultipleServices && selectedServiceModules.length > 0" class="mt-2 text-sm text-gray-600">
+                                        {{ selectedServiceModules.length }} services selected
+                                    </p>
                                     <p v-if="form.errors.service_module_id" class="mt-1 text-sm text-red-600">{{ form.errors.service_module_id }}</p>
                                 </div>
                             </div>
@@ -89,10 +132,33 @@
                             <!-- Country & Visa Type -->
                             <div v-if="form.assignment_scope !== 'global'">
                                 <h3 class="text-lg font-medium text-gray-900 mb-4">Country & Visa Type</h3>
+                                
+                                <!-- Enable Multiple Country Selection -->
+                                <div class="mb-4">
+                                    <div class="flex items-start">
+                                        <div class="flex items-center h-5">
+                                            <input 
+                                                v-model="enableMultipleCountries"
+                                                type="checkbox"
+                                                class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                            />
+                                        </div>
+                                        <div class="ml-3">
+                                            <label class="font-medium text-gray-900">Assign multiple countries at once</label>
+                                            <p class="text-sm text-gray-500">Select multiple countries to create bulk assignments with same settings</p>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Country *</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        {{ enableMultipleCountries ? 'Countries *' : 'Country *' }}
+                                    </label>
+                                    
+                                    <!-- Single Country Selection -->
                                     <select 
+                                        v-if="!enableMultipleCountries"
                                         v-model="selectedCountry"
                                         @change="onCountryChange"
                                         :required="form.assignment_scope !== 'global'"
@@ -103,6 +169,26 @@
                                             {{ country.name }} ({{ country.iso_code_2 }})
                                         </option>
                                     </select>
+                                    
+                                    <!-- Multiple Country Selection -->
+                                    <div v-else class="border border-gray-300 rounded-md max-h-60 overflow-y-auto p-3 bg-white">
+                                        <div v-for="country in countries" :key="country.id" class="flex items-center mb-2">
+                                            <input 
+                                                :id="'country-' + country.id"
+                                                v-model="selectedCountries"
+                                                :value="country.id"
+                                                type="checkbox"
+                                                class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                            />
+                                            <label :for="'country-' + country.id" class="ml-2 text-sm text-gray-700">
+                                                {{ country.name }} ({{ country.iso_code_2 }})
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <p v-if="enableMultipleCountries && selectedCountries.length > 0" class="mt-2 text-sm text-gray-600">
+                                        {{ selectedCountries.length }} countries selected
+                                    </p>
                                     <p v-if="form.errors.country" class="mt-1 text-sm text-red-600">{{ form.errors.country }}</p>
                                 </div>                                    <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Country Code</label>
@@ -280,7 +366,7 @@
     </div>
   </AdminLayout>
 </template><script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 
@@ -292,11 +378,17 @@ const props = defineProps({
 });
 
 const selectedCountry = ref('');
+const selectedCountries = ref([]);
+const enableMultipleCountries = ref(false);
 const selectedServiceModule = ref('');
+const selectedServiceModules = ref([]);
+const enableMultipleServices = ref(false);
 
 const form = useForm({
     agency_id: '',
     service_module_id: '',
+    service_module_ids: [],  // For multiple services
+    country_ids: [],  // For multiple countries
     country_id: '',
     country: '',
     country_code: '',
@@ -313,23 +405,58 @@ const form = useForm({
     auto_assign_requirements: true,
 });
 
+// Watch for service module checkbox changes
+watch(enableMultipleServices, (newValue) => {
+    if (newValue) {
+        // Switching to multiple - clear single selection
+        selectedServiceModule.value = '';
+        form.service_module_id = '';
+    } else {
+        // Switching to single - clear multiple selections
+        selectedServiceModules.value = [];
+        form.service_module_ids = [];
+    }
+});
+
+// Watch for service module selection changes
+watch(selectedServiceModules, (newValue) => {
+    if (enableMultipleServices.value) {
+        onServiceModuleChange();
+    }
+});
+
 const onCountryChange = () => {
-    const country = props.countries.find(c => c.id === parseInt(selectedCountry.value));
-    if (country) {
-        form.country = country.name;
-        form.country_code = country.iso_code_2;
-        form.country_id = country.id;
+    if (!enableMultipleCountries.value) {
+        const country = props.countries.find(c => c.id === parseInt(selectedCountry.value));
+        if (country) {
+            form.country = country.name;
+            form.country_code = country.iso_code_2;
+            form.country_id = country.id;
+            form.country_ids = [];
+        }
+    } else {
+        // For multiple countries, we'll handle this in submit
+        form.country_ids = selectedCountries.value;
+        form.country_id = '';
+        form.country = '';
+        form.country_code = '';
     }
 };
 
 const onServiceModuleChange = () => {
-    const module = props.serviceModules.find(m => m.id === parseInt(selectedServiceModule.value));
-    if (module) {
-        form.service_module_id = module.id;
-        // Auto-set scope based on service type
-        if (module.service_type === 'premade' || module.service_type === 'api_based') {
-            form.assignment_scope = 'global';
+    if (!enableMultipleServices.value) {
+        const module = props.serviceModules.find(m => m.id === parseInt(selectedServiceModule.value));
+        if (module) {
+            form.service_module_id = module.id;
+            form.service_module_ids = [];
+            // Auto-set scope based on service type
+            if (module.service_type === 'premade' || module.service_type === 'api_based') {
+                form.assignment_scope = 'global';
+            }
         }
+    } else {
+        form.service_module_ids = selectedServiceModules.value;
+        form.service_module_id = '';
     }
 };
 
@@ -343,6 +470,20 @@ const onVisaTypeChange = (event) => {
 };
 
 const submitForm = () => {
+    // Update country_ids array when submitting
+    if (enableMultipleCountries.value) {
+        form.country_ids = selectedCountries.value;
+    } else {
+        form.country_ids = [];
+    }
+    
+    // Update service_module_ids array when submitting
+    if (enableMultipleServices.value) {
+        form.service_module_ids = selectedServiceModules.value;
+    } else {
+        form.service_module_ids = [];
+    }
+    
     form.post(route('admin.agency-assignments.store'));
 };
 </script>

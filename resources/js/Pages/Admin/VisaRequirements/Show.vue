@@ -52,11 +52,56 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <!-- Main Content -->
                     <div class="lg:col-span-2 space-y-6">
-                        <!-- General Requirements -->
-                        <div class="bg-white rounded-lg shadow p-6">
-                            <h2 class="text-xl font-semibold text-gray-900 mb-4">General Requirements</h2>
-                            <div class="prose prose-sm max-w-none text-gray-600 whitespace-pre-line">
-                                {{ visaRequirement.general_requirements }}
+                        <!-- Basic Documents (Common for All) -->
+                        <div v-if="visaRequirement.required_documents && visaRequirement.required_documents.length > 0" class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-xl font-semibold text-gray-900">Basic Documents (Common for All)</h2>
+                                <span class="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
+                                    {{ visaRequirement.required_documents.length }} documents
+                                </span>
+                            </div>
+                            <ul class="space-y-2">
+                                <li 
+                                    v-for="(doc, index) in visaRequirement.required_documents" 
+                                    :key="index"
+                                    class="flex items-start"
+                                >
+                                    <svg class="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="text-gray-700">{{ doc }}</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Profession-Specific Documents -->
+                        <div v-if="visaRequirement.profession_specific_docs && Object.keys(visaRequirement.profession_specific_docs).length > 0" class="bg-white rounded-lg shadow p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-xl font-semibold text-gray-900">Profession-Specific Documents</h2>
+                                <span class="px-3 py-1 bg-purple-100 text-purple-800 text-sm font-medium rounded-full">
+                                    {{ Object.keys(visaRequirement.profession_specific_docs).length }} professions
+                                </span>
+                            </div>
+                            <div class="space-y-6">
+                                <div 
+                                    v-for="(docs, profession) in visaRequirement.profession_specific_docs" 
+                                    :key="profession"
+                                    class="p-4 border-2 border-indigo-100 rounded-lg bg-indigo-50/30"
+                                >
+                                    <h3 class="font-semibold text-indigo-900 mb-3">{{ profession }}</h3>
+                                    <ul class="space-y-2">
+                                        <li 
+                                            v-for="(doc, index) in (typeof docs === 'string' ? docs.split('\n').filter(d => d.trim()) : docs)" 
+                                            :key="index"
+                                            class="flex items-start"
+                                        >
+                                            <svg class="w-5 h-5 text-indigo-500 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                            </svg>
+                                            <span class="text-gray-700">{{ doc }}</span>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
 
@@ -86,91 +131,6 @@
                             </div>
                         </div>
 
-                        <!-- Documents Required -->
-                        <div class="bg-white rounded-lg shadow p-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <h2 class="text-xl font-semibold text-gray-900">Required Documents</h2>
-                                <span class="px-3 py-1 bg-purple-100 text-purple-800 text-sm font-medium rounded-full">
-                                    {{ visaRequirement.documents?.length || 0 }} documents
-                                </span>
-                            </div>
-                            <div v-if="visaRequirement.documents && visaRequirement.documents.length > 0" class="space-y-3">
-                                <div 
-                                    v-for="doc in visaRequirement.documents" 
-                                    :key="doc.id"
-                                    class="p-4 border border-gray-200 rounded-lg hover:border-indigo-300 transition"
-                                >
-                                    <div class="flex items-start justify-between">
-                                        <div class="flex-1">
-                                            <h3 class="font-medium text-gray-900">{{ doc.document_name }}</h3>
-                                            <p v-if="doc.description" class="mt-1 text-sm text-gray-600">{{ doc.description }}</p>
-                                            <div v-if="doc.specifications" class="mt-2 text-sm text-gray-500">
-                                                <span class="font-medium">Specifications:</span> {{ doc.specifications }}
-                                            </div>
-                                        </div>
-                                        <span 
-                                            :class="[
-                                                'ml-3 px-2 py-1 text-xs font-medium rounded-full',
-                                                doc.is_mandatory 
-                                                    ? 'bg-red-100 text-red-800' 
-                                                    : 'bg-blue-100 text-blue-800'
-                                            ]"
-                                        >
-                                            {{ doc.is_mandatory ? 'Mandatory' : 'Optional' }}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div v-else class="text-center py-8 text-gray-500">
-                                No documents added yet
-                            </div>
-                        </div>
-
-                        <!-- Profession Requirements -->
-                        <div class="bg-white rounded-lg shadow p-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <h2 class="text-xl font-semibold text-gray-900">Profession-Specific Requirements</h2>
-                                <span class="px-3 py-1 bg-orange-100 text-orange-800 text-sm font-medium rounded-full">
-                                    {{ visaRequirement.profession_requirements?.length || 0 }} professions
-                                </span>
-                            </div>
-                            <div v-if="visaRequirement.profession_requirements && visaRequirement.profession_requirements.length > 0" class="space-y-4">
-                                <div 
-                                    v-for="prof in visaRequirement.profession_requirements" 
-                                    :key="prof.id"
-                                    class="p-4 border border-gray-200 rounded-lg hover:border-indigo-300 transition"
-                                >
-                                    <div class="flex items-start justify-between">
-                                        <div class="flex-1">
-                                            <h3 class="font-medium text-gray-900">{{ prof.profession_category }}</h3>
-                                            <p v-if="prof.profession_title" class="text-sm text-gray-500">{{ prof.profession_title }}</p>
-                                            <div v-if="prof.additional_requirements" class="mt-2 text-sm text-gray-600 whitespace-pre-line">
-                                                {{ prof.additional_requirements }}
-                                            </div>
-                                            <div v-if="prof.min_bank_balance_override" class="mt-2 text-sm">
-                                                <span class="font-medium text-gray-700">Min. Bank Balance:</span>
-                                                <span class="text-gray-900"> ৳{{ prof.min_bank_balance_override.toLocaleString() }}</span>
-                                            </div>
-                                        </div>
-                                        <span 
-                                            v-if="prof.risk_level"
-                                            :class="[
-                                                'ml-3 px-2 py-1 text-xs font-medium rounded-full',
-                                                prof.risk_level === 1 ? 'bg-green-100 text-green-800' :
-                                                prof.risk_level === 2 ? 'bg-yellow-100 text-yellow-800' :
-                                                'bg-red-100 text-red-800'
-                                            ]"
-                                        >
-                                            {{ prof.risk_level === 1 ? 'Low Risk' : prof.risk_level === 2 ? 'Medium Risk' : 'High Risk' }}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div v-else class="text-center py-8 text-gray-500">
-                                No profession-specific requirements added yet
-                            </div>
-                        </div>
-
                         <!-- Important Notes -->
                         <div v-if="visaRequirement.important_notes" class="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-lg">
                             <div class="flex">
@@ -195,9 +155,9 @@
                         <div class="bg-white rounded-lg shadow p-6">
                             <h2 class="text-lg font-semibold text-gray-900 mb-4">Fee Structure</h2>
                             <div class="space-y-3">
-                                <div class="flex justify-between py-2 border-b border-gray-200">
-                                    <span class="text-gray-600">Government Fee:</span>
-                                    <span class="font-semibold text-gray-900">৳{{ (visaRequirement.government_fee || 0).toLocaleString() }}</span>
+                                <div class="flex justify-between py-2 border-b-2 border-indigo-200">
+                                    <span class="text-gray-700 font-medium">Embassy Fee:</span>
+                                    <span class="font-bold text-indigo-600">৳{{ (visaRequirement.government_fee || 0).toLocaleString() }}</span>
                                 </div>
                                 <div class="flex justify-between py-2 border-b border-gray-200">
                                     <span class="text-gray-600">Service Fee:</span>
@@ -207,9 +167,9 @@
                                     <span class="text-gray-600">Processing Fee:</span>
                                     <span class="font-semibold text-gray-900">৳{{ (visaRequirement.processing_fee_standard || 0).toLocaleString() }}</span>
                                 </div>
-                                <div class="flex justify-between py-3 bg-indigo-50 px-3 rounded -mx-3">
-                                    <span class="font-semibold text-gray-900">Total:</span>
-                                    <span class="font-bold text-indigo-600">
+                                <div class="flex justify-between py-3 bg-indigo-600 text-white px-3 rounded -mx-3">
+                                    <span class="font-bold">Total Amount:</span>
+                                    <span class="font-bold text-lg">
                                         ৳{{ ((visaRequirement.government_fee || 0) + (visaRequirement.service_fee || 0) + (visaRequirement.processing_fee_standard || 0)).toLocaleString() }}
                                     </span>
                                 </div>

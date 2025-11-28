@@ -12,7 +12,10 @@ import {
     CheckIcon,
     XMarkIcon,
     PlusIcon,
-    ArrowPathIcon
+    ArrowPathIcon,
+    KeyIcon,
+    EyeIcon,
+    EyeSlashIcon
 } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
@@ -21,6 +24,11 @@ const props = defineProps({
 });
 
 const activeTab = ref('general');
+const visiblePasswords = ref({});
+
+const togglePasswordVisibility = (key) => {
+    visiblePasswords.value[key] = !visiblePasswords.value[key];
+};
 
 const groupConfig = {
     general: { icon: CogIcon, label: 'General', color: 'indigo' },
@@ -29,6 +37,7 @@ const groupConfig = {
     wallet: { icon: WalletIcon, label: 'Wallet', color: 'green' },
     features: { icon: FlagIcon, label: 'Features', color: 'orange' },
     social: { icon: ShareIcon, label: 'Social Media', color: 'pink' },
+    api: { icon: KeyIcon, label: 'API Keys', color: 'red' },
 };
 
 const form = useForm({
@@ -63,6 +72,7 @@ const getInputType = (type) => {
         'url': 'url',
         'number': 'number',
         'boolean': 'checkbox',
+        'password': 'password',
     };
     return typeMap[type] || 'text';
 };
@@ -166,7 +176,7 @@ const updateSetting = (key, value) => {
                                         </div>
 
                                         <!-- Text/Number/Email/URL Inputs -->
-                                        <div v-else class="mt-3">
+                                        <div v-else-if="setting.type !== 'password'" class="mt-3">
                                             <input
                                                 :id="setting.key"
                                                 :type="getInputType(setting.type)"
@@ -175,6 +185,28 @@ const updateSetting = (key, value) => {
                                                 :step="setting.type === 'number' ? 'any' : undefined"
                                                 class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                             >
+                                        </div>
+
+                                        <!-- Password Input with Toggle -->
+                                        <div v-else class="mt-3">
+                                            <div class="relative">
+                                                <input
+                                                    :id="setting.key"
+                                                    :type="visiblePasswords[setting.key] ? 'text' : 'password'"
+                                                    :value="form.settings.find(s => s.key === setting.key)?.value"
+                                                    @input="updateSetting(setting.key, $event.target.value)"
+                                                    :placeholder="form.settings.find(s => s.key === setting.key)?.value ? '••••••••••••' : 'Enter API key'"
+                                                    class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm pr-10"
+                                                >
+                                                <button
+                                                    type="button"
+                                                    @click="togglePasswordVisibility(setting.key)"
+                                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                                                >
+                                                    <EyeIcon v-if="!visiblePasswords[setting.key]" class="h-5 w-5" />
+                                                    <EyeSlashIcon v-else class="h-5 w-5" />
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

@@ -27,33 +27,44 @@
                 <div class="bg-white rounded-lg shadow">
                     <form @submit.prevent="submitForm">
                         <div class="p-6 space-y-6">
+                            <!-- Document Hub Notice -->
+                            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                                <div class="flex items-start">
+                                    <div class="flex-shrink-0">
+                                        <svg class="h-5 w-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <div class="ml-3">
+                                        <h3 class="text-sm font-semibold text-blue-800">Using Legacy Document System</h3>
+                                        <p class="mt-1 text-sm text-blue-700">
+                                            This form uses the old text-based document system. For new requirements, consider using the 
+                                            <Link :href="route('admin.document-assignments.index')" class="font-semibold underline hover:text-blue-900">Document Hub System</Link> 
+                                            for better management and standardization with ICAO, ISO, WHO, and UN standards.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Basic Information -->
                             <div>
                                 <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
+                                    <div class="md:col-span-2">
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Country *</label>
-                                        <input 
-                                            v-model="form.country"
-                                            type="text"
+                                        <select 
+                                            v-model="form.country_id"
+                                            @change="updateCountryInfo"
                                             required
                                             class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                            placeholder="e.g., United States"
-                                        />
+                                        >
+                                            <option value="">Select a country</option>
+                                            <option v-for="country in props.countries" :key="country.id" :value="country.id">
+                                                {{ country.label }}
+                                            </option>
+                                        </select>
+                                        <p v-if="form.errors.country_id" class="mt-1 text-sm text-red-600">{{ form.errors.country_id }}</p>
                                         <p v-if="form.errors.country" class="mt-1 text-sm text-red-600">{{ form.errors.country }}</p>
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Country Code *</label>
-                                        <input 
-                                            v-model="form.country_code"
-                                            type="text"
-                                            required
-                                            maxlength="3"
-                                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                            placeholder="e.g., USA"
-                                        />
-                                        <p v-if="form.errors.country_code" class="mt-1 text-sm text-red-600">{{ form.errors.country_code }}</p>
                                     </div>
 
                                     <div>
@@ -92,15 +103,66 @@
                                 <h3 class="text-lg font-medium text-gray-900 mb-4">Requirements</h3>
                                 <div class="space-y-4">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">General Requirements *</label>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                                            Basic Documents (Common for All) *
+                                            <span class="text-xs text-gray-500">One document per line</span>
+                                        </label>
                                         <textarea 
-                                            v-model="form.general_requirements"
+                                            v-model="form.required_documents_text"
                                             required
-                                            rows="4"
-                                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                            placeholder="Enter general visa requirements..."
+                                            rows="8"
+                                            class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 font-mono text-sm"
+                                            placeholder="Valid passport with Old Passport if available (minimum 6 months validity)&#10;Recent passport-size photograph (white background, without glasses)&#10;Recent bank statement (last 6 months) and bank solvency certificate&#10;TIN Certificate and Income Tax Certificate&#10;Tour itinerary&#10;Air-ticket booking&#10;Hotel booking confirmation&#10;Cover letter to the visa officer"
                                         />
-                                        <p v-if="form.errors.general_requirements" class="mt-1 text-sm text-red-600">{{ form.errors.general_requirements }}</p>
+                                        <p v-if="form.errors.required_documents" class="mt-1 text-sm text-red-600">{{ form.errors.required_documents }}</p>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-3">
+                                            Profession-Specific Documents *
+                                            <span class="text-xs text-gray-500">Select professions to add their requirements</span>
+                                        </label>
+                                        
+                                        <!-- Profession Selector -->
+                                        <div class="mb-4 p-4 bg-gray-50 rounded-md border border-gray-200">
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Add Documents For:</label>
+                                            <select 
+                                                v-model="selectedProfessionToAdd"
+                                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                                @change="addProfessionSection"
+                                            >
+                                                <option value="">Select a profession...</option>
+                                                <option v-for="profession in props.professions" :key="profession" :value="profession">
+                                                    {{ profession }}
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Dynamic Profession Sections -->
+                                        <div v-if="professionDocs.length === 0" class="text-sm text-gray-500 italic p-4 bg-gray-50 rounded-md">
+                                            No profession-specific documents added yet. Select a profession above to add documents.
+                                        </div>
+
+                                        <div v-for="(item, index) in professionDocs" :key="index" class="mb-4 p-4 bg-white border-2 border-indigo-100 rounded-md">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <h4 class="font-semibold text-indigo-700">{{ item.profession }}</h4>
+                                                <button 
+                                                    type="button"
+                                                    @click="removeProfessionSection(index)"
+                                                    class="text-red-600 hover:text-red-800 text-sm"
+                                                >
+                                                    Remove
+                                                </button>
+                                            </div>
+                                            <textarea 
+                                                v-model="item.documents"
+                                                rows="5"
+                                                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 font-mono text-sm"
+                                                :placeholder="`Enter ${item.profession} documents (one per line):\nNOC from current employer\nEmployee ID card photo\nSalary certificate`"
+                                            />
+                                        </div>
+
+                                        <p v-if="form.errors.profession_specific_docs" class="mt-1 text-sm text-red-600">{{ form.errors.profession_specific_docs }}</p>
                                     </div>
 
                                     <div>
@@ -114,12 +176,12 @@
                                     </div>
 
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Important Notes</label>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Important Notes / Special Requirements</label>
                                         <textarea 
                                             v-model="form.important_notes"
-                                            rows="3"
+                                            rows="4"
                                             class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                            placeholder="Enter important notes..."
+                                            placeholder="Special notes for all applicants...&#10;Example: If the applicant has visited this country previously, provide visa copy"
                                         />
                                     </div>
                                 </div>
@@ -290,19 +352,42 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
+import { ref, computed } from 'vue';
 
-defineProps({
+const props = defineProps({
     serviceModules: Array,
     professionCategories: Object,
+    countries: Array,
+    professions: Array,
 });
+
+// Profession-specific document management
+const professionDocs = ref([]);
+const selectedProfessionToAdd = ref('');
+
+const addProfessionSection = () => {
+    if (selectedProfessionToAdd.value) {
+        professionDocs.value.push({
+            profession: selectedProfessionToAdd.value,
+            documents: ''
+        });
+        selectedProfessionToAdd.value = '';
+    }
+};
+
+const removeProfessionSection = (index) => {
+    professionDocs.value.splice(index, 1);
+};
 
 const form = useForm({
     service_module_id: null,
+    country_id: null,
     country: '',
     country_code: '',
     visa_type: '',
     visa_category: '',
-    general_requirements: '',
+    required_documents_text: '', // Text area input
+    profession_specific_docs_text: '', // Text area input
     eligibility_criteria: '',
     processing_time_info: '',
     validity_info: '',
@@ -328,7 +413,44 @@ const form = useForm({
     is_active: true,
 });
 
+const updateCountryInfo = () => {
+    const selectedCountry = props.countries.find(c => c.id === form.country_id);
+    if (selectedCountry) {
+        form.country = selectedCountry.name;
+        form.country_code = selectedCountry.code;
+    }
+};
+
 const submitForm = () => {
-    form.post(route('admin.visa-requirements.store'));
+    // Convert professionDocs array to object format
+    const professionDocsObject = {};
+    professionDocs.value.forEach(item => {
+        if (item.documents.trim()) {
+            // If profession already exists, append with index
+            let key = item.profession;
+            let counter = 1;
+            while (professionDocsObject[key]) {
+                key = `${item.profession}_${counter}`;
+                counter++;
+            }
+            professionDocsObject[key] = item.documents;
+        }
+    });
+
+    // Convert text areas to JSON arrays (split by newline)
+    const formData = {
+        ...form.data(),
+        required_documents: form.required_documents_text
+            .split('\n')
+            .map(line => line.trim())
+            .filter(line => line.length > 0),
+        profession_specific_docs: professionDocsObject,
+    };
+
+    // Remove the text versions
+    delete formData.required_documents_text;
+    delete formData.profession_specific_docs_text;
+
+    form.transform(() => formData).post(route('admin.visa-requirements.store'));
 };
 </script>

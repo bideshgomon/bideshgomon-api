@@ -197,6 +197,57 @@ const formatDateTime = (date) => {
                         <p class="text-xs text-gray-500 mt-1">{{ stats.services.approved_visa_applications }} approved</p>
                     </div>
                 </div>
+
+                <!-- Support Tickets -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-rose-100 rounded-lg">
+                            <ClipboardDocumentListIcon class="h-6 w-6 text-rose-600" />
+                        </div>
+                        <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
+                            +{{ stats.support.tickets_today }} today
+                        </span>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600 mb-1">Support Tickets</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ stats.support.total_tickets }}</p>
+                        <p class="text-xs text-gray-500 mt-1">{{ stats.support.open_tickets }} open · {{ stats.support.urgent_tickets }} urgent</p>
+                    </div>
+                </div>
+
+                <!-- Appointments -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-cyan-100 rounded-lg">
+                            <CogIcon class="h-6 w-6 text-cyan-600" />
+                        </div>
+                        <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
+                            +{{ stats.appointments.appointments_today }} today
+                        </span>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600 mb-1">Appointments</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ stats.appointments.total_appointments }}</p>
+                        <p class="text-xs text-gray-500 mt-1">{{ stats.appointments.pending_appointments }} pending · {{ stats.appointments.confirmed_appointments }} confirmed</p>
+                    </div>
+                </div>
+
+                <!-- Marketing Campaigns -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-fuchsia-100 rounded-lg">
+                            <ChartPieIcon class="h-6 w-6 text-fuchsia-600" />
+                        </div>
+                        <span class="text-xs font-medium text-gray-600 bg-gray-50 px-2 py-1 rounded">
+                            {{ stats.campaigns.active_campaigns }} active
+                        </span>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600 mb-1">Marketing Campaigns</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ stats.campaigns.total_campaigns }}</p>
+                        <p class="text-xs text-gray-500 mt-1">{{ formatCurrency(stats.campaigns.campaign_reach_month) }} reach this month</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Visa Revenue Card -->
@@ -227,10 +278,103 @@ const formatDateTime = (date) => {
                     Quick Access Management
                 </h2>
                 
+                <!-- Document Hub System (Priority) -->
+                <div class="mb-6">
+                    <h3 class="text-sm font-semibold text-indigo-600 uppercase tracking-wide mb-3 flex items-center">
+                        <span class="inline-block w-2 h-2 bg-indigo-600 rounded-full mr-2"></span>
+                        Document Hub System (International Standards)
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <Link
+                            :href="route('admin.master-documents.index')"
+                            class="flex items-center p-4 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl hover:shadow-lg transition-all group border-2 border-indigo-100"
+                        >
+                            <div class="p-3 bg-indigo-600 rounded-lg group-hover:bg-indigo-700 transition-colors">
+                                <DocumentTextIcon class="h-6 w-6 text-white" />
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-bold text-gray-900">Master Documents</p>
+                                <p class="text-sm text-gray-600">36 documents library</p>
+                            </div>
+                        </Link>
+
+                        <Link
+                            :href="route('admin.document-categories.index')"
+                            class="flex items-center p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl hover:shadow-lg transition-all group border-2 border-blue-100"
+                        >
+                            <div class="p-3 bg-blue-600 rounded-lg group-hover:bg-blue-700 transition-colors">
+                                <RectangleStackIcon class="h-6 w-6 text-white" />
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-bold text-gray-900">Document Categories</p>
+                                <p class="text-sm text-gray-600">8 categories</p>
+                            </div>
+                        </Link>
+
+                        <Link
+                            :href="route('admin.document-assignments.index')"
+                            class="flex items-center p-4 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl hover:shadow-lg transition-all group border-2 border-purple-100"
+                        >
+                            <div class="p-3 bg-purple-600 rounded-lg group-hover:bg-purple-700 transition-colors">
+                                <GlobeAltIcon class="h-6 w-6 text-white" />
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-bold text-gray-900">Country Assignments</p>
+                                <p class="text-sm text-gray-600">Document requirements</p>
+                            </div>
+                        </Link>
+                    </div>
+                </div>
+
+                <!-- Visa Management -->
+                <div class="mb-6">
+                    <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3">Visa Management</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <Link
+                            :href="route('admin.visa-requirements.index')"
+                            class="flex items-center p-4 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl hover:shadow-md transition-all group"
+                        >
+                            <div class="p-3 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors">
+                                <DocumentTextIcon class="h-6 w-6 text-purple-600" />
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-semibold text-gray-900">Visa Requirements (Legacy)</p>
+                                <p class="text-sm text-gray-600">Old system</p>
+                            </div>
+                        </Link>
+
+                        <Link
+                            :href="route('admin.visa-applications.index')"
+                            class="flex items-center p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl hover:shadow-md transition-all group"
+                        >
+                            <div class="p-3 bg-indigo-100 rounded-lg group-hover:bg-indigo-200 transition-colors">
+                                <ClipboardDocumentListIcon class="h-6 w-6 text-indigo-600" />
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-semibold text-gray-900">Visa Applications</p>
+                                <p class="text-sm text-gray-600">Process visas</p>
+                            </div>
+                        </Link>
+
+                        <Link
+                            :href="route('admin.agency-assignments.index')"
+                            class="flex items-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl hover:shadow-md transition-all group"
+                        >
+                            <div class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                                <UserGroupIcon class="h-6 w-6 text-blue-600" />
+                            </div>
+                            <div class="ml-4">
+                                <p class="font-semibold text-gray-900">Agency Assignments</p>
+                                <p class="text-sm text-gray-600">Country allocation</p>
+                            </div>
+                        </Link>
+                    </div>
+                </div>
+
                 <!-- Core Services -->
                 <div class="mb-6">
                     <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3">Core Services</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
                         <Link
                             :href="route('admin.service-modules.index')"
                             class="flex items-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl hover:shadow-md transition-all group"
@@ -241,32 +385,6 @@ const formatDateTime = (date) => {
                             <div class="ml-4">
                                 <p class="font-semibold text-gray-900">Service Modules</p>
                                 <p class="text-sm text-gray-600">39 services</p>
-                            </div>
-                        </Link>
-
-                        <Link
-                            :href="route('admin.visa-requirements.index')"
-                            class="flex items-center p-4 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl hover:shadow-md transition-all group"
-                        >
-                            <div class="p-3 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors">
-                                <GlobeAltIcon class="h-6 w-6 text-purple-600" />
-                            </div>
-                            <div class="ml-4">
-                                <p class="font-semibold text-gray-900">Visa Requirements</p>
-                                <p class="text-sm text-gray-600">Country rules</p>
-                            </div>
-                        </Link>
-
-                        <Link
-                            :href="route('admin.agency-assignments.index')"
-                            class="flex items-center p-4 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl hover:shadow-md transition-all group"
-                        >
-                            <div class="p-3 bg-indigo-100 rounded-lg group-hover:bg-indigo-200 transition-colors">
-                                <UserGroupIcon class="h-6 w-6 text-indigo-600" />
-                            </div>
-                            <div class="ml-4">
-                                <p class="font-semibold text-gray-900">Agency Assignments</p>
-                                <p class="text-sm text-gray-600">Country allocation</p>
                             </div>
                         </Link>
 

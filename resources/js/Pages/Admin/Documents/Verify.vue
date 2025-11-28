@@ -1,7 +1,10 @@
 <script setup>
+import { ref } from 'vue'
 import { Link, useForm } from '@inertiajs/vue3'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
+import Modal from '@/Components/Modal.vue'
 import { useBangladeshFormat } from '@/Composables/useBangladeshFormat'
+import { EyeIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
   pending: Object,
@@ -13,6 +16,19 @@ const approveForm = useForm({})
 const rejectForm = useForm({ reason: '' })
 const { formatDate } = useBangladeshFormat()
 
+const viewingDocument = ref(null)
+const showModal = ref(false)
+
+function viewDocument(doc) {
+  viewingDocument.value = doc
+  showModal.value = true
+}
+
+function closeModal() {
+  showModal.value = false
+  viewingDocument.value = null
+}
+
 function approve(doc) {
   approveForm.post(route('admin.documents.approve', doc.id))
 }
@@ -20,6 +36,24 @@ function reject(doc) {
   rejectForm.post(route('admin.documents.reject', doc.id), {
     onSuccess: () => rejectForm.reset('reason')
   })
+}
+
+function getDocumentUrl(doc) {
+  // Handle both full URLs and storage paths
+  if (doc.file_path.startsWith('http://') || doc.file_path.startsWith('https://')) {
+    return doc.file_path
+  }
+  // Remove 'documents/' prefix if it exists since /storage already points to storage/app/public
+  const cleanPath = doc.file_path.replace(/^documents\//, '')
+  return `/storage/documents/${cleanPath}`
+}
+
+function isImage(filename) {
+  return /\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(filename)
+}
+
+function isPdf(filename) {
+  return /\.pdf$/i.test(filename)
 }
 </script>
 
@@ -54,7 +88,7 @@ function reject(doc) {
                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Type</th>
                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Filename</th>
                 <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Uploaded</th>
-                <th class="px-3 py-2" />
+                <th class="px-3 py-2 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 bg-white">
@@ -64,6 +98,10 @@ function reject(doc) {
                 <td class="px-3 py-2 text-sm">{{ doc.original_filename }}</td>
                 <td class="px-3 py-2 text-sm">{{ formatDate(doc.created_at) }}</td>
                 <td class="px-3 py-2 text-sm text-right space-x-2">
+                  <button @click="viewDocument(doc)" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded inline-flex items-center gap-1">
+                    <EyeIcon class="h-3 w-3" />
+                    View
+                  </button>
                   <button @click="approve(doc)" :disabled="approveForm.processing" class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1 rounded">Approve</button>
                   <details class="inline-block">
                     <summary class="cursor-pointer bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded inline-block">Reject</summary>
@@ -114,6 +152,77 @@ function reject(doc) {
           </table>
         </div>
       </div>
+
+      <!-- Document Viewer Modal -->
+      <Modal :show="showModal" @close="closeModal" max-width="4xl">
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-xl font-semibold text-gray-900">Document Preview</h2>
+              <p v-if="viewingDocument" class="text-sm text-gray-600 mt-1">
+                {{ viewingDocument.document_type.replace('_',' ') }} - {{ viewingDocument.original_filename }}
+              </p>
+            </div>
+            <button @click="closeModal" class="text-gray-400 hover:text-gray-600">
+              <XMarkIcon class="h-6 w-6" />
+            </button>
+          </div>
+
+          <div v-if="viewingDocument" class="bg-gray-100 rounded-lg p-4 min-h-[500px] flex items-center justify-center">
+            <!-- Image Preview -->
+            <img 
+              v-if="isImage(viewingDocument.original_filename)"
+              :src="getDocumentUrl(viewingDocument)"
+              :alt="viewingDocument.original_filename"
+              class="max-w-full max-h-[600px] object-contain rounded shadow-lg"
+            />
+
+            <!-- PDF Preview -->
+            <iframe
+              v-else-if="isPdf(viewingDocument.original_filename)"
+              :src="getDocumentUrl(viewingDocument)"
+              class="w-full h-[600px] rounded shadow-lg bg-white"
+              frameborder="0"
+            ></iframe>
+
+            <!-- Other Files - Download Link -->
+            <div v-else class="text-center">
+              <p class="text-gray-600 mb-4">Preview not available for this file type</p>
+              <a 
+                :href="getDocumentUrl(viewingDocument)"
+                target="_blank"
+                download
+                class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Download {{ viewingDocument.original_filename }}
+              </a>
+            </div>
+          </div>
+
+          <div class="mt-6 flex items-center justify-between">
+            <div v-if="viewingDocument" class="text-sm text-gray-600">
+              <p><strong>User:</strong> {{ viewingDocument.user?.name || 'User #' + viewingDocument.user_id }}</p>
+              <p><strong>Uploaded:</strong> {{ formatDate(viewingDocument.created_at) }}</p>
+            </div>
+            <div class="flex gap-3">
+              <button 
+                v-if="viewingDocument"
+                @click="approve(viewingDocument); closeModal()" 
+                :disabled="approveForm.processing"
+                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
+              >
+                Approve Document
+              </button>
+              <button 
+                @click="closeModal"
+                class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </Modal>
     </div>
   </AdminLayout>
 </template>
