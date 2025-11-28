@@ -175,7 +175,7 @@ const stepTitles = [
 
     <AuthenticatedLayout>
         <!-- Header -->
-        <div class="bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-600 text-white">
+        <div class="bg-blue-600 text-white">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-3">

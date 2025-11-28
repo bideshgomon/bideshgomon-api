@@ -87,22 +87,22 @@ const getCategoryVariant = (category) => {
 const getCategoryColor = (category) => {
   const categoryName = typeof category === 'object' ? category?.name?.toLowerCase() : category?.toLowerCase();
   const colors = {
-    'visa services': 'from-ocean-500 to-sky-600',
-    'visa': 'from-ocean-500 to-sky-600',
-    'travel services': 'from-sky-500 to-growth-600',
-    'travel': 'from-sky-500 to-growth-600',
-    'education services': 'from-heritage-500 to-heritage-600',
-    'education': 'from-heritage-500 to-heritage-600',
-    'employment services': 'from-sunrise-500 to-gold-600',
-    'employment': 'from-sunrise-500 to-gold-600',
-    'document services': 'from-growth-500 to-sky-600',
-    'documents': 'from-growth-500 to-sky-600',
-    'financial services': 'from-gold-500 to-sunrise-600',
-    'financial': 'from-gold-500 to-sunrise-600',
-    'other services': 'from-gray-500 to-slate-600',
-    'other': 'from-gray-500 to-slate-600',
+    'visa services': 'ocean-500',
+    'visa': 'ocean-500',
+    'travel services': 'sky-500',
+    'travel': 'sky-500',
+    'education services': 'heritage-500',
+    'education': 'heritage-500',
+    'employment services': 'sunrise-500',
+    'employment': 'sunrise-500',
+    'document services': 'growth-500',
+    'documents': 'growth-500',
+    'financial services': 'gold-500',
+    'financial': 'gold-500',
+    'other services': 'gray-500',
+    'other': 'gray-500',
   };
-  return colors[categoryName] || 'from-ocean-500 to-sky-600';
+  return colors[categoryName] || 'ocean-500';
 };
 
 const getCategoryIcon = (category, solid = false) => {
