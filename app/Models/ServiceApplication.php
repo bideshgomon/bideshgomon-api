@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ServiceApplication extends Model
 {
@@ -108,6 +109,21 @@ class ServiceApplication extends Model
     public function touristVisa(): BelongsTo
     {
         return $this->belongsTo(TouristVisa::class);
+    }
+
+    public function documents(): HasMany
+    {
+        return $this->hasMany(ApplicationDocument::class);
+    }
+
+    public function pendingDocuments(): HasMany
+    {
+        return $this->documents()->where('verification_status', 'pending');
+    }
+
+    public function verifiedDocuments(): HasMany
+    {
+        return $this->documents()->where('verification_status', 'verified');
     }
 
     /**

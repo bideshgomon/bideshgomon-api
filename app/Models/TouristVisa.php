@@ -18,6 +18,7 @@ class TouristVisa extends Model
         'application_reference',
         'intended_travel_date',
         'duration_days',
+        'profession',
         'status',
         'user_notes',
         'admin_notes',

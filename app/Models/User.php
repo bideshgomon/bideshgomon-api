@@ -22,11 +22,13 @@ use App\Models\UserSecurityInformation;
 use App\Models\UserCv;
 use App\Models\JobApplication;
 use App\Models\Country;
+use Laravel\Scout\Searchable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, Searchable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -38,6 +40,7 @@ class User extends Authenticatable
         'email',
         'password',
         'phone',
+        'language',
         'role_id',
         'referral_code',
         'referred_by',
@@ -295,6 +298,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the user's document scans.
+     */
+    public function documentScans(): HasMany
+    {
+        return $this->hasMany(DocumentScan::class);
+    }
+
+    /**
      * Get the user's translation requests.
      */
     public function translationRequests(): HasMany
@@ -364,6 +375,14 @@ class User extends Authenticatable
     public function isAgency(): bool
     {
         return $this->hasRole('agency');
+    }
+
+    /**
+     * Get the agency profile for this user.
+     */
+    public function agency(): HasOne
+    {
+        return $this->hasOne(Agency::class);
     }
 
     /**
@@ -635,6 +654,21 @@ class User extends Authenticatable
     public function profileAssessments(): HasMany
     {
         return $this->hasMany(ProfileAssessment::class);
+    }
+
+    /**
+     * Get the indexable data array for the model.
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'role' => $this->role?->name,
+            'country' => $this->country?->name,
+        ];
     }
 }
 

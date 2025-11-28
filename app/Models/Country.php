@@ -22,4 +22,15 @@ class Country extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    // Relationships
+    public function documentRequirements()
+    {
+        return $this->hasMany(CountryDocumentRequirement::class);
+    }
+
+    public function visaRequirements()
+    {
+        return $this->hasMany(VisaRequirement::class);
+    }
 }

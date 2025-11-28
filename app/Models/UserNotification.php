@@ -11,7 +11,7 @@ class UserNotification extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'type', 'title', 'body', 'priority', 'data', 'read_at'
+        'user_id', 'type', 'title', 'body', 'priority', 'data', 'read_at', 'action_url', 'icon', 'color'
     ];
 
     protected $casts = [

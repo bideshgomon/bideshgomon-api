@@ -10,12 +10,19 @@ class VisaRequirement extends Model
 {
     protected $fillable = [
         'service_module_id',
+        'country_id',
         'managed_by_agency',
         'agency_assigned_at',
         'country',
         'country_code',
+        'profession',
         'visa_type',
         'visa_category',
+        'required_documents',
+        'profession_specific_docs',
+        'processing_time',
+        'validity_period',
+        'is_template',
         'general_requirements',
         'eligibility_criteria',
         'processing_time_info',
@@ -77,9 +84,12 @@ class VisaRequirement extends Model
         'biometrics_required' => 'boolean',
         'is_active' => 'boolean',
         'agency_can_edit' => 'boolean',
+        'is_template' => 'boolean',
         'specific_conditions' => 'array',
         'prohibited_items' => 'array',
         'tips_for_applicants' => 'array',
+        'required_documents' => 'array',
+        'profession_specific_docs' => 'array',
     ];
 
     /**
