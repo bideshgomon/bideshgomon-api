@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\JobApplication;
 use App\Models\JobPosting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class AdminJobApplicationController extends Controller
@@ -45,7 +46,7 @@ class AdminJobApplicationController extends Controller
             $query->where('payment_status', $request->payment_status);
         }
 
-        $applications = $query->latest('applied_at')
+        $applications = $query->latest('submitted_at')
             ->paginate(20)
             ->withQueryString();
 
@@ -102,6 +103,7 @@ class AdminJobApplicationController extends Controller
         ]);
 
         $validated['reviewed_at'] = now();
+        $validated['reviewed_by'] = Auth::id();
         
         $application->update($validated);
 
@@ -187,7 +189,7 @@ class AdminJobApplicationController extends Controller
                     $app->status,
                     $app->application_fee_paid,
                     $app->payment_status,
-                    $app->applied_at?->format('Y-m-d H:i:s') ?? 'N/A',
+                    $app->submitted_at?->format('Y-m-d H:i:s') ?? $app->created_at?->format('Y-m-d H:i:s') ?? 'N/A',
                     $app->reviewed_at?->format('Y-m-d H:i:s') ?? 'N/A',
                 ]);
             }

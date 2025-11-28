@@ -47,7 +47,11 @@
             <article class="bg-white rounded-lg shadow-md p-8 mb-8">
                 <!-- Featured Image Placeholder -->
                 <div v-if="post.featured_image" class="mb-8 rounded-lg overflow-hidden">
-                    <div class="h-96 bg-gradient-to-br from-blue-400 to-indigo-600"></div>
+                    <div class="h-96 bg-gray-200 flex items-center justify-center">
+                        <svg class="h-24 w-24 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                    </div>
                     <p v-if="post.image_credit" class="text-xs text-gray-500 mt-2">{{ post.image_credit }}</p>
                 </div>
 
@@ -77,7 +81,7 @@
                 <!-- Author Info -->
                 <div class="mt-12 pt-8 border-t">
                     <div class="flex items-center gap-4">
-                        <div class="h-16 w-16 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-white text-xl font-bold">
+                        <div class="h-16 w-16 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xl font-bold">
                             {{ post.author.name.charAt(0) }}
                         </div>
                         <div>
@@ -98,7 +102,11 @@
                         class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition cursor-pointer"
                         @click="$inertia.visit(route('blog.show', relatedPost.slug))"
                     >
-                        <div class="h-48 bg-gradient-to-br from-blue-400 to-indigo-600"></div>
+                        <div class="h-48 bg-gray-200 flex items-center justify-center">
+                            <svg class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
                         <div class="p-6">
                             <div class="flex items-center gap-2 mb-3">
                                 <span class="px-2 py-1 text-xs font-semibold rounded-full" :style="{ backgroundColor: relatedPost.category.color + '20', color: relatedPost.category.color }">

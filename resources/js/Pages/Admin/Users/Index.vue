@@ -160,26 +160,31 @@ const impersonateUser = (user) => {
     <Head title="User Management" />
 
     <AdminLayout>
-        <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
+        <div class="min-h-screen bg-gray-50 py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <!-- Header -->
-                <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-lg p-8 mb-8 text-white">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
                     <div class="flex items-center justify-between">
-                        <div>
-                            <h1 class="text-3xl font-bold mb-2">User Management</h1>
-                            <p class="text-blue-100">Manage and moderate platform users</p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                <UsersIcon class="h-6 w-6 text-indigo-600" />
+                            </div>
+                            <div>
+                                <h1 class="text-2xl font-bold text-gray-900">User Management</h1>
+                                <p class="text-sm text-gray-600 mt-0.5">Manage and moderate platform users</p>
+                            </div>
                         </div>
                         <div class="flex gap-3">
                             <Link
                                 :href="route('admin.users.create')"
-                                class="bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-xl font-semibold transition-colors flex items-center gap-2"
+                                class="bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2.5 rounded-lg font-medium transition-colors flex items-center gap-2"
                             >
                                 <UserPlusIcon class="h-5 w-5" />
                                 Create User
                             </Link>
                             <button
                                 @click="exportUsers"
-                                class="bg-white/20 hover:bg-white/30 px-6 py-3 rounded-xl font-semibold transition-colors flex items-center gap-2"
+                                class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 px-4 py-2.5 rounded-lg font-medium transition-colors flex items-center gap-2"
                             >
                                 <ArrowDownTrayIcon class="h-5 w-5" />
                                 Export CSV
@@ -189,86 +194,86 @@ const impersonateUser = (user) => {
                 </div>
 
                 <!-- Stats Cards -->
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-                    <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-gray-600 mb-1">Total Users</p>
+                                <p class="text-sm font-medium text-gray-600 mb-1">Total Users</p>
                                 <p class="text-2xl font-bold text-gray-900">{{ stats.total }}</p>
                             </div>
-                            <UsersIcon class="h-8 w-8 text-blue-500" />
+                            <UsersIcon class="h-8 w-8 text-indigo-500" />
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-gray-600 mb-1">Active</p>
+                                <p class="text-sm font-medium text-gray-600 mb-1">Active</p>
                                 <p class="text-2xl font-bold text-green-600">{{ stats.active }}</p>
                             </div>
                             <CheckCircleIcon class="h-8 w-8 text-green-500" />
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-gray-600 mb-1">Suspended</p>
+                                <p class="text-sm font-medium text-gray-600 mb-1">Suspended</p>
                                 <p class="text-2xl font-bold text-red-600">{{ stats.suspended }}</p>
                             </div>
                             <NoSymbolIcon class="h-8 w-8 text-red-500" />
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-gray-600 mb-1">Verified</p>
+                                <p class="text-sm font-medium text-gray-600 mb-1">Verified</p>
                                 <p class="text-2xl font-bold text-green-600">{{ stats.verified }}</p>
                             </div>
                             <ShieldCheckIcon class="h-8 w-8 text-green-500" />
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-gray-600 mb-1">Unverified</p>
-                                <p class="text-2xl font-bold text-yellow-600">{{ stats.unverified }}</p>
+                                <p class="text-sm font-medium text-gray-600 mb-1">Unverified</p>
+                                <p class="text-2xl font-bold text-amber-600">{{ stats.unverified }}</p>
                             </div>
-                            <XCircleIcon class="h-8 w-8 text-yellow-500" />
+                            <XCircleIcon class="h-8 w-8 text-amber-500" />
                         </div>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-gray-600 mb-1">Admins</p>
-                                <p class="text-2xl font-bold text-purple-600">{{ stats.admins }}</p>
+                                <p class="text-sm font-medium text-gray-600 mb-1">Admins</p>
+                                <p class="text-2xl font-bold text-indigo-600">{{ stats.admins }}</p>
                             </div>
-                            <ShieldCheckIcon class="h-8 w-8 text-purple-500" />
+                            <ShieldCheckIcon class="h-8 w-8 text-indigo-500" />
                         </div>
                     </div>
                 </div>
 
                 <!-- Search and Filters -->
-                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
                     <div class="flex flex-col lg:flex-row gap-4">
                         <div class="flex-1">
                             <div class="relative">
-                                <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                <MagnifyingGlassIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
                                 <input
                                     v-model="search"
                                     type="text"
                                     @keyup.enter="searchUsers"
                                     placeholder="Search by name, email, or phone..."
-                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                                 />
                             </div>
                         </div>
                         <button
                             @click="showFilters = !showFilters"
-                            class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+                            class="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
                         >
                             <FunnelIcon class="h-5 w-5" />
                             Filters
@@ -282,7 +287,7 @@ const impersonateUser = (user) => {
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
                                 <select
                                     v-model="filters.role"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                                 >
                                     <option value="">All Roles</option>
                                     <option value="user">User</option>
@@ -294,7 +299,7 @@ const impersonateUser = (user) => {
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
                                 <select
                                     v-model="filters.status"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                                 >
                                     <option value="">All Statuses</option>
                                     <option value="active">Active</option>
@@ -306,7 +311,7 @@ const impersonateUser = (user) => {
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Email Verification</label>
                                 <select
                                     v-model="filters.email_verified"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                                 >
                                     <option value="">All</option>
                                     <option value="verified">Verified</option>
@@ -317,13 +322,13 @@ const impersonateUser = (user) => {
                             <div class="flex items-end gap-2">
                                 <button
                                     @click="applyFilters"
-                                    class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+                                    class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
                                 >
                                     Apply
                                 </button>
                                 <button
                                     @click="clearFilters"
-                                    class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-semibold"
+                                    class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
                                 >
                                     Clear
                                 </button>
@@ -335,20 +340,20 @@ const impersonateUser = (user) => {
                 <!-- Bulk Actions -->
                 <div
                     v-if="selectedUsers.length > 0"
-                    class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 flex items-center justify-between"
+                    class="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-6 flex items-center justify-between"
                 >
-                    <span class="text-blue-900 font-semibold">{{ selectedUsers.length }} user(s) selected</span>
+                    <span class="text-indigo-900 font-medium">{{ selectedUsers.length }} user(s) selected</span>
                     <div class="flex gap-2">
                         <button
                             @click="bulkSuspend"
-                            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-semibold text-sm"
+                            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium text-sm"
                         >
                             <NoSymbolIcon class="h-4 w-4 inline mr-1" />
                             Suspend
                         </button>
                         <button
                             @click="bulkUnsuspend"
-                            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold text-sm"
+                            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm"
                         >
                             <CheckCircleIcon class="h-4 w-4 inline mr-1" />
                             Unsuspend
@@ -357,7 +362,7 @@ const impersonateUser = (user) => {
                 </div>
 
                 <!-- Users Table -->
-                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
@@ -367,7 +372,7 @@ const impersonateUser = (user) => {
                                             type="checkbox"
                                             :checked="selectedUsers.length === users.data.length && users.data.length > 0"
                                             @change="toggleSelectAll"
-                                            class="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                                            class="h-4 w-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
                                         />
                                     </th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -402,7 +407,7 @@ const impersonateUser = (user) => {
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
-                                            <div class="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold">
+                                            <div class="h-10 w-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold">
                                                 {{ user.name.charAt(0).toUpperCase() }}
                                             </div>
                                             <div>

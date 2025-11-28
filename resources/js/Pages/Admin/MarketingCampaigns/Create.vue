@@ -30,21 +30,18 @@ const submit = () => {
 
 <template>
   <AdminLayout>
-    <!-- Modern Gradient Header -->
-    <div class="relative overflow-hidden bg-gradient-to-br from-rose-600 via-pink-600 to-purple-700 shadow-2xl">
-      <div class="absolute inset-0 bg-black/10"></div>
-      <div class="absolute inset-0 bg-grid-white/5 bg-[size:20px_20px]"></div>
-      
-      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Modern Header -->
+    <div class="relative overflow-hidden bg-white border-b border-gray-200 shadow-sm">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div class="flex-1">
             <div class="flex items-center gap-3 mb-3">
-              <div class="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
-                <PlusIcon class="w-8 h-8 text-white" />
+              <div class="p-3 bg-indigo-100 rounded-lg">
+                <PlusIcon class="w-8 h-8 text-indigo-600" />
               </div>
-              <h1 class="text-4xl font-bold text-white tracking-tight">Create Campaign</h1>
+              <h1 class="text-4xl font-bold text-gray-900 tracking-tight">Create Campaign</h1>
             </div>
-            <p class="text-pink-100 text-lg max-w-2xl">
+            <p class="text-gray-600 text-lg max-w-2xl">
               Set up a new marketing campaign with powerful targeting options
             </p>
           </div>
@@ -90,10 +87,10 @@ const submit = () => {
               v-for="type in ['email', 'sms', 'push', 'notification']"
               :key="type"
               :class="[
-                'flex items-center justify-center p-5 border-2 rounded-xl cursor-pointer transition-all transform hover:scale-105',
+                'flex items-center justify-center p-5 border-2 rounded-lg cursor-pointer transition-all',
                 form.type === type
-                  ? 'border-pink-500 bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-900/30 dark:to-purple-900/30 shadow-lg'
-                  : 'border-gray-300 dark:border-gray-600 hover:border-pink-400 dark:hover:border-pink-500 hover:shadow-md',
+                  ? 'border-indigo-500 bg-indigo-50 shadow-md'
+                  : 'border-gray-300 hover:border-indigo-400 hover:shadow-md',
               ]"
             >
               <input
@@ -157,10 +154,10 @@ const submit = () => {
               v-for="type in ['all_users', 'segment', 'custom']"
               :key="type"
               :class="[
-                'flex flex-wrap items-start p-5 border-2 rounded-xl cursor-pointer transition-all',
+                'flex flex-wrap items-start p-5 border-2 rounded-lg cursor-pointer transition-all',
                 form.audience_type === type
-                  ? 'border-pink-500 bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-900/30 dark:to-purple-900/30 shadow-lg'
-                  : 'border-gray-300 dark:border-gray-600 hover:border-pink-400 dark:hover:border-pink-500 hover:shadow-md',
+                  ? 'border-indigo-500 bg-indigo-50 shadow-md'
+                  : 'border-gray-300 hover:border-indigo-400 hover:shadow-md',
               ]"
             >
               <input
@@ -191,12 +188,12 @@ const submit = () => {
         </div>
 
         <!-- Audience Filters (for segment) -->
-        <div v-if="form.audience_type === 'segment'" class="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-xl border-2 border-blue-200 dark:border-blue-800">
+        <div v-if="form.audience_type === 'segment'" class="bg-blue-50 p-6 rounded-lg border-2 border-blue-200">
           <div class="flex items-center gap-2 mb-5">
             <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
             </svg>
-            <label class="block text-lg font-bold text-gray-900 dark:text-white">Comprehensive Segment Filters</label>
+            <label class="block text-lg font-bold text-gray-900">Comprehensive Segment Filters</label>
           </div>
           <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">Target specific user segments with powerful filtering criteria</p>
 
@@ -718,13 +715,13 @@ const submit = () => {
         </div>
 
         <!-- A/B Test Configuration -->
-        <div v-if="form.is_ab_test" class="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border-2 border-yellow-300 dark:border-yellow-700 rounded-xl p-6">
-          <h3 class="font-bold text-gray-900 dark:text-white text-lg mb-4">
+        <div v-if="form.is_ab_test" class="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-6">
+          <h3 class="font-bold text-gray-900 text-lg mb-4">
             ⚡ A/B Test Configuration
           </h3>
           <div class="space-y-4">
             <div>
-              <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Test Split (%)</label>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Test Split (%)</label>
               <input
                 v-model.number="form.ab_test_config.split_percentage"
                 type="number"
@@ -762,7 +759,7 @@ const submit = () => {
           <button
             type="submit"
             :disabled="form.processing"
-            class="px-8 py-3.5 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white rounded-xl transition-all shadow-lg hover:shadow-xl font-semibold transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            class="px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-all shadow-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {{ form.processing ? 'Creating...' : 'Create Campaign' }}
           </button>

@@ -121,7 +121,7 @@ const getCategoryColor = (category) => {
                 <!-- Main Content -->
                 <div class="lg:col-span-2 space-y-6">
                     <!-- Salary & Benefits -->
-                    <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-6 border border-indigo-100">
+                    <div class="bg-white rounded-lg p-6 border border-gray-200">
                         <div class="flex items-center justify-between mb-4">
                             <div>
                                 <div class="text-sm text-gray-600 mb-1">Salary Range</div>
@@ -139,7 +139,7 @@ const getCategoryColor = (category) => {
                                 <span
                                     v-for="benefit in job.benefits"
                                     :key="benefit"
-                                    class="px-3 py-1 bg-white rounded-full text-sm text-gray-700 border border-indigo-200"
+                                    class="px-3 py-1 bg-gray-50 rounded-full text-sm text-gray-700 border border-gray-200"
                                 >
                                     {{ benefit }}
                                 </span>
@@ -290,10 +290,10 @@ const getCategoryColor = (category) => {
 
                 <div class="inline-block w-full max-w-2xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
                     <!-- Modal Header -->
-                    <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
+                    <div class="bg-white border-b border-gray-200 px-6 py-4">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-xl font-bold text-white">Apply for this Job</h3>
-                            <button @click="showApplicationModal = false" class="text-white hover:text-gray-200">
+                            <h3 class="text-xl font-bold text-gray-900">Apply for this Job</h3>
+                            <button @click="showApplicationModal = false" class="text-gray-400 hover:text-gray-600">
                                 <XMarkIcon class="h-6 w-6" />
                             </button>
                         </div>

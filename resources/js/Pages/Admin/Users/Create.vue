@@ -28,22 +28,24 @@ const submit = () => {
     <Head title="Create User - Admin" />
 
     <AdminLayout>
-        <div class="py-12">
-            <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="py-8">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <!-- Header -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                    <div class="p-6 border-b border-gray-200">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+                    <div class="p-6">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-3">
-                                <UserPlusIcon class="w-8 h-8 text-indigo-600" />
+                                <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                    <UserPlusIcon class="w-6 h-6 text-indigo-600" />
+                                </div>
                                 <div>
-                                    <h2 class="text-2xl font-bold text-gray-800">Create New User</h2>
-                                    <p class="text-gray-600 mt-1">Add a new user to the system</p>
+                                    <h2 class="text-2xl font-bold text-gray-900">Create New User</h2>
+                                    <p class="text-sm text-gray-600 mt-0.5">Add a new user to the system</p>
                                 </div>
                             </div>
                             <Link
                                 :href="route('admin.users.index')"
-                                class="flex items-center gap-2 text-gray-600 hover:text-gray-800 px-4 py-2 rounded-lg border border-gray-300"
+                                class="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 font-medium transition-colors"
                             >
                                 <ArrowLeftIcon class="w-4 h-4" />
                                 Back to Users
@@ -53,7 +55,7 @@ const submit = () => {
                 </div>
 
                 <!-- Create Form -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                     <form @submit.prevent="submit" class="p-6">
                         <div class="space-y-6">
                             <!-- Basic Information -->

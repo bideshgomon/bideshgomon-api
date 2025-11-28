@@ -96,7 +96,7 @@
                         class="bg-white rounded-lg shadow-sm hover:shadow-lg transition-shadow overflow-hidden border border-gray-200"
                     >
                         <!-- Featured Badge -->
-                        <div v-if="agency.is_featured" class="bg-gradient-to-r from-yellow-400 to-yellow-500 px-4 py-1 text-center">
+                        <div v-if="agency.is_featured" class="bg-yellow-500 px-4 py-1 text-center">
                             <span class="text-xs font-semibold text-white">FEATURED</span>
                         </div>
 

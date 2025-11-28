@@ -233,18 +233,18 @@ const getSectionCompletion = (sectionId) => {
     return calculator ? calculator() : 50;
 };
 
-// Get dynamic gradient based on completion
+// Get dynamic solid color based on completion
 const getSectionGradient = (sectionId) => {
     const percentage = getSectionCompletion(sectionId);
     
     if (percentage >= 80) {
-        return 'from-green-500 to-emerald-600'; // Complete
+        return 'bg-green-600'; // Complete
     } else if (percentage >= 50) {
-        return 'from-yellow-500 to-amber-600'; // Partial
+        return 'bg-yellow-600'; // Partial
     } else if (percentage > 0) {
-        return 'from-orange-500 to-red-600'; // Started but incomplete
+        return 'bg-orange-600'; // Started but incomplete
     } else {
-        return 'from-gray-400 to-gray-500'; // Not started
+        return 'bg-gray-500'; // Not started
     }
 };
 
@@ -523,7 +523,7 @@ const backToCards = () => {
             </div>
         </template>
 
-        <div class="py-3 md:py-6 lg:py-12">
+        <div class="py-6 md:py-8">
             <div class="mx-auto max-w-7xl px-2 sm:px-4 lg:px-8">
                 <!-- Mobile Back Button (Sticky) -->
                 <div 
@@ -542,11 +542,11 @@ const backToCards = () => {
                 </div>
 
                 <!-- Profile Completion Progress -->
-                <RhythmicCard variant="gradient" class="mb-rhythm-lg">
-                    <div class="p-rhythm-md">
-                        <div class="flex items-center justify-between mb-rhythm-sm">
+                <RhythmicCard variant="gradient" class="mb-6">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-ocean-500 flex items-center justify-center shadow-rhythmic-md">
+                                <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center shadow-sm">
                                     <CheckCircleIcon v-if="completion.isComplete" class="w-6 h-6 text-white" />
                                     <ExclamationCircleIcon v-else class="w-6 h-6 text-white" />
                                 </div>
@@ -559,9 +559,9 @@ const backToCards = () => {
                                 {{ completion.percentage }}%
                             </span>
                         </div>
-                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-rhythm-sm relative overflow-hidden">
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-3 relative overflow-hidden">
                             <div
-                                class="h-3 rounded-full transition-all duration-500 bg-ocean-500 shadow-rhythmic-md relative overflow-hidden"
+                                class="h-3 rounded-full transition-all duration-500 bg-indigo-600 shadow-sm relative overflow-hidden"
                                 :style="{ width: completion.percentage + '%' }"
                             >
                                 <div class="absolute inset-0 bg-white/20 animate-shimmer"></div>
@@ -579,11 +579,11 @@ const backToCards = () => {
                 </RhythmicCard>
 
                 <!-- Card View: Show when no section is active -->
-                <div v-if="!activeSection" class="space-y-rhythm-lg">
+                <div v-if="!activeSection" class="space-y-8">
                     <!-- Personal Information -->
                     <div>
-                        <div class="flex items-center gap-3 mb-rhythm-md px-1">
-                            <div class="w-8 h-8 rounded-lg bg-ocean-500 flex items-center justify-center shadow-rhythmic-sm">
+                        <div class="flex items-center gap-3 mb-4 px-1">
+                            <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-sm">
                                 <UserCircleIcon class="w-5 h-5 text-white" />
                             </div>
                             <h3 class="font-display font-bold text-xl text-gray-800">
@@ -603,7 +603,7 @@ const backToCards = () => {
                                 <div class="flex items-start justify-between">
                                     <div class="flex items-start space-x-3 md:space-x-4 flex-1">
                                         <div :class="[
-                                            'flex-shrink-0 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br rounded-lg md:rounded-xl flex items-center justify-center shadow-md md:shadow-lg group-hover:scale-110 transition-transform duration-200',
+                                            'flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center shadow-md md:shadow-lg group-hover:scale-110 transition-transform duration-200',
                                             getSectionGradient(section.id)
                                         ]">
                                             <component :is="section.icon" class="w-5 h-5 md:w-6 md:h-6 text-white" />
@@ -639,8 +639,8 @@ const backToCards = () => {
 
                     <!-- Professional Profile -->
                     <div>
-                        <div class="flex items-center gap-3 mb-rhythm-md px-1">
-                            <div class="w-8 h-8 rounded-lg bg-sunrise-500 flex items-center justify-center shadow-rhythmic-sm">
+                        <div class="flex items-center gap-3 mb-4 px-1">
+                            <div class="w-8 h-8 rounded-lg bg-orange-600 flex items-center justify-center shadow-sm">
                                 <BriefcaseIcon class="w-5 h-5 text-white" />
                             </div>
                             <h3 class="font-display font-bold text-xl text-gray-800">
@@ -660,7 +660,7 @@ const backToCards = () => {
                                 <div class="flex items-start justify-between">
                                     <div class="flex items-start space-x-3 md:space-x-4 flex-1">
                                         <div :class="[
-                                            'flex-shrink-0 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br rounded-lg md:rounded-xl flex items-center justify-center shadow-md md:shadow-lg group-hover:scale-110 transition-transform duration-200',
+                                            'flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center shadow-md md:shadow-lg group-hover:scale-110 transition-transform duration-200',
                                             getSectionGradient(section.id)
                                         ]">
                                             <component :is="section.icon" class="w-5 h-5 md:w-6 md:h-6 text-white" />
@@ -696,8 +696,8 @@ const backToCards = () => {
 
                     <!-- Safety & Health -->
                     <div>
-                        <div class="flex items-center gap-3 mb-rhythm-md px-1">
-                            <div class="w-8 h-8 rounded-lg bg-heritage-500 flex items-center justify-center shadow-rhythmic-sm">
+                        <div class="flex items-center gap-3 mb-4 px-1">
+                            <div class="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center shadow-sm">
                                 <HeartIcon class="w-5 h-5 text-white" />
                             </div>
                             <h3 class="font-display font-bold text-xl text-gray-800">
@@ -717,7 +717,7 @@ const backToCards = () => {
                                 <div class="flex items-start justify-between">
                                     <div class="flex items-start space-x-3 md:space-x-4 flex-1">
                                         <div :class="[
-                                            'flex-shrink-0 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br rounded-lg md:rounded-xl flex items-center justify-center shadow-md md:shadow-lg group-hover:scale-110 transition-transform duration-200',
+                                            'flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center shadow-md md:shadow-lg group-hover:scale-110 transition-transform duration-200',
                                             getSectionGradient(section.id)
                                         ]">
                                             <component :is="section.icon" class="w-5 h-5 md:w-6 md:h-6 text-white" />
@@ -753,8 +753,8 @@ const backToCards = () => {
 
                     <!-- Immigration & Documents -->
                     <div>
-                        <div class="flex items-center gap-3 mb-rhythm-md px-1">
-                            <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center shadow-rhythmic-sm">
+                        <div class="flex items-center gap-3 mb-4 px-1">
+                            <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shadow-sm">
                                 <GlobeAltIcon class="w-5 h-5 text-white" />
                             </div>
                             <h3 class="font-display font-bold text-xl text-gray-800">
@@ -774,7 +774,7 @@ const backToCards = () => {
                                 <div class="flex items-start justify-between">
                                     <div class="flex items-start space-x-3 md:space-x-4 flex-1">
                                         <div :class="[
-                                            'flex-shrink-0 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br rounded-lg md:rounded-xl flex items-center justify-center shadow-md md:shadow-lg group-hover:scale-110 transition-transform duration-200',
+                                            'flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center shadow-md md:shadow-lg group-hover:scale-110 transition-transform duration-200',
                                             getSectionGradient(section.id)
                                         ]">
                                             <component :is="section.icon" class="w-5 h-5 md:w-6 md:h-6 text-white" />
@@ -810,8 +810,8 @@ const backToCards = () => {
 
                     <!-- Family & Financial -->
                     <div>
-                        <div class="flex items-center gap-3 mb-rhythm-md px-1">
-                            <div class="w-8 h-8 rounded-lg bg-gold-500 flex items-center justify-center shadow-rhythmic-sm">
+                        <div class="flex items-center gap-3 mb-4 px-1">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center shadow-sm">
                                 <UsersIcon class="w-5 h-5 text-white" />
                             </div>
                             <h3 class="font-display font-bold text-xl text-gray-800">
@@ -831,7 +831,7 @@ const backToCards = () => {
                                 <div class="flex items-start justify-between">
                                     <div class="flex items-start space-x-3 md:space-x-4 flex-1">
                                         <div :class="[
-                                            'flex-shrink-0 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br rounded-lg md:rounded-xl flex items-center justify-center shadow-md md:shadow-lg group-hover:scale-110 transition-transform duration-200',
+                                            'flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center shadow-md md:shadow-lg group-hover:scale-110 transition-transform duration-200',
                                             getSectionGradient(section.id)
                                         ]">
                                             <component :is="section.icon" class="w-5 h-5 md:w-6 md:h-6 text-white" />
@@ -867,8 +867,8 @@ const backToCards = () => {
 
                     <!-- Background & Security -->
                     <div>
-                        <div class="flex items-center gap-3 mb-rhythm-md px-1">
-                            <div class="w-8 h-8 rounded-lg bg-heritage-500 flex items-center justify-center shadow-rhythmic-sm">
+                        <div class="flex items-center gap-3 mb-4 px-1">
+                            <div class="w-8 h-8 rounded-lg bg-amber-600 flex items-center justify-center shadow-sm">
                                 <ShieldCheckIcon class="w-5 h-5 text-white" />
                             </div>
                             <h3 class="font-display font-bold text-xl text-gray-800">
@@ -888,7 +888,7 @@ const backToCards = () => {
                                 <div class="flex items-start justify-between">
                                     <div class="flex items-start space-x-3 md:space-x-4 flex-1">
                                         <div :class="[
-                                            'flex-shrink-0 w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br rounded-lg md:rounded-xl flex items-center justify-center shadow-md md:shadow-lg group-hover:scale-110 transition-transform duration-200',
+                                            'flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center shadow-md md:shadow-lg group-hover:scale-110 transition-transform duration-200',
                                             getSectionGradient(section.id)
                                         ]">
                                             <component :is="section.icon" class="w-5 h-5 md:w-6 md:h-6 text-white" />
@@ -924,8 +924,8 @@ const backToCards = () => {
 
                     <!-- Account & Settings -->
                     <div>
-                        <div class="flex items-center gap-3 mb-rhythm-md px-1">
-                            <div class="w-8 h-8 rounded-lg bg-growth-500 flex items-center justify-center shadow-rhythmic-sm">
+                        <div class="flex items-center gap-3 mb-4 px-1">
+                            <div class="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center shadow-sm">
                                 <Cog6ToothIcon class="w-5 h-5 text-white" />
                             </div>
                             <h3 class="font-display font-bold text-xl text-gray-800">
@@ -949,8 +949,8 @@ const backToCards = () => {
                                         <div :class="[
                                             'flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl flex items-center justify-center shadow-md md:shadow-lg group-hover:scale-110 transition-transform duration-200',
                                             section.id === 'delete' 
-                                                ? 'bg-gradient-to-br from-red-500 to-pink-600' 
-                                                : 'bg-gradient-to-br ' + getSectionGradient(section.id)
+                                                ? 'bg-red-600' 
+                                                : getSectionGradient(section.id)
                                         ]">
                                             <component :is="section.icon" class="w-5 h-5 md:w-6 md:h-6 text-white" />
                                         </div>
@@ -1256,3 +1256,4 @@ const backToCards = () => {
     }
 }
 </style>
+

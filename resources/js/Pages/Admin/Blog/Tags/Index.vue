@@ -25,7 +25,7 @@
                         <div
                             v-for="tag in tags"
                             :key="tag.id"
-                            class="group relative flex items-center justify-between p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-100 hover:border-blue-300 hover:shadow-md transition-all duration-200"
+                            class="group relative flex items-center justify-between p-4 bg-white rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-200"
                         >
                             <div class="flex items-center space-x-3 flex-1 min-w-0">
                                 <div class="flex-shrink-0">

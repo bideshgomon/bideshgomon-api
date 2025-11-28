@@ -32,14 +32,16 @@ const submit = () => {
         <div class="py-12">
             <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
                 <!-- Header -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                    <div class="p-6 border-b border-gray-200">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+                    <div class="p-6">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-3">
-                                <PencilSquareIcon class="w-8 h-8 text-indigo-600" />
+                                <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                    <PencilSquareIcon class="w-6 h-6 text-indigo-600" />
+                                </div>
                                 <div>
-                                    <h2 class="text-2xl font-bold text-gray-800">Edit User</h2>
-                                    <p class="text-gray-600 mt-1">Update user information</p>
+                                    <h2 class="text-2xl font-bold text-gray-900">Edit User</h2>
+                                    <p class="text-sm text-gray-600 mt-0.5">Update user information</p>
                                 </div>
                             </div>
                             <Link
@@ -54,20 +56,20 @@ const submit = () => {
                 </div>
 
                 <!-- Edit Form -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
                     <form @submit.prevent="submit" class="p-6">
                         <div class="space-y-6">
                             <!-- User Info Badge -->
-                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                    <div class="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
                                         {{ user.name.charAt(0).toUpperCase() }}
                                     </div>
                                     <div>
                                         <div class="font-semibold text-gray-900">{{ user.name }}</div>
                                         <div class="text-sm text-gray-600">{{ user.email }}</div>
                                         <div class="flex gap-2 mt-1">
-                                            <span class="text-xs px-2 py-1 rounded bg-blue-100 text-blue-800">
+                                            <span class="text-xs px-2 py-1 rounded bg-indigo-100 text-indigo-700">
                                                 {{ user.role?.name || 'User' }}
                                             </span>
                                             <span v-if="user.suspended_at" class="text-xs px-2 py-1 rounded bg-red-100 text-red-800">

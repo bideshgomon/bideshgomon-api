@@ -116,18 +116,18 @@ const formatDate = (date) => {
     <Head title="Job Applications Management" />
 
     <AdminLayout>
-        <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pb-12">
+        <div class="min-h-screen bg-gray-50 pb-12">
             <!-- Header -->
-            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-4 py-8 sm:px-6 lg:px-8">
+            <div class="bg-white border-b border-gray-200 px-4 py-8 sm:px-6 lg:px-8">
                 <div class="max-w-7xl mx-auto">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h1 class="text-3xl font-bold">Job Applications</h1>
-                            <p class="mt-2 text-blue-100">Review and manage all job applications</p>
+                            <h1 class="text-3xl font-bold text-gray-900">Job Applications</h1>
+                            <p class="mt-2 text-gray-600">Review and manage all job applications</p>
                         </div>
                         <button
                             @click="exportApplications"
-                            class="inline-flex items-center px-6 py-3 bg-white text-blue-600 rounded-xl font-semibold hover:bg-blue-50 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                            class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition-all shadow-sm"
                         >
                             <ArrowDownTrayIcon class="h-5 w-5 mr-2" />
                             Export CSV
@@ -136,29 +136,29 @@ const formatDate = (date) => {
 
                     <!-- Stats Cards -->
                     <div class="grid grid-cols-2 md:grid-cols-6 gap-3 mt-8">
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-3">
-                            <div class="text-white/70 text-xs">Total</div>
-                            <div class="text-2xl font-bold mt-1">{{ stats.total }}</div>
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl p-3">
+                            <div class="text-gray-600 text-xs font-medium">Total</div>
+                            <div class="text-2xl font-bold text-gray-900 mt-1">{{ stats.total }}</div>
                         </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-3">
-                            <div class="text-white/70 text-xs">Pending</div>
-                            <div class="text-2xl font-bold mt-1">{{ stats.pending }}</div>
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-3">
+                            <div class="text-yellow-700 text-xs font-medium">Pending</div>
+                            <div class="text-2xl font-bold text-yellow-900 mt-1">{{ stats.pending }}</div>
                         </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-3">
-                            <div class="text-white/70 text-xs">Reviewed</div>
-                            <div class="text-2xl font-bold mt-1">{{ stats.reviewed }}</div>
+                        <div class="bg-blue-50 border border-blue-200 rounded-xl p-3">
+                            <div class="text-blue-700 text-xs font-medium">Reviewed</div>
+                            <div class="text-2xl font-bold text-blue-900 mt-1">{{ stats.reviewed }}</div>
                         </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-3">
-                            <div class="text-white/70 text-xs">Shortlisted</div>
-                            <div class="text-2xl font-bold mt-1">{{ stats.shortlisted }}</div>
+                        <div class="bg-purple-50 border border-purple-200 rounded-xl p-3">
+                            <div class="text-purple-700 text-xs font-medium">Shortlisted</div>
+                            <div class="text-2xl font-bold text-purple-900 mt-1">{{ stats.shortlisted }}</div>
                         </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-3">
-                            <div class="text-white/70 text-xs">Rejected</div>
-                            <div class="text-2xl font-bold mt-1">{{ stats.rejected }}</div>
+                        <div class="bg-red-50 border border-red-200 rounded-xl p-3">
+                            <div class="text-red-700 text-xs font-medium">Rejected</div>
+                            <div class="text-2xl font-bold text-red-900 mt-1">{{ stats.rejected }}</div>
                         </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-3">
-                            <div class="text-white/70 text-xs">Hired</div>
-                            <div class="text-2xl font-bold mt-1">{{ stats.hired }}</div>
+                        <div class="bg-green-50 border border-green-200 rounded-xl p-3">
+                            <div class="text-green-700 text-xs font-medium">Hired</div>
+                            <div class="text-2xl font-bold text-green-900 mt-1">{{ stats.hired }}</div>
                         </div>
                     </div>
                 </div>
@@ -320,7 +320,7 @@ const formatDate = (date) => {
                                             </div>
                                             <div class="flex items-center">
                                                 <CalendarIcon class="h-4 w-4 mr-1" />
-                                                Applied {{ formatDate(app.applied_at) }}
+                                                Applied {{ formatDate(app.submitted_at || app.created_at) }}
                                             </div>
                                             <div v-if="app.reviewed_at" class="flex items-center">
                                                 <CheckCircleIcon class="h-4 w-4 mr-1" />

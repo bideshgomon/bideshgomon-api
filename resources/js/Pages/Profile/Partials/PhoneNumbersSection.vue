@@ -314,7 +314,7 @@ onMounted(() => {
         <!-- Section Header -->
         <div class="flex items-center justify-between mb-rhythm-md">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-ocean-500 flex items-center justify-center shadow-rhythmic-md">
+                <div class="w-10 h-10 rounded-xl bg-cyan-600 flex items-center justify-center shadow-sm">
                     <PhoneIcon class="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -451,7 +451,7 @@ onMounted(() => {
         <Modal :show="showModal" @close="closeModal" max-width="2xl">
             <div class="p-6">
                 <div class="flex items-center gap-3 mb-6">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-600 to-blue-600 flex items-center justify-center">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-600 flex items-center justify-center">
                         <PhoneIcon class="w-6 h-6 text-white" />
                     </div>
                     <div>

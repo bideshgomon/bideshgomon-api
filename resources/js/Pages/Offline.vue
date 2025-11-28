@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4">
+  <div class="min-h-screen bg-gray-100 flex items-center justify-center px-4">
     <div class="max-w-md w-full">
       <!-- Offline Icon -->
       <div class="text-center mb-8">

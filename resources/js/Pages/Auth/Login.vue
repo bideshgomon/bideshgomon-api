@@ -38,7 +38,7 @@ const submit = () => {
         <Header :can-login="false" :can-register="true" />
 
         <!-- Main Content -->
-        <div class="flex-1 flex items-center justify-center px-4 py-24 sm:px-6 lg:px-8 bg-gradient-to-br from-emerald-50 via-white to-blue-50">
+        <div class="flex-1 flex items-center justify-center px-4 py-24 sm:px-6 lg:px-8 bg-gray-50">
             <div class="w-full max-w-md">
                 <!-- Logo -->
                 <div class="flex justify-center mb-8">
@@ -154,7 +154,7 @@ const submit = () => {
                         <button
                             type="submit"
                             :disabled="form.processing"
-                            class="w-full flex justify-center items-center py-4 px-6 text-base font-semibold text-white bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-2xl shadow-lg hover:shadow-xl hover:from-emerald-700 hover:to-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 touch-manipulation min-h-[48px]"
+                            class="w-full flex justify-center items-center py-4 px-6 text-base font-semibold text-white bg-emerald-600 rounded-2xl shadow-lg hover:shadow-xl hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 touch-manipulation min-h-[48px]"
                         >
                             <svg v-if="form.processing" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

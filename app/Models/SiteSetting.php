@@ -89,4 +89,10 @@ class SiteSetting extends Model
         }
         return $this->value;
     }
+
+    // Clear settings cache
+    public static function clearCache()
+    {
+        Cache::forget('site_settings');
+    }
 }

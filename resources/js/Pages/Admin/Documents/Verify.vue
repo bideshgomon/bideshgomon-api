@@ -39,6 +39,10 @@ function reject(doc) {
 }
 
 function getDocumentUrl(doc) {
+  // Safety check for null/undefined
+  if (!doc || !doc.file_path) {
+    return ''
+  }
   // Handle both full URLs and storage paths
   if (doc.file_path.startsWith('http://') || doc.file_path.startsWith('https://')) {
     return doc.file_path
@@ -49,10 +53,12 @@ function getDocumentUrl(doc) {
 }
 
 function isImage(filename) {
+  if (!filename) return false
   return /\.(jpg|jpeg|png|gif|bmp|webp)$/i.test(filename)
 }
 
 function isPdf(filename) {
+  if (!filename) return false
   return /\.pdf$/i.test(filename)
 }
 </script>

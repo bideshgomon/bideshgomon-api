@@ -75,11 +75,11 @@ const skipForNow = () => {
     <Head title="Welcome to Bidesh Gomon" />
 
     <AuthenticatedLayout>
-        <div class="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-12">
+        <div class="min-h-screen bg-gray-50 py-12">
             <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <!-- Hero Section -->
                 <div class="text-center mb-12">
-                    <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-full mb-6 shadow-lg">
+                    <div class="inline-flex items-center justify-center w-20 h-20 bg-indigo-600 rounded-full mb-6">
                         <RocketLaunchIcon class="h-10 w-10 text-white" />
                     </div>
                     <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
@@ -98,7 +98,7 @@ const skipForNow = () => {
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                             <div 
-                                class="bg-gradient-to-r from-indigo-600 to-purple-600 h-3 rounded-full transition-all duration-500"
+                                class="bg-indigo-600 h-3 rounded-full transition-all duration-500"
                                 :style="{ width: `${completionPercentage}%` }"
                             ></div>
                         </div>
@@ -143,7 +143,7 @@ const skipForNow = () => {
                                 <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
                                     <component :is="step.icon" class="h-6 w-6 text-indigo-600" />
                                 </div>
-                                <div class="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                                <div class="w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
                                     {{ index + 1 }}
                                 </div>
                             </div>
@@ -165,7 +165,7 @@ const skipForNow = () => {
                 </div>
 
                 <!-- CTA Buttons -->
-                <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-center shadow-2xl">
+                <div class="bg-indigo-600 rounded-2xl p-8 text-center">
                     <h2 class="text-3xl font-bold text-white mb-4">
                         Ready to Get Started?
                     </h2>

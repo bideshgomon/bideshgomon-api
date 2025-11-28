@@ -2,6 +2,62 @@
 
 This directory contains utility scripts for testing, maintenance, and administrative tasks.
 
+## 📊 Database Analysis Scripts (NEW)
+
+### analyze-database-relationships.php
+**Comprehensive database relationship integrity check**
+
+Checks:
+- ✅ Orphaned records across 21+ critical tables
+- ✅ Missing indexes on foreign keys
+- ✅ Referential integrity
+- ✅ Duplicate relationships
+- ✅ Cascade delete configuration
+- ✅ Model relationship verification
+
+**Usage:**
+```bash
+php scripts/analyze-database-relationships.php
+```
+
+### analyze-advanced-relationships.php
+**Deep relationship analysis with advanced checks**
+
+Checks:
+- ✅ Missing inverse relationships
+- ✅ Circular reference detection
+- ✅ Wallet transaction consistency
+- ✅ Service quote integrity
+- ✅ Referral & reward integrity
+- ✅ Profile completeness
+
+**Usage:**
+```bash
+php scripts/analyze-advanced-relationships.php
+```
+
+### run-database-analysis.ps1
+**PowerShell runner for comprehensive analysis**
+
+**Usage:**
+```powershell
+.\scripts\run-database-analysis.ps1
+```
+
+### run-database-analysis.bat
+**CMD runner for comprehensive analysis**
+
+**Usage:**
+```cmd
+scripts\run-database-analysis.bat
+```
+
+**📊 Reports Generated:**
+- `docs/DATABASE_RELATIONSHIP_ANALYSIS.md` - Full detailed report
+- `docs/DATABASE_SCAN_EXECUTIVE_SUMMARY.md` - Executive summary
+
+---
+
 ## 🧪 Test Scripts
 
 ### Service Testing

@@ -9,9 +9,9 @@
         </div>
 
         <!-- Upload Section -->
-        <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg border-2 border-dashed border-indigo-300 p-6">
+        <div class="bg-white rounded-lg border-2 border-dashed border-indigo-300 p-6">
             <div class="flex items-center gap-3 mb-4">
-                <div class="p-2 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg shadow-lg">
+                <div class="p-2 bg-indigo-600 rounded-lg">
                     <CloudArrowUpIcon class="w-6 h-6 text-white" />
                 </div>
                 <div>
@@ -278,36 +278,36 @@
 
         <!-- Statistics -->
         <div class="grid md:grid-cols-4 gap-4">
-            <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-4 border border-blue-200">
+            <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
                 <div class="flex items-center gap-3 mb-2">
-                    <div class="p-2 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-lg">
+                    <div class="p-2 bg-blue-600 rounded-lg">
                         <DocumentTextIcon class="w-5 h-5 text-white" />
                     </div>
                     <div class="text-2xl font-bold text-blue-700">{{ documents.length }}</div>
                 </div>
                 <div class="text-sm font-medium text-blue-800">Total Documents</div>
             </div>
-            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
+            <div class="bg-green-50 rounded-lg p-4 border border-green-200">
                 <div class="flex items-center gap-3 mb-2">
-                    <div class="p-2 bg-gradient-to-br from-green-600 to-emerald-600 rounded-lg">
+                    <div class="p-2 bg-green-600 rounded-lg">
                         <CheckBadgeIcon class="w-5 h-5 text-white" />
                     </div>
                     <div class="text-2xl font-bold text-green-700">{{ verifiedCount }}</div>
                 </div>
                 <div class="text-sm font-medium text-green-800">Verified</div>
             </div>
-            <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-4 border border-amber-200">
+            <div class="bg-amber-50 rounded-lg p-4 border border-amber-200">
                 <div class="flex items-center gap-3 mb-2">
-                    <div class="p-2 bg-gradient-to-br from-amber-600 to-orange-600 rounded-lg">
+                    <div class="p-2 bg-amber-600 rounded-lg">
                         <ExclamationTriangleIcon class="w-5 h-5 text-white" />
                     </div>
                     <div class="text-2xl font-bold text-amber-700">{{ expiringSoonCount }}</div>
                 </div>
                 <div class="text-sm font-medium text-amber-800">Expiring Soon</div>
             </div>
-            <div class="bg-gradient-to-br from-red-50 to-rose-50 rounded-lg p-4 border border-red-200">
+            <div class="bg-red-50 rounded-lg p-4 border border-red-200">
                 <div class="flex items-center gap-3 mb-2">
-                    <div class="p-2 bg-gradient-to-br from-red-600 to-rose-600 rounded-lg">
+                    <div class="p-2 bg-red-600 rounded-lg">
                         <XCircleIcon class="w-5 h-5 text-white" />
                     </div>
                     <div class="text-2xl font-bold text-red-700">{{ expiredCount }}</div>
@@ -444,20 +444,20 @@ const formatDate = (date) => {
 
 const getDocumentColor = (type) => {
     const colors = {
-        'passport': 'bg-gradient-to-br from-blue-600 to-blue-700 shadow-lg',
-        'visa': 'bg-gradient-to-br from-purple-600 to-purple-700 shadow-lg',
-        'nid': 'bg-gradient-to-br from-indigo-600 to-indigo-700 shadow-lg',
-        'birth_certificate': 'bg-gradient-to-br from-pink-600 to-pink-700 shadow-lg',
-        'driving_license': 'bg-gradient-to-br from-green-600 to-green-700 shadow-lg',
-        'educational_certificate': 'bg-gradient-to-br from-yellow-600 to-yellow-700 shadow-lg',
-        'work_permit': 'bg-gradient-to-br from-orange-600 to-orange-700 shadow-lg',
-        'bank_statement': 'bg-gradient-to-br from-cyan-600 to-cyan-700 shadow-lg',
-        'police_clearance': 'bg-gradient-to-br from-teal-600 to-teal-700 shadow-lg',
-        'medical_certificate': 'bg-gradient-to-br from-red-600 to-red-700 shadow-lg',
-        'insurance': 'bg-gradient-to-br from-violet-600 to-violet-700 shadow-lg',
-        'reference_letter': 'bg-gradient-to-br from-emerald-600 to-emerald-700 shadow-lg',
-        'other': 'bg-gradient-to-br from-gray-600 to-gray-700 shadow-lg',
+        'passport': 'bg-blue-600',
+        'visa': 'bg-purple-600',
+        'nid': 'bg-indigo-600',
+        'birth_certificate': 'bg-pink-600',
+        'driving_license': 'bg-green-600',
+        'educational_certificate': 'bg-yellow-600',
+        'work_permit': 'bg-orange-600',
+        'bank_statement': 'bg-cyan-600',
+        'police_clearance': 'bg-teal-600',
+        'medical_certificate': 'bg-red-600',
+        'insurance': 'bg-violet-600',
+        'reference_letter': 'bg-emerald-600',
+        'other': 'bg-gray-600',
     };
-    return colors[type] || 'bg-gradient-to-br from-gray-600 to-gray-700 shadow-lg';
+    return colors[type] || 'bg-gray-600';
 };
 </script>

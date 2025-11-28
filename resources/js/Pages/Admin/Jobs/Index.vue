@@ -123,18 +123,18 @@ const getCategoryColor = (cat) => {
     <Head title="Manage Job Postings" />
 
     <AdminLayout>
-        <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pb-12">
+        <div class="min-h-screen bg-gray-50 pb-12">
             <!-- Header -->
-            <div class="bg-gradient-to-r from-indigo-600 to-purple-700 text-white px-4 py-8 sm:px-6 lg:px-8">
+            <div class="bg-white border-b border-gray-200 px-4 py-8 sm:px-6 lg:px-8">
                 <div class="max-w-7xl mx-auto">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h1 class="text-3xl font-bold">Job Postings Management</h1>
-                            <p class="mt-2 text-indigo-100">Manage all job postings on the platform</p>
+                            <h1 class="text-3xl font-bold text-gray-900">Job Postings Management</h1>
+                            <p class="mt-2 text-gray-600">Manage all job postings on the platform</p>
                         </div>
                         <Link
                             :href="route('admin.jobs.create')"
-                            class="inline-flex items-center px-6 py-3 bg-white text-indigo-600 rounded-xl font-semibold hover:bg-indigo-50 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                            class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition-all shadow-sm"
                         >
                             <PlusIcon class="h-5 w-5 mr-2" />
                             Create Job
@@ -143,21 +143,21 @@ const getCategoryColor = (cat) => {
 
                     <!-- Stats Cards -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                            <div class="text-white/70 text-sm">Total Jobs</div>
-                            <div class="text-3xl font-bold mt-1">{{ stats.total }}</div>
+                        <div class="bg-white rounded-lg p-4 border border-gray-200">
+                            <div class="text-gray-600 text-sm">Total Jobs</div>
+                            <div class="text-3xl font-bold text-gray-900 mt-1">{{ stats.total }}</div>
                         </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                            <div class="text-white/70 text-sm">Active</div>
-                            <div class="text-3xl font-bold mt-1">{{ stats.active }}</div>
+                        <div class="bg-white rounded-lg p-4 border border-gray-200">
+                            <div class="text-gray-600 text-sm">Active</div>
+                            <div class="text-3xl font-bold text-gray-900 mt-1">{{ stats.active }}</div>
                         </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                            <div class="text-white/70 text-sm">Featured</div>
-                            <div class="text-3xl font-bold mt-1">{{ stats.featured }}</div>
+                        <div class="bg-white rounded-lg p-4 border border-gray-200">
+                            <div class="text-gray-600 text-sm">Featured</div>
+                            <div class="text-3xl font-bold text-gray-900 mt-1">{{ stats.featured }}</div>
                         </div>
-                        <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                            <div class="text-white/70 text-sm">Expired</div>
-                            <div class="text-3xl font-bold mt-1">{{ stats.expired }}</div>
+                        <div class="bg-white rounded-lg p-4 border border-gray-200">
+                            <div class="text-gray-600 text-sm">Expired</div>
+                            <div class="text-3xl font-bold text-gray-900 mt-1">{{ stats.expired }}</div>
                         </div>
                     </div>
                 </div>
@@ -311,7 +311,7 @@ const getCategoryColor = (cat) => {
                                     <div class="flex-1">
                                         <div class="flex items-center gap-2 mb-2">
                                             <h3 class="text-xl font-bold text-gray-900">{{ job.title }}</h3>
-                                            <span v-if="job.is_featured" class="inline-flex items-center px-2 py-1 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-semibold rounded-full">
+                                            <span v-if="job.is_featured" class="inline-flex items-center px-2 py-1 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">
                                                 <SparklesIcon class="h-3 w-3 mr-1" />
                                                 Featured
                                             </span>

@@ -59,14 +59,14 @@ const getRiskColor = (risk) => {
 
     <AdminLayout>
         <!-- Header -->
-        <div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white">
+        <div class="bg-white border-b border-gray-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h1 class="text-3xl font-bold">Service Management Dashboard</h1>
-                        <p class="text-sm text-purple-100 mt-2">Comprehensive overview of all platform services</p>
+                        <h1 class="text-3xl font-bold text-gray-900">Service Management Dashboard</h1>
+                        <p class="text-sm text-gray-600 mt-2">Comprehensive overview of all platform services</p>
                     </div>
-                    <ChartBarIcon class="h-16 w-16 text-purple-200 opacity-50" />
+                    <ChartBarIcon class="h-16 w-16 text-gray-300" />
                 </div>
             </div>
         </div>
@@ -392,7 +392,7 @@ const getRiskColor = (risk) => {
             </div>
 
             <!-- Quick Actions -->
-            <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border border-indigo-200 p-6">
+            <div class="bg-white rounded-lg border border-gray-200 p-6">
                 <h2 class="text-lg font-bold text-gray-900 mb-4">Quick Actions</h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <Link

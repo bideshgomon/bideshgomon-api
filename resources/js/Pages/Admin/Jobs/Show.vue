@@ -92,7 +92,7 @@ const isExpired = () => {
     <Head :title="job.title" />
 
     <AdminLayout>
-        <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
+        <div class="min-h-screen bg-gray-50 py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <!-- Header -->
                 <div class="mb-6">
@@ -415,7 +415,7 @@ const isExpired = () => {
                         </div>
 
                         <!-- Statistics -->
-                        <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-sm p-6 text-white">
+                        <div class="bg-indigo-600 rounded-lg shadow-sm p-6 text-white">
                             <h3 class="text-md font-semibold mb-4">Statistics</h3>
                             <div class="space-y-3">
                                 <div class="flex items-center justify-between">

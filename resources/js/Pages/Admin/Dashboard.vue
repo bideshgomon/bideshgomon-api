@@ -8,6 +8,8 @@ import {
     ChartPieIcon, CogIcon, BuildingOffice2Icon, PaperAirplaneIcon,
     GlobeAltIcon, UserGroupIcon, RectangleStackIcon
 } from '@heroicons/vue/24/outline';
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
+import AnimatedSection from '@/Components/Rhythmic/AnimatedSection.vue';
 
 const props = defineProps({
     stats: Object,
@@ -43,256 +45,246 @@ const formatDateTime = (date) => {
     <Head title="Admin Dashboard" />
 
     <AdminLayout>
-        <!-- Header -->
-        <div class="bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 text-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Header with AnimatedSection -->
+        <AnimatedSection variant="ocean" :blobs="true" :animated="true">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-rhythm-xl">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h1 class="text-2xl font-bold">Admin Dashboard</h1>
-                        <p class="text-sm text-purple-100 mt-1">Monitor and manage your platform</p>
+                        <h1 class="font-display font-bold text-rhythm text-4xl sm:text-5xl">
+                            <span class="text-ocean-600">Admin</span> Dashboard
+                        </h1>
+                        <p class="text-ocean-200 mt-rhythm-sm text-lg">Monitor and manage your platform</p>
                     </div>
-                    <ChartBarIcon class="h-12 w-12 text-purple-200 opacity-50" />
+                    <ChartBarIcon class="h-16 w-16 text-ocean-300 opacity-50" />
                 </div>
             </div>
-        </div>
+        </AnimatedSection>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-rhythm-xl space-y-rhythm-xl">
             <!-- Stats Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-rhythm-lg">
                 <!-- Total Users -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-blue-100 rounded-lg">
-                            <UsersIcon class="h-6 w-6 text-blue-600" />
-                        </div>
-                        <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
-                            +{{ stats.users.today }} today
-                        </span>
+                <RhythmicCard
+                    variant="ocean"
+                    size="md"
+                    title="Total Users"
+                    :description="`${stats.users.active} active this month`"
+                    :badge="`+${stats.users.today} today`"
+                >
+                    <template #icon>
+                        <UsersIcon class="h-8 w-8" />
+                    </template>
+                    <div class="text-display-md font-bold text-gray-900">
+                        {{ stats.users.total.toLocaleString() }}
                     </div>
-                    <div>
-                        <p class="text-sm text-gray-600 mb-1">Total Users</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ stats.users.total.toLocaleString() }}</p>
-                        <p class="text-xs text-gray-500 mt-1">{{ stats.users.active }} active this month</p>
-                    </div>
-                </div>
+                </RhythmicCard>
 
                 <!-- Total Revenue -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-green-100 rounded-lg">
-                            <CurrencyDollarIcon class="h-6 w-6 text-green-600" />
-                        </div>
-                        <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
-                            {{ formatCurrency(stats.revenue.today) }}
-                        </span>
+                <RhythmicCard
+                    variant="growth"
+                    size="md"
+                    title="Total Revenue"
+                    :description="`${formatCurrency(stats.revenue.this_month)} this month`"
+                    :badge="formatCurrency(stats.revenue.today)"
+                >
+                    <template #icon>
+                        <CurrencyDollarIcon class="h-8 w-8" />
+                    </template>
+                    <div class="text-display-md font-bold text-gray-900">
+                        {{ formatCurrency(stats.revenue.total) }}
                     </div>
-                    <div>
-                        <p class="text-sm text-gray-600 mb-1">Total Revenue</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ formatCurrency(stats.revenue.total) }}</p>
-                        <p class="text-xs text-gray-500 mt-1">{{ formatCurrency(stats.revenue.this_month) }} this month</p>
-                    </div>
-                </div>
+                </RhythmicCard>
 
                 <!-- Insurance Bookings -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-emerald-100 rounded-lg">
-                            <ShieldCheckIcon class="h-6 w-6 text-emerald-600" />
-                        </div>
-                        <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
-                            +{{ stats.services.insurance_today }} today
-                        </span>
+                <RhythmicCard
+                    variant="sunrise"
+                    size="md"
+                    title="Insurance Bookings"
+                    description="Travel insurance policies"
+                    :badge="`+${stats.services.insurance_today} today`"
+                >
+                    <template #icon>
+                        <ShieldCheckIcon class="h-8 w-8" />
+                    </template>
+                    <div class="text-display-md font-bold text-gray-900">
+                        {{ stats.services.insurance_bookings }}
                     </div>
-                    <div>
-                        <p class="text-sm text-gray-600 mb-1">Insurance Bookings</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ stats.services.insurance_bookings }}</p>
-                        <p class="text-xs text-gray-500 mt-1">Travel insurance policies</p>
-                    </div>
-                </div>
+                </RhythmicCard>
 
                 <!-- CVs Created -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-blue-100 rounded-lg">
-                            <DocumentTextIcon class="h-6 w-6 text-blue-600" />
-                        </div>
-                        <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
-                            +{{ stats.services.cvs_today }} today
-                        </span>
+                <RhythmicCard
+                    variant="sky"
+                    size="md"
+                    title="CVs Created"
+                    description="Professional CVs built"
+                    :badge="`+${stats.services.cvs_today} today`"
+                >
+                    <template #icon>
+                        <DocumentTextIcon class="h-8 w-8" />
+                    </template>
+                    <div class="text-display-md font-bold text-gray-900">
+                        {{ stats.services.cvs_created }}
                     </div>
-                    <div>
-                        <p class="text-sm text-gray-600 mb-1">CVs Created</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ stats.services.cvs_created }}</p>
-                        <p class="text-xs text-gray-500 mt-1">Professional CVs built</p>
-                    </div>
-                </div>
+                </RhythmicCard>
             </div>
 
             <!-- Hotel Bookings & Flight Requests Stats -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-rhythm-lg">
                 <!-- Hotel Bookings -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-orange-100 rounded-lg">
-                            <BuildingOffice2Icon class="h-6 w-6 text-orange-600" />
-                        </div>
-                        <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
-                            +{{ stats.services.hotel_bookings_today }} today
-                        </span>
+                <RhythmicCard
+                    variant="heritage"
+                    size="md"
+                    title="Hotel Bookings"
+                    :description="`${stats.services.confirmed_hotel_bookings} confirmed`"
+                    :badge="`+${stats.services.hotel_bookings_today} today`"
+                >
+                    <template #icon>
+                        <BuildingOffice2Icon class="h-8 w-8" />
+                    </template>
+                    <div class="text-display-md font-bold text-gray-900">
+                        {{ stats.services.hotel_bookings }}
                     </div>
-                    <div>
-                        <p class="text-sm text-gray-600 mb-1">Hotel Bookings</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ stats.services.hotel_bookings }}</p>
-                        <p class="text-xs text-gray-500 mt-1">{{ stats.services.confirmed_hotel_bookings }} confirmed</p>
-                    </div>
-                </div>
+                </RhythmicCard>
 
                 <!-- Hotel Revenue -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-amber-100 rounded-lg">
-                            <CurrencyDollarIcon class="h-6 w-6 text-amber-600" />
-                        </div>
-                        <span class="text-xs font-medium text-gray-600 bg-gray-50 px-2 py-1 rounded">
-                            This month
-                        </span>
+                <RhythmicCard
+                    variant="gold"
+                    size="md"
+                    title="Hotel Revenue"
+                    description="From confirmed bookings"
+                    badge="This month"
+                >
+                    <template #icon>
+                        <CurrencyDollarIcon class="h-8 w-8" />
+                    </template>
+                    <div class="text-display-md font-bold text-gray-900">
+                        {{ formatCurrency(stats.services.hotel_revenue_month) }}
                     </div>
-                    <div>
-                        <p class="text-sm text-gray-600 mb-1">Hotel Revenue</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ formatCurrency(stats.services.hotel_revenue_month) }}</p>
-                        <p class="text-xs text-gray-500 mt-1">From confirmed bookings</p>
-                    </div>
-                </div>
+                </RhythmicCard>
 
                 <!-- Flight Requests -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-sky-100 rounded-lg">
-                            <PaperAirplaneIcon class="h-6 w-6 text-sky-600" />
-                        </div>
-                        <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
-                            +{{ stats.services.flight_requests_today }} today
-                        </span>
+                <RhythmicCard
+                    variant="sky"
+                    size="md"
+                    title="Flight Requests"
+                    :description="`${stats.services.pending_flight_requests} pending`"
+                    :badge="`+${stats.services.flight_requests_today} today`"
+                >
+                    <template #icon>
+                        <PaperAirplaneIcon class="h-8 w-8" />
+                    </template>
+                    <div class="text-display-md font-bold text-gray-900">
+                        {{ stats.services.flight_requests }}
                     </div>
-                    <div>
-                        <p class="text-sm text-gray-600 mb-1">Flight Requests</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ stats.services.flight_requests }}</p>
-                        <p class="text-xs text-gray-500 mt-1">{{ stats.services.pending_flight_requests }} pending</p>
-                    </div>
-                </div>
+                </RhythmicCard>
 
                 <!-- Visa Applications -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-purple-100 rounded-lg">
-                            <DocumentTextIcon class="h-6 w-6 text-purple-600" />
-                        </div>
-                        <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
-                            +{{ stats.services.visa_applications_today }} today
-                        </span>
+                <RhythmicCard
+                    variant="ocean"
+                    size="md"
+                    title="Visa Applications"
+                    :description="`${stats.services.approved_visa_applications} approved`"
+                    :badge="`+${stats.services.visa_applications_today} today`"
+                >
+                    <template #icon>
+                        <DocumentTextIcon class="h-8 w-8" />
+                    </template>
+                    <div class="text-display-md font-bold text-gray-900">
+                        {{ stats.services.visa_applications }}
                     </div>
-                    <div>
-                        <p class="text-sm text-gray-600 mb-1">Visa Applications</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ stats.services.visa_applications }}</p>
-                        <p class="text-xs text-gray-500 mt-1">{{ stats.services.approved_visa_applications }} approved</p>
-                    </div>
-                </div>
+                </RhythmicCard>
 
                 <!-- Support Tickets -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-rose-100 rounded-lg">
-                            <ClipboardDocumentListIcon class="h-6 w-6 text-rose-600" />
-                        </div>
-                        <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
-                            +{{ stats.support.tickets_today }} today
-                        </span>
+                <RhythmicCard
+                    variant="sunrise"
+                    size="md"
+                    title="Support Tickets"
+                    :description="`${stats.support.open_tickets} open · ${stats.support.urgent_tickets} urgent`"
+                    :badge="`+${stats.support.tickets_today} today`"
+                >
+                    <template #icon>
+                        <ClipboardDocumentListIcon class="h-8 w-8" />
+                    </template>
+                    <div class="text-display-md font-bold text-gray-900">
+                        {{ stats.support.total_tickets }}
                     </div>
-                    <div>
-                        <p class="text-sm text-gray-600 mb-1">Support Tickets</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ stats.support.total_tickets }}</p>
-                        <p class="text-xs text-gray-500 mt-1">{{ stats.support.open_tickets }} open · {{ stats.support.urgent_tickets }} urgent</p>
-                    </div>
-                </div>
+                </RhythmicCard>
 
                 <!-- Appointments -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-cyan-100 rounded-lg">
-                            <CogIcon class="h-6 w-6 text-cyan-600" />
-                        </div>
-                        <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
-                            +{{ stats.appointments.appointments_today }} today
-                        </span>
+                <RhythmicCard
+                    variant="growth"
+                    size="md"
+                    title="Appointments"
+                    :description="`${stats.appointments.pending_appointments} pending · ${stats.appointments.confirmed_appointments} confirmed`"
+                    :badge="`+${stats.appointments.appointments_today} today`"
+                >
+                    <template #icon>
+                        <CogIcon class="h-8 w-8" />
+                    </template>
+                    <div class="text-display-md font-bold text-gray-900">
+                        {{ stats.appointments.total_appointments }}
                     </div>
-                    <div>
-                        <p class="text-sm text-gray-600 mb-1">Appointments</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ stats.appointments.total_appointments }}</p>
-                        <p class="text-xs text-gray-500 mt-1">{{ stats.appointments.pending_appointments }} pending · {{ stats.appointments.confirmed_appointments }} confirmed</p>
-                    </div>
-                </div>
+                </RhythmicCard>
 
                 <!-- Marketing Campaigns -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-fuchsia-100 rounded-lg">
-                            <ChartPieIcon class="h-6 w-6 text-fuchsia-600" />
-                        </div>
-                        <span class="text-xs font-medium text-gray-600 bg-gray-50 px-2 py-1 rounded">
-                            {{ stats.campaigns.active_campaigns }} active
-                        </span>
+                <RhythmicCard
+                    variant="heritage"
+                    size="md"
+                    title="Marketing Campaigns"
+                    :description="`${formatCurrency(stats.campaigns.campaign_reach_month)} reach this month`"
+                    :badge="`${stats.campaigns.active_campaigns} active`"
+                >
+                    <template #icon>
+                        <ChartPieIcon class="h-8 w-8" />
+                    </template>
+                    <div class="text-display-md font-bold text-gray-900">
+                        {{ stats.campaigns.total_campaigns }}
                     </div>
-                    <div>
-                        <p class="text-sm text-gray-600 mb-1">Marketing Campaigns</p>
-                        <p class="text-2xl font-bold text-gray-900">{{ stats.campaigns.total_campaigns }}</p>
-                        <p class="text-xs text-gray-500 mt-1">{{ formatCurrency(stats.campaigns.campaign_reach_month) }} reach this month</p>
-                    </div>
-                </div>
+                </RhythmicCard>
             </div>
 
             <!-- Visa Revenue Card -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <RhythmicCard variant="ocean" size="lg">
+                <template #icon>
+                    <CurrencyDollarIcon class="h-8 w-8" />
+                </template>
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <div class="p-3 bg-purple-100 rounded-lg">
-                            <CurrencyDollarIcon class="h-6 w-6 text-purple-600" />
-                        </div>
-                        <div class="ml-4">
-                            <p class="text-sm text-gray-600">Visa Service Revenue (This Month)</p>
-                            <p class="text-2xl font-bold text-gray-900">{{ formatCurrency(stats.services.visa_revenue_month) }}</p>
-                        </div>
+                    <div>
+                        <p class="text-sm text-gray-600 font-medium mb-2">Visa Service Revenue (This Month)</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ formatCurrency(stats.services.visa_revenue_month) }}</p>
                     </div>
                     <Link
                         :href="route('admin.visa-applications.index')"
-                        class="inline-flex items-center px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700"
+                        class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
                     >
                         Manage Applications
                     </Link>
                 </div>
-            </div>
+            </RhythmicCard>
 
             <!-- Quick Access Management -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
-                    <RectangleStackIcon class="h-5 w-5 mr-2 text-indigo-600" />
-                    Quick Access Management
-                </h2>
+            <RhythmicCard variant="light" size="lg">
+                <div class="space-y-6">
+                    <h2 class="font-bold text-2xl flex items-center text-gray-900">
+                        <RectangleStackIcon class="h-6 w-6 mr-2 text-gray-600" />
+                        Quick Access Management
+                    </h2>
                 
                 <!-- Document Hub System (Priority) -->
-                <div class="mb-6">
-                    <h3 class="text-sm font-semibold text-indigo-600 uppercase tracking-wide mb-3 flex items-center">
-                        <span class="inline-block w-2 h-2 bg-indigo-600 rounded-full mr-2"></span>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-4 flex items-center">
+                        <span class="inline-block w-2 h-2 bg-gray-600 rounded-full mr-2"></span>
                         Document Hub System (International Standards)
                     </h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <Link
                             :href="route('admin.master-documents.index')"
-                            class="flex items-center p-4 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl hover:shadow-lg transition-all group border-2 border-indigo-100"
+                            class="flex items-center p-4 bg-white rounded-lg hover:shadow-md transition-all group border border-gray-200"
                         >
                             <div class="p-3 bg-indigo-600 rounded-lg group-hover:bg-indigo-700 transition-colors">
                                 <DocumentTextIcon class="h-6 w-6 text-white" />
                             </div>
-                            <div class="ml-4">
+                            <div class="ml-3">
                                 <p class="font-bold text-gray-900">Master Documents</p>
                                 <p class="text-sm text-gray-600">36 documents library</p>
                             </div>
@@ -300,12 +292,12 @@ const formatDateTime = (date) => {
 
                         <Link
                             :href="route('admin.document-categories.index')"
-                            class="flex items-center p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl hover:shadow-lg transition-all group border-2 border-blue-100"
+                            class="flex items-center p-4 bg-white rounded-lg hover:shadow-md transition-all group border border-gray-200"
                         >
-                            <div class="p-3 bg-blue-600 rounded-lg group-hover:bg-blue-700 transition-colors">
+                            <div class="p-3 bg-indigo-600 rounded-lg group-hover:bg-indigo-700 transition-colors">
                                 <RectangleStackIcon class="h-6 w-6 text-white" />
                             </div>
-                            <div class="ml-4">
+                            <div class="ml-3">
                                 <p class="font-bold text-gray-900">Document Categories</p>
                                 <p class="text-sm text-gray-600">8 categories</p>
                             </div>
@@ -313,12 +305,12 @@ const formatDateTime = (date) => {
 
                         <Link
                             :href="route('admin.document-assignments.index')"
-                            class="flex items-center p-4 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl hover:shadow-lg transition-all group border-2 border-purple-100"
+                            class="flex items-center p-4 bg-white rounded-lg hover:shadow-md transition-all group border border-gray-200"
                         >
-                            <div class="p-3 bg-purple-600 rounded-lg group-hover:bg-purple-700 transition-colors">
+                            <div class="p-3 bg-indigo-600 rounded-lg group-hover:bg-indigo-700 transition-colors">
                                 <GlobeAltIcon class="h-6 w-6 text-white" />
                             </div>
-                            <div class="ml-4">
+                            <div class="ml-3">
                                 <p class="font-bold text-gray-900">Country Assignments</p>
                                 <p class="text-sm text-gray-600">Document requirements</p>
                             </div>
@@ -327,15 +319,15 @@ const formatDateTime = (date) => {
                 </div>
 
                 <!-- Visa Management -->
-                <div class="mb-6">
-                    <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-3">Visa Management</h3>
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-4">Visa Management</h3>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <Link
                             :href="route('admin.visa-requirements.index')"
-                            class="flex items-center p-4 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl hover:shadow-md transition-all group"
+                            class="flex items-center p-4 bg-white rounded-lg hover:shadow-md transition-all group border border-gray-200"
                         >
-                            <div class="p-3 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors">
-                                <DocumentTextIcon class="h-6 w-6 text-purple-600" />
+                            <div class="p-3 bg-gray-100 rounded-lg group-hover:bg-gray-200 transition-colors">
+                                <DocumentTextIcon class="h-6 w-6 text-gray-600" />
                             </div>
                             <div class="ml-4">
                                 <p class="font-semibold text-gray-900">Visa Requirements (Legacy)</p>
@@ -345,7 +337,7 @@ const formatDateTime = (date) => {
 
                         <Link
                             :href="route('admin.visa-applications.index')"
-                            class="flex items-center p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl hover:shadow-md transition-all group"
+                            class="flex items-center p-4 bg-white rounded-lg hover:shadow-md transition-all group border border-gray-200"
                         >
                             <div class="p-3 bg-indigo-100 rounded-lg group-hover:bg-indigo-200 transition-colors">
                                 <ClipboardDocumentListIcon class="h-6 w-6 text-indigo-600" />
@@ -358,7 +350,7 @@ const formatDateTime = (date) => {
 
                         <Link
                             :href="route('admin.agency-assignments.index')"
-                            class="flex items-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl hover:shadow-md transition-all group"
+                            class="flex items-center p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-all group"
                         >
                             <div class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
                                 <UserGroupIcon class="h-6 w-6 text-blue-600" />
@@ -377,7 +369,7 @@ const formatDateTime = (date) => {
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
                         <Link
                             :href="route('admin.service-modules.index')"
-                            class="flex items-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl hover:shadow-md transition-all group"
+                            class="flex items-center p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-all group"
                         >
                             <div class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
                                 <RectangleStackIcon class="h-6 w-6 text-blue-600" />
@@ -390,7 +382,7 @@ const formatDateTime = (date) => {
 
                         <Link
                             :href="route('admin.users.index')"
-                            class="flex items-center p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl hover:shadow-md transition-all group"
+                            class="flex items-center p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-all group"
                         >
                             <div class="p-3 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors">
                                 <UsersIcon class="h-6 w-6 text-purple-600" />
@@ -409,7 +401,7 @@ const formatDateTime = (date) => {
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <Link
                             :href="route('admin.hotels.index')"
-                            class="flex items-center p-4 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl hover:shadow-md transition-all group"
+                            class="flex items-center p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-all group"
                         >
                             <div class="p-3 bg-orange-100 rounded-lg group-hover:bg-orange-200 transition-colors">
                                 <BuildingOffice2Icon class="h-6 w-6 text-orange-600" />
@@ -422,7 +414,7 @@ const formatDateTime = (date) => {
 
                         <Link
                             :href="route('admin.hotel-bookings.index')"
-                            class="flex items-center p-4 bg-gradient-to-br from-amber-50 to-yellow-50 rounded-xl hover:shadow-md transition-all group"
+                            class="flex items-center p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-all group"
                         >
                             <div class="p-3 bg-amber-100 rounded-lg group-hover:bg-amber-200 transition-colors">
                                 <ClipboardDocumentListIcon class="h-6 w-6 text-amber-600" />
@@ -435,7 +427,7 @@ const formatDateTime = (date) => {
 
                         <Link
                             :href="route('admin.flight-requests.index')"
-                            class="flex items-center p-4 bg-gradient-to-br from-sky-50 to-blue-50 rounded-xl hover:shadow-md transition-all group"
+                            class="flex items-center p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-all group"
                         >
                             <div class="p-3 bg-sky-100 rounded-lg group-hover:bg-sky-200 transition-colors">
                                 <PaperAirplaneIcon class="h-6 w-6 text-sky-600" />
@@ -448,7 +440,7 @@ const formatDateTime = (date) => {
 
                         <Link
                             :href="route('admin.visa-applications.index')"
-                            class="flex items-center p-4 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl hover:shadow-md transition-all group"
+                            class="flex items-center p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-all group"
                         >
                             <div class="p-3 bg-purple-100 rounded-lg group-hover:bg-purple-200 transition-colors">
                                 <DocumentTextIcon class="h-6 w-6 text-purple-600" />
@@ -467,7 +459,7 @@ const formatDateTime = (date) => {
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <Link
                             :href="route('admin.jobs.index')"
-                            class="flex items-center p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl hover:shadow-md transition-all group"
+                            class="flex items-center p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-all group"
                         >
                             <div class="p-3 bg-indigo-100 rounded-lg group-hover:bg-indigo-200 transition-colors">
                                 <BriefcaseIcon class="h-6 w-6 text-indigo-600" />
@@ -480,7 +472,7 @@ const formatDateTime = (date) => {
 
                         <Link
                             :href="route('admin.applications.index')"
-                            class="flex items-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl hover:shadow-md transition-all group"
+                            class="flex items-center p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-all group"
                         >
                             <div class="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
                                 <ClipboardDocumentListIcon class="h-6 w-6 text-blue-600" />
@@ -499,7 +491,7 @@ const formatDateTime = (date) => {
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <Link
                             :href="route('admin.analytics.index')"
-                            class="flex items-center p-4 bg-gradient-to-br from-green-50 to-teal-50 rounded-xl hover:shadow-md transition-all group"
+                            class="flex items-center p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-all group"
                         >
                             <div class="p-3 bg-green-100 rounded-lg group-hover:bg-green-200 transition-colors">
                                 <ChartPieIcon class="h-6 w-6 text-green-600" />
@@ -512,7 +504,7 @@ const formatDateTime = (date) => {
 
                         <Link
                             :href="route('admin.settings.index')"
-                            class="flex items-center p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl hover:shadow-md transition-all group"
+                            class="flex items-center p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-all group"
                         >
                             <div class="p-3 bg-gray-100 rounded-lg group-hover:bg-gray-200 transition-colors">
                                 <CogIcon class="h-6 w-6 text-gray-600" />
@@ -524,62 +516,57 @@ const formatDateTime = (date) => {
                         </Link>
                     </div>
                 </div>
-            </div>
+                </div>
+            </RhythmicCard>
 
             <!-- Wallet Stats -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center space-x-3">
-                        <div class="p-3 bg-purple-100 rounded-lg">
-                            <WalletIcon class="h-6 w-6 text-purple-600" />
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600">Total Wallet Balance</p>
-                            <p class="text-xl font-bold text-gray-900">{{ formatCurrency(stats.wallet.total_balance) }}</p>
-                        </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-rhythm-lg">
+                <RhythmicCard variant="heritage" size="sm">
+                    <template #icon>
+                        <WalletIcon class="h-8 w-8" />
+                    </template>
+                    <div>
+                        <p class="text-sm text-gray-600 mb-rhythm-xs">Total Wallet Balance</p>
+                        <p class="text-display-sm font-bold text-gray-900">{{ formatCurrency(stats.wallet.total_balance) }}</p>
                     </div>
-                </div>
+                </RhythmicCard>
 
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center space-x-3">
-                        <div class="p-3 bg-indigo-100 rounded-lg">
-                            <ArrowTrendingUpIcon class="h-6 w-6 text-indigo-600" />
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600">Total Transactions</p>
-                            <p class="text-xl font-bold text-gray-900">{{ stats.wallet.total_transactions.toLocaleString() }}</p>
-                        </div>
+                <RhythmicCard variant="ocean" size="sm">
+                    <template #icon>
+                        <ArrowTrendingUpIcon class="h-8 w-8" />
+                    </template>
+                    <div>
+                        <p class="text-sm text-gray-600 mb-rhythm-xs">Total Transactions</p>
+                        <p class="text-display-sm font-bold text-gray-900">{{ stats.wallet.total_transactions.toLocaleString() }}</p>
                     </div>
-                </div>
+                </RhythmicCard>
 
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <div class="flex items-center space-x-3">
-                        <div class="p-3 bg-orange-100 rounded-lg">
-                            <BriefcaseIcon class="h-6 w-6 text-orange-600" />
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600">Pending Withdrawals</p>
-                            <p class="text-xl font-bold text-gray-900">{{ stats.wallet.pending_withdrawals }}</p>
-                        </div>
+                <RhythmicCard variant="sunrise" size="sm">
+                    <template #icon>
+                        <BriefcaseIcon class="h-8 w-8" />
+                    </template>
+                    <div>
+                        <p class="text-sm text-gray-600 mb-rhythm-xs">Pending Withdrawals</p>
+                        <p class="text-display-sm font-bold text-gray-900">{{ stats.wallet.pending_withdrawals }}</p>
                     </div>
-                </div>
+                </RhythmicCard>
             </div>
 
             <!-- Charts Row -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-rhythm-lg">
                 <!-- User Registrations Chart -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">User Registrations (Last 7 Days)</h3>
-                    <div v-if="userChartData && userChartData.length > 0" class="space-y-3">
+                <RhythmicCard variant="light" size="lg">
+                    <h3 class="font-display font-bold text-xl text-gray-900 mb-rhythm-md">User Registrations (Last 7 Days)</h3>
+                    <div v-if="userChartData && userChartData.length > 0" class="space-y-rhythm-sm">
                         <div 
                             v-for="data in userChartData" 
                             :key="data.date"
-                            class="flex items-center space-x-3"
+                            class="flex items-center space-x-rhythm-sm"
                         >
                             <div class="w-20 text-sm text-gray-600">{{ data.date }}</div>
                             <div class="flex-1 bg-gray-100 rounded-full h-8 overflow-hidden">
                                 <div 
-                                    class="bg-gradient-to-r from-blue-500 to-blue-600 h-full flex items-center justify-end pr-3 text-white text-sm font-medium transition-all duration-500"
+                                    class="bg-blue-600 h-full flex items-center justify-end pr-3 text-white text-sm font-medium transition-all duration-500"
                                     :style="{ width: `${Math.max((data.count / Math.max(...userChartData.map(d => d.count), 1)) * 100, 10)}%` }"
                                 >
                                     {{ data.count }}
@@ -587,24 +574,24 @@ const formatDateTime = (date) => {
                             </div>
                         </div>
                     </div>
-                    <div v-else class="text-center py-8 text-gray-500">
+                    <div v-else class="text-center py-rhythm-lg text-gray-500">
                         No registration data available
                     </div>
-                </div>
+                </RhythmicCard>
 
                 <!-- Revenue Chart -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4">Revenue (Last 7 Days)</h3>
-                    <div v-if="revenueChartData && revenueChartData.length > 0" class="space-y-3">
+                <RhythmicCard variant="light" size="lg">
+                    <h3 class="font-display font-bold text-xl text-gray-900 mb-rhythm-md">Revenue (Last 7 Days)</h3>
+                    <div v-if="revenueChartData && revenueChartData.length > 0" class="space-y-rhythm-sm">
                         <div 
                             v-for="data in revenueChartData" 
                             :key="data.date"
-                            class="flex items-center space-x-3"
+                            class="flex items-center space-x-rhythm-sm"
                         >
                             <div class="w-20 text-sm text-gray-600">{{ data.date }}</div>
                             <div class="flex-1 bg-gray-100 rounded-full h-8 overflow-hidden">
                                 <div 
-                                    class="bg-gradient-to-r from-green-500 to-emerald-600 h-full flex items-center justify-end pr-3 text-white text-sm font-medium transition-all duration-500"
+                                    class="bg-green-600 h-full flex items-center justify-end pr-3 text-white text-sm font-medium transition-all duration-500"
                                     :style="{ width: `${Math.max((data.amount / Math.max(...revenueChartData.map(d => d.amount), 1)) * 100, 10)}%` }"
                                 >
                                     {{ formatCurrency(data.amount) }}
@@ -612,16 +599,16 @@ const formatDateTime = (date) => {
                             </div>
                         </div>
                     </div>
-                    <div v-else class="text-center py-8 text-gray-500">
+                    <div v-else class="text-center py-rhythm-lg text-gray-500">
                         No revenue data available
                     </div>
-                </div>
+                </RhythmicCard>
             </div>
 
             <!-- Security & Audit: Recent Impersonations -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-bold text-gray-900">Recent Admin Impersonations</h3>
+            <RhythmicCard variant="light" size="lg">
+                <div class="flex items-center justify-between mb-rhythm-md">
+                    <h3 class="font-display font-bold text-xl text-gray-900">Recent Admin Impersonations</h3>
                     <span class="text-xs text-gray-500">Last 10 sessions</span>
                 </div>
                 <div v-if="recentImpersonations && recentImpersonations.length" class="overflow-x-auto">
@@ -674,13 +661,13 @@ const formatDateTime = (date) => {
                         </tbody>
                     </table>
                 </div>
-                <div v-else class="text-center py-8 text-sm text-gray-500">
+                <div v-else class="text-center py-rhythm-lg text-sm text-gray-500">
                     No impersonation sessions recorded yet.
                 </div>
-            </div>
+            </RhythmicCard>
 
             <!-- Recent Activities -->
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-rhythm-lg">
                 <!-- Recent Users -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200">
                     <div class="p-6 border-b border-gray-200">

@@ -87,7 +87,7 @@ const submit = () => {
     <section>
         <header class="mb-6">
             <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-growth-500 flex items-center justify-center shadow-rhythmic-md">
+                <div class="w-10 h-10 rounded-xl bg-green-600 flex items-center justify-center shadow-sm">
                     <DocumentTextIcon class="h-6 w-6 text-white" />
                 </div>
                 <div>
@@ -100,7 +100,7 @@ const submit = () => {
         <form @submit.prevent="submit" class="space-y-rhythm-md">
             <RhythmicCard variant="light" class="space-y-rhythm-md">
             <!-- Bio -->
-            <div class="space-y-rhythm-sm">
+            <div class="space-y-rhythm-sm mb-6">
                 <InputLabel for="bio" value="Bio" class="text-sm md:text-base" />
                 <textarea
                     id="bio"

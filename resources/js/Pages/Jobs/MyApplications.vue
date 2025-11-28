@@ -50,16 +50,16 @@ const getStatusLabel = (status) => {
 
     <AuthenticatedLayout>
         <!-- Header -->
-        <div class="bg-gradient-to-br from-indigo-600 to-purple-700 px-4 py-6 sm:px-6 lg:px-8">
+        <div class="bg-white border-b border-gray-200 px-4 py-6 sm:px-6 lg:px-8">
             <div class="max-w-7xl mx-auto">
                 <div class="flex items-center justify-between mb-6">
                     <div>
-                        <h1 class="text-2xl font-bold text-white">My Applications</h1>
-                        <p class="text-indigo-100 text-sm mt-1">Track your job applications</p>
+                        <h1 class="text-2xl font-bold text-gray-900">My Applications</h1>
+                        <p class="text-gray-600 text-sm mt-1">Track your job applications</p>
                     </div>
                     <Link
                         :href="route('jobs.index')"
-                        class="flex items-center space-x-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-colors"
+                        class="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
                     >
                         <BriefcaseIcon class="h-5 w-5" />
                         <span class="hidden sm:inline">Browse Jobs</span>

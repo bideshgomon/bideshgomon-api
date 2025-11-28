@@ -53,7 +53,7 @@ const formatDate = (date) => {
     <Head :title="`Application from ${application.user?.name}`" />
 
     <AdminLayout>
-        <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
+        <div class="min-h-screen bg-gray-50 py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <!-- Back Button -->
                 <Link
@@ -104,7 +104,7 @@ const formatDate = (date) => {
                                     <ClockIcon class="h-5 w-5 mr-3 text-gray-400" />
                                     <div>
                                         <div class="text-xs text-gray-500">Applied</div>
-                                        <div class="font-medium">{{ formatDate(application.applied_at) }}</div>
+                                        <div class="font-medium">{{ formatDate(application.submitted_at || application.created_at) }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -245,7 +245,7 @@ const formatDate = (date) => {
                                     </div>
                                     <div class="flex-1">
                                         <div class="font-medium text-gray-900">Application Submitted</div>
-                                        <div class="text-sm text-gray-500">{{ formatDate(application.applied_at) }}</div>
+                                        <div class="text-sm text-gray-500">{{ formatDate(application.submitted_at || application.created_at) }}</div>
                                     </div>
                                 </div>
                                 <div v-if="application.reviewed_at" class="flex items-start">

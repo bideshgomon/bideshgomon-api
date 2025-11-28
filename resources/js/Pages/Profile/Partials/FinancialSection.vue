@@ -124,7 +124,7 @@ const submitForm = () => {
     <!-- Section Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-rhythm-lg">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold-500 to-sunrise-500 flex items-center justify-center shadow-rhythmic-md">
+        <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center shadow-sm">
           <BanknotesIcon class="w-6 h-6 text-white" />
         </div>
         <div>

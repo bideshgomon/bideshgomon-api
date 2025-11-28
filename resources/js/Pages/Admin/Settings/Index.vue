@@ -15,7 +15,14 @@ import {
     ArrowPathIcon,
     KeyIcon,
     EyeIcon,
-    EyeSlashIcon
+    EyeSlashIcon,
+    MapIcon,
+    CreditCardIcon,
+    CloudIcon,
+    ShieldCheckIcon,
+    ChatBubbleLeftRightIcon,
+    SparklesIcon,
+    ExclamationTriangleIcon
 } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
@@ -32,12 +39,43 @@ const togglePasswordVisibility = (key) => {
 
 const groupConfig = {
     general: { icon: CogIcon, label: 'General', color: 'indigo' },
+    branding: { icon: SparklesIcon, label: 'Branding', color: 'purple' },
+    seo: { icon: ShieldCheckIcon, label: 'SEO', color: 'blue' },
     email: { icon: EnvelopeIcon, label: 'Email', color: 'blue' },
+    contact: { icon: ChatBubbleLeftRightIcon, label: 'Contact', color: 'green' },
     jobs: { icon: BriefcaseIcon, label: 'Jobs', color: 'purple' },
     wallet: { icon: WalletIcon, label: 'Wallet', color: 'green' },
     features: { icon: FlagIcon, label: 'Features', color: 'orange' },
     social: { icon: ShareIcon, label: 'Social Media', color: 'pink' },
     api: { icon: KeyIcon, label: 'API Keys', color: 'red' },
+    advanced: { icon: CogIcon, label: 'Advanced', color: 'gray' },
+};
+
+// API service configuration with icons and colors
+const apiServices = {
+    google_maps: { icon: MapIcon, color: 'green', label: 'Google Maps' },
+    google_oauth: { icon: ShieldCheckIcon, color: 'blue', label: 'Google OAuth' },
+    facebook: { icon: ShareIcon, color: 'indigo', label: 'Facebook' },
+    stripe: { icon: CreditCardIcon, color: 'purple', label: 'Stripe' },
+    paypal: { icon: WalletIcon, color: 'blue', label: 'PayPal' },
+    sslcommerz: { icon: CreditCardIcon, color: 'green', label: 'SSLCommerz' },
+    bkash: { icon: WalletIcon, color: 'pink', label: 'bKash' },
+    nagad: { icon: WalletIcon, color: 'orange', label: 'Nagad' },
+    aws: { icon: CloudIcon, color: 'orange', label: 'AWS' },
+    pusher: { icon: ChatBubbleLeftRightIcon, color: 'purple', label: 'Pusher' },
+    mailgun: { icon: EnvelopeIcon, color: 'red', label: 'Mailgun' },
+    twilio: { icon: ChatBubbleLeftRightIcon, color: 'red', label: 'Twilio' },
+    openai: { icon: SparklesIcon, color: 'green', label: 'OpenAI' },
+    recaptcha: { icon: ShieldCheckIcon, color: 'blue', label: 'reCAPTCHA' },
+};
+
+const getApiServiceConfig = (key) => {
+    for (const [service, config] of Object.entries(apiServices)) {
+        if (key.toLowerCase().includes(service.replace('_', ''))) {
+            return config;
+        }
+    }
+    return null;
 };
 
 const form = useForm({
@@ -124,7 +162,7 @@ const updateSetting = (key, value) => {
                                 @click="activeTab = group"
                                 :class="[
                                     activeTab === group
-                                        ? `border-${groupConfig[group]?.color || 'indigo'}-500 text-${groupConfig[group]?.color || 'indigo'}-600`
+                                        ? 'border-indigo-500 text-indigo-600'
                                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
                                     'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 transition-colors'
                                 ]"
@@ -137,7 +175,88 @@ const updateSetting = (key, value) => {
 
                     <!-- Settings Form -->
                     <form @submit.prevent="submit" class="p-6">
-                        <div class="space-y-6">
+                        <!-- API Keys Section - Enhanced Layout -->
+                        <div v-if="activeTab === 'api'" class="space-y-4">
+                            <!-- Warning Banner -->
+                            <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+                                <div class="flex">
+                                    <ExclamationTriangleIcon class="h-5 w-5 text-amber-400 flex-shrink-0" />
+                                    <div class="ml-3">
+                                        <h3 class="text-sm font-medium text-amber-800">Security Notice</h3>
+                                        <p class="mt-1 text-sm text-amber-700">
+                                            API keys are sensitive credentials. Never share them publicly or commit them to version control.
+                                            These values are stored securely in your .env file.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Group API keys by service -->
+                            <div
+                                v-for="setting in activeSettings"
+                                :key="setting.key"
+                                class="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow"
+                            >
+                                <div class="flex items-start gap-4">
+                                    <!-- Service Icon -->
+                                    <div class="flex-shrink-0 rounded-lg p-3 bg-indigo-100">
+                                        <component 
+                                            :is="getApiServiceConfig(setting.key)?.icon || KeyIcon" 
+                                            class="h-6 w-6 text-indigo-600"
+                                        />
+                                    </div>
+
+                                    <!-- Setting Details -->
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <label :for="setting.key" class="text-sm font-semibold text-gray-900">
+                                                {{ setting.key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') }}
+                                            </label>
+                                            <span
+                                                v-if="form.settings.find(s => s.key === setting.key)?.value"
+                                                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                                            >
+                                                <CheckIcon class="h-3 w-3 mr-1" />
+                                                Configured
+                                            </span>
+                                            <span
+                                                v-else
+                                                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600"
+                                            >
+                                                Not Set
+                                            </span>
+                                        </div>
+                                        
+                                        <p class="text-sm text-gray-600 mb-3">
+                                            {{ setting.description }}
+                                        </p>
+
+                                        <!-- Password Input with Toggle -->
+                                        <div class="relative">
+                                            <input
+                                                :id="setting.key"
+                                                :type="visiblePasswords[setting.key] ? 'text' : 'password'"
+                                                :value="form.settings.find(s => s.key === setting.key)?.value"
+                                                @input="updateSetting(setting.key, $event.target.value)"
+                                                :placeholder="form.settings.find(s => s.key === setting.key)?.value ? '••••••••••••••••••••' : `Enter ${setting.key.split('_').pop()}`"
+                                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm pr-10 font-mono text-sm"
+                                            >
+                                            <button
+                                                type="button"
+                                                @click="togglePasswordVisibility(setting.key)"
+                                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                                            >
+                                                <EyeIcon v-if="!visiblePasswords[setting.key]" class="h-5 w-5" />
+                                                <EyeSlashIcon v-else class="h-5 w-5" />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Standard Settings Layout for Other Tabs -->
+                        <div v-else class="space-y-6">
                             <div
                                 v-for="setting in activeSettings"
                                 :key="setting.key"
@@ -175,6 +294,37 @@ const updateSetting = (key, value) => {
                                             </label>
                                         </div>
 
+                                        <!-- Textarea for long content -->
+                                        <div v-else-if="setting.type === 'textarea'" class="mt-3">
+                                            <textarea
+                                                :id="setting.key"
+                                                :value="form.settings.find(s => s.key === setting.key)?.value"
+                                                @input="updateSetting(setting.key, $event.target.value)"
+                                                rows="4"
+                                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                            ></textarea>
+                                        </div>
+
+                                        <!-- Color picker -->
+                                        <div v-else-if="setting.type === 'color'" class="mt-3">
+                                            <div class="flex items-center gap-3">
+                                                <input
+                                                    :id="setting.key"
+                                                    type="color"
+                                                    :value="form.settings.find(s => s.key === setting.key)?.value || '#3B82F6'"
+                                                    @input="updateSetting(setting.key, $event.target.value)"
+                                                    class="h-10 w-20 rounded border-gray-300 cursor-pointer"
+                                                >
+                                                <input
+                                                    type="text"
+                                                    :value="form.settings.find(s => s.key === setting.key)?.value"
+                                                    @input="updateSetting(setting.key, $event.target.value)"
+                                                    placeholder="#3B82F6"
+                                                    class="flex-1 rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm font-mono"
+                                                >
+                                            </div>
+                                        </div>
+
                                         <!-- Text/Number/Email/URL Inputs -->
                                         <div v-else-if="setting.type !== 'password'" class="mt-3">
                                             <input
@@ -195,7 +345,7 @@ const updateSetting = (key, value) => {
                                                     :type="visiblePasswords[setting.key] ? 'text' : 'password'"
                                                     :value="form.settings.find(s => s.key === setting.key)?.value"
                                                     @input="updateSetting(setting.key, $event.target.value)"
-                                                    :placeholder="form.settings.find(s => s.key === setting.key)?.value ? '••••••••••••' : 'Enter API key'"
+                                                    :placeholder="form.settings.find(s => s.key === setting.key)?.value ? '••••••••••••' : 'Enter secure value'"
                                                     class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm pr-10"
                                                 >
                                                 <button
@@ -218,7 +368,7 @@ const updateSetting = (key, value) => {
                             <button
                                 type="submit"
                                 :disabled="form.processing"
-                                class="inline-flex items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                class="inline-flex items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                             >
                                 <CheckIcon class="h-5 w-5 mr-2" />
                                 {{ form.processing ? 'Saving...' : 'Save Settings' }}

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Setting;
+use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -11,11 +11,11 @@ class AdminSettingsController extends Controller
 {
     public function index()
     {
-        $settings = Setting::orderBy('group')->orderBy('key')->get()->groupBy('group');
+        $settings = SiteSetting::orderBy('group')->orderBy('sort_order')->get()->groupBy('group');
 
         return Inertia::render('Admin/Settings/Index', [
             'settings' => $settings,
-            'groups' => Setting::distinct('group')->pluck('group'),
+            'groups' => SiteSetting::distinct('group')->pluck('group'),
         ]);
     }
 
@@ -28,7 +28,7 @@ class AdminSettingsController extends Controller
         ]);
 
         foreach ($validated['settings'] as $settingData) {
-            $setting = Setting::where('key', $settingData['key'])->first();
+            $setting = SiteSetting::where('key', $settingData['key'])->first();
             
             if ($setting) {
                 $value = $settingData['value'];
@@ -44,7 +44,7 @@ class AdminSettingsController extends Controller
             }
         }
 
-        Setting::clearCache();
+        SiteSetting::clearCache();
 
         return back()->with('success', 'Settings updated successfully!');
     }
@@ -57,7 +57,7 @@ class AdminSettingsController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'key' => 'required|string|unique:settings,key',
+            'key' => 'required|string|unique:site_settings,key',
             'value' => 'nullable',
             'group' => 'required|string',
             'type' => 'required|in:text,number,boolean,json,email,url',
@@ -73,7 +73,7 @@ class AdminSettingsController extends Controller
             $value = json_encode($value);
         }
 
-        Setting::create([
+        SiteSetting::create([
             'key' => $validated['key'],
             'value' => $value,
             'group' => $validated['group'],
@@ -87,7 +87,7 @@ class AdminSettingsController extends Controller
 
     public function destroy($id)
     {
-        $setting = Setting::findOrFail($id);
+        $setting = SiteSetting::findOrFail($id);
         $setting->delete();
 
         return back()->with('success', 'Setting deleted successfully!');
@@ -133,13 +133,13 @@ class AdminSettingsController extends Controller
         ];
 
         foreach ($defaultSettings as $setting) {
-            Setting::updateOrCreate(
+            SiteSetting::updateOrCreate(
                 ['key' => $setting['key']],
                 $setting
             );
         }
 
-        Setting::clearCache();
+        SiteSetting::clearCache();
 
         return back()->with('success', 'Default settings seeded successfully!');
     }

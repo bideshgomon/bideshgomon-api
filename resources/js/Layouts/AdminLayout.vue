@@ -724,21 +724,18 @@ const navigationSections = {
       <!-- Sidebar -->
       <nav
         :class="[
-          'fixed inset-y-0 left-0 z-50 hidden md:flex flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out',
+          'fixed inset-y-0 left-0 z-50 hidden md:flex flex-col bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out overflow-hidden',
           sidebarCollapsed ? 'w-20' : 'w-64',
         ]"
       >
-        <!-- Logo Section -->
+        <!-- Logo Section - Fixed at Top -->
         <div
-          class="flex flex-shrink-0 items-center justify-between px-4 h-16 border-b border-gray-200 dark:border-gray-700"
+          class="flex flex-shrink-0 items-center justify-between px-4 h-16 border-b border-gray-200 bg-white"
         >
-          <Link :href="route('admin.dashboard')" class="flex items-center gap-3">
-            <ApplicationLogo class="h-10 w-auto" v-if="!sidebarCollapsed" />
+          <Link :href="route('admin.dashboard')" class="flex items-center">
+            <ApplicationLogo class="h-8 w-auto" v-if="!sidebarCollapsed" />
             <div v-else class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
-              <SparklesIcon class="w-5 h-5 text-white" />
-            </div>
-            <div v-if="!sidebarCollapsed" class="flex flex-col ml-2">
-              <span class="text-xs text-gray-500 dark:text-gray-400">Admin</span>
+              <SparklesIcon class="w-4 h-4 text-white" />
             </div>
           </Link>
           
@@ -746,28 +743,29 @@ const navigationSections = {
           <button
             v-if="!sidebarCollapsed"
             @click="toggleSidebar"
-            class="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+            class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
             title="Collapse Sidebar"
           >
             <ChevronDownIcon class="w-4 h-4 rotate-90" />
           </button>
         </div>
 
-        <!-- Expand Button (When Collapsed) -->
-        <button
-          v-if="sidebarCollapsed"
-          @click="toggleSidebar"
-          class="mx-auto mt-3 p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
-          title="Expand Sidebar"
-        >
-          <ChevronRightIcon class="w-5 h-5" />
-        </button>
+        <!-- Expand Button (When Collapsed) - Fixed Position -->
+        <div v-if="sidebarCollapsed" class="flex-shrink-0 px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <button
+            @click="toggleSidebar"
+            class="w-full p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+            title="Expand Sidebar"
+          >
+            <ChevronRightIcon class="w-5 h-5 mx-auto" />
+          </button>
+        </div>
 
-        <!-- Navigation Sections -->
+        <!-- Navigation Sections - Scrollable Area -->
         <div
-          class="flex flex-1 flex-col overflow-y-auto px-3 py-4"
+          class="flex-1 overflow-y-auto px-3 py-4"
         >
-          <ul role="list" class="flex flex-1 flex-col gap-y-1">
+          <ul role="list" class="space-y-1">
             <!-- Dashboard - Standalone at Top -->
             <li>
               <Link
@@ -776,15 +774,15 @@ const navigationSections = {
                   route().current('admin.dashboard')
                     ? 'bg-indigo-600 text-white'
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700',
-                  sidebarCollapsed ? 'justify-center px-3' : 'px-3',
-                  'group flex items-center gap-x-3 rounded-lg py-2 text-sm font-medium transition-colors',
+                  sidebarCollapsed ? 'justify-center px-2' : 'px-3',
+                  'group flex items-center gap-x-3 rounded-lg py-2.5 text-sm font-semibold transition-colors',
                 ]"
                 :title="sidebarCollapsed ? 'Dashboard' : ''"
               >
                 <HomeIcon
                   :class="[
                     'h-5 w-5 shrink-0',
-                    route().current('admin.dashboard') ? 'text-white' : 'text-gray-400',
+                    route().current('admin.dashboard') ? 'text-white' : 'text-gray-500',
                   ]"
                 />
                 <span v-if="!sidebarCollapsed">Dashboard</span>
@@ -792,17 +790,17 @@ const navigationSections = {
             </li>
 
             <!-- Divider -->
-            <li class="my-2">
+            <li class="my-3">
               <div class="h-px bg-gray-200 dark:bg-gray-700"></div>
             </li>
 
             <!-- Other Sections -->
-            <li v-for="(items, sectionName) in navigationSections" :key="sectionName">
-              <div v-if="items.length > 0" class="mb-2">
+            <li v-for="(items, sectionName) in navigationSections" :key="sectionName" class="mb-4">
+              <div v-if="items.length > 0">
                 <!-- Collapsible Section Header -->
                 <button
                   v-if="!sidebarCollapsed"
-                  class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                  class="w-full flex items-center justify-between px-3 py-2 text-xs font-bold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors rounded-md hover:bg-gray-50 dark:hover:bg-gray-700/50"
                   @click="toggleSection(sectionName)"
                 >
                   <span class="uppercase tracking-wider">{{ sectionName }}</span>
@@ -818,7 +816,7 @@ const navigationSections = {
                 <div v-if="sidebarCollapsed" class="h-px bg-gray-200 dark:bg-gray-700 my-2"></div>
 
                 <!-- Section Items -->
-                <ul v-show="!collapsedSections[sectionName]" role="list" class="space-y-1 mt-1">
+                <ul v-show="!collapsedSections[sectionName]" role="list" class="space-y-1 mt-2">
                   <li v-for="item in items" :key="item.name">
                     <Link
                       :href="item.disabled ? '#' : item.href"
@@ -826,8 +824,8 @@ const navigationSections = {
                         item.current
                           ? 'bg-indigo-600 text-white'
                           : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700',
-                        sidebarCollapsed ? 'justify-center px-3' : 'px-3',
-                        'group flex items-center gap-x-3 rounded-lg py-2 text-sm font-medium transition-colors',
+                        sidebarCollapsed ? 'justify-center px-2' : 'px-3',
+                        'group flex items-center gap-x-3 rounded-lg py-2.5 text-sm font-medium transition-colors',
                         item.disabled ? 'opacity-50 cursor-not-allowed' : '',
                       ]"
                       :aria-disabled="item.disabled"
@@ -838,15 +836,15 @@ const navigationSections = {
                         :is="item.icon"
                         :class="[
                           'h-5 w-5 shrink-0',
-                          item.current ? 'text-white' : 'text-gray-400',
+                          item.current ? 'text-white' : 'text-gray-500',
                         ]"
                         aria-hidden="true"
                       />
-                      <span v-if="!sidebarCollapsed" class="flex-1">{{ item.name }}</span>
+                      <span v-if="!sidebarCollapsed" class="flex-1 truncate">{{ item.name }}</span>
                       <!-- Badge Count (if any) -->
                       <span
                         v-if="item.badge && !sidebarCollapsed"
-                        class="px-2 py-0.5 text-xs font-semibold bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 rounded-full"
+                        class="px-2 py-0.5 text-xs font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400 rounded-full"
                       >
                         {{ item.badge }}
                       </span>
@@ -858,49 +856,57 @@ const navigationSections = {
           </ul>
         </div>
 
-        <!-- Footer -->
-        <div class="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 p-3">
+        <!-- Footer - Fixed at Bottom -->
+        <div class="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800">
           <div v-if="!sidebarCollapsed" class="space-y-2">
+            <!-- User Info -->
+            <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+              <p class="text-xs font-semibold text-gray-900 dark:text-white truncate">{{ user.name }}</p>
+              <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ user.email }}</p>
+            </div>
+            
             <!-- Dark Mode Toggle & Logout -->
             <div class="flex items-center gap-2">
               <button
                 @click="toggleDarkMode"
-                class="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                class="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors font-medium"
                 :title="darkMode ? 'Light Mode' : 'Dark Mode'"
               >
                 <SunIcon v-if="darkMode" class="w-4 h-4" />
                 <MoonIcon v-else class="w-4 h-4" />
+                <span class="text-xs">{{ darkMode ? 'Light' : 'Dark' }}</span>
               </button>
               <Link
                 :href="route('logout')"
                 method="post"
                 as="button"
-                class="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                class="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors font-medium"
                 title="Logout"
               >
                 <ArrowRightOnRectangleIcon class="w-4 h-4" />
+                <span class="text-xs">Logout</span>
               </Link>
             </div>
           </div>
           
           <!-- Collapsed View - Icons Only -->
-          <div v-else class="flex flex-col items-center gap-2">
+          <div v-else class="flex flex-col items-center gap-3">
             <button
               @click="toggleDarkMode"
-              class="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              class="p-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               :title="darkMode ? 'Light Mode' : 'Dark Mode'"
             >
-              <SunIcon v-if="darkMode" class="w-4 h-4" />
-              <MoonIcon v-else class="w-4 h-4" />
+              <SunIcon v-if="darkMode" class="w-5 h-5" />
+              <MoonIcon v-else class="w-5 h-5" />
             </button>
             <Link
               :href="route('logout')"
               method="post"
               as="button"
-              class="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+              class="p-2.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
               title="Logout"
             >
-              <ArrowRightOnRectangleIcon class="w-4 h-4" />
+              <ArrowRightOnRectangleIcon class="w-5 h-5" />
             </Link>
           </div>
         </div>
@@ -913,47 +919,36 @@ const navigationSections = {
           sidebarCollapsed ? 'md:pl-20' : 'md:pl-64',
         ]"
       >
-        <!-- Top Header Bar -->
+        <!-- Top Header Bar - Simplified -->
         <div
-          class="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 lg:px-8"
+          class="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 lg:px-8"
         >
           <!-- Mobile Menu Button -->
           <button
             type="button"
-            class="p-2.5 flex items-center justify-center rounded-xl text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 dark:hover:from-indigo-900/20 dark:hover:to-purple-900/20 transition-all transform hover:scale-105 md:hidden shadow-sm"
+            class="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors md:hidden"
             @click="showingNavigationDropdown = !showingNavigationDropdown"
           >
             <span class="sr-only">Open sidebar</span>
             <Bars3Icon class="h-6 w-6" aria-hidden="true" />
           </button>
 
-          <!-- Page Title with Beautiful Breadcrumb -->
-          <div class="flex items-center gap-3 min-w-0">
-            <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/20 rounded-lg">
-              <HomeIcon class="w-4 h-4 text-indigo-600 dark:text-indigo-400 flex-shrink-0" />
-              <span class="text-gray-300 dark:text-gray-600 select-none">/</span>
-              <h1 class="text-sm font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent truncate">
-                {{ $page.props.title || 'Dashboard' }}
-              </h1>
-            </div>
-          </div>
-
-          <!-- Command Palette Hint -->
+          <!-- Quick Search -->
           <button
             @click="showCommandPalette = true"
-            class="hidden lg:flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl transition-all group"
+            class="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors group flex-1 max-w-md"
           >
-            <CommandLineIcon class="w-4 h-4 text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400" />
-            <span class="text-sm text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300">Quick search...</span>
-            <kbd class="hidden xl:inline-block px-2 py-0.5 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded">
+            <CommandLineIcon class="w-4 h-4 text-gray-400" />
+            <span class="text-sm text-gray-500">Quick search...</span>
+            <kbd class="ml-auto px-2 py-0.5 text-xs font-semibold text-gray-500 bg-white border border-gray-300 rounded">
               ⌘K
             </kbd>
           </button>
 
           <!-- Spacer -->
-          <div class="flex-1"></div>
+          <div class="flex-1 md:hidden"></div>
 
-          <!-- Right Actions - Stunning Icons -->
+          <!-- Right Actions -->
           <div class="flex items-center gap-2">
             <!-- Mobile Search Icon -->
             <button

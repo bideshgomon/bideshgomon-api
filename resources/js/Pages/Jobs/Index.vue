@@ -107,16 +107,16 @@ const getJobTypeLabel = (type) => {
 
     <AuthenticatedLayout>
         <!-- Mobile Header -->
-        <div class="bg-gradient-to-br from-indigo-600 to-purple-700 px-4 py-6 sm:px-6 lg:px-8">
+        <div class="bg-white border-b border-gray-200 px-4 py-6 sm:px-6 lg:px-8">
             <div class="max-w-7xl mx-auto">
                 <div class="flex items-center justify-between mb-4">
                     <div>
-                        <h1 class="text-2xl font-bold text-white">Job Opportunities</h1>
-                        <p class="text-indigo-100 text-sm mt-1">{{ jobs.total }} jobs available</p>
+                        <h1 class="text-2xl font-bold text-gray-900">Job Opportunities</h1>
+                        <p class="text-gray-600 text-sm mt-1">{{ jobs.total }} jobs available</p>
                     </div>
                     <Link
                         :href="route('jobs.my-applications')"
-                        class="flex items-center space-x-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-colors"
+                        class="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
                     >
                         <BriefcaseIcon class="h-5 w-5" />
                         <span class="hidden sm:inline">My Applications</span>
@@ -254,7 +254,7 @@ const getJobTypeLabel = (type) => {
                     class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-200 overflow-hidden"
                 >
                     <!-- Featured Badge -->
-                    <div v-if="job.is_featured" class="bg-gradient-to-r from-amber-400 to-orange-500 px-4 py-1 flex items-center justify-center space-x-1">
+                    <div v-if="job.is_featured" class="bg-amber-500 px-4 py-1 flex items-center justify-center space-x-1">
                         <SparklesIcon class="h-4 w-4 text-white" />
                         <span class="text-white text-xs font-semibold">FEATURED</span>
                     </div>

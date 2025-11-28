@@ -124,18 +124,20 @@ const deleteCampaign = (campaignId) => {
 
 <template>
   <AdminLayout title="Marketing Campaigns">
-    <div class="mb-6">
-      <div class="flex justify-between items-center">
-        <h1 class="text-3xl font-bold text-gray-800">Marketing Campaigns</h1>
-        <Link
-          :href="route('admin.marketing-campaigns.create')"
-          class="inline-flex items-center px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg transition-colors"
-        >
-          <PlusIcon class="h-5 w-5 mr-2" />
-          Create Campaign
-        </Link>
-      </div>
-    </div>
+    <div class="min-h-screen bg-gray-50 pb-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="mb-6">
+          <div class="flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-gray-800">Marketing Campaigns</h1>
+            <Link
+              :href="route('admin.marketing-campaigns.create')"
+              class="inline-flex items-center px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg transition-colors"
+            >
+              <PlusIcon class="h-5 w-5 mr-2" />
+              Create Campaign
+            </Link>
+          </div>
+        </div>
 
     <!-- Stats Overview -->
     <div v-if="stats" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -386,6 +388,8 @@ const deleteCampaign = (campaignId) => {
             />
           </nav>
         </div>
+      </div>
+    </div>
       </div>
     </div>
   </AdminLayout>

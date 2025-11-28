@@ -279,7 +279,7 @@ onMounted(() => {
     <header class="mb-rhythm-lg">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-heritage-500 to-gold-500 flex items-center justify-center shadow-rhythmic-md">
+          <div class="w-10 h-10 rounded-xl bg-pink-600 flex items-center justify-center shadow-sm">
             <UsersIcon class="w-6 h-6 text-white" />
           </div>
           <div>

@@ -98,41 +98,41 @@ const resetFilters = () => {
       <!-- Stats Cards -->
       <div class="px-4 sm:px-6 lg:px-8 mb-8">
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-xl p-6 shadow-sm">
+          <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-sm font-medium text-yellow-600 dark:text-yellow-400">Pending</p>
-                <p class="text-3xl font-bold text-yellow-900 dark:text-yellow-100">{{ stats?.pending || 0 }}</p>
+                <p class="text-sm font-medium text-yellow-600">Pending</p>
+                <p class="text-3xl font-bold text-gray-900">{{ stats?.pending || 0 }}</p>
               </div>
               <ClockIcon class="h-12 w-12 text-yellow-400" />
             </div>
           </div>
 
-          <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-6 shadow-sm">
+          <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-sm font-medium text-blue-600 dark:text-blue-400">Quoted</p>
-                <p class="text-3xl font-bold text-blue-900 dark:text-blue-100">{{ stats?.quoted || 0 }}</p>
+                <p class="text-sm font-medium text-blue-600">Quoted</p>
+                <p class="text-3xl font-bold text-gray-900">{{ stats?.quoted || 0 }}</p>
               </div>
               <DocumentTextIcon class="h-12 w-12 text-blue-400" />
             </div>
           </div>
 
-          <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-800/20 rounded-xl p-6 shadow-sm">
+          <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-sm font-medium text-indigo-600 dark:text-indigo-400">In Progress</p>
-                <p class="text-3xl font-bold text-indigo-900 dark:text-indigo-100">{{ stats?.in_progress || 0 }}</p>
+                <p class="text-sm font-medium text-indigo-600">In Progress</p>
+                <p class="text-3xl font-bold text-gray-900">{{ stats?.in_progress || 0 }}</p>
               </div>
               <ArrowPathIcon class="h-12 w-12 text-indigo-400" />
             </div>
           </div>
 
-          <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-6 shadow-sm">
+          <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-sm font-medium text-green-600 dark:text-green-400">Completed</p>
-                <p class="text-3xl font-bold text-green-900 dark:text-green-100">{{ stats?.completed || 0 }}</p>
+                <p class="text-sm font-medium text-green-600">Completed</p>
+                <p class="text-3xl font-bold text-gray-900">{{ stats?.completed || 0 }}</p>
               </div>
               <CheckCircleIcon class="h-12 w-12 text-green-400" />
             </div>

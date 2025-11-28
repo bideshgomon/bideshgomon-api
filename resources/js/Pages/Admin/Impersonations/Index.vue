@@ -11,11 +11,11 @@ const props = defineProps({
 });
 
 const localFilters = ref({
-  status: props.filters.status || '',
-  admin_id: props.filters.admin_id || '',
-  target_id: props.filters.target_id || '',
-  from: props.filters.from || '',
-  to: props.filters.to || '',
+  status: props.filters?.status || '',
+  admin_id: props.filters?.admin_id || '',
+  target_id: props.filters?.target_id || '',
+  from: props.filters?.from || '',
+  to: props.filters?.to || '',
 });
 
 function applyFilters() {
@@ -61,7 +61,7 @@ const formatDateTime = (dt) => dt ? new Date(dt).toLocaleString('en-US', { month
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label class="block text-xs font-medium text-gray-600 mb-1">Status</label>
-            <select v-model="localFilters.value.status" class="w-full rounded-md border-gray-300 text-sm">
+            <select v-model="localFilters.status" class="w-full rounded-md border-gray-300 text-sm">
               <option value="">All</option>
               <option value="active">Active</option>
               <option value="ended">Ended</option>
@@ -69,18 +69,18 @@ const formatDateTime = (dt) => dt ? new Date(dt).toLocaleString('en-US', { month
           </div>
           <div>
             <label class="block text-xs font-medium text-gray-600 mb-1">Admin</label>
-            <select v-model="localFilters.value.admin_id" class="w-full rounded-md border-gray-300 text-sm">
+            <select v-model="localFilters.admin_id" class="w-full rounded-md border-gray-300 text-sm">
               <option value="">All</option>
               <option v-for="admin in admins" :key="admin.id" :value="admin.id">{{ admin.name }}</option>
             </select>
           </div>
           <div>
             <label class="block text-xs font-medium text-gray-600 mb-1">From Date</label>
-            <input type="date" v-model="localFilters.value.from" class="w-full rounded-md border-gray-300 text-sm" />
+            <input type="date" v-model="localFilters.from" class="w-full rounded-md border-gray-300 text-sm" />
           </div>
           <div>
             <label class="block text-xs font-medium text-gray-600 mb-1">To Date</label>
-            <input type="date" v-model="localFilters.value.to" class="w-full rounded-md border-gray-300 text-sm" />
+            <input type="date" v-model="localFilters.to" class="w-full rounded-md border-gray-300 text-sm" />
           </div>
         </div>
         <div class="mt-4 flex items-center space-x-3">

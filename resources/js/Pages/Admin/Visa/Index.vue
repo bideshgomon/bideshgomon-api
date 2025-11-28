@@ -90,18 +90,18 @@ const paymentColors = {
     <Head title="Visa Applications" />
 
     <AdminLayout>
-        <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
+        <div class="min-h-screen bg-gray-50 py-8">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <!-- Header -->
-                <div class="bg-gradient-to-r from-indigo-600 to-blue-700 rounded-2xl shadow-lg p-8 mb-8 text-white">
+                <div class="bg-white border-b border-gray-200 rounded-lg shadow-sm p-8 mb-8">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                         <div>
-                            <h1 class="text-3xl font-bold mb-2">Visa Applications</h1>
-                            <p class="text-indigo-100">Manage and track all visa applications</p>
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2">Visa Applications</h1>
+                            <p class="text-gray-600">Manage and track all visa applications</p>
                         </div>
                         <button
                             @click="showFilters = !showFilters"
-                            class="mt-4 md:mt-0 px-6 py-3 bg-white/20 hover:bg-white/30 rounded-lg font-semibold flex items-center gap-2 transition"
+                            class="mt-4 md:mt-0 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-semibold flex items-center gap-2 transition"
                         >
                             <FunnelIcon class="h-5 w-5" />
                             {{ showFilters ? 'Hide' : 'Show' }} Filters

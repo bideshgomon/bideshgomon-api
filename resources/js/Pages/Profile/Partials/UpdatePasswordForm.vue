@@ -65,7 +65,7 @@ const updatePassword = () => {
     <section>
         <header class="mb-6">
             <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold-500 to-heritage-500 flex items-center justify-center shadow-rhythmic-md">
+                <div class="w-10 h-10 rounded-xl bg-amber-600 flex items-center justify-center shadow-sm">
                     <KeyIcon class="h-6 w-6 text-white" />
                 </div>
                 <div>
