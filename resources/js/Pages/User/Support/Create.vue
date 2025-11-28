@@ -2,32 +2,44 @@
     <AuthenticatedLayout>
         <Head title="Create Support Ticket" />
 
-        <div class="py-12">
+        <div class="py-rhythm-xl">
             <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <h2 class="text-2xl font-bold text-gray-900">Create Support Ticket</h2>
-                            <Link :href="route('support.index')" class="text-sm text-gray-600 hover:text-gray-900">
-                                ← Back to Tickets
-                            </Link>
-                        </div>
+                <RhythmicCard variant="gradient" class="mb-rhythm-lg">
+                    <template #icon>
+                        <PlusCircleIcon class="w-6 h-6 text-white" />
+                    </template>
+                    <template #title>
+                        <h2 class="font-display font-bold text-2xl text-gray-800">Create Support Ticket</h2>
+                    </template>
+                    <template #description>
+                        <p class="text-gray-600">Describe your issue and our team will assist you</p>
+                    </template>
+                    <template #footer>
+                        <Link :href="route('support.index')" class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                            <ArrowLeftIcon class="w-4 h-4" />
+                            Back to Tickets
+                        </Link>
+                    </template>
+                </RhythmicCard>
 
-                        <form @submit.prevent="submit">
+                <RhythmicCard variant="default">
+
+                        <form @submit.prevent="submit" class="space-y-rhythm-md">
                             <!-- Subject -->
-                            <div class="mb-4">
-                                <label for="subject" class="block text-sm font-medium text-gray-700 mb-2">
+                            <div>
+                                <label for="subject" class="block text-sm font-semibold text-gray-700 mb-rhythm-xs">
                                     Subject <span class="text-red-500">*</span>
                                 </label>
                                 <input
                                     id="subject"
                                     v-model="form.subject"
                                     type="text"
-                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    class="w-full rounded-lg border-gray-300 shadow-sm focus:border-ocean-500 focus:ring-ocean-500 transition-colors"
                                     :class="{ 'border-red-500': form.errors.subject }"
                                     required
+                                    placeholder="Brief description of your issue"
                                 />
-                                <p v-if="form.errors.subject" class="mt-1 text-sm text-red-600">{{ form.errors.subject }}</p>
+                                <p v-if="form.errors.subject" class="mt-rhythm-xs text-sm text-red-600">{{ form.errors.subject }}</p>
                             </div>
 
                             <!-- Category -->
@@ -109,23 +121,25 @@
                             </div>
 
                             <!-- Actions -->
-                            <div class="flex items-center justify-end gap-4">
-                                <Link :href="route('support.index')" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-                                    Cancel
+                            <div class="flex items-center justify-end gap-rhythm-sm pt-rhythm-md border-t border-gray-200">
+                                <Link :href="route('support.index')">
+                                    <FlowButton variant="secondary">
+                                        Cancel
+                                    </FlowButton>
                                 </Link>
-                                <button
+                                <FlowButton
                                     type="submit"
-                                    :disabled="form.processing"
-                                    class="px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150"
-                                    :class="{ 'opacity-50 cursor-not-allowed': form.processing }"
+                                    variant="primary"
+                                    :loading="form.processing"
                                 >
-                                    <span v-if="form.processing">Creating...</span>
-                                    <span v-else>Create Ticket</span>
-                                </button>
+                                    <template #icon>
+                                        <PlusCircleIcon class="w-5 h-5" />
+                                    </template>
+                                    {{ form.processing ? 'Creating...' : 'Create Ticket' }}
+                                </FlowButton>
                             </div>
                         </form>
-                    </div>
-                </div>
+                    </RhythmicCard>
             </div>
         </div>
     </AuthenticatedLayout>
@@ -134,6 +148,9 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
+import FlowButton from '@/Components/Rhythmic/FlowButton.vue';
+import { PlusCircleIcon, ArrowLeftIcon } from '@heroicons/vue/24/solid';
 
 const form = useForm({
     subject: '',

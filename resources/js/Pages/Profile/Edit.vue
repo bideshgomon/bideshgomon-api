@@ -546,7 +546,7 @@ const backToCards = () => {
                     <div class="p-rhythm-md">
                         <div class="flex items-center justify-between mb-rhythm-sm">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-ocean-500 to-sky-500 flex items-center justify-center shadow-rhythmic-md">
+                                <div class="w-10 h-10 rounded-xl bg-ocean-500 flex items-center justify-center shadow-rhythmic-md">
                                     <CheckCircleIcon v-if="completion.isComplete" class="w-6 h-6 text-white" />
                                     <ExclamationCircleIcon v-else class="w-6 h-6 text-white" />
                                 </div>
@@ -561,10 +561,10 @@ const backToCards = () => {
                         </div>
                         <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-rhythm-sm relative overflow-hidden">
                             <div
-                                class="h-3 rounded-full transition-all duration-500 bg-gradient-to-r from-ocean-500 via-sky-500 to-growth-500 shadow-rhythmic-md"
+                                class="h-3 rounded-full transition-all duration-500 bg-ocean-500 shadow-rhythmic-md relative overflow-hidden"
                                 :style="{ width: completion.percentage + '%' }"
                             >
-                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
+                                <div class="absolute inset-0 bg-white/20 animate-shimmer"></div>
                             </div>
                         </div>
                         <div class="flex items-start text-sm">
@@ -583,7 +583,7 @@ const backToCards = () => {
                     <!-- Personal Information -->
                     <div>
                         <div class="flex items-center gap-3 mb-rhythm-md px-1">
-                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-ocean-500 to-sky-500 flex items-center justify-center shadow-rhythmic-sm">
+                            <div class="w-8 h-8 rounded-lg bg-ocean-500 flex items-center justify-center shadow-rhythmic-sm">
                                 <UserCircleIcon class="w-5 h-5 text-white" />
                             </div>
                             <h3 class="font-display font-bold text-xl text-gray-800">
@@ -640,7 +640,7 @@ const backToCards = () => {
                     <!-- Professional Profile -->
                     <div>
                         <div class="flex items-center gap-3 mb-rhythm-md px-1">
-                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sunrise-500 to-gold-500 flex items-center justify-center shadow-rhythmic-sm">
+                            <div class="w-8 h-8 rounded-lg bg-sunrise-500 flex items-center justify-center shadow-rhythmic-sm">
                                 <BriefcaseIcon class="w-5 h-5 text-white" />
                             </div>
                             <h3 class="font-display font-bold text-xl text-gray-800">
@@ -697,7 +697,7 @@ const backToCards = () => {
                     <!-- Safety & Health -->
                     <div>
                         <div class="flex items-center gap-3 mb-rhythm-md px-1">
-                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-heritage-500 to-sunrise-500 flex items-center justify-center shadow-rhythmic-sm">
+                            <div class="w-8 h-8 rounded-lg bg-heritage-500 flex items-center justify-center shadow-rhythmic-sm">
                                 <HeartIcon class="w-5 h-5 text-white" />
                             </div>
                             <h3 class="font-display font-bold text-xl text-gray-800">
@@ -754,7 +754,7 @@ const backToCards = () => {
                     <!-- Immigration & Documents -->
                     <div>
                         <div class="flex items-center gap-3 mb-rhythm-md px-1">
-                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500 to-ocean-500 flex items-center justify-center shadow-rhythmic-sm">
+                            <div class="w-8 h-8 rounded-lg bg-sky-500 flex items-center justify-center shadow-rhythmic-sm">
                                 <GlobeAltIcon class="w-5 h-5 text-white" />
                             </div>
                             <h3 class="font-display font-bold text-xl text-gray-800">
@@ -811,7 +811,7 @@ const backToCards = () => {
                     <!-- Family & Financial -->
                     <div>
                         <div class="flex items-center gap-3 mb-rhythm-md px-1">
-                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-heritage-500 to-gold-500 flex items-center justify-center shadow-rhythmic-sm">
+                            <div class="w-8 h-8 rounded-lg bg-gold-500 flex items-center justify-center shadow-rhythmic-sm">
                                 <UsersIcon class="w-5 h-5 text-white" />
                             </div>
                             <h3 class="font-display font-bold text-xl text-gray-800">
@@ -868,7 +868,7 @@ const backToCards = () => {
                     <!-- Background & Security -->
                     <div>
                         <div class="flex items-center gap-3 mb-rhythm-md px-1">
-                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-heritage-500 to-sunrise-500 flex items-center justify-center shadow-rhythmic-sm">
+                            <div class="w-8 h-8 rounded-lg bg-heritage-500 flex items-center justify-center shadow-rhythmic-sm">
                                 <ShieldCheckIcon class="w-5 h-5 text-white" />
                             </div>
                             <h3 class="font-display font-bold text-xl text-gray-800">
@@ -925,7 +925,7 @@ const backToCards = () => {
                     <!-- Account & Settings -->
                     <div>
                         <div class="flex items-center gap-3 mb-rhythm-md px-1">
-                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500 to-growth-500 flex items-center justify-center shadow-rhythmic-sm">
+                            <div class="w-8 h-8 rounded-lg bg-growth-500 flex items-center justify-center shadow-rhythmic-sm">
                                 <Cog6ToothIcon class="w-5 h-5 text-white" />
                             </div>
                             <h3 class="font-display font-bold text-xl text-gray-800">

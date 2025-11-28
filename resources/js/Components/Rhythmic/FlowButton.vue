@@ -93,14 +93,14 @@ const roundedClass = computed(() => {
 
 const variantClass = computed(() => {
     const variants = {
-        ocean: 'gradient-ocean text-white hover:shadow-glow-ocean focus:ring-ocean-300',
-        sky: 'gradient-sky text-white hover:shadow-glow-ocean focus:ring-sky-300',
-        growth: 'gradient-growth text-white hover:shadow-glow-growth focus:ring-growth-300',
-        sunrise: 'gradient-sunrise text-white hover:shadow-glow-sunrise focus:ring-sunrise-300',
-        gold: 'bg-gradient-to-r from-gold-400 to-gold-600 text-white hover:from-gold-500 hover:to-gold-700 focus:ring-gold-300',
+        ocean: 'bg-ocean-500 text-white hover:bg-ocean-600 focus:ring-ocean-300',
+        sky: 'bg-sky-500 text-white hover:bg-sky-600 focus:ring-sky-300',
+        growth: 'bg-growth-500 text-white hover:bg-growth-600 focus:ring-growth-300',
+        sunrise: 'bg-sunrise-500 text-white hover:bg-sunrise-600 focus:ring-sunrise-300',
+        gold: 'bg-gold-500 text-white hover:bg-gold-600 focus:ring-gold-300',
         outline: 'bg-white border-2 border-ocean-500 text-ocean-600 hover:bg-ocean-50 focus:ring-ocean-300',
         ghost: 'bg-transparent text-ocean-600 hover:bg-ocean-50 focus:ring-ocean-300',
-        danger: 'bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 focus:ring-red-300',
+        danger: 'bg-red-500 text-white hover:bg-red-600 focus:ring-red-300',
     };
     return variants[props.variant] || variants.ocean;
 });
