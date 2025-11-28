@@ -19,17 +19,25 @@ const { formatDate, formatTime } = useBangladeshFormat();
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center justify-between">
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                    My Referrals
-                </h2>
+            <div class="flex items-center justify-between animate-fadeIn">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-ocean-500 to-sky-500 flex items-center justify-center shadow-rhythmic-md">
+                        <UserGroupIcon class="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                        <h2 class="font-display font-bold text-xl text-gray-800 leading-tight">
+                            My Referrals
+                        </h2>
+                        <p class="text-xs text-gray-500">Track your referral network</p>
+                    </div>
+                </div>
                 <FlowButton
                     :href="route('referral.index')"
                     variant="secondary"
                     size="sm"
                     as="Link"
                 >
-                    Back to Referral
+                    Back to Dashboard
                 </FlowButton>
             </div>
         </template>
@@ -39,20 +47,20 @@ const { formatDate, formatTime } = useBangladeshFormat();
                 <RhythmicCard variant="light" size="lg" class="animate-fadeIn">
                     <template #default>
                         <div v-if="referrals.data.length > 0">
-                            <div class="overflow-x-auto">
+                            <div class="overflow-x-auto rounded-xl">
                                 <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
+                                    <thead class="bg-gradient-to-r from-ocean-50 to-sky-50">
                                         <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reward Status</th>
+                                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">User</th>
+                                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Email</th>
+                                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider hidden sm:table-cell">Phone</th>
+                                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider hidden md:table-cell">Joined</th>
+                                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
+                                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider hidden lg:table-cell">Reward Status</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200">
-                                        <tr v-for="referral in referrals.data" :key="referral.id">
+                                    <tbody class="bg-white divide-y divide-gray-100">
+                                        <tr v-for="referral in referrals.data" :key="referral.id" class="hover:bg-gray-50 transition-colors">
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="text-sm font-medium text-gray-900">
                                                     {{ referral.referred_user?.name }}
@@ -63,12 +71,12 @@ const { formatDate, formatTime } = useBangladeshFormat();
                                                     {{ referral.referred_user?.email }}
                                                 </div>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
+                                            <td class="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
                                                 <div class="text-sm text-gray-500">
                                                     {{ referral.referred_user?.phone || 'N/A' }}
                                                 </div>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
+                                            <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
                                                 <div class="text-sm text-gray-500">
                                                     {{ formatDate(referral.created_at) }}
                                                     <div class="text-xs text-gray-400">{{ formatTime(referral.created_at) }}</div>
@@ -77,7 +85,7 @@ const { formatDate, formatTime } = useBangladeshFormat();
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <StatusBadge :status="referral.is_completed ? 'completed' : 'pending'" />
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
+                                            <td class="px-6 py-4 whitespace-nowrap hidden lg:table-cell">
                                                 <StatusBadge v-if="referral.reward" :status="referral.reward.status" />
                                                 <span v-else class="text-xs text-gray-400">No reward</span>
                                             </td>
@@ -87,21 +95,21 @@ const { formatDate, formatTime } = useBangladeshFormat();
                             </div>
 
                             <!-- Pagination -->
-                            <div class="mt-6 flex items-center justify-between">
-                                <div class="text-sm text-gray-700">
-                                    Showing {{ referrals.from }} to {{ referrals.to }} of {{ referrals.total }} referrals
+                            <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-gray-200">
+                                <div class="text-sm text-gray-600 font-medium">
+                                    <span class="text-ocean-600">{{ referrals.from }}</span> to <span class="text-ocean-600">{{ referrals.to }}</span> of <span class="font-bold">{{ referrals.total }}</span> referrals
                                 </div>
-                                <div class="flex space-x-2">
+                                <div class="flex space-x-1">
                                     <Link 
                                         v-for="link in referrals.links" 
                                         :key="link.label"
                                         :href="link.url"
                                         :class="{
-                                            'bg-ocean-600 text-white': link.active,
-                                            'bg-white text-gray-700 hover:bg-gray-50': !link.active,
+                                            'bg-gradient-to-r from-ocean-600 to-sky-600 text-white shadow-rhythmic-md': link.active,
+                                            'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300': !link.active,
                                             'opacity-50 cursor-not-allowed': !link.url
                                         }"
-                                        class="px-3 py-2 border rounded-md text-sm"
+                                        class="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-rhythmic-sm"
                                         v-html="link.label"
                                     />
                                 </div>

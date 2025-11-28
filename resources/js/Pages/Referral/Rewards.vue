@@ -19,10 +19,18 @@ const { formatCurrency, formatDate, formatTime } = useBangladeshFormat();
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center justify-between">
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                    My Rewards
-                </h2>
+            <div class="flex items-center justify-between animate-fadeIn">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold-500 to-sunrise-500 flex items-center justify-center shadow-rhythmic-md">
+                        <CurrencyDollarIcon class="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                        <h2 class="font-display font-bold text-xl text-gray-800 leading-tight">
+                            My Rewards
+                        </h2>
+                        <p class="text-xs text-gray-500">Track your earnings and bonuses</p>
+                    </div>
+                </div>
                 <FlowButton
                     :href="route('referral.index')"
                     variant="secondary"
@@ -39,21 +47,21 @@ const { formatCurrency, formatDate, formatTime } = useBangladeshFormat();
                 <RhythmicCard variant="light" size="lg" class="animate-fadeIn">
                     <template #default>
                         <div v-if="rewards.data.length > 0">
-                            <div class="overflow-x-auto">
+                            <div class="overflow-x-auto rounded-xl">
                                 <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
+                                    <thead class="bg-gradient-to-r from-gold-50 to-sunrise-50">
                                         <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Approved On</th>
+                                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider hidden md:table-cell">Type</th>
+                                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Description</th>
+                                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Amount</th>
+                                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
+                                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider hidden lg:table-cell">Date</th>
+                                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider hidden xl:table-cell">Approved On</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200">
-                                        <tr v-for="reward in rewards.data" :key="reward.id">
-                                            <td class="px-6 py-4 whitespace-nowrap">
+                                    <tbody class="bg-white divide-y divide-gray-100">
+                                        <tr v-for="reward in rewards.data" :key="reward.id" class="hover:bg-gray-50 transition-colors">
+                                            <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
                                                 <div class="text-sm font-medium text-gray-900">
                                                     {{ reward.type }}
                                                 </div>
@@ -62,25 +70,25 @@ const { formatCurrency, formatDate, formatTime } = useBangladeshFormat();
                                                 <div class="text-sm text-gray-900">
                                                     {{ reward.description }}
                                                 </div>
-                                                <div v-if="reward.status === 'rejected' && reward.metadata?.rejection_reason" class="text-xs text-red-600 mt-1">
-                                                    Reason: {{ reward.metadata.rejection_reason }}
+                                                <div v-if="reward.status === 'rejected' && reward.metadata?.rejection_reason" class="text-xs text-red-600 mt-1 bg-red-50 px-2 py-1 rounded">
+                                                    ⚠️ {{ reward.metadata.rejection_reason }}
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-semibold text-gray-900">
+                                                <div class="text-sm font-bold text-gold-600">
                                                     {{ formatCurrency(reward.amount) }}
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <StatusBadge :status="reward.status" />
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
+                                            <td class="px-6 py-4 whitespace-nowrap hidden lg:table-cell">
                                                 <div class="text-sm text-gray-500">
                                                     {{ formatDate(reward.created_at) }}
                                                     <div class="text-xs text-gray-400">{{ formatTime(reward.created_at) }}</div>
                                                 </div>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
+                                            <td class="px-6 py-4 whitespace-nowrap hidden xl:table-cell">
                                                 <div v-if="reward.approved_at" class="text-sm text-gray-500">
                                                     {{ formatDate(reward.approved_at) }}
                                                     <div class="text-xs text-gray-400">{{ formatTime(reward.approved_at) }}</div>
@@ -93,21 +101,21 @@ const { formatCurrency, formatDate, formatTime } = useBangladeshFormat();
                             </div>
 
                             <!-- Pagination -->
-                            <div class="mt-6 flex items-center justify-between">
-                                <div class="text-sm text-gray-700">
-                                    Showing {{ rewards.from }} to {{ rewards.to }} of {{ rewards.total }} rewards
+                            <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-gray-200">
+                                <div class="text-sm text-gray-600 font-medium">
+                                    <span class="text-gold-600">{{ rewards.from }}</span> to <span class="text-gold-600">{{ rewards.to }}</span> of <span class="font-bold">{{ rewards.total }}</span> rewards
                                 </div>
-                                <div class="flex space-x-2">
+                                <div class="flex space-x-1">
                                     <Link 
                                         v-for="link in rewards.links" 
                                         :key="link.label"
                                         :href="link.url"
                                         :class="{
-                                            'bg-ocean-600 text-white': link.active,
-                                            'bg-white text-gray-700 hover:bg-gray-50': !link.active,
+                                            'bg-gradient-to-r from-gold-600 to-sunrise-600 text-white shadow-rhythmic-md': link.active,
+                                            'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300': !link.active,
                                             'opacity-50 cursor-not-allowed': !link.url
                                         }"
-                                        class="px-3 py-2 border rounded-md text-sm"
+                                        class="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-rhythmic-sm"
                                         v-html="link.label"
                                     />
                                 </div>
