@@ -3,6 +3,25 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { useBangladeshFormat } from '@/Composables/useBangladeshFormat';
 import { ref, onMounted, computed } from 'vue';
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
+import FlowButton from '@/Components/Rhythmic/FlowButton.vue';
+import AnimatedSection from '@/Components/Rhythmic/AnimatedSection.vue';
+import StatusBadge from '@/Components/Rhythmic/StatusBadge.vue';
+import { 
+    UserCircleIcon, 
+    PhoneIcon, 
+    AcademicCapIcon, 
+    BriefcaseIcon, 
+    SparklesIcon, 
+    GlobeAltIcon, 
+    UsersIcon, 
+    BanknotesIcon, 
+    ShieldCheckIcon,
+    MapPinIcon,
+    DocumentTextIcon,
+    PencilSquareIcon,
+    PlusIcon
+} from '@heroicons/vue/24/solid';
 
 const props = defineProps({
     user: Object,
@@ -109,32 +128,64 @@ const getProficiencyLabel = (level) => {
     <Head title="Profile" />
 
     <AuthenticatedLayout>
-        <template #header>
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                <div class="flex items-center gap-3 flex-1">
-                    <button
-                        @click="showNavigation = !showNavigation"
-                        class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors touch-manipulation"
-                        aria-label="Toggle navigation"
+        <!-- Hero Section -->
+        <AnimatedSection variant="heritage" :show-blobs="true" class="mb-rhythm-2xl">
+            <div class="relative z-10">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-rhythm-md">
+                    <div class="flex items-center gap-rhythm-md flex-1">
+                        <button
+                            @click="showNavigation = !showNavigation"
+                            class="p-rhythm-sm rounded-xl bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors touch-manipulation text-white"
+                            aria-label="Toggle navigation"
+                        >
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                            </svg>
+                        </button>
+                        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-3xl sm:text-4xl">
+                            {{ user.name.charAt(0).toUpperCase() }}
+                        </div>
+                        <div class="flex-1">
+                            <h1 class="text-2xl sm:text-3xl font-bold text-white">{{ user.name }}</h1>
+                            <p class="text-sm sm:text-base text-white/90 mt-1">{{ user.email }}</p>
+                            <p class="text-xs text-white/80 mt-1 capitalize flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-green-400"></span>
+                                {{ user.role?.name || 'User' }}
+                            </p>
+                        </div>
+                    </div>
+                    <FlowButton
+                        variant="white"
+                        size="md"
+                        @click="$inertia.visit(route('profile.edit'))"
                     >
-                        <svg class="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                        </svg>
-                    </button>
-                    <div>
-                        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Profile Overview</h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ user.name }}</p>
+                        <template #icon-left>
+                            <PencilSquareIcon class="h-5 w-5" />
+                        </template>
+                        Edit Profile
+                    </FlowButton>
+                </div>
+                
+                <!-- Profile Completion -->
+                <div class="mt-rhythm-lg bg-white/10 backdrop-blur-sm rounded-xl p-rhythm-md">
+                    <div class="flex items-center justify-between mb-rhythm-sm">
+                        <span class="text-sm font-medium text-white">Profile Completion</span>
+                        <span class="text-xl font-bold text-white">{{ profileCompletion }}%</span>
+                    </div>
+                    <div class="w-full bg-white/20 rounded-full h-3">
+                        <div 
+                            class="h-3 rounded-full transition-all duration-500"
+                            :class="{
+                                'bg-green-400': profileCompletion >= 80,
+                                'bg-yellow-400': profileCompletion >= 50 && profileCompletion < 80,
+                                'bg-red-400': profileCompletion < 50
+                            }"
+                            :style="{ width: profileCompletion + '%' }"
+                        ></div>
                     </div>
                 </div>
-                <Link 
-                    :href="route('profile.edit')" 
-                    class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 bg-indigo-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 touch-manipulation"
-                    style="min-height: 44px"
-                >
-                    Edit Profile
-                </Link>
             </div>
-        </template>
+        </AnimatedSection>
 
         <!-- Section Navigation - Mobile Dropdown -->
         <Transition
@@ -151,24 +202,24 @@ const getProficiencyLabel = (level) => {
                 @click="showNavigation = false"
             >
                 <div class="bg-white dark:bg-gray-800 rounded-t-3xl absolute bottom-0 left-0 right-0 max-h-[70vh] overflow-y-auto" @click.stop style="animation: slide-up 0.3s ease-out">
-                    <div class="p-6">
-                        <div class="flex justify-between items-center mb-4">
+                    <div class="p-rhythm-lg">
+                        <div class="flex justify-between items-center mb-rhythm-md">
                             <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">Jump to Section</h3>
-                            <button @click="showNavigation = false" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+                            <button @click="showNavigation = false" class="p-rhythm-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                 </svg>
                             </button>
                         </div>
-                        <nav class="space-y-2">
+                        <nav class="space-y-rhythm-xs">
                             <button
                                 v-for="section in sections"
                                 :key="section.id"
                                 @click="scrollToSection(section.id)"
                                 :class="[
-                                    'w-full flex items-center gap-3 p-3 rounded-lg text-left transition-colors touch-manipulation',
+                                    'w-full flex items-center gap-rhythm-sm p-rhythm-sm rounded-xl text-left transition-colors touch-manipulation',
                                     activeSection === section.id 
-                                        ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300' 
+                                        ? 'bg-heritage-100 dark:bg-heritage-900 text-heritage-700 dark:text-heritage-300' 
                                         : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300',
                                     !section.hasData && 'opacity-50'
                                 ]"
@@ -183,91 +234,56 @@ const getProficiencyLabel = (level) => {
             </div>
         </Transition>
 
-        <div class="py-6 sm:py-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
-                <!-- Mobile Sticky Profile Card -->
-                <div class="sticky top-0 z-10 -mx-4 sm:mx-0 sm:relative" style="padding-top: env(safe-area-inset-top, 0px);">
-                    <div class="bg-indigo-600 sm:rounded-xl shadow-lg">
-                        <div class="p-4 sm:p-6">
-                            <div class="flex items-center gap-4 mb-4">
-                                <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-2xl sm:text-3xl">
-                                    {{ user.name.charAt(0).toUpperCase() }}
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="text-lg sm:text-xl font-bold text-white truncate">{{ user.name }}</h3>
-                                    <p class="text-sm text-indigo-100">{{ user.email }}</p>
-                                    <p class="text-xs text-indigo-200 mt-1 capitalize">{{ user.role?.name || 'User' }}</p>
-                                </div>
-                            </div>
-                            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="text-sm font-medium text-white">Profile Completion</span>
-                                    <span class="text-lg font-bold text-white">{{ profileCompletion }}%</span>
-                                </div>
-                                <div class="w-full bg-white/20 rounded-full h-2.5">
-                                    <div 
-                                        class="h-2.5 rounded-full transition-all duration-500"
-                                        :class="{
-                                            'bg-green-400': profileCompletion >= 80,
-                                            'bg-yellow-400': profileCompletion >= 50 && profileCompletion < 80,
-                                            'bg-red-400': profileCompletion < 50
-                                        }"
-                                        :style="{ width: profileCompletion + '%' }"
-                                    ></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="py-rhythm-2xl">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-rhythm-lg">
 
                 <!-- Basic Information -->
-                <div id="basic" class="bg-white dark:bg-gray-800 shadow-md sm:rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 scroll-mt-20">
-                    <div class="h-1 bg-gray-500"></div>
-                    <div class="p-4 sm:p-6">
-                        <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                            <span class="text-2xl">👤</span>
-                            <span>Basic Information</span>
-                        </h3>
-                        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                            <div class="bg-gray-50 rounded-lg p-3">
-                                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Name</dt>
+                <RhythmicCard id="basic" variant="ocean" size="lg" class="scroll-mt-20">
+                    <template #icon>
+                        <UserCircleIcon class="h-6 w-6" />
+                    </template>
+                    <template #default>
+                        <h3 class="text-xl font-bold text-gray-900 mb-rhythm-md">Basic Information</h3>
+                        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-rhythm-md">
+                            <div class="bg-ocean-50 rounded-xl p-rhythm-sm border-2 border-ocean-100">
+                                <dt class="text-xs font-semibold text-ocean-700 uppercase tracking-wide">Name</dt>
                                 <dd class="mt-1 text-sm text-gray-900 font-medium">{{ user.name }}</dd>
                             </div>
-                            <div class="bg-gray-50 rounded-lg p-3">
-                                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Email</dt>
+                            <div class="bg-ocean-50 rounded-xl p-rhythm-sm border-2 border-ocean-100">
+                                <dt class="text-xs font-semibold text-ocean-700 uppercase tracking-wide">Email</dt>
                                 <dd class="mt-1 text-sm text-gray-900 break-all">{{ user.email }}</dd>
                             </div>
-                            <div class="bg-gray-50 rounded-lg p-3">
-                                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Role</dt>
+                            <div class="bg-ocean-50 rounded-xl p-rhythm-sm border-2 border-ocean-100">
+                                <dt class="text-xs font-semibold text-ocean-700 uppercase tracking-wide">Role</dt>
                                 <dd class="mt-1 text-sm text-gray-900 capitalize">{{ user.role?.name || 'N/A' }}</dd>
                             </div>
-                            <div class="bg-gray-50 rounded-lg p-3">
-                                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Date of Birth</dt>
+                            <div class="bg-ocean-50 rounded-xl p-rhythm-sm border-2 border-ocean-100">
+                                <dt class="text-xs font-semibold text-ocean-700 uppercase tracking-wide">Date of Birth</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
                                     {{ userProfile?.dob ? formatDate(userProfile.dob) : 'Not provided' }}
                                 </dd>
                             </div>
-                            <div class="bg-gray-50 rounded-lg p-3">
-                                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Gender</dt>
+                            <div class="bg-ocean-50 rounded-xl p-rhythm-sm border-2 border-ocean-100">
+                                <dt class="text-xs font-semibold text-ocean-700 uppercase tracking-wide">Gender</dt>
                                 <dd class="mt-1 text-sm text-gray-900 capitalize">
                                     {{ userProfile?.gender || 'Not provided' }}
                                 </dd>
                             </div>
-                            <div class="bg-gray-50 rounded-lg p-3">
-                                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Nationality</dt>
+                            <div class="bg-ocean-50 rounded-xl p-rhythm-sm border-2 border-ocean-100">
+                                <dt class="text-xs font-semibold text-ocean-700 uppercase tracking-wide">Nationality</dt>
                                 <dd class="text-sm text-gray-900">
                                     {{ userProfile?.nationality || 'Not provided' }}
                                 </dd>
                             </div>
-                            <div class="bg-gray-50 rounded-lg p-3 sm:col-span-2">
-                                <dt class="text-xs font-medium text-gray-500 uppercase tracking-wide">Bio</dt>
+                            <div class="bg-ocean-50 rounded-xl p-rhythm-sm border-2 border-ocean-100 sm:col-span-2">
+                                <dt class="text-xs font-semibold text-ocean-700 uppercase tracking-wide">Bio</dt>
                                 <dd class="mt-1 text-sm text-gray-900">
                                     {{ userProfile?.bio || 'No bio provided' }}
                                 </dd>
                             </div>
                         </dl>
-                    </div>
-                </div>
+                    </template>
+                </RhythmicCard>
 
                 <!-- Phone Numbers -->
                 <div id="phones" class="bg-white dark:bg-gray-800 shadow-md sm:rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 scroll-mt-20">
