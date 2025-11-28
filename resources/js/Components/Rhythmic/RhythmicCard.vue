@@ -181,16 +181,16 @@ const titleColorClass = computed(() => {
 
 const descriptionClass = computed(() => {
     const variants = {
-        default: 'text-gray-600 dark:text-gray-400',
-        light: 'text-gray-600',
+        default: 'text-gray-700 dark:text-gray-400',
+        light: 'text-gray-700',
         dark: 'text-gray-300',
-        gradient: 'text-gray-600',
-        ocean: 'text-gray-600',
-        sky: 'text-gray-600',
-        growth: 'text-gray-600',
-        sunrise: 'text-gray-600',
-        gold: 'text-gray-600',
-        heritage: 'text-gray-600',
+        gradient: 'text-gray-700',
+        ocean: 'text-gray-700',
+        sky: 'text-gray-700',
+        growth: 'text-gray-700',
+        sunrise: 'text-gray-700',
+        gold: 'text-gray-700',
+        heritage: 'text-gray-700',
     };
     return variants[props.variant] || variants.default;
 });
