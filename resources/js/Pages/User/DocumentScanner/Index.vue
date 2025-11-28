@@ -4,17 +4,17 @@
     <AuthenticatedLayout>
         <!-- Hero Section -->
         <AnimatedSection variant="heritage" :show-blobs="true" class="mb-rhythm-2xl">
-            <div class="relative z-10 text-white">
+            <div class="relative z-10">
                 <div class="flex items-center gap-rhythm-md mb-rhythm-md">
-                    <div class="p-rhythm-md rounded-2xl bg-white/20 backdrop-blur-sm">
-                        <DocumentMagnifyingGlassIcon class="h-12 w-12" />
+                    <div class="p-rhythm-md rounded-2xl bg-heritage-600 shadow-lg">
+                        <DocumentMagnifyingGlassIcon class="h-12 w-12 text-white" />
                     </div>
                     <div>
-                        <h1 class="text-4xl font-bold mb-rhythm-xs">Document Scanner</h1>
-                        <p class="text-xl text-white/90">AI-powered document scanning & data extraction</p>
+                        <h1 class="text-4xl font-bold mb-rhythm-xs text-heritage-900">Document Scanner</h1>
+                        <p class="text-xl text-heritage-700">AI-powered document scanning & data extraction</p>
                     </div>
                 </div>
-                <p class="text-lg max-w-3xl text-white/90">
+                <p class="text-lg max-w-3xl text-heritage-600">
                     Upload your passport, ID, or visa documents and let our AI extract the information automatically.
                     Save time and reduce errors in your applications.
                 </p>

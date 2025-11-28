@@ -135,27 +135,27 @@ const getProficiencyLabel = (level) => {
                     <div class="flex items-center gap-rhythm-md flex-1">
                         <button
                             @click="showNavigation = !showNavigation"
-                            class="p-rhythm-sm rounded-xl bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors touch-manipulation text-white"
+                            class="p-rhythm-sm rounded-xl bg-heritage-600 hover:bg-heritage-700 transition-colors touch-manipulation text-white shadow-md"
                             aria-label="Toggle navigation"
                         >
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                             </svg>
                         </button>
-                        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white font-bold text-3xl sm:text-4xl">
+                        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-heritage-600 shadow-lg flex items-center justify-center text-white font-bold text-3xl sm:text-4xl">
                             {{ user.name.charAt(0).toUpperCase() }}
                         </div>
                         <div class="flex-1">
-                            <h1 class="text-2xl sm:text-3xl font-bold text-white">{{ user.name }}</h1>
-                            <p class="text-sm sm:text-base text-white/90 mt-1">{{ user.email }}</p>
-                            <p class="text-xs text-white/80 mt-1 capitalize flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-green-400"></span>
+                            <h1 class="text-2xl sm:text-3xl font-bold text-heritage-900">{{ user.name }}</h1>
+                            <p class="text-sm sm:text-base text-heritage-700 mt-1">{{ user.email }}</p>
+                            <p class="text-xs text-heritage-600 mt-1 capitalize flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-green-500"></span>
                                 {{ user.role?.name || 'User' }}
                             </p>
                         </div>
                     </div>
                     <FlowButton
-                        variant="white"
+                        variant="heritage"
                         size="md"
                         @click="$inertia.visit(route('profile.edit'))"
                     >
@@ -167,17 +167,17 @@ const getProficiencyLabel = (level) => {
                 </div>
                 
                 <!-- Profile Completion -->
-                <div class="mt-rhythm-lg bg-white/10 backdrop-blur-sm rounded-xl p-rhythm-md">
+                <div class="mt-rhythm-lg bg-white border-2 border-heritage-200 rounded-xl p-rhythm-md shadow-sm">
                     <div class="flex items-center justify-between mb-rhythm-sm">
-                        <span class="text-sm font-medium text-white">Profile Completion</span>
-                        <span class="text-xl font-bold text-white">{{ profileCompletion }}%</span>
+                        <span class="text-sm font-medium text-heritage-900">Profile Completion</span>
+                        <span class="text-xl font-bold text-heritage-900">{{ profileCompletion }}%</span>
                     </div>
-                    <div class="w-full bg-white/20 rounded-full h-3">
+                    <div class="w-full bg-heritage-100 rounded-full h-3">
                         <div 
                             class="h-3 rounded-full transition-all duration-500"
                             :class="{
-                                'bg-green-400': profileCompletion >= 80,
-                                'bg-yellow-400': profileCompletion >= 50 && profileCompletion < 80,
+                                'bg-green-500': profileCompletion >= 80,
+                                'bg-yellow-500': profileCompletion >= 50 && profileCompletion < 80,
                                 'bg-red-400': profileCompletion < 50
                             }"
                             :style="{ width: profileCompletion + '%' }"

@@ -14,9 +14,9 @@
 
         <!-- Floating blobs for visual rhythm (optional) -->
         <div v-if="blobs" class="absolute inset-0 -z-10 overflow-hidden">
-            <div class="absolute top-10 left-10 w-72 h-72 bg-ocean-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-            <div class="absolute top-40 right-10 w-72 h-72 bg-growth-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" style="animation-delay: 2s;"></div>
-            <div class="absolute bottom-20 left-1/2 w-72 h-72 bg-sunrise-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" style="animation-delay: 4s;"></div>
+            <div class="absolute top-10 left-10 w-72 h-72 bg-heritage-400 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob"></div>
+            <div class="absolute top-40 right-10 w-72 h-72 bg-ocean-400 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob" style="animation-delay: 2s;"></div>
+            <div class="absolute bottom-20 left-1/2 w-72 h-72 bg-sky-400 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob" style="animation-delay: 4s;"></div>
         </div>
 
         <!-- Container -->
