@@ -1,6 +1,9 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
+import StatusBadge from '@/Components/Rhythmic/StatusBadge.vue';
+import FlowButton from '@/Components/Rhythmic/FlowButton.vue';
 import { CurrencyDollarIcon } from '@heroicons/vue/24/outline';
 import { useBangladeshFormat } from '@/Composables/useBangladeshFormat';
 
@@ -20,19 +23,21 @@ const { formatCurrency, formatDate, formatTime } = useBangladeshFormat();
                 <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                     My Rewards
                 </h2>
-                <Link 
-                    :href="route('referral.index')" 
-                    class="flex items-center space-x-2 text-gray-600 hover:text-emerald-600 transition-colors"
+                <FlowButton
+                    :href="route('referral.index')"
+                    variant="secondary"
+                    size="sm"
+                    as="Link"
                 >
                     Back to Dashboard
-                </Link>
+                </FlowButton>
             </div>
         </template>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
+                <RhythmicCard variant="light" size="lg" class="animate-fadeIn">
+                    <template #default>
                         <div v-if="rewards.data.length > 0">
                             <div class="overflow-x-auto">
                                 <table class="min-w-full divide-y divide-gray-200">
@@ -67,16 +72,7 @@ const { formatCurrency, formatDate, formatTime } = useBangladeshFormat();
                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <span 
-                                                    :class="{
-                                                        'bg-green-100 text-green-800': reward.status === 'approved' || reward.status === 'paid',
-                                                        'bg-yellow-100 text-yellow-800': reward.status === 'pending',
-                                                        'bg-red-100 text-red-800': reward.status === 'rejected'
-                                                    }"
-                                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
-                                                >
-                                                    {{ reward.status.charAt(0).toUpperCase() + reward.status.slice(1) }}
-                                                </span>
+                                                <StatusBadge :status="reward.status" />
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="text-sm text-gray-500">
@@ -107,7 +103,7 @@ const { formatCurrency, formatDate, formatTime } = useBangladeshFormat();
                                         :key="link.label"
                                         :href="link.url"
                                         :class="{
-                                            'bg-indigo-600 text-white': link.active,
+                                            'bg-ocean-600 text-white': link.active,
                                             'bg-white text-gray-700 hover:bg-gray-50': !link.active,
                                             'opacity-50 cursor-not-allowed': !link.url
                                         }"
@@ -124,15 +120,18 @@ const { formatCurrency, formatDate, formatTime } = useBangladeshFormat();
                             <p class="mt-2 text-sm text-gray-500">
                                 Refer friends to earn rewards!
                             </p>
-                            <Link 
-                                :href="route('referral.index')" 
-                                class="mt-6 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                            <FlowButton
+                                :href="route('referral.index')"
+                                variant="primary"
+                                size="md"
+                                class="mt-6"
+                                as="Link"
                             >
                                 Go to Referral Dashboard
-                            </Link>
+                            </FlowButton>
                         </div>
-                    </div>
-                </div>
+                    </template>
+                </RhythmicCard>
             </div>
         </div>
     </AuthenticatedLayout>

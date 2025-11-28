@@ -1,147 +1,150 @@
 <template>
-    <div class="space-y-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="space-y-rhythm-lg">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-rhythm-md">
             <!-- SSLCommerz Option -->
-            <div
+            <RhythmicCard
                 @click="selectGateway('sslcommerz')"
-                :class="[
-                    'relative cursor-pointer rounded-lg border-2 p-6 transition-all',
-                    selectedGateway === 'sslcommerz'
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700'
-                ]"
+                :variant="selectedGateway === 'sslcommerz' ? 'ocean' : 'light'"
+                size="md"
+                :hoverable="true"
+                class="cursor-pointer transition-all duration-300 animate-fadeIn"
+                :class="selectedGateway === 'sslcommerz' ? 'ring-2 ring-ocean-500' : ''"
             >
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-white dark:bg-gray-800 rounded-lg flex items-center justify-center shadow-sm">
-                            <CreditCardIcon class="w-6 h-6 text-blue-600" />
-                        </div>
-                        <div>
-                            <h3 class="font-semibold text-gray-900 dark:text-white">SSLCommerz</h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Cards & Banking</p>
-                        </div>
+                <template #icon>
+                    <CreditCardIcon class="w-6 h-6" />
+                </template>
+                <template #title>SSLCommerz</template>
+                <template #description>Cards & Banking</template>
+                <template #default>
+                    <p class="text-sm text-gray-600 mb-rhythm-xs">
+                        Credit/Debit cards, Mobile & Internet Banking
+                    </p>
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs text-gray-500">
+                            Fee: 1.5% + ৳{{ calculateFee('sslcommerz').toFixed(2) }}
+                        </p>
+                        <input
+                            type="radio"
+                            name="gateway"
+                            :checked="selectedGateway === 'sslcommerz'"
+                            class="text-ocean-600 focus:ring-ocean-500"
+                        />
                     </div>
-                    <input
-                        type="radio"
-                        name="gateway"
-                        :checked="selectedGateway === 'sslcommerz'"
-                        class="text-blue-600 focus:ring-blue-500"
-                    />
-                </div>
-                <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">
-                    Pay with Credit/Debit cards, Mobile Banking, or Internet Banking
-                </p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">
-                    Fee: 1.5% + ৳{{ calculateFee('sslcommerz').toFixed(2) }}
-                </p>
-            </div>
+                </template>
+            </RhythmicCard>
 
             <!-- bKash Option -->
-            <div
+            <RhythmicCard
                 @click="selectGateway('bkash')"
-                :class="[
-                    'relative cursor-pointer rounded-lg border-2 p-6 transition-all',
-                    selectedGateway === 'bkash'
-                        ? 'border-pink-500 bg-pink-50 dark:bg-pink-900/20'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-pink-300 dark:hover:border-pink-700'
-                ]"
+                :variant="selectedGateway === 'bkash' ? 'heritage' : 'light'"
+                size="md"
+                :hoverable="true"
+                class="cursor-pointer transition-all duration-300 animate-fadeIn"
+                :class="selectedGateway === 'bkash' ? 'ring-2 ring-heritage-500' : ''"
+                style="animation-delay: 100ms;"
             >
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-white dark:bg-gray-800 rounded-lg flex items-center justify-center shadow-sm">
-                            <DevicePhoneMobileIcon class="w-6 h-6 text-pink-600" />
-                        </div>
-                        <div>
-                            <h3 class="font-semibold text-gray-900 dark:text-white">bKash</h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Mobile Wallet</p>
-                        </div>
+                <template #icon>
+                    <DevicePhoneMobileIcon class="w-6 h-6" />
+                </template>
+                <template #title>bKash</template>
+                <template #description>Mobile Wallet</template>
+                <template #default>
+                    <p class="text-sm text-gray-600 mb-rhythm-xs">
+                        Pay instantly with your bKash mobile wallet
+                    </p>
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs text-gray-500">
+                            Fee: 1.8% + ৳{{ calculateFee('bkash').toFixed(2) }}
+                        </p>
+                        <input
+                            type="radio"
+                            name="gateway"
+                            :checked="selectedGateway === 'bkash'"
+                            class="text-heritage-600 focus:ring-heritage-500"
+                        />
                     </div>
-                    <input
-                        type="radio"
-                        name="gateway"
-                        :checked="selectedGateway === 'bkash'"
-                        class="text-pink-600 focus:ring-pink-500"
-                    />
-                </div>
-                <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">
-                    Pay instantly with your bKash mobile wallet
-                </p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">
-                    Fee: 1.8% + ৳{{ calculateFee('bkash').toFixed(2) }}
-                </p>
-            </div>
+                </template>
+            </RhythmicCard>
 
             <!-- Nagad Option -->
-            <div
+            <RhythmicCard
                 @click="selectGateway('nagad')"
-                :class="[
-                    'relative cursor-pointer rounded-lg border-2 p-6 transition-all',
-                    selectedGateway === 'nagad'
-                        ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/20'
-                        : 'border-gray-200 dark:border-gray-700 hover:border-orange-300 dark:hover:border-orange-700'
-                ]"
+                :variant="selectedGateway === 'nagad' ? 'sunrise' : 'light'"
+                size="md"
+                :hoverable="true"
+                class="cursor-pointer transition-all duration-300 animate-fadeIn"
+                :class="selectedGateway === 'nagad' ? 'ring-2 ring-sunrise-500' : ''"
+                style="animation-delay: 200ms;"
             >
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-white dark:bg-gray-800 rounded-lg flex items-center justify-center shadow-sm">
-                            <DevicePhoneMobileIcon class="w-6 h-6 text-orange-600" />
-                        </div>
-                        <div>
-                            <h3 class="font-semibold text-gray-900 dark:text-white">Nagad</h3>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Mobile Wallet</p>
-                        </div>
+                <template #icon>
+                    <DevicePhoneMobileIcon class="w-6 h-6" />
+                </template>
+                <template #title>Nagad</template>
+                <template #description>Mobile Wallet</template>
+                <template #default>
+                    <p class="text-sm text-gray-600 mb-rhythm-xs">
+                        Pay securely with your Nagad mobile wallet
+                    </p>
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs text-gray-500">
+                            Fee: 1.6% + ৳{{ calculateFee('nagad').toFixed(2) }}
+                        </p>
+                        <input
+                            type="radio"
+                            name="gateway"
+                            :checked="selectedGateway === 'nagad'"
+                            class="text-sunrise-600 focus:ring-sunrise-500"
+                        />
                     </div>
-                    <input
-                        type="radio"
-                        name="gateway"
-                        :checked="selectedGateway === 'nagad'"
-                        class="text-orange-600 focus:ring-orange-500"
-                    />
-                </div>
-                <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">
-                    Pay securely with your Nagad mobile wallet
-                </p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">
-                    Fee: 1.6% + ৳{{ calculateFee('nagad').toFixed(2) }}
-                </p>
-            </div>
+                </template>
+            </RhythmicCard>
         </div>
 
         <!-- Payment Summary -->
-        <div v-if="selectedGateway && amount > 0" class="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 space-y-3">
-            <h4 class="font-semibold text-gray-900 dark:text-white mb-4">Payment Summary</h4>
-            <div class="flex justify-between text-sm">
-                <span class="text-gray-600 dark:text-gray-400">Amount</span>
-                <span class="font-medium text-gray-900 dark:text-white">৳{{ amount.toFixed(2) }}</span>
-            </div>
-            <div class="flex justify-between text-sm">
-                <span class="text-gray-600 dark:text-gray-400">Gateway Fee</span>
-                <span class="font-medium text-gray-900 dark:text-white">৳{{ calculateFee(selectedGateway).toFixed(2) }}</span>
-            </div>
-            <div class="border-t border-gray-200 dark:border-gray-700 pt-3 flex justify-between">
-                <span class="font-semibold text-gray-900 dark:text-white">Total</span>
-                <span class="font-bold text-lg text-gray-900 dark:text-white">৳{{ totalAmount.toFixed(2) }}</span>
-            </div>
-        </div>
+        <RhythmicCard 
+            v-if="selectedGateway && amount > 0" 
+            variant="gradient" 
+            size="md"
+            class="animate-fadeIn"
+        >
+            <template #title>Payment Summary</template>
+            <template #default>
+                <div class="space-y-rhythm-sm">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-white/80">Amount</span>
+                        <span class="font-medium text-white">৳{{ amount.toFixed(2) }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-white/80">Gateway Fee</span>
+                        <span class="font-medium text-white">৳{{ calculateFee(selectedGateway).toFixed(2) }}</span>
+                    </div>
+                    <div class="border-t border-white/20 pt-rhythm-sm flex justify-between">
+                        <span class="font-semibold text-white">Total</span>
+                        <span class="font-bold text-lg text-white">৳{{ totalAmount.toFixed(2) }}</span>
+                    </div>
+                </div>
+            </template>
+        </RhythmicCard>
 
         <!-- Terms and Conditions -->
-        <div class="flex items-start gap-2">
+        <div class="flex items-start gap-rhythm-xs">
             <input
                 type="checkbox"
                 id="terms"
                 v-model="agreeToTerms"
-                class="mt-1 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+                class="mt-1 rounded border-gray-300 dark:border-gray-600 text-ocean-600 focus:ring-ocean-500"
             />
             <label for="terms" class="text-sm text-gray-600 dark:text-gray-400">
-                I agree to the <a href="#" class="text-blue-600 hover:underline">Terms and Conditions</a> and understand that payment gateway fees are non-refundable.
+                I agree to the <a href="#" class="text-ocean-600 hover:underline font-medium">Terms and Conditions</a> and understand that payment gateway fees are non-refundable.
             </label>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { CreditCardIcon, DevicePhoneMobileIcon } from '@heroicons/vue/24/outline';
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
 
 const props = defineProps({
     amount: {
@@ -182,7 +185,6 @@ const selectGateway = (gateway) => {
 };
 
 // Watch for changes in agreeToTerms
-import { watch } from 'vue';
 watch(agreeToTerms, (value) => {
     emit('update:agreeToTerms', value);
 });

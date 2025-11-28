@@ -296,32 +296,49 @@ const submitWithdraw = () => {
         <!-- Add Funds Modal -->
         <div
             v-if="showAddFunds"
-            class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+            class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fadeIn"
             @click.self="showAddFunds = false"
         >
-            <div class="bg-white rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md max-h-[85vh] sm:max-h-[90vh] overflow-y-auto animate-slide-up">
-                <div class="p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Add Funds</h3>
-
-                <form @submit.prevent="submitAddFunds" class="space-y-6">
-                    <!-- Amount Input -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Amount (BDT)</label>
-                        <input
-                            v-model="addFundsForm.amount"
-                            type="number"
-                            min="100"
-                            max="100000"
-                            placeholder="Enter amount (min ৳100)"
-                            class="w-full px-4 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                            required
-                        />
-                        <p class="text-xs text-gray-500 mt-2">Minimum: ৳100 • Maximum: ৳100,000</p>
+            <div class="bg-gradient-to-br from-ocean-50 to-sky-50 rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md max-h-[85vh] sm:max-h-[90vh] overflow-y-auto shadow-rhythmic-2xl animate-slideIn">
+                <div class="p-rhythm-lg pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]">
+                    <!-- Modal Header with gradient accent -->
+                    <div class="flex items-center gap-3 mb-rhythm-lg">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-ocean-500 to-sky-500 flex items-center justify-center shadow-rhythmic-md">
+                            <PlusCircleIcon class="h-6 w-6 text-white" />
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-display font-bold text-gray-900">Add Funds</h3>
+                            <p class="text-sm text-gray-600">Choose a payment method</p>
+                        </div>
                     </div>
 
+                <form @submit.prevent="submitAddFunds" class="space-y-rhythm-lg">
+                    <!-- Amount Input Card -->
+                    <RhythmicCard variant="light" size="md">
+                        <template #default>
+                            <label class="block text-sm font-semibold text-gray-700 mb-rhythm-sm">Amount (BDT)</label>
+                            <input
+                                v-model="addFundsForm.amount"
+                                type="number"
+                                min="100"
+                                max="100000"
+                                placeholder="Enter amount (min ৳100)"
+                                class="w-full px-rhythm-md py-rhythm-md text-lg border-2 border-ocean-200 rounded-xl focus:ring-2 focus:ring-ocean-500 focus:border-ocean-500 transition-all bg-white"
+                                required
+                            />
+                            <p class="text-xs text-gray-500 mt-rhythm-xs flex items-center gap-1">
+                                <span class="inline-block w-1.5 h-1.5 rounded-full bg-ocean-500"></span>
+                                Minimum: ৳100 • Maximum: ৳100,000
+                            </p>
+                        </template>
+                    </RhythmicCard>
+
                     <!-- Payment Gateway Selector -->
-                    <div v-if="addFundsForm.amount >= 100">
-                        <label class="block text-sm font-semibold text-gray-700 mb-3">Select Payment Gateway</label>
+                    <div v-if="addFundsForm.amount >= 100" class="animate-fadeIn">
+                        <label class="block text-sm font-semibold text-gray-800 mb-rhythm-sm flex items-center gap-2">
+                            <span class="inline-block w-2 h-2 rounded-full bg-gradient-to-r from-ocean-500 to-sky-500"></span>
+                            Select Payment Gateway
+                        </label>
                         <PaymentGatewaySelector
                             :amount="Number(addFundsForm.amount)"
                             v-model="addFundsForm.gateway"
@@ -330,21 +347,26 @@ const submitWithdraw = () => {
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="flex space-x-3 pt-4 pb-2">
-                        <button
+                    <div class="flex gap-rhythm-sm pt-rhythm-md pb-rhythm-xs">
+                        <FlowButton
                             type="button"
                             @click="showAddFunds = false"
-                            class="flex-1 py-4 bg-gray-100 text-gray-700 rounded-2xl font-semibold hover:bg-gray-200 transition-colors min-h-[48px] touch-manipulation"
+                            variant="secondary"
+                            size="lg"
+                            class="flex-1 min-h-[48px]"
                         >
                             Cancel
-                        </button>
-                        <button
+                        </FlowButton>
+                        <FlowButton
                             type="submit"
                             :disabled="addFundsForm.processing || !addFundsForm.gateway || !agreeToTerms || addFundsForm.amount < 100"
-                            class="flex-1 py-4 bg-emerald-600 text-white rounded-2xl font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px] touch-manipulation"
+                            :loading="addFundsForm.processing"
+                            variant="primary"
+                            size="lg"
+                            class="flex-1 min-h-[48px]"
                         >
                             {{ addFundsForm.processing ? 'Processing...' : 'Proceed to Payment' }}
-                        </button>
+                        </FlowButton>
                     </div>
                 </form>
                 </div>
@@ -354,70 +376,94 @@ const submitWithdraw = () => {
         <!-- Withdraw Modal -->
         <div
             v-if="showWithdraw"
-            class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+            class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fadeIn"
             @click.self="showWithdraw = false"
         >
-            <div class="bg-white rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md max-h-[85vh] sm:max-h-[90vh] overflow-y-auto animate-slide-up">
-                <div class="p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Withdraw Funds</h3>
-
-                <form @submit.prevent="submitWithdraw" class="space-y-4">
-                    <!-- Amount Input -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Amount (BDT)</label>
-                        <input
-                            v-model="withdrawForm.amount"
-                            type="number"
-                            placeholder="Enter amount"
-                            :max="balance"
-                            class="w-full px-4 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                            required
-                        />
-                        <p class="text-xs text-gray-500 mt-2">Available: {{ formattedBalance }}</p>
+            <div class="bg-gradient-to-br from-sunrise-50 to-gold-50 rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md max-h-[85vh] sm:max-h-[90vh] overflow-y-auto shadow-rhythmic-2xl animate-slideIn">
+                <div class="p-rhythm-lg pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]">
+                    <!-- Modal Header with gradient accent -->
+                    <div class="flex items-center gap-3 mb-rhythm-lg">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-sunrise-500 to-gold-500 flex items-center justify-center shadow-rhythmic-md">
+                            <MinusCircleIcon class="h-6 w-6 text-white" />
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-display font-bold text-gray-900">Withdraw Funds</h3>
+                            <p class="text-sm text-gray-600">Transfer to your account</p>
+                        </div>
                     </div>
 
-                    <!-- Account Type -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Withdraw To</label>
-                        <select
-                            v-model="withdrawForm.account_type"
-                            class="w-full px-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                        >
-                            <option value="Bank">Bank Account</option>
-                            <option value="bKash">bKash</option>
-                            <option value="Nagad">Nagad</option>
-                            <option value="Rocket">Rocket</option>
-                        </select>
-                    </div>
+                <form @submit.prevent="submitWithdraw" class="space-y-rhythm-md">
+                    <!-- Withdraw Form Card -->
+                    <RhythmicCard variant="light" size="md">
+                        <template #default>
+                            <div class="space-y-rhythm-md">
+                                <!-- Amount Input -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-rhythm-sm">Amount (BDT)</label>
+                                    <input
+                                        v-model="withdrawForm.amount"
+                                        type="number"
+                                        placeholder="Enter amount"
+                                        :max="balance"
+                                        class="w-full px-rhythm-md py-rhythm-md text-lg border-2 border-sunrise-200 rounded-xl focus:ring-2 focus:ring-sunrise-500 focus:border-sunrise-500 transition-all bg-white"
+                                        required
+                                    />
+                                    <p class="text-xs text-gray-500 mt-rhythm-xs flex items-center gap-1">
+                                        <span class="inline-block w-1.5 h-1.5 rounded-full bg-growth-500"></span>
+                                        Available: {{ formattedBalance }}
+                                    </p>
+                                </div>
 
-                    <!-- Account Number -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Account Number</label>
-                        <input
-                            v-model="withdrawForm.account_number"
-                            type="text"
-                            placeholder="Enter account number"
-                            class="w-full px-4 py-4 border-2 border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                            required
-                        />
-                    </div>
+                                <!-- Account Type -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-rhythm-sm">Withdraw To</label>
+                                    <select
+                                        v-model="withdrawForm.account_type"
+                                        class="w-full px-rhythm-md py-rhythm-md border-2 border-sunrise-200 rounded-xl focus:ring-2 focus:ring-sunrise-500 focus:border-sunrise-500 transition-all bg-white"
+                                    >
+                                        <option value="Bank">🏦 Bank Account</option>
+                                        <option value="bKash">💰 bKash</option>
+                                        <option value="Nagad">📱 Nagad</option>
+                                        <option value="Rocket">🚀 Rocket</option>
+                                    </select>
+                                </div>
+
+                                <!-- Account Number -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-rhythm-sm">Account Number</label>
+                                    <input
+                                        v-model="withdrawForm.account_number"
+                                        type="text"
+                                        placeholder="Enter account number"
+                                        class="w-full px-rhythm-md py-rhythm-md border-2 border-sunrise-200 rounded-xl focus:ring-2 focus:ring-sunrise-500 focus:border-sunrise-500 transition-all bg-white"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                        </template>
+                    </RhythmicCard>
 
                     <!-- Action Buttons -->
-                    <div class="flex space-x-3 pt-4 pb-2">
-                        <button
+                    <div class="flex gap-rhythm-sm pt-rhythm-md pb-rhythm-xs">
+                        <FlowButton
                             type="button"
                             @click="showWithdraw = false"
-                            class="flex-1 py-4 bg-gray-100 text-gray-700 rounded-2xl font-semibold hover:bg-gray-200 transition-colors min-h-[48px] touch-manipulation"
+                            variant="secondary"
+                            size="lg"
+                            class="flex-1 min-h-[48px]"
                         >
                             Cancel
-                        </button>
-                        <button
+                        </FlowButton>
+                        <FlowButton
                             type="submit"
                             :disabled="withdrawForm.processing"
-                            class="flex-1 py-4 bg-emerald-600 text-white rounded-2xl font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50 min-h-[48px] touch-manipulation"
+                            :loading="withdrawForm.processing"
+                            variant="primary"
+                            size="lg"
+                            class="flex-1 min-h-[48px]"
                         >
                             {{ withdrawForm.processing ? 'Processing...' : 'Withdraw' }}
-                        </button>
+                        </FlowButton>
                     </div>
                 </form>
                 </div>
@@ -425,41 +471,3 @@ const submitWithdraw = () => {
         </div>
     </AuthenticatedLayout>
 </template>
-
-<style scoped>
-@keyframes slide-up {
-    from {
-        transform: translateY(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-.animate-slide-up {
-    animation: slide-up 0.3s ease-out;
-}
-
-/* Ensure modals have proper spacing on mobile with notches */
-@media (max-width: 640px) {
-    /* Add extra bottom padding for mobile devices */
-    .max-h-\[85vh\] {
-        max-height: calc(85vh - env(safe-area-inset-bottom, 0px));
-    }
-}
-
-/* For very short screens, reduce modal height further */
-@media (max-height: 700px) {
-    .max-h-\[85vh\] {
-        max-height: 80vh;
-    }
-}
-
-@media (max-height: 600px) {
-    .max-h-\[85vh\] {
-        max-height: 75vh;
-    }
-}
-</style>
