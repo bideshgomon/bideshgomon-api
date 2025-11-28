@@ -42,7 +42,7 @@ class DatabaseSeeder extends Seeder
         $this->call(JobPostingSeeder::class);
         $this->call(SettingsSeeder::class);
         $this->call(TravelInsurancePackageSeeder::class);
-        $this->call(CvTemplateSeeder::class);
+        $this->call(CvTemplateSeederCompatible::class);
         $this->call(FlightRouteSeeder::class);
         // $this->call(BlogSeeder::class);
         // $this->call(ServiceSeeder::class);

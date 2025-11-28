@@ -13,6 +13,7 @@ use App\Http\Controllers\HotelBookingController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\OnboardingController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Admin\AdminJobPostingController;
 use App\Http\Controllers\Admin\AdminJobApplicationController;
 use App\Http\Controllers\Admin\AdminUserController;
@@ -23,6 +24,11 @@ use App\Http\Controllers\Admin\VisaController as AdminVisaController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+// PWA Routes
+Route::get('/offline', function () {
+    return Inertia::render('Offline');
+})->name('offline');
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -50,8 +56,24 @@ Route::middleware('auth')->get('/profile/assessment/recommendations', [\App\Http
 Route::middleware('auth')->get('/profile/assessment/score-breakdown', [\App\Http\Controllers\ProfileAssessmentController::class, 'scoreBreakdown'])
     ->name('profile.assessment.score-breakdown');
 
+// Role-based dashboard routing
 Route::get('/dashboard', function () {
     $user = auth()->user();
+    
+    // Redirect to appropriate dashboard based on role
+    if ($user->hasRole('admin')) {
+        return redirect()->route('admin.dashboard');
+    }
+    
+    if ($user->hasRole('agency')) {
+        return redirect()->route('agency.dashboard');
+    }
+    
+    if ($user->hasRole('consultant')) {
+        return redirect()->route('consultant.dashboard');
+    }
+    
+    // Default: User dashboard
     $profile = $user->userProfile;
     
     // Calculate stats
@@ -72,6 +94,67 @@ Route::get('/dashboard', function () {
     if ($user->workExperiences()->count() > 0) $completion += 15;
     if ($user->familyMembers()->count() > 0) $completion += 10;
     if ($user->languages()->count() > 0) $completion += 10;
+    
+    // Get leaderboard data
+    $topReferrers = [];
+    $userRank = null;
+    
+    try {
+        if (class_exists('App\Models\Referral')) {
+            $period = now()->format('Y-m');
+            [$year, $month] = explode('-', $period);
+            $startDate = \Carbon\Carbon::create($year, $month, 1)->startOfMonth();
+            $endDate = \Carbon\Carbon::create($year, $month, 1)->endOfMonth();
+            
+            // Get top 5 referrers for this month
+            $topReferrers = \App\Models\Referral::select('referrer_id', \Illuminate\Support\Facades\DB::raw('COUNT(*) as referral_count'), \Illuminate\Support\Facades\DB::raw('SUM(reward_amount) as total_earnings'))
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->where('status', 'completed')
+                ->groupBy('referrer_id')
+                ->orderByDesc('referral_count')
+                ->orderByDesc('total_earnings')
+                ->limit(5)
+                ->get()
+                ->map(function ($item, $index) {
+                    $referrer = \App\Models\User::find($item->referrer_id);
+                    return [
+                        'rank' => $index + 1,
+                        'user_id' => $item->referrer_id,
+                        'user' => [
+                            'id' => $referrer->id ?? null,
+                            'name' => $referrer->name ?? 'Unknown',
+                            'email' => $referrer->email ?? null,
+                        ],
+                        'referral_count' => (int) $item->referral_count,
+                        'total_earnings' => (float) $item->total_earnings,
+                    ];
+                });
+            
+            // Get user's rank
+            $allReferrers = \App\Models\Referral::select('referrer_id', \Illuminate\Support\Facades\DB::raw('COUNT(*) as referral_count'), \Illuminate\Support\Facades\DB::raw('SUM(reward_amount) as total_earnings'))
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->where('status', 'completed')
+                ->groupBy('referrer_id')
+                ->orderByDesc('referral_count')
+                ->orderByDesc('total_earnings')
+                ->get();
+            
+            $userRankIndex = $allReferrers->search(function ($item) use ($user) {
+                return $item->referrer_id == $user->id;
+            });
+            
+            if ($userRankIndex !== false) {
+                $userData = $allReferrers[$userRankIndex];
+                $userRank = [
+                    'rank' => $userRankIndex + 1,
+                    'referral_count' => (int) $userData->referral_count,
+                    'total_earnings' => (float) $userData->total_earnings,
+                ];
+            }
+        }
+    } catch (\Exception $e) {
+        // Silently fail if referral system not available
+    }
     
     // Generate smart suggestions based on profile completion
     $suggestions = [];
@@ -139,18 +222,69 @@ Route::get('/dashboard', function () {
         'recentActivity' => [],
         'suggestions' => $suggestions,
         'recommendedServices' => $recommendedServices,
+        'topReferrers' => $topReferrers,
+        'userRank' => $userRank,
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    // CV Builder routes (must come BEFORE the catch-all /services/{slug} route)
+    Route::prefix('services/cv-builder')->name('cv-builder.')->group(function () {
+        Route::get('/', [CvBuilderController::class, 'index'])->name('index');
+        Route::get('/template/{slug}', [CvBuilderController::class, 'showTemplate'])->name('template');
+        Route::get('/create', [CvBuilderController::class, 'create'])->name('create');
+        Route::post('/store', [CvBuilderController::class, 'store'])->name('store');
+        Route::get('/my-cvs', [CvBuilderController::class, 'myCvs'])->name('my-cvs');
+        Route::get('/{id}/edit', [CvBuilderController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [CvBuilderController::class, 'update'])->name('update');
+        Route::delete('/{id}', [CvBuilderController::class, 'destroy'])->name('destroy');
+        Route::get('/{id}/preview', [CvBuilderController::class, 'preview'])->name('preview');
+        Route::get('/{id}/download', [CvBuilderController::class, 'download'])->name('download');
+    });
+
     // User Services Routes
     Route::get('/services', [\App\Http\Controllers\ServiceController::class, 'index'])->name('services.index');
     Route::get('/services/{slug}', [\App\Http\Controllers\ServiceController::class, 'show'])->name('services.show');
+    
+    // Visa Requirements API
+    Route::get('/api/visa-requirements', [\App\Http\Controllers\VisaRequirementController::class, 'getRequirements'])->name('visa.requirements');
     
     // User Applications Routes
     Route::post('/my-applications', [\App\Http\Controllers\User\UserApplicationController::class, 'store'])->name('user.applications.store');
     Route::get('/my-applications', [\App\Http\Controllers\User\UserApplicationController::class, 'index'])->name('user.applications.index');
     Route::get('/my-applications/{id}', [\App\Http\Controllers\User\UserApplicationController::class, 'show'])->name('user.applications.show');
+    
+    // Payment Gateway Routes
+    Route::prefix('payment')->name('payment.')->group(function () {
+        // Payment history
+        Route::get('/', [\App\Http\Controllers\PaymentController::class, 'index'])->name('index');
+        Route::get('/{transaction}', [\App\Http\Controllers\PaymentController::class, 'show'])->name('show');
+        
+        // SSLCommerz routes
+        Route::post('/sslcommerz/initiate', [\App\Http\Controllers\PaymentController::class, 'initiateSSLCommerz'])->name('sslcommerz.initiate');
+        Route::post('/sslcommerz/success', [\App\Http\Controllers\PaymentController::class, 'sslcommerzSuccess'])->name('sslcommerz.success');
+        Route::post('/sslcommerz/fail', [\App\Http\Controllers\PaymentController::class, 'sslcommerzFail'])->name('sslcommerz.fail');
+        Route::get('/sslcommerz/cancel', [\App\Http\Controllers\PaymentController::class, 'sslcommerzCancel'])->name('sslcommerz.cancel');
+        
+        // bKash routes
+        Route::post('/bkash/initiate', [\App\Http\Controllers\PaymentController::class, 'initiateBKash'])->name('bkash.initiate');
+        Route::get('/bkash/callback', [\App\Http\Controllers\PaymentController::class, 'bkashCallback'])->name('bkash.callback');
+        
+        // Nagad routes
+        Route::post('/nagad/initiate', [\App\Http\Controllers\PaymentController::class, 'initiateNagad'])->name('nagad.initiate');
+        Route::get('/nagad/callback', [\App\Http\Controllers\PaymentController::class, 'nagadCallback'])->name('nagad.callback');
+    });
+});
+
+// Public payment webhook routes (no auth required)
+Route::prefix('payment')->name('payment.')->group(function () {
+    Route::post('/sslcommerz/ipn', [\App\Http\Controllers\PaymentController::class, 'sslcommerzIPN'])->name('sslcommerz.ipn');
+    Route::post('/bkash/webhook', [\App\Http\Controllers\PaymentController::class, 'bkashWebhook'])->name('bkash.webhook');
+    Route::post('/nagad/webhook', [\App\Http\Controllers\PaymentController::class, 'nagadWebhook'])->name('nagad.webhook');
+});
+
+// Authenticated application quotes routes
+Route::middleware('auth')->group(function () {
     Route::get('/my-applications/{id}/quotes', [\App\Http\Controllers\User\UserApplicationController::class, 'quotes'])->name('user.applications.quotes');
     Route::post('/my-applications/{id}/quotes/{quoteId}/accept', [\App\Http\Controllers\User\UserApplicationController::class, 'acceptQuote'])->name('user.applications.quotes.accept');
     Route::post('/my-applications/{id}/quotes/{quoteId}/reject', [\App\Http\Controllers\User\UserApplicationController::class, 'rejectQuote'])->name('user.applications.quotes.reject');
@@ -311,6 +445,16 @@ Route::middleware('auth')->group(function () {
     // Privacy & Data Control
     Route::post('/profile/privacy-settings', [ProfileController::class, 'updatePrivacySettings'])->name('profile.privacy-settings.update');
     Route::get('/profile/download-data', [ProfileController::class, 'downloadData'])->name('profile.download-data');
+
+    // Document Scanner Routes
+    Route::prefix('document-scanner')->name('document-scanner.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\User\DocumentScanController::class, 'index'])->name('index');
+        Route::post('/upload', [\App\Http\Controllers\User\DocumentScanController::class, 'upload'])->name('upload');
+        Route::get('/{scan}', [\App\Http\Controllers\User\DocumentScanController::class, 'show'])->name('show');
+        Route::post('/{scan}/apply', [\App\Http\Controllers\User\DocumentScanController::class, 'applyToProfile'])->name('apply');
+        Route::post('/{scan}/reprocess', [\App\Http\Controllers\User\DocumentScanController::class, 'reprocess'])->name('reprocess');
+        Route::delete('/{scan}', [\App\Http\Controllers\User\DocumentScanController::class, 'destroy'])->name('destroy');
+    });
     
     // Preferences
     Route::post('/profile/preferences', [ProfileController::class, 'updatePreferences'])->name('profile.preferences.update');
@@ -355,20 +499,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/booking/{id}', [TravelInsuranceController::class, 'bookingDetails'])->name('booking-details');
     });
 
-    // CV Builder routes
-    Route::prefix('services/cv-builder')->name('cv-builder.')->group(function () {
-        Route::get('/', [CvBuilderController::class, 'index'])->name('index');
-        Route::get('/template/{slug}', [CvBuilderController::class, 'showTemplate'])->name('template');
-        Route::get('/create', [CvBuilderController::class, 'create'])->name('create');
-        Route::post('/store', [CvBuilderController::class, 'store'])->name('store');
-        Route::get('/my-cvs', [CvBuilderController::class, 'myCvs'])->name('my-cvs');
-        Route::get('/{id}/edit', [CvBuilderController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [CvBuilderController::class, 'update'])->name('update');
-        Route::delete('/{id}', [CvBuilderController::class, 'destroy'])->name('destroy');
-        Route::get('/{id}/preview', [CvBuilderController::class, 'preview'])->name('preview');
-        Route::get('/{id}/download', [CvBuilderController::class, 'download'])->name('download');
-    });
-
     // Tourist Visa Application routes
     Route::prefix('profile/tourist-visa')->name('profile.tourist-visa.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Profile\TouristVisaController::class, 'index'])->name('index');
@@ -386,14 +516,6 @@ Route::middleware('auth')->group(function () {
     Route::prefix('profile/service-quotes')->name('profile.service-quotes.')->group(function () {
         Route::post('/{quote}/accept', [\App\Http\Controllers\Api\Profile\ServiceQuoteController::class, 'accept'])->name('accept');
         Route::post('/{quote}/reject', [\App\Http\Controllers\Api\Profile\ServiceQuoteController::class, 'reject'])->name('reject');
-    });
-
-    // Job Posting routes
-    Route::prefix('jobs')->name('jobs.')->group(function () {
-        Route::get('/', [JobController::class, 'index'])->name('index');
-        Route::get('/{id}', [JobController::class, 'show'])->name('show');
-        Route::post('/{id}/apply', [JobController::class, 'apply'])->name('apply');
-        Route::get('/my/applications', [JobController::class, 'myApplications'])->name('my-applications');
     });
 
     // Flight Booking routes
@@ -445,21 +567,42 @@ Route::middleware('auth')->group(function () {
         Route::get('/{translation}', [\App\Http\Controllers\TranslationRequestController::class, 'show'])->name('show');
         Route::post('/{translation}/cancel', [\App\Http\Controllers\TranslationRequestController::class, 'cancel'])->name('cancel');
     });
+});
 
+// Additional authenticated routes (documents, jobs, notifications)
+Route::middleware('auth')->group(function () {
     // User Documents (upload & listing)
     Route::get('/documents', [\App\Http\Controllers\DocumentController::class, 'index'])->name('documents.index');
     Route::post('/documents', [\App\Http\Controllers\DocumentController::class, 'store'])->name('documents.store');
     Route::get('/documents/{document}/download', [\App\Http\Controllers\DocumentController::class, 'download'])->name('documents.download');
     Route::delete('/documents/{document}', [\App\Http\Controllers\DocumentController::class, 'destroy'])->name('documents.destroy');
 
+    // Job Posting routes
+    Route::prefix('jobs')->name('jobs.')->group(function () {
+        Route::get('/', [JobController::class, 'index'])->name('index');
+        Route::get('/{id}', [JobController::class, 'show'])->name('show');
+        Route::post('/{id}/apply', [JobController::class, 'apply'])->name('apply');
+        Route::get('/my/applications', [JobController::class, 'myApplications'])->name('my-applications');
+    });
+
     // Notifications
     Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/dropdown', [\App\Http\Controllers\NotificationController::class, 'dropdown'])->name('notifications.dropdown');
+    Route::get('/notifications/unread-count', [\App\Http\Controllers\NotificationController::class, 'unreadCount'])->name('notifications.unread-count');
     Route::post('/notifications/{notification}/read', [\App\Http\Controllers\NotificationController::class, 'markRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+    Route::delete('/notifications/{notification}', [\App\Http\Controllers\NotificationController::class, 'destroy'])->name('notifications.destroy');
+
+    // Notification Preferences
+    Route::get('/notification-preferences', [\App\Http\Controllers\User\NotificationPreferenceController::class, 'index'])->name('notification-preferences.index');
+    Route::post('/notification-preferences', [\App\Http\Controllers\User\NotificationPreferenceController::class, 'update'])->name('notification-preferences.update');
 });
 
 // Admin routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Analytics Dashboard
+    Route::get('/analytics', [\App\Http\Controllers\Admin\AnalyticsController::class, 'dashboard'])->name('analytics.dashboard');
+    
     // Service Management Dashboard
     Route::get('/services', [\App\Http\Controllers\Admin\ServiceManagementController::class, 'index'])->name('services.index');
     
@@ -729,9 +872,29 @@ Route::get('/blog/{slug}', [\App\Http\Controllers\BlogController::class, 'show']
 
 // Admin blog routes
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::resource('blog.posts', \App\Http\Controllers\Admin\BlogPostController::class);
-    Route::resource('blog.categories', \App\Http\Controllers\Admin\BlogCategoryController::class)->except(['show', 'create', 'edit']);
-    Route::resource('blog.tags', \App\Http\Controllers\Admin\BlogTagController::class)->except(['show', 'create', 'edit']);
+    Route::resource('blog-posts', \App\Http\Controllers\Admin\BlogPostController::class)->names([
+        'index' => 'blog.posts.index',
+        'create' => 'blog.posts.create',
+        'store' => 'blog.posts.store',
+        'show' => 'blog.posts.show',
+        'edit' => 'blog.posts.edit',
+        'update' => 'blog.posts.update',
+        'destroy' => 'blog.posts.destroy',
+    ])->parameters(['blog-posts' => 'post']);
+    
+    Route::resource('blog-categories', \App\Http\Controllers\Admin\BlogCategoryController::class)->names([
+        'index' => 'blog.categories.index',
+        'store' => 'blog.categories.store',
+        'update' => 'blog.categories.update',
+        'destroy' => 'blog.categories.destroy',
+    ])->except(['show', 'create', 'edit'])->parameters(['blog-categories' => 'category']);
+    
+    Route::resource('blog-tags', \App\Http\Controllers\Admin\BlogTagController::class)->names([
+        'index' => 'blog.tags.index',
+        'store' => 'blog.tags.store',
+        'update' => 'blog.tags.update',
+        'destroy' => 'blog.tags.destroy',
+    ])->except(['show', 'create', 'edit'])->parameters(['blog-tags' => 'tag']);
 });
 
 // Admin Routes
@@ -742,6 +905,14 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     })->name('admin');
     
     Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    
+    // Translation Demo - Shows how multi-language system works
+    Route::get('/translation-demo', function () {
+        return inertia('Admin/TranslationDemo');
+    })->name('admin.translation-demo');
+    
+    // Admin Sitemap - Test all admin links
+    Route::get('/sitemap', [\App\Http\Controllers\Admin\AdminSitemapController::class, 'index'])->name('admin.sitemap');
     
     // Service Modules Management
     Route::prefix('service-modules')->name('admin.service-modules.')->group(function () {
@@ -784,6 +955,19 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::post('/{visaRequirement}/toggle-active', [\App\Http\Controllers\Admin\VisaRequirementController::class, 'toggleActive'])->name('toggle-active');
         Route::post('/{visaRequirement}/documents', [\App\Http\Controllers\Admin\VisaRequirementController::class, 'addDocument'])->name('add-document');
         Route::post('/{visaRequirement}/profession-requirements', [\App\Http\Controllers\Admin\VisaRequirementController::class, 'addProfessionRequirement'])->name('add-profession');
+    });
+
+    // Document Hub System
+    Route::resource('document-categories', \App\Http\Controllers\Admin\DocumentCategoryController::class)->names('admin.document-categories');
+    Route::resource('master-documents', \App\Http\Controllers\Admin\MasterDocumentController::class)->names('admin.master-documents');
+    
+    Route::prefix('document-assignments')->name('admin.document-assignments.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\CountryDocumentAssignmentController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\CountryDocumentAssignmentController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\CountryDocumentAssignmentController::class, 'store'])->name('store');
+        Route::get('/{country}', [\App\Http\Controllers\Admin\CountryDocumentAssignmentController::class, 'show'])->name('show');
+        Route::delete('/{assignment}', [\App\Http\Controllers\Admin\CountryDocumentAssignmentController::class, 'destroy'])->name('destroy');
+        Route::post('/bulk-assign', [\App\Http\Controllers\Admin\CountryDocumentAssignmentController::class, 'bulkAssign'])->name('bulk-assign');
     });
     
     // Agency Country Assignments Management
@@ -837,6 +1021,79 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::post('/applications/bulk-update-status', [AdminJobApplicationController::class, 'bulkUpdateStatus'])->name('admin.applications.bulk-update-status');
     Route::get('/applications/export', [AdminJobApplicationController::class, 'export'])->name('admin.applications.export');
     
+    // FAQ Management
+    Route::resource('faqs', \App\Http\Controllers\Admin\FaqController::class)->names('admin.faqs');
+    Route::post('/faqs/reorder', [\App\Http\Controllers\Admin\FaqController::class, 'reorder'])->name('admin.faqs.reorder');
+    
+    // FAQ Categories Management
+    Route::resource('faq-categories', \App\Http\Controllers\Admin\FaqCategoryController::class)->names('admin.faq-categories');
+    Route::post('/faq-categories/reorder', [\App\Http\Controllers\Admin\FaqCategoryController::class, 'reorder'])->name('admin.faq-categories.reorder');
+    
+    // Events Management
+    Route::resource('events', \App\Http\Controllers\Admin\EventController::class)->names('admin.events');
+    Route::post('/events/{event}/toggle-featured', [\App\Http\Controllers\Admin\EventController::class, 'toggleFeatured'])->name('admin.events.toggle-featured');
+    Route::post('/events/{event}/toggle-published', [\App\Http\Controllers\Admin\EventController::class, 'togglePublished'])->name('admin.events.toggle-published');
+    
+    // CMS Pages Management
+    Route::resource('pages', \App\Http\Controllers\Admin\PageController::class)->names('admin.pages');
+    Route::post('/pages/{page}/toggle-published', [\App\Http\Controllers\Admin\PageController::class, 'togglePublished'])->name('admin.pages.toggle-published');
+    Route::post('/pages/{page}/duplicate', [\App\Http\Controllers\Admin\PageController::class, 'duplicate'])->name('admin.pages.duplicate');
+    
+    // Site Settings Management
+    Route::get('/settings', [\App\Http\Controllers\Admin\SiteSettingController::class, 'index'])->name('admin.settings.index');
+    Route::post('/settings', [\App\Http\Controllers\Admin\SiteSettingController::class, 'update'])->name('admin.settings.update');
+    Route::post('/settings/update-single', [\App\Http\Controllers\Admin\SiteSettingController::class, 'updateSingle'])->name('admin.settings.update-single');
+    Route::delete('/settings/file', [\App\Http\Controllers\Admin\SiteSettingController::class, 'deleteFile'])->name('admin.settings.delete-file');
+    Route::post('/settings/reset', [\App\Http\Controllers\Admin\SiteSettingController::class, 'reset'])->name('admin.settings.reset');
+    Route::post('/settings/clear-cache', [\App\Http\Controllers\Admin\SiteSettingController::class, 'clearCache'])->name('admin.settings.clear-cache');
+    
+    // Support Tickets Management
+    Route::resource('support-tickets', \App\Http\Controllers\Admin\SupportTicketController::class)->names('admin.support-tickets');
+    Route::post('/support-tickets/{supportTicket}/assign', [\App\Http\Controllers\Admin\SupportTicketController::class, 'assign'])->name('admin.support-tickets.assign');
+    Route::post('/support-tickets/{supportTicket}/close', [\App\Http\Controllers\Admin\SupportTicketController::class, 'close'])->name('admin.support-tickets.close');
+    Route::post('/support-tickets/{supportTicket}/reopen', [\App\Http\Controllers\Admin\SupportTicketController::class, 'reopen'])->name('admin.support-tickets.reopen');
+    Route::post('/support-tickets/{supportTicket}/reply', [\App\Http\Controllers\Admin\SupportTicketController::class, 'reply'])->name('admin.support-tickets.reply');
+    Route::post('/support-tickets/{supportTicket}/update-priority', [\App\Http\Controllers\Admin\SupportTicketController::class, 'updatePriority'])->name('admin.support-tickets.update-priority');
+    
+    // Appointments Management
+    Route::resource('appointments', \App\Http\Controllers\Admin\AppointmentController::class)->names('admin.appointments');
+    Route::post('/appointments/{appointment}/confirm', [\App\Http\Controllers\Admin\AppointmentController::class, 'confirm'])->name('admin.appointments.confirm');
+    Route::post('/appointments/{appointment}/cancel', [\App\Http\Controllers\Admin\AppointmentController::class, 'cancel'])->name('admin.appointments.cancel');
+    Route::post('/appointments/{appointment}/reschedule', [\App\Http\Controllers\Admin\AppointmentController::class, 'reschedule'])->name('admin.appointments.reschedule');
+    Route::post('/appointments/{appointment}/complete', [\App\Http\Controllers\Admin\AppointmentController::class, 'complete'])->name('admin.appointments.complete');
+    Route::get('/appointments/calendar', [\App\Http\Controllers\Admin\AppointmentController::class, 'calendar'])->name('admin.appointments.calendar');
+    
+    // Marketing Campaigns Management
+    Route::resource('marketing-campaigns', \App\Http\Controllers\Admin\MarketingCampaignController::class)->names('admin.marketing-campaigns');
+    Route::post('/marketing-campaigns/{marketingCampaign}/activate', [\App\Http\Controllers\Admin\MarketingCampaignController::class, 'activate'])->name('admin.marketing-campaigns.activate');
+    Route::post('/marketing-campaigns/{marketingCampaign}/pause', [\App\Http\Controllers\Admin\MarketingCampaignController::class, 'pause'])->name('admin.marketing-campaigns.pause');
+    Route::post('/marketing-campaigns/{marketingCampaign}/complete', [\App\Http\Controllers\Admin\MarketingCampaignController::class, 'complete'])->name('admin.marketing-campaigns.complete');
+    Route::post('/marketing-campaigns/{marketingCampaign}/duplicate', [\App\Http\Controllers\Admin\MarketingCampaignController::class, 'duplicate'])->name('admin.marketing-campaigns.duplicate');
+    Route::get('/marketing-campaigns/{marketingCampaign}/analytics', [\App\Http\Controllers\Admin\MarketingCampaignController::class, 'analytics'])->name('admin.marketing-campaigns.analytics');
+    
+    // Partners Management
+    Route::resource('partners', \App\Http\Controllers\Admin\PartnerController::class)->names('admin.partners');
+    Route::post('/partners/{partner}/toggle-active', [\App\Http\Controllers\Admin\PartnerController::class, 'toggleActive'])->name('admin.partners.toggle-active');
+    Route::post('/partners/update-order', [\App\Http\Controllers\Admin\PartnerController::class, 'updateOrder'])->name('admin.partners.update-order');
+    
+    // Testimonials Management
+    Route::resource('testimonials', \App\Http\Controllers\Admin\TestimonialController::class)->names('admin.testimonials');
+    Route::post('/testimonials/{testimonial}/toggle-approved', [\App\Http\Controllers\Admin\TestimonialController::class, 'toggleApproved'])->name('admin.testimonials.toggle-approved');
+    Route::post('/testimonials/{testimonial}/toggle-featured', [\App\Http\Controllers\Admin\TestimonialController::class, 'toggleFeatured'])->name('admin.testimonials.toggle-featured');
+    Route::post('/testimonials/{testimonial}/toggle-active', [\App\Http\Controllers\Admin\TestimonialController::class, 'toggleActive'])->name('admin.testimonials.toggle-active');
+    Route::post('/testimonials/update-order', [\App\Http\Controllers\Admin\TestimonialController::class, 'updateOrder'])->name('admin.testimonials.update-order');
+    
+    // Directory Categories Management
+    Route::resource('directory-categories', \App\Http\Controllers\Admin\DirectoryCategoryController::class)->names('admin.directory-categories');
+    Route::post('/directory-categories/{directory_category}/toggle-active', [\App\Http\Controllers\Admin\DirectoryCategoryController::class, 'toggleActive'])->name('admin.directory-categories.toggle-active');
+    Route::post('/directory-categories/update-order', [\App\Http\Controllers\Admin\DirectoryCategoryController::class, 'updateOrder'])->name('admin.directory-categories.update-order');
+    
+    // Directories Management
+    Route::resource('directories', \App\Http\Controllers\Admin\DirectoryController::class)->names('admin.directories');
+    Route::post('/directories/{directory}/toggle-verified', [\App\Http\Controllers\Admin\DirectoryController::class, 'toggleVerified'])->name('admin.directories.toggle-verified');
+    Route::post('/directories/{directory}/toggle-featured', [\App\Http\Controllers\Admin\DirectoryController::class, 'toggleFeatured'])->name('admin.directories.toggle-featured');
+    Route::post('/directories/{directory}/toggle-published', [\App\Http\Controllers\Admin\DirectoryController::class, 'togglePublished'])->name('admin.directories.toggle-published');
+    
     // User Management
     Route::get('/users', [AdminUserController::class, 'index'])->name('admin.users.index');
     Route::get('/users/create', [AdminUserController::class, 'create'])->name('admin.users.create');
@@ -854,6 +1111,16 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     // Admin Impersonation Logs (Audit)
     Route::get('/impersonations', [\App\Http\Controllers\Admin\AdminImpersonationLogController::class, 'index'])->name('admin.impersonations.index');
     Route::get('/impersonations/export', [\App\Http\Controllers\Admin\AdminImpersonationLogController::class, 'export'])->name('admin.impersonations.export');
+    
+    // Agency Verification
+    Route::prefix('agency-verification')->name('agency-verification.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\AgencyVerificationController::class, 'index'])->name('index');
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\AgencyVerificationController::class, 'dashboard'])->name('dashboard');
+        Route::get('/{verificationRequest}', [\App\Http\Controllers\Admin\AgencyVerificationController::class, 'show'])->name('show');
+        Route::post('/{verificationRequest}/update-status', [\App\Http\Controllers\Admin\AgencyVerificationController::class, 'updateStatus'])->name('update-status');
+        Route::post('/documents/{document}/update-status', [\App\Http\Controllers\Admin\AgencyVerificationController::class, 'updateDocumentStatus'])->name('update-document-status');
+    });
+    
     Route::delete('/users/{id}', [AdminUserController::class, 'destroy'])->name('admin.users.destroy');
     Route::post('/users/bulk-suspend', [AdminUserController::class, 'bulkSuspend'])->name('admin.users.bulk-suspend');
     Route::post('/users/bulk-unsuspend', [AdminUserController::class, 'bulkUnsuspend'])->name('admin.users.bulk-unsuspend');
@@ -904,6 +1171,9 @@ Route::get('/profile/{slug}', [\App\Http\Controllers\PublicProfileController::cl
 Route::middleware(['auth', 'verified'])->prefix('agency')->name('agency.')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Agency\DashboardController::class, 'index'])->name('dashboard');
     
+    // Country Assignments
+    Route::get('/country-assignments', [\App\Http\Controllers\Agency\CountryAssignmentController::class, 'index'])->name('country-assignments.index');
+    
     // Applications
     Route::get('/applications', [\App\Http\Controllers\Agency\ApplicationController::class, 'index'])->name('applications.index');
     Route::get('/applications/{application}', [\App\Http\Controllers\Agency\ApplicationController::class, 'show'])->name('applications.show');
@@ -914,7 +1184,89 @@ Route::middleware(['auth', 'verified'])->prefix('agency')->name('agency.')->grou
     Route::post('/applications/{application}/quote', [\App\Http\Controllers\Agency\QuoteController::class, 'store'])->name('quotes.store');
     Route::get('/quotes/{quote}/edit', [\App\Http\Controllers\Agency\QuoteController::class, 'edit'])->name('quotes.edit');
     Route::put('/quotes/{quote}', [\App\Http\Controllers\Agency\QuoteController::class, 'update'])->name('quotes.update');
+    
+    // Agency Profile
+    Route::get('/profile', [\App\Http\Controllers\Agency\ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [\App\Http\Controllers\Agency\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [\App\Http\Controllers\Agency\ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/logo', [\App\Http\Controllers\Agency\ProfileController::class, 'uploadLogo'])->name('profile.logo');
+    Route::post('/profile/office-images', [\App\Http\Controllers\Agency\ProfileController::class, 'uploadOfficeImages'])->name('profile.office-images');
+    Route::delete('/profile/office-images', [\App\Http\Controllers\Agency\ProfileController::class, 'deleteOfficeImage'])->name('profile.delete-office-image');
+    
+    // Team Members
+    Route::get('/team', [\App\Http\Controllers\Agency\TeamMemberController::class, 'index'])->name('team.index');
+    Route::get('/team/create', [\App\Http\Controllers\Agency\TeamMemberController::class, 'create'])->name('team.create');
+    Route::post('/team', [\App\Http\Controllers\Agency\TeamMemberController::class, 'store'])->name('team.store');
+    Route::get('/team/{teamMember}/edit', [\App\Http\Controllers\Agency\TeamMemberController::class, 'edit'])->name('team.edit');
+    Route::put('/team/{teamMember}', [\App\Http\Controllers\Agency\TeamMemberController::class, 'update'])->name('team.update');
+    Route::post('/team/{teamMember}/photo', [\App\Http\Controllers\Agency\TeamMemberController::class, 'uploadPhoto'])->name('team.photo');
+    Route::delete('/team/{teamMember}', [\App\Http\Controllers\Agency\TeamMemberController::class, 'destroy'])->name('team.destroy');
+    Route::post('/team/reorder', [\App\Http\Controllers\Agency\TeamMemberController::class, 'reorder'])->name('team.reorder');
+    
+    // Verification
+    Route::get('/verification', [\App\Http\Controllers\Agency\VerificationController::class, 'index'])->name('verification.index');
+    Route::post('/verification/documents', [\App\Http\Controllers\Agency\VerificationController::class, 'uploadDocument'])->name('verification.upload-document');
+    Route::delete('/verification/documents/{document}', [\App\Http\Controllers\Agency\VerificationController::class, 'deleteDocument'])->name('verification.delete-document');
+    Route::post('/verification/submit', [\App\Http\Controllers\Agency\VerificationController::class, 'submitRequest'])->name('verification.submit');
 });
+
+// Consultant Routes (for consultant users)
+Route::middleware(['auth', 'verified'])->prefix('consultant')->name('consultant.')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\Consultant\DashboardController::class, 'index'])->name('dashboard');
+});
+
+// User Support Ticket Routes
+Route::middleware(['auth', 'verified'])->prefix('support')->name('support.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\User\SupportTicketController::class, 'index'])->name('index');
+    Route::get('/create', [\App\Http\Controllers\User\SupportTicketController::class, 'create'])->name('create');
+    Route::post('/', [\App\Http\Controllers\User\SupportTicketController::class, 'store'])->name('store');
+    Route::get('/{ticket}', [\App\Http\Controllers\User\SupportTicketController::class, 'show'])->name('show');
+    Route::post('/{ticket}/reply', [\App\Http\Controllers\User\SupportTicketController::class, 'reply'])->name('reply');
+    Route::post('/{ticket}/close', [\App\Http\Controllers\User\SupportTicketController::class, 'close'])->name('close');
+    Route::post('/{ticket}/rate', [\App\Http\Controllers\User\SupportTicketController::class, 'rate'])->name('rate');
+});
+
+// User Appointment Routes
+Route::middleware(['auth', 'verified'])->prefix('appointments')->name('appointments.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\User\AppointmentController::class, 'index'])->name('index');
+    Route::get('/create', [\App\Http\Controllers\User\AppointmentController::class, 'create'])->name('create');
+    Route::post('/', [\App\Http\Controllers\User\AppointmentController::class, 'store'])->name('store');
+    Route::get('/{appointment}', [\App\Http\Controllers\User\AppointmentController::class, 'show'])->name('show');
+    Route::post('/{appointment}/cancel', [\App\Http\Controllers\User\AppointmentController::class, 'cancel'])->name('cancel');
+    Route::post('/{appointment}/reschedule', [\App\Http\Controllers\User\AppointmentController::class, 'reschedule'])->name('reschedule');
+});
+
+// User FAQ Routes
+Route::middleware(['auth', 'verified'])->prefix('faqs')->name('faqs.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\User\FaqController::class, 'index'])->name('index');
+    Route::post('/{faq}/helpful', [\App\Http\Controllers\User\FaqController::class, 'helpful'])->name('helpful');
+    Route::post('/{faq}/not-helpful', [\App\Http\Controllers\User\FaqController::class, 'notHelpful'])->name('not-helpful');
+});
+
+// Public Events Routes
+Route::prefix('events')->name('events.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\User\EventController::class, 'index'])->name('index');
+    Route::get('/{slug}', [\App\Http\Controllers\User\EventController::class, 'show'])->name('show');
+});
+
+// Public Directory Routes
+Route::prefix('directory')->name('directory.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\User\DirectoryController::class, 'index'])->name('index');
+    Route::get('/category/{slug}', [\App\Http\Controllers\User\DirectoryController::class, 'byCategory'])->name('category');
+    Route::get('/search', [\App\Http\Controllers\User\DirectoryController::class, 'search'])->name('search');
+    Route::get('/{slug}', [\App\Http\Controllers\User\DirectoryController::class, 'show'])->name('show');
+});
+
+// Public Agency Routes
+Route::prefix('agencies')->name('agencies.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\AgencyPublicController::class, 'index'])->name('index');
+    Route::get('/{slug}', [\App\Http\Controllers\AgencyPublicController::class, 'show'])->name('show');
+    Route::post('/{agency}/review', [\App\Http\Controllers\AgencyPublicController::class, 'submitReview'])->name('review');
+});
+
+// Public Pages Routes (Terms, Privacy, About, etc.)
+Route::get('/page/{slug}', [\App\Http\Controllers\User\PageController::class, 'show'])->name('page.show');
+
 
 
 
