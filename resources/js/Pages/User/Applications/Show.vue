@@ -2,6 +2,10 @@
 import { computed } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import ProgressWave from '@/Components/Rhythmic/ProgressWave.vue';
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
+import FlowButton from '@/Components/Rhythmic/FlowButton.vue';
+import StatusBadge from '@/Components/Rhythmic/StatusBadge.vue';
 import {
   ArrowLeftIcon,
   ClockIcon,
@@ -52,6 +56,39 @@ const applicationData = computed(() => {
     return {};
   }
 });
+
+const applicationSteps = computed(() => {
+  const statusMap = {
+    pending: 0,
+    quoted: 1,
+    accepted: 2,
+    in_progress: 3,
+    completed: 4,
+    cancelled: 0,
+    rejected: 0,
+  };
+
+  return [
+    { label: 'Submitted', completed: true },
+    { label: 'Quote Received', completed: statusMap[props.application.status] >= 1 },
+    { label: 'Quote Accepted', completed: statusMap[props.application.status] >= 2 },
+    { label: 'In Progress', completed: statusMap[props.application.status] >= 3 },
+    { label: 'Completed', completed: statusMap[props.application.status] >= 4 },
+  ];
+});
+
+const currentStep = computed(() => {
+  const statusMap = {
+    pending: 0,
+    quoted: 1,
+    accepted: 2,
+    in_progress: 3,
+    completed: 4,
+    cancelled: 0,
+    rejected: 0,
+  };
+  return statusMap[props.application.status] || 0;
+});
 </script>
 
 <template>
@@ -70,7 +107,7 @@ const applicationData = computed(() => {
         </Link>
 
         <!-- Header -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-6">
+        <RhythmicCard variant="light" size="lg" class="mb-6 animate-fadeInUp">
           <div class="flex items-start justify-between mb-6">
             <div>
               <div class="flex items-center gap-3 mb-2">
@@ -132,13 +169,28 @@ const applicationData = computed(() => {
               </div>
             </div>
           </div>
-        </div>
+        </RhythmicCard>
+
+        <!-- Progress Tracking -->
+        <RhythmicCard variant="ocean" size="lg" class="mb-6 animate-fadeIn" style="animation-delay: 100ms;">
+          <template #default>
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">
+              Application Progress
+            </h2>
+            <ProgressWave 
+              :steps="applicationSteps"
+              :current-step="currentStep"
+              variant="ocean"
+            />
+          </template>
+        </RhythmicCard>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <!-- Main Content -->
           <div class="lg:col-span-2 space-y-6">
             <!-- Application Details -->
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+            <RhythmicCard variant="light" size="lg" class="animate-fadeIn" style="animation-delay: 200ms;">
+              <template #default>
               <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-6">
                 Application Details
               </h2>
@@ -193,10 +245,12 @@ const applicationData = computed(() => {
                   </dd>
                 </div>
               </dl>
-            </div>
+              </template>
+            </RhythmicCard>
 
             <!-- Quotes Section -->
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+            <RhythmicCard variant="light" size="lg" class="animate-fadeIn" style="animation-delay: 300ms;">
+              <template #default>
               <div class="flex items-center justify-between mb-6">
                 <h2 class="text-xl font-bold text-gray-900 dark:text-white">
                   Quotes ({{ application.quotes?.length || 0 }})
@@ -225,16 +279,7 @@ const applicationData = computed(() => {
                         {{ quote.agency.email }}
                       </p>
                     </div>
-                    <span
-                      class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"
-                      :class="{
-                        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400': quote.status === 'pending',
-                        'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400': quote.status === 'accepted',
-                        'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400': quote.status === 'rejected',
-                      }"
-                    >
-                      {{ quote.status.toUpperCase() }}
-                    </span>
+                    <StatusBadge :status="quote.status" size="sm" />
                   </div>
 
                   <div class="grid grid-cols-2 gap-4 text-sm">
@@ -263,13 +308,15 @@ const applicationData = computed(() => {
                   Agencies will send quotes soon
                 </p>
               </div>
-            </div>
+              </template>
+            </RhythmicCard>
           </div>
 
           <!-- Sidebar -->
           <div class="lg:col-span-1">
             <!-- Service Info -->
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-6">
+            <RhythmicCard variant="sky" size="md" class="mb-6 animate-fadeIn" style="animation-delay: 400ms;">
+              <template #default>
               <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">
                 Service Information
               </h3>
@@ -294,20 +341,25 @@ const applicationData = computed(() => {
                   </span>
                 </div>
               </div>
-            </div>
+              </template>
+            </RhythmicCard>
 
             <!-- Actions -->
-            <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl shadow-lg p-6 text-white">
-              <h3 class="text-lg font-bold mb-4">Need Help?</h3>
-              <p class="text-blue-100 text-sm mb-4">
-                If you have questions about your application, feel free to contact us.
-              </p>
-              <button
-                class="w-full bg-white text-blue-700 hover:bg-blue-50 font-semibold py-3 px-4 rounded-lg transition-colors"
-              >
-                Contact Support
-              </button>
-            </div>
+            <RhythmicCard variant="gradient" size="md" class="animate-fadeIn" style="animation-delay: 500ms;">
+              <template #default>
+                <h3 class="text-lg font-bold text-white mb-4">Need Help?</h3>
+                <p class="text-white/90 text-sm mb-4">
+                  If you have questions about your application, feel free to contact us.
+                </p>
+                <FlowButton 
+                  variant="white-outline"
+                  href="#"
+                  class="w-full"
+                >
+                  Contact Support
+                </FlowButton>
+              </template>
+            </RhythmicCard>
           </div>
         </div>
       </div>
