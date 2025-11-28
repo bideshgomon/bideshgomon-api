@@ -3,6 +3,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, router } from '@inertiajs/vue3';
 import { ref, computed, onMounted, watch } from 'vue';
 import { useProfileCompletion } from '@/Composables/useProfileCompletion';
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
+import ProgressWave from '@/Components/Rhythmic/ProgressWave.vue';
 import { 
     CheckCircleIcon, 
     ExclamationCircleIcon,
@@ -540,29 +542,32 @@ const backToCards = () => {
                 </div>
 
                 <!-- Profile Completion Progress -->
-                <div class="mb-4 md:mb-6 bg-white dark:bg-gray-800 shadow-md md:shadow-lg sm:rounded-lg md:rounded-xl overflow-hidden">
-                    <div class="p-3 md:p-6">
-                        <div class="flex items-center justify-between mb-2">
-                            <h3 class="text-xs md:text-sm font-semibold text-gray-900 dark:text-white">Profile Completion</h3>
+                <RhythmicCard variant="gradient" class="mb-rhythm-lg">
+                    <div class="p-rhythm-md">
+                        <div class="flex items-center justify-between mb-rhythm-sm">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-ocean-500 to-sky-500 flex items-center justify-center shadow-rhythmic-md">
+                                    <CheckCircleIcon v-if="completion.isComplete" class="w-6 h-6 text-white" />
+                                    <ExclamationCircleIcon v-else class="w-6 h-6 text-white" />
+                                </div>
+                                <h3 class="font-display font-bold text-lg text-gray-800">Profile Completion</h3>
+                            </div>
                             <span :class="[
-                                'text-xl md:text-2xl font-bold',
+                                'text-2xl md:text-3xl font-display font-bold',
                                 getCompletionColor(completion.percentage)
                             ]">
                                 {{ completion.percentage }}%
                             </span>
                         </div>
-                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 md:h-3 mb-3 md:mb-4">
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-rhythm-sm relative overflow-hidden">
                             <div
-                                :class="[
-                                    'h-2 md:h-3 rounded-full transition-all duration-500',
-                                    getCompletionBgColor(completion.percentage)
-                                ]"
+                                class="h-3 rounded-full transition-all duration-500 bg-gradient-to-r from-ocean-500 via-sky-500 to-growth-500 shadow-rhythmic-md"
                                 :style="{ width: completion.percentage + '%' }"
-                            ></div>
+                            >
+                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
+                            </div>
                         </div>
-                        <div class="flex items-start md:items-center text-xs md:text-sm">
-                            <CheckCircleIcon v-if="completion.isComplete" class="w-4 h-4 md:w-5 md:h-5 text-green-600 mr-2 flex-shrink-0 mt-0.5 md:mt-0" />
-                            <ExclamationCircleIcon v-else class="w-4 h-4 md:w-5 md:h-5 text-yellow-600 mr-2 flex-shrink-0 mt-0.5 md:mt-0" />
+                        <div class="flex items-start text-sm">
                             <span class="text-gray-600 dark:text-gray-400 leading-snug">
                                 {{ completion.completed }} of {{ completion.total }} essential fields completed
                                 <span v-if="!completion.isComplete" class="block text-gray-500 dark:text-gray-500 mt-1">
@@ -571,15 +576,20 @@ const backToCards = () => {
                             </span>
                         </div>
                     </div>
-                </div>
+                </RhythmicCard>
 
                 <!-- Card View: Show when no section is active -->
-                <div v-if="!activeSection" class="space-y-4 md:space-y-6">
+                <div v-if="!activeSection" class="space-y-rhythm-lg">
                     <!-- Personal Information -->
                     <div>
-                        <h3 class="text-base md:text-lg font-bold text-gray-900 dark:text-white mb-3 md:mb-4 px-1 md:px-2">
-                            👤 Personal Information
-                        </h3>
+                        <div class="flex items-center gap-3 mb-rhythm-md px-1">
+                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-ocean-500 to-sky-500 flex items-center justify-center shadow-rhythmic-sm">
+                                <UserCircleIcon class="w-5 h-5 text-white" />
+                            </div>
+                            <h3 class="font-display font-bold text-xl text-gray-800">
+                                Personal Information
+                            </h3>
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                             <button
                                 v-for="section in sections.filter(s => s.category === 'personal')"
@@ -629,9 +639,14 @@ const backToCards = () => {
 
                     <!-- Professional Profile -->
                     <div>
-                        <h3 class="text-base md:text-lg font-bold text-gray-900 dark:text-white mb-3 md:mb-4 px-1 md:px-2">
-                            💼 Professional Profile
-                        </h3>
+                        <div class="flex items-center gap-3 mb-rhythm-md px-1">
+                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sunrise-500 to-gold-500 flex items-center justify-center shadow-rhythmic-sm">
+                                <BriefcaseIcon class="w-5 h-5 text-white" />
+                            </div>
+                            <h3 class="font-display font-bold text-xl text-gray-800">
+                                Professional Profile
+                            </h3>
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                             <button
                                 v-for="section in sections.filter(s => s.category === 'professional')"
@@ -681,9 +696,14 @@ const backToCards = () => {
 
                     <!-- Safety & Health -->
                     <div>
-                        <h3 class="text-base md:text-lg font-bold text-gray-900 dark:text-white mb-3 md:mb-4 px-1 md:px-2">
-                            ❤️ Safety & Health
-                        </h3>
+                        <div class="flex items-center gap-3 mb-rhythm-md px-1">
+                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-heritage-500 to-sunrise-500 flex items-center justify-center shadow-rhythmic-sm">
+                                <HeartIcon class="w-5 h-5 text-white" />
+                            </div>
+                            <h3 class="font-display font-bold text-xl text-gray-800">
+                                Safety & Health
+                            </h3>
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                             <button
                                 v-for="section in sections.filter(s => s.category === 'safety')"
@@ -733,9 +753,14 @@ const backToCards = () => {
 
                     <!-- Immigration & Documents -->
                     <div>
-                        <h3 class="text-base md:text-lg font-bold text-gray-900 dark:text-white mb-3 md:mb-4 px-1 md:px-2">
-                            ✈️ Immigration & Documents
-                        </h3>
+                        <div class="flex items-center gap-3 mb-rhythm-md px-1">
+                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500 to-ocean-500 flex items-center justify-center shadow-rhythmic-sm">
+                                <GlobeAltIcon class="w-5 h-5 text-white" />
+                            </div>
+                            <h3 class="font-display font-bold text-xl text-gray-800">
+                                Immigration & Documents
+                            </h3>
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                             <button
                                 v-for="section in sections.filter(s => s.category === 'immigration')"
@@ -785,9 +810,14 @@ const backToCards = () => {
 
                     <!-- Family & Financial -->
                     <div>
-                        <h3 class="text-base md:text-lg font-bold text-gray-900 dark:text-white mb-3 md:mb-4 px-1 md:px-2">
-                            👨‍👩‍👧‍👦 Family & Financial
-                        </h3>
+                        <div class="flex items-center gap-3 mb-rhythm-md px-1">
+                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-heritage-500 to-gold-500 flex items-center justify-center shadow-rhythmic-sm">
+                                <UsersIcon class="w-5 h-5 text-white" />
+                            </div>
+                            <h3 class="font-display font-bold text-xl text-gray-800">
+                                Family & Financial
+                            </h3>
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                             <button
                                 v-for="section in sections.filter(s => s.category === 'family-financial')"
@@ -837,9 +867,14 @@ const backToCards = () => {
 
                     <!-- Background & Security -->
                     <div>
-                        <h3 class="text-base md:text-lg font-bold text-gray-900 dark:text-white mb-3 md:mb-4 px-1 md:px-2">
-                            🏛️ Background & Security
-                        </h3>
+                        <div class="flex items-center gap-3 mb-rhythm-md px-1">
+                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-heritage-500 to-sunrise-500 flex items-center justify-center shadow-rhythmic-sm">
+                                <ShieldCheckIcon class="w-5 h-5 text-white" />
+                            </div>
+                            <h3 class="font-display font-bold text-xl text-gray-800">
+                                Background & Security
+                            </h3>
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                             <button
                                 v-for="section in sections.filter(s => s.category === 'background')"
@@ -889,9 +924,14 @@ const backToCards = () => {
 
                     <!-- Account & Settings -->
                     <div>
-                        <h3 class="text-base md:text-lg font-bold text-gray-900 dark:text-white mb-3 md:mb-4 px-1 md:px-2">
-                            ⚙️ Account & Settings
-                        </h3>
+                        <div class="flex items-center gap-3 mb-rhythm-md px-1">
+                            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500 to-growth-500 flex items-center justify-center shadow-rhythmic-sm">
+                                <Cog6ToothIcon class="w-5 h-5 text-white" />
+                            </div>
+                            <h3 class="font-display font-bold text-xl text-gray-800">
+                                Account & Settings
+                            </h3>
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                             <button
                                 v-for="section in sections.filter(s => s.category === 'settings')"
