@@ -64,9 +64,7 @@ return new class extends Migration
             $table->timestamp('cancelled_at')->nullable();
             $table->timestamps();
             
-            // Indexes
-            $table->index('status');
-            $table->index('gateway');
+            // Indexes (status and gateway already indexed above)
             $table->index('created_at');
             $table->index(['user_id', 'status']);
         });

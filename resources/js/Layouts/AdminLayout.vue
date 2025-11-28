@@ -950,6 +950,9 @@ const navigationSections = {
 
           <!-- Right Actions -->
           <div class="flex items-center gap-2">
+            <!-- Language Switcher -->
+            <LanguageSwitcher />
+
             <!-- Mobile Search Icon -->
             <button
               class="lg:hidden p-2.5 text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-xl transition-all transform hover:scale-105"
@@ -971,9 +974,6 @@ const navigationSections = {
                 />
               </svg>
             </button>
-
-            <!-- Language Switcher -->
-            <LanguageSwitcher />
 
             <!-- Real-time Notifications -->
             <div class="relative">
