@@ -14,6 +14,9 @@ use App\Models\AdminImpersonationLog;
 use App\Models\JobApplication;
 use App\Models\ProfileAssessment;
 use App\Models\ProfileView;
+use App\Models\SupportTicket;
+use App\Models\Appointment;
+use App\Models\MarketingCampaign;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -92,6 +95,24 @@ class AdminDashboardController extends Controller
         $publicProfiles = User::where('profile_is_public', true)->count();
         $totalProfileViews = ProfileView::count();
         $profileViewsToday = ProfileView::whereDate('viewed_at', today())->count();
+
+        // Support Tickets Statistics
+        $totalTickets = SupportTicket::count();
+        $ticketsToday = SupportTicket::whereDate('created_at', today())->count();
+        $openTickets = SupportTicket::where('status', 'open')->count();
+        $urgentTickets = SupportTicket::where('priority', 'urgent')->count();
+
+        // Appointments Statistics
+        $totalAppointments = Appointment::count();
+        $appointmentsToday = Appointment::whereDate('appointment_date', today())->count();
+        $pendingAppointments = Appointment::where('status', 'pending')->count();
+        $confirmedAppointments = Appointment::where('status', 'confirmed')->count();
+
+        // Marketing Campaigns Statistics
+        $totalCampaigns = MarketingCampaign::count();
+        $activeCampaigns = MarketingCampaign::where('status', 'active')->count();
+        $completedCampaigns = MarketingCampaign::where('status', 'completed')->count();
+        $campaignReachThisMonth = MarketingCampaign::whereMonth('created_at', now()->month)->sum('target_audience');
 
         // Recent Activities
         $recentUsers = User::with('role')->latest()->take(10)->get(['id', 'name', 'email', 'created_at', 'role_id']);
@@ -219,6 +240,24 @@ class AdminDashboardController extends Controller
                     'total_public' => $publicProfiles,
                     'total_views' => $totalProfileViews,
                     'views_today' => $profileViewsToday,
+                ],
+                'support' => [
+                    'total_tickets' => $totalTickets,
+                    'tickets_today' => $ticketsToday,
+                    'open_tickets' => $openTickets,
+                    'urgent_tickets' => $urgentTickets,
+                ],
+                'appointments' => [
+                    'total_appointments' => $totalAppointments,
+                    'appointments_today' => $appointmentsToday,
+                    'pending_appointments' => $pendingAppointments,
+                    'confirmed_appointments' => $confirmedAppointments,
+                ],
+                'campaigns' => [
+                    'total_campaigns' => $totalCampaigns,
+                    'active_campaigns' => $activeCampaigns,
+                    'completed_campaigns' => $completedCampaigns,
+                    'campaign_reach_month' => $campaignReachThisMonth,
                 ],
             ],
             'recentUsers' => $recentUsers,

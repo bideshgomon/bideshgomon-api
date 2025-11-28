@@ -36,6 +36,7 @@ class TouristVisaApplicationController extends Controller
             'destination_country_id' => 'required|exists:countries,id',
             'intended_travel_date' => 'nullable|date|after:today',
             'duration_days' => 'nullable|integer|min:1|max:365',
+            'profession' => 'required|string|in:Student,Job Holder,Business Person',
             'user_notes' => 'nullable|string|max:5000',
         ]);
 
@@ -61,6 +62,7 @@ class TouristVisaApplicationController extends Controller
                         'destination_country_id' => $validated['destination_country_id'],
                         'intended_travel_date' => $validated['intended_travel_date'] ?? null,
                         'duration_days' => $validated['duration_days'] ?? null,
+                        'profession' => $validated['profession'] ?? null,
                         'user_notes' => $validated['user_notes'] ?? null,
                     ],
                 ]);
@@ -123,6 +125,7 @@ class TouristVisaApplicationController extends Controller
             'user_notes' => 'nullable|string|max:5000',
             'intended_travel_date' => 'nullable|date|after:today',
             'duration_days' => 'nullable|integer|min:1|max:365',
+            'profession' => 'nullable|string|in:Student,Job Holder,Business Person',
         ]);
 
         if (in_array($touristVisaApplication->status, ['approved', 'rejected'])) {

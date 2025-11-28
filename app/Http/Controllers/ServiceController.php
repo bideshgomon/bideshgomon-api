@@ -51,8 +51,42 @@ class ServiceController extends Controller
             ->where('is_active', true)
             ->firstOrFail();
 
+        // Get all countries from database
+        $countries = \App\Models\Country::select('id', 'name', 'iso_code_2 as code', 'flag_emoji as flag')
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
+
+        // Get professions list
+        $professions = [
+            'Student',
+            'Engineer',
+            'Doctor',
+            'Teacher',
+            'Business Owner',
+            'IT Professional',
+            'Accountant',
+            'Manager',
+            'Consultant',
+            'Lawyer',
+            'Architect',
+            'Designer',
+            'Nurse',
+            'Chef',
+            'Artist',
+            'Writer',
+            'Freelancer',
+            'Government Employee',
+            'Private Employee',
+            'Retired',
+            'Self Employed',
+            'Other'
+        ];
+
         return Inertia::render('Services/Show', [
             'service' => $service,
+            'countries' => $countries,
+            'professions' => $professions,
         ]);
     }
 }

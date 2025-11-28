@@ -198,9 +198,6 @@ class ProfileController extends Controller
             'permanent_division' => ['nullable', 'string', 'max:100'],
             'permanent_district' => ['nullable', 'string', 'max:100'],
             'nid' => ['nullable', 'string', 'max:20'],
-            'passport_number' => ['nullable', 'string', 'max:20'],
-            'passport_issue_date' => ['nullable', 'date'],
-            'passport_expiry_date' => ['nullable', 'date', 'after:passport_issue_date'],
             // Financial fields (33 fields)
             'employer_name' => ['nullable', 'string', 'max:255'],
             'employer_address' => ['nullable', 'string', 'max:255'],

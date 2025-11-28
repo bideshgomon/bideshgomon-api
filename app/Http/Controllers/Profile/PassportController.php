@@ -17,36 +17,9 @@ class PassportController extends Controller
     public function index()
     {
         $passports = Auth::user()->passports()
-            ->orderBy('is_primary', 'desc')
+            ->orderBy('is_current_passport', 'desc')
             ->orderBy('expiry_date', 'desc')
-            ->get()
-            ->map(function ($passport) {
-                return [
-                    'id' => $passport->id,
-                    'passport_number' => $passport->passport_number,
-                    'full_name_on_passport' => $passport->full_name_on_passport,
-                    'issuing_country' => $passport->issuing_country,
-                    'nationality' => $passport->nationality,
-                    'date_of_birth' => $passport->date_of_birth,
-                    'place_of_birth' => $passport->place_of_birth,
-                    'issue_date' => $passport->issue_date,
-                    'expiry_date' => $passport->expiry_date,
-                    'issuing_authority' => $passport->issuing_authority,
-                    'passport_type' => $passport->passport_type,
-                    'mrz_code' => $passport->mrz_code,
-                    'pages_count' => $passport->pages_count,
-                    'is_primary' => $passport->is_primary,
-                    'scan_front_upload' => $passport->scan_front_upload,
-                    'scan_back_upload' => $passport->scan_back_upload,
-                    'scan_bio_page_upload' => $passport->scan_bio_page_upload,
-                    'notes' => $passport->notes,
-                    'is_valid' => $passport->isValid(),
-                    'is_expiring_soon' => $passport->expiresWithinMonths(6),
-                    'days_until_expiry' => $passport->daysUntilExpiry(),
-                    'created_at' => $passport->created_at,
-                    'updated_at' => $passport->updated_at,
-                ];
-            });
+            ->get();
 
         return Inertia::render('Profile/PassportManagement', [
             'passports' => $passports,
@@ -65,47 +38,39 @@ class PassportController extends Controller
                 'max:50',
                 'unique:user_passports,passport_number,NULL,id,user_id,' . Auth::id()
             ],
-            'full_name_on_passport' => 'required|string|max:255',
-            'issuing_country' => 'required|string|max:100',
-            'nationality' => 'required|string|max:100',
-            'date_of_birth' => 'required|date',
-            'place_of_birth' => 'required|string|max:255',
+            'passport_type' => 'required|in:regular,diplomatic,official,service,emergency',
+            'issuing_country' => 'required|string|max:2',
+            'issuing_authority' => 'nullable|string|max:255',
             'issue_date' => 'required|date',
             'expiry_date' => 'required|date|after:issue_date',
-            'issuing_authority' => 'nullable|string|max:255',
-            'passport_type' => 'required|in:regular,diplomatic,official,emergency',
-            'mrz_code' => 'nullable|string|max:255',
-            'pages_count' => 'nullable|integer|min:20|max:100',
-            'is_primary' => 'boolean',
-            'scan_front' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
-            'scan_back' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
-            'scan_bio_page' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'place_of_issue' => 'nullable|string|max:255',
+            'is_current_passport' => 'boolean',
+            'is_lost_or_stolen' => 'boolean',
+            'reported_lost_date' => 'nullable|date',
+            'surname' => 'nullable|string|max:255',
+            'given_names' => 'nullable|string|max:255',
+            'nationality' => 'nullable|string|max:2',
+            'sex' => 'nullable|in:M,F,X',
+            'date_of_birth' => 'nullable|date',
+            'place_of_birth' => 'nullable|string|max:255',
+            'passport_scan' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'additional_pages' => 'nullable|file|mimes:pdf|max:10240',
             'notes' => 'nullable|string|max:1000',
         ]);
 
-        // If this is marked as primary, unset other primary passports
-        if ($validated['is_primary'] ?? false) {
-            Auth::user()->passports()->update(['is_primary' => false]);
-        }
-
         // Handle file uploads
-        if ($request->hasFile('scan_front')) {
-            $validated['scan_front_upload'] = $request->file('scan_front')
+        if ($request->hasFile('passport_scan')) {
+            $validated['passport_scan_path'] = $request->file('passport_scan')
                 ->store('passports/scans', 'public');
+            unset($validated['passport_scan']);
         }
 
-        if ($request->hasFile('scan_back')) {
-            $validated['scan_back_upload'] = $request->file('scan_back')
-                ->store('passports/scans', 'public');
+        if ($request->hasFile('additional_pages')) {
+            $validated['additional_pages_path'] = $request->file('additional_pages')
+                ->store('passports/pages', 'public');
+            unset($validated['additional_pages']);
         }
 
-        if ($request->hasFile('scan_bio_page')) {
-            $validated['scan_bio_page_upload'] = $request->file('scan_bio_page')
-                ->store('passports/scans', 'public');
-        }
-
-        // Remove file keys and add user_id
-        unset($validated['scan_front'], $validated['scan_back'], $validated['scan_bio_page']);
         $validated['user_id'] = Auth::id();
 
         $passport = UserPassport::create($validated);
@@ -127,59 +92,44 @@ class PassportController extends Controller
                 'max:50',
                 'unique:user_passports,passport_number,' . $id . ',id,user_id,' . Auth::id()
             ],
-            'full_name_on_passport' => 'required|string|max:255',
-            'issuing_country' => 'required|string|max:100',
-            'nationality' => 'required|string|max:100',
-            'date_of_birth' => 'required|date',
-            'place_of_birth' => 'required|string|max:255',
+            'passport_type' => 'required|in:regular,diplomatic,official,service,emergency',
+            'issuing_country' => 'required|string|max:2',
+            'issuing_authority' => 'nullable|string|max:255',
             'issue_date' => 'required|date',
             'expiry_date' => 'required|date|after:issue_date',
-            'issuing_authority' => 'nullable|string|max:255',
-            'passport_type' => 'required|in:regular,diplomatic,official,emergency',
-            'mrz_code' => 'nullable|string|max:255',
-            'pages_count' => 'nullable|integer|min:20|max:100',
-            'is_primary' => 'boolean',
-            'scan_front' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
-            'scan_back' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
-            'scan_bio_page' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'place_of_issue' => 'nullable|string|max:255',
+            'is_current_passport' => 'boolean',
+            'is_lost_or_stolen' => 'boolean',
+            'reported_lost_date' => 'nullable|date',
+            'surname' => 'nullable|string|max:255',
+            'given_names' => 'nullable|string|max:255',
+            'nationality' => 'nullable|string|max:2',
+            'sex' => 'nullable|in:M,F,X',
+            'date_of_birth' => 'nullable|date',
+            'place_of_birth' => 'nullable|string|max:255',
+            'passport_scan' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'additional_pages' => 'nullable|file|mimes:pdf|max:10240',
             'notes' => 'nullable|string|max:1000',
         ]);
 
-        // If this is marked as primary, unset other primary passports
-        if ($validated['is_primary'] ?? false) {
-            Auth::user()->passports()->where('id', '!=', $id)->update(['is_primary' => false]);
-        }
-
         // Handle file uploads
-        if ($request->hasFile('scan_front')) {
-            // Delete old file if exists
-            if ($passport->scan_front_upload) {
-                Storage::disk('public')->delete($passport->scan_front_upload);
+        if ($request->hasFile('passport_scan')) {
+            if ($passport->passport_scan_path) {
+                Storage::disk('public')->delete($passport->passport_scan_path);
             }
-            $validated['scan_front_upload'] = $request->file('scan_front')
+            $validated['passport_scan_path'] = $request->file('passport_scan')
                 ->store('passports/scans', 'public');
+            unset($validated['passport_scan']);
         }
 
-        if ($request->hasFile('scan_back')) {
-            // Delete old file if exists
-            if ($passport->scan_back_upload) {
-                Storage::disk('public')->delete($passport->scan_back_upload);
+        if ($request->hasFile('additional_pages')) {
+            if ($passport->additional_pages_path) {
+                Storage::disk('public')->delete($passport->additional_pages_path);
             }
-            $validated['scan_back_upload'] = $request->file('scan_back')
-                ->store('passports/scans', 'public');
+            $validated['additional_pages_path'] = $request->file('additional_pages')
+                ->store('passports/pages', 'public');
+            unset($validated['additional_pages']);
         }
-
-        if ($request->hasFile('scan_bio_page')) {
-            // Delete old file if exists
-            if ($passport->scan_bio_page_upload) {
-                Storage::disk('public')->delete($passport->scan_bio_page_upload);
-            }
-            $validated['scan_bio_page_upload'] = $request->file('scan_bio_page')
-                ->store('passports/scans', 'public');
-        }
-
-        // Remove file keys
-        unset($validated['scan_front'], $validated['scan_back'], $validated['scan_bio_page']);
 
         $passport->update($validated);
 
@@ -207,14 +157,11 @@ class PassportController extends Controller
         }
 
         // Delete uploaded files
-        if ($passport->scan_front_upload) {
-            Storage::disk('public')->delete($passport->scan_front_upload);
+        if ($passport->passport_scan_path) {
+            Storage::disk('public')->delete($passport->passport_scan_path);
         }
-        if ($passport->scan_back_upload) {
-            Storage::disk('public')->delete($passport->scan_back_upload);
-        }
-        if ($passport->scan_bio_page_upload) {
-            Storage::disk('public')->delete($passport->scan_bio_page_upload);
+        if ($passport->additional_pages_path) {
+            Storage::disk('public')->delete($passport->additional_pages_path);
         }
 
         $passport->delete();

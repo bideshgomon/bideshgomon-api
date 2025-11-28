@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\UserNotification;
+use App\Services\EmailNotificationService;
 use App\Services\WalletService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -11,10 +13,12 @@ use Inertia\Response;
 class WalletController extends Controller
 {
     protected WalletService $walletService;
+    protected EmailNotificationService $emailService;
 
-    public function __construct(WalletService $walletService)
+    public function __construct(WalletService $walletService, EmailNotificationService $emailService)
     {
         $this->walletService = $walletService;
+        $this->emailService = $emailService;
     }
 
     /**
@@ -31,13 +35,29 @@ class WalletController extends Controller
         }
 
         $wallet = $user->wallet;
-        $recentTransactions = $wallet->transactions()->take(10)->get();
+        $recentTransactions = $wallet->transactions()->latest()->take(10)->get();
+        
+        // Calculate statistics
+        $totalIn = $wallet->transactions()
+            ->where('transaction_type', 'credit')
+            ->where('status', 'completed')
+            ->sum('amount');
+            
+        $totalOut = $wallet->transactions()
+            ->where('transaction_type', 'debit')
+            ->where('status', 'completed')
+            ->sum('amount');
+            
+        $transactionCount = $wallet->transactions()->count();
 
         return Inertia::render('Wallet/Index', [
             'wallet' => $wallet,
             'balance' => (float) $wallet->balance,
             'formattedBalance' => $wallet->formatted_balance,
             'recentTransactions' => $recentTransactions,
+            'totalIn' => (float) $totalIn,
+            'totalOut' => (float) $totalOut,
+            'transactionCount' => $transactionCount,
         ]);
     }
 
@@ -83,7 +103,7 @@ class WalletController extends Controller
     {
         $validated = $request->validate([
             'amount' => 'required|numeric|min:100|max:100000',
-            'payment_method' => 'required|in:bKash,Nagad,Rocket,Bank,Card',
+            'gateway' => 'required|in:sslcommerz,bkash,nagad',
         ]);
 
         $user = $request->user();
@@ -95,29 +115,19 @@ class WalletController extends Controller
         }
 
         try {
-            // Create payment reference
-            $methodPrefix = match($validated['payment_method']) {
-                'bKash' => 'BKS',
-                'Nagad' => 'NGD',
-                'Rocket' => 'RKT',
-                'Bank' => 'BNK',
-                'Card' => 'CRD',
-            };
+            // Redirect to payment gateway initiation
+            $gateway = $validated['gateway'];
+            $route = "payment.{$gateway}.initiate";
             
-            $referenceId = $methodPrefix . rand(100000, 999999);
+            return redirect()->route($route, [
+                'amount' => $validated['amount'],
+                'customer_name' => $user->name,
+                'customer_email' => $user->email,
+                'customer_phone' => $user->phone_number ?? $user->email,
+            ]);
 
-            // Add funds to wallet
-            $this->walletService->creditWallet(
-                wallet: $user->wallet,
-                amount: $validated['amount'],
-                description: "Add funds via {$validated['payment_method']}",
-                referenceType: 'payment',
-                referenceId: $referenceId,
-            );
-
-            return redirect()->back()->with('success', "৳ {$validated['amount']} added successfully!");
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to add funds. Please try again.');
+            return redirect()->back()->with('error', 'Failed to initiate payment. Please try again.');
         }
     }
 
@@ -153,6 +163,31 @@ class WalletController extends Controller
                 description: "Withdrawal to {$validated['account_type']} ({$validated['account_number']})",
                 referenceType: 'withdrawal',
                 referenceId: $referenceId,
+            );
+
+            // Create notification
+            UserNotification::create([
+                'user_id' => $user->id,
+                'type' => 'withdrawal_completed',
+                'title' => 'Withdrawal Completed 💸',
+                'body' => "৳ {$validated['amount']} has been withdrawn to your {$validated['account_type']} account.",
+                'icon' => '💸',
+                'color' => 'blue',
+                'priority' => 'high',
+                'action_url' => route('wallet.transactions'),
+            ]);
+
+            // Send email notification
+            $this->emailService->sendFromTemplate(
+                'withdrawal_completed',
+                $user->email,
+                [
+                    'user_name' => $user->name,
+                    'amount' => number_format($validated['amount'], 2),
+                    'account_type' => $validated['account_type'],
+                    'balance' => number_format($user->wallet->fresh()->balance, 2),
+                ],
+                $user->id
             );
 
             return redirect()->back()->with('success', "৳ {$validated['amount']} withdrawal successful!");

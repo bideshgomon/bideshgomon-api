@@ -104,6 +104,21 @@ class VisaRequirementController extends Controller
                 ->limit(1);
         })->get(['id', 'name']);
 
+        // Get countries from main data management
+        $countries = \App\Models\Country::select('id', 'name', 'iso_code_2 as code', 'iso_code_3', 'flag_emoji as flag')
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get()
+            ->map(fn($country) => [
+                'id' => $country->id,
+                'name' => $country->name,
+                'code' => $country->code,
+                'iso_code_3' => $country->iso_code_3,
+                'flag' => $country->flag,
+                'label' => "{$country->flag} {$country->name}",
+                'value' => $country->name,
+            ]);
+
         $professionCategories = [
             'employed' => 'Employed/Salaried',
             'self_employed' => 'Self-Employed',
@@ -114,9 +129,18 @@ class VisaRequirementController extends Controller
             'homemaker' => 'Homemaker',
         ];
 
+        // Get professions list - most common 3 professions
+        $professions = [
+            'Job Holder',
+            'Business Person',
+            'Student',
+        ];
+
         return Inertia::render('Admin/VisaRequirements/Create', [
             'serviceModules' => $serviceModules,
+            'countries' => $countries,
             'professionCategories' => $professionCategories,
+            'professions' => $professions,
         ]);
     }
 
@@ -127,11 +151,16 @@ class VisaRequirementController extends Controller
     {
         $validated = $request->validate([
             'service_module_id' => 'nullable|exists:service_modules,id',
-            'country' => 'required|string|max:255',
-            'country_code' => 'required|string|max:3',
+            'country_id' => 'required|exists:countries,id',
+            'country' => 'nullable|string|max:255',
+            'country_code' => 'nullable|string|max:3',
+            'profession' => 'nullable|string|max:255',
             'visa_type' => 'required|string|max:255',
             'visa_category' => 'nullable|string|max:255',
-            'general_requirements' => 'required|string',
+            'general_requirements' => 'nullable|string',
+            'required_documents' => 'required|array',
+            'required_documents.*' => 'string',
+            'profession_specific_docs' => 'required|array',
             'eligibility_criteria' => 'nullable|string',
             'processing_time_info' => 'nullable|string',
             'validity_info' => 'nullable|string',
@@ -156,6 +185,15 @@ class VisaRequirementController extends Controller
             'application_process' => 'nullable|string',
             'is_active' => 'boolean',
         ]);
+
+        // Auto-populate country name and code from countries table
+        if ($request->filled('country_id')) {
+            $country = \App\Models\Country::find($request->country_id);
+            if ($country) {
+                $validated['country'] = $country->name;
+                $validated['country_code'] = $country->iso_code_2;
+            }
+        }
 
         $visaRequirement = VisaRequirement::create($validated);
 
@@ -178,6 +216,21 @@ class VisaRequirementController extends Controller
                 ->limit(1);
         })->get(['id', 'name']);
 
+        // Get countries from main data management
+        $countries = \App\Models\Country::select('id', 'name', 'iso_code_2 as code', 'iso_code_3', 'flag_emoji as flag')
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get()
+            ->map(fn($country) => [
+                'id' => $country->id,
+                'name' => $country->name,
+                'code' => $country->code,
+                'iso_code_3' => $country->iso_code_3,
+                'flag' => $country->flag,
+                'label' => "{$country->flag} {$country->name}",
+                'value' => $country->name,
+            ]);
+
         $professionCategories = [
             'employed' => 'Employed/Salaried',
             'self_employed' => 'Self-Employed',
@@ -188,10 +241,19 @@ class VisaRequirementController extends Controller
             'homemaker' => 'Homemaker',
         ];
 
+        // Get professions list - most common 3 professions
+        $professions = [
+            'Job Holder',
+            'Business Person',
+            'Student',
+        ];
+
         return Inertia::render('Admin/VisaRequirements/Edit', [
             'visaRequirement' => $visaRequirement,
             'serviceModules' => $serviceModules,
+            'countries' => $countries,
             'professionCategories' => $professionCategories,
+            'professions' => $professions,
         ]);
     }
 
@@ -202,11 +264,13 @@ class VisaRequirementController extends Controller
     {
         $validated = $request->validate([
             'service_module_id' => 'nullable|exists:service_modules,id',
-            'country' => 'required|string|max:255',
-            'country_code' => 'required|string|max:3',
+            'country_id' => 'required|exists:countries,id',
+            'country' => 'nullable|string|max:255',
+            'country_code' => 'nullable|string|max:3',
+            'profession' => 'nullable|string|max:255',
             'visa_type' => 'required|string|max:255',
             'visa_category' => 'nullable|string|max:255',
-            'general_requirements' => 'required|string',
+            'general_requirements' => 'nullable|string',
             'eligibility_criteria' => 'nullable|string',
             'processing_time_info' => 'nullable|string',
             'validity_info' => 'nullable|string',
@@ -231,6 +295,15 @@ class VisaRequirementController extends Controller
             'application_process' => 'nullable|string',
             'is_active' => 'boolean',
         ]);
+
+        // Auto-populate country name and code from countries table
+        if ($request->filled('country_id')) {
+            $country = \App\Models\Country::find($request->country_id);
+            if ($country) {
+                $validated['country'] = $country->name;
+                $validated['country_code'] = $country->iso_code_2;
+            }
+        }
 
         $visaRequirement->update($validated);
 

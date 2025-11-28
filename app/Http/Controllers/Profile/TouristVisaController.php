@@ -102,33 +102,64 @@ class TouristVisaController extends Controller
      */
     public function getRequirements(Request $request, $countryId)
     {
-        $country = Country::find($countryId);
+        $country = Country::with([
+            'documentRequirements' => function($query) use ($request) {
+                $query->where('visa_type', 'tourist')
+                    ->orderBy('is_mandatory', 'desc')
+                    ->orderBy('sort_order');
+                
+                // Filter by profession if provided
+                if ($request->profession) {
+                    $query->where(function($q) use ($request) {
+                        $q->whereNull('profession_category')
+                          ->orWhere('profession_category', $request->profession);
+                    });
+                }
+            },
+            'documentRequirements.document.category'
+        ])->find($countryId);
         
         if (!$country) {
             return response()->json(['error' => 'Country not found'], 404);
         }
 
-        // Return basic visa information
-        // In a full implementation, this would integrate with VisaRequirementService
+        // Group requirements by mandatory/optional
+        $mandatoryDocs = $country->documentRequirements
+            ->where('is_mandatory', true)
+            ->map(function($req) {
+                return [
+                    'id' => $req->document->id,
+                    'name' => $req->document->document_name,
+                    'category' => $req->document->category->name ?? 'General',
+                    'description' => $req->document->description,
+                    'specific_notes' => $req->specific_notes,
+                    'profession_category' => $req->profession_category,
+                ];
+            })->values();
+
+        $optionalDocs = $country->documentRequirements
+            ->where('is_mandatory', false)
+            ->map(function($req) {
+                return [
+                    'id' => $req->document->id,
+                    'name' => $req->document->document_name,
+                    'category' => $req->document->category->name ?? 'General',
+                    'description' => $req->document->description,
+                    'specific_notes' => $req->specific_notes,
+                    'profession_category' => $req->profession_category,
+                ];
+            })->values();
+
         return response()->json([
             'success' => true,
-            'country' => $country,
-            'requirements' => [
-                'passport_validity_months' => 6,
-                'processing_time_days' => '7-14',
-                'required_documents' => [
-                    'Valid passport',
-                    'Recent passport photos',
-                    'Bank statements',
-                    'Flight itinerary',
-                    'Hotel reservations',
-                ],
+            'country' => [
+                'id' => $country->id,
+                'name' => $country->name,
             ],
-            'fees' => [
-                'base_fee' => 8500,
-                'service_charge' => 3500,
-                'total' => 12000,
-                'currency' => 'BDT',
+            'requirements' => [
+                'mandatory_documents' => $mandatoryDocs,
+                'optional_documents' => $optionalDocs,
+                'total_documents' => $mandatoryDocs->count() + $optionalDocs->count(),
             ],
         ]);
     }

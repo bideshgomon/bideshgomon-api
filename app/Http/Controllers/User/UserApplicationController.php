@@ -25,6 +25,10 @@ class UserApplicationController extends Controller
             'travel_dates.departure' => 'required|date',
             'travel_dates.return' => 'required|date|after:travel_dates.departure',
             'notes' => 'nullable|string',
+            'documents' => 'nullable|array',
+            'documents.*' => 'file|max:10240', // 10MB max per file
+            'document_types' => 'nullable|array',
+            'document_types.*' => 'string',
         ]);
 
         $user = Auth::user();
@@ -55,6 +59,25 @@ class UserApplicationController extends Controller
             'application_data' => json_encode($applicationData),
             'special_notes' => $request->notes,
         ]);
+
+        // Handle document uploads with types
+        if ($request->hasFile('documents')) {
+            $documentTypes = $request->input('document_types', []);
+            
+            foreach ($request->file('documents') as $key => $file) {
+                $fileName = time() . '_' . $key . '_' . $file->getClientOriginalName();
+                $filePath = $file->storeAs('applications/' . $application->id, $fileName, 'public');
+
+                $application->documents()->create([
+                    'document_type' => $documentTypes[$key] ?? 'Other',
+                    'file_name' => $file->getClientOriginalName(),
+                    'file_path' => $filePath,
+                    'mime_type' => $file->getMimeType(),
+                    'file_size' => $file->getSize(),
+                    'verification_status' => 'pending',
+                ]);
+            }
+        }
 
         return redirect()->route('user.applications.index')
             ->with('success', 'Application submitted successfully! Agencies will send you quotes soon.');
@@ -99,7 +122,7 @@ class UserApplicationController extends Controller
     {
         $user = Auth::user();
 
-        $application = ServiceApplication::with(['serviceModule', 'quotes.agency'])
+        $application = ServiceApplication::with(['serviceModule', 'quotes.agency', 'documents'])
             ->where('user_id', $user->id)
             ->findOrFail($id);
 

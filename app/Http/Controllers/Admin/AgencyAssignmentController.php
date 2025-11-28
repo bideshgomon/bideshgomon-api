@@ -65,10 +65,31 @@ class AgencyAssignmentController extends Controller
     /**
      * Show form to assign agency to country.
      */
-    public function create()
+    public function create(Request $request)
     {
-        $agencies = User::where('role', 'agency')
-            ->where('is_active', true)
+        // Get all agencies by default
+        $agenciesQuery = User::whereHas('role', function($query) {
+            $query->where('slug', 'agency');
+        });
+
+        // Filter agencies by service module if provided
+        if ($request->filled('service_module_id')) {
+            $serviceModuleId = $request->service_module_id;
+            
+            // Get agencies already assigned to this service module
+            $assignedAgencyIds = AgencyCountryAssignment::where('service_module_id', $serviceModuleId)
+                ->distinct()
+                ->pluck('agency_id');
+            
+            // Optionally show only assigned or unassigned agencies
+            if ($request->filter === 'assigned') {
+                $agenciesQuery->whereIn('id', $assignedAgencyIds);
+            } elseif ($request->filter === 'unassigned') {
+                $agenciesQuery->whereNotIn('id', $assignedAgencyIds);
+            }
+        }
+
+        $agencies = $agenciesQuery->with('agency')
             ->orderBy('name')
             ->get(['id', 'name', 'email']);
 
@@ -93,18 +114,24 @@ class AgencyAssignmentController extends Controller
             'serviceModules' => $serviceModules,
             'countries' => $countries,
             'visaTypes' => $visaTypes,
+            'filters' => $request->only(['service_module_id', 'filter']),
         ]);
     }
 
     /**
      * Store new agency assignment.
+     * Supports single or multiple country assignments.
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
             'agency_id' => 'required|exists:users,id',
-            'service_module_id' => 'required|exists:service_modules,id',
+            'service_module_id' => 'nullable|exists:service_modules,id',
+            'service_module_ids' => 'nullable|array',
+            'service_module_ids.*' => 'exists:service_modules,id',
             'country_id' => 'nullable|exists:countries,id',
+            'country_ids' => 'nullable|array',
+            'country_ids.*' => 'exists:countries,id',
             'country' => 'nullable|string|max:255',
             'country_code' => 'nullable|string|max:3',
             'visa_type_id' => 'nullable|exists:visa_types,id',
@@ -119,40 +146,197 @@ class AgencyAssignmentController extends Controller
             'assignment_notes' => 'nullable|string',
         ]);
 
-        // Set country name and code if country_id provided
-        if ($validated['country_id']) {
-            $country = Country::find($validated['country_id']);
-            $validated['country'] = $country->name;
-            $validated['country_code'] = $country->iso_code_2;
+        // Check if multiple services should be assigned
+        $serviceIds = $validated['service_module_ids'] ?? [];
+        $countryIds = $validated['country_ids'] ?? [];
+        
+        // Handle multiple services
+        if (!empty($serviceIds) && count($serviceIds) > 0) {
+            $totalAssignments = 0;
+            
+            foreach ($serviceIds as $serviceId) {
+                $serviceModule = ServiceModule::find($serviceId);
+                if (!$serviceModule) continue;
+                
+                // If multiple countries too, create assignment for each combination
+                if (!empty($countryIds) && count($countryIds) > 0) {
+                    foreach ($countryIds as $countryId) {
+                        $country = Country::find($countryId);
+                        if (!$country) continue;
+                        
+                        $assignmentData = $validated;
+                        $assignmentData['service_module_id'] = $serviceId;
+                        $assignmentData['country_id'] = $country->id;
+                        $assignmentData['country'] = $country->name;
+                        $assignmentData['country_code'] = $country->iso_code_2;
+                        
+                        if ($validated['visa_type_id']) {
+                            $visaType = VisaType::find($validated['visa_type_id']);
+                            $assignmentData['visa_type'] = $visaType->name;
+                        }
+                        
+                        $assignmentData['assigned_by'] = auth()->id();
+                        $assignmentData['assigned_at'] = now();
+                        unset($assignmentData['country_ids'], $assignmentData['service_module_ids']);
+                        
+                        try {
+                            AgencyCountryAssignment::create($assignmentData);
+                            $totalAssignments++;
+                        } catch (\Exception $e) {
+                            \Log::error('Failed to create assignment', [
+                                'service' => $serviceModule->name,
+                                'country' => $country->name,
+                                'error' => $e->getMessage()
+                            ]);
+                        }
+                    }
+                } else {
+                    // Multiple services, single or no country
+                    $assignmentData = $validated;
+                    $assignmentData['service_module_id'] = $serviceId;
+                    
+                    if ($validated['country_id']) {
+                        $country = Country::find($validated['country_id']);
+                        $assignmentData['country'] = $country->name;
+                        $assignmentData['country_code'] = $country->iso_code_2;
+                    }
+                    
+                    if ($validated['visa_type_id']) {
+                        $visaType = VisaType::find($validated['visa_type_id']);
+                        $assignmentData['visa_type'] = $visaType->name;
+                    }
+                    
+                    $assignmentData['assigned_by'] = auth()->id();
+                    $assignmentData['assigned_at'] = now();
+                    unset($assignmentData['country_ids'], $assignmentData['service_module_ids']);
+                    
+                    try {
+                        AgencyCountryAssignment::create($assignmentData);
+                        $totalAssignments++;
+                    } catch (\Exception $e) {
+                        \Log::error('Failed to create assignment', [
+                            'service' => $serviceModule->name,
+                            'error' => $e->getMessage()
+                        ]);
+                    }
+                }
+            }
+            
+            if ($totalAssignments === 0) {
+                return back()->with('error', 'Failed to create any assignments. Please check the logs.');
+            }
+            
+            $serviceCount = count($serviceIds);
+            $countryCount = count($countryIds) > 0 ? count($countryIds) : 1;
+            
+            return redirect()
+                ->route('admin.agency-assignments.index')
+                ->with('success', "Successfully created {$totalAssignments} assignments ({$serviceCount} services × {$countryCount} countries)!");
         }
+        
+        // Check if multiple countries should be assigned (single service)
+        $countryIds = $validated['country_ids'] ?? [];
+        
+        if (!empty($countryIds) && count($countryIds) > 0) {
+            // Bulk assignment for multiple countries
+            $assignments = [];
+            $successCount = 0;
+            
+            foreach ($countryIds as $countryId) {
+                $country = Country::find($countryId);
+                if (!$country) continue;
+                
+                $assignmentData = $validated;
+                $assignmentData['country_id'] = $country->id;
+                $assignmentData['country'] = $country->name;
+                $assignmentData['country_code'] = $country->iso_code_2;
+                
+                // Set visa type name if visa_type_id provided
+                if ($validated['visa_type_id']) {
+                    $visaType = VisaType::find($validated['visa_type_id']);
+                    $assignmentData['visa_type'] = $visaType->name;
+                }
+                
+                $assignmentData['assigned_by'] = auth()->id();
+                $assignmentData['assigned_at'] = now();
+                
+                // Remove country_ids from the data before creating
+                unset($assignmentData['country_ids']);
+                
+                try {
+                    $assignment = AgencyCountryAssignment::create($assignmentData);
+                    
+                    // Auto-assign existing visa requirements if applicable
+                    if ($request->boolean('auto_assign_requirements', true) && $assignmentData['country'] && $assignmentData['visa_type']) {
+                        VisaRequirement::where('country', $assignmentData['country'])
+                            ->where('visa_type', $assignmentData['visa_type'])
+                            ->whereNull('managed_by_agency')
+                            ->update([
+                                'managed_by_agency' => $validated['agency_id'],
+                                'agency_assigned_at' => now(),
+                                'platform_commission_rate' => $validated['platform_commission_rate'],
+                                'agency_can_edit' => $validated['can_edit_requirements'] ?? true,
+                            ]);
+                    }
+                    
+                    $assignments[] = $assignment;
+                    $successCount++;
+                } catch (\Exception $e) {
+                    // Log error but continue with other countries
+                    \Log::error('Failed to create assignment for country ' . $country->name, [
+                        'error' => $e->getMessage()
+                    ]);
+                }
+            }
+            
+            if ($successCount === 0) {
+                return back()->with('error', 'Failed to create any assignments. Please check the logs.');
+            }
+            
+            return redirect()
+                ->route('admin.agency-assignments.index')
+                ->with('success', "Successfully assigned agency to {$successCount} countries!");
+                
+        } else {
+            // Single country assignment (original logic)
+            // Set country name and code if country_id provided
+            if ($validated['country_id']) {
+                $country = Country::find($validated['country_id']);
+                $validated['country'] = $country->name;
+                $validated['country_code'] = $country->iso_code_2;
+            }
 
-        // Set visa type name if visa_type_id provided
-        if ($validated['visa_type_id']) {
-            $visaType = VisaType::find($validated['visa_type_id']);
-            $validated['visa_type'] = $visaType->name;
+            // Set visa type name if visa_type_id provided
+            if ($validated['visa_type_id']) {
+                $visaType = VisaType::find($validated['visa_type_id']);
+                $validated['visa_type'] = $visaType->name;
+            }
+
+            $validated['assigned_by'] = auth()->id();
+            $validated['assigned_at'] = now();
+            
+            // Remove country_ids from the data
+            unset($validated['country_ids']);
+
+            $assignment = AgencyCountryAssignment::create($validated);
+
+            // Auto-assign existing visa requirements if applicable
+            if ($request->boolean('auto_assign_requirements', true) && $validated['country'] && $validated['visa_type']) {
+                VisaRequirement::where('country', $validated['country'])
+                    ->where('visa_type', $validated['visa_type'])
+                    ->whereNull('managed_by_agency')
+                    ->update([
+                        'managed_by_agency' => $validated['agency_id'],
+                        'agency_assigned_at' => now(),
+                        'platform_commission_rate' => $validated['platform_commission_rate'],
+                        'agency_can_edit' => $validated['can_edit_requirements'] ?? true,
+                    ]);
+            }
+
+            return redirect()
+                ->route('admin.agency-assignments.show', $assignment)
+                ->with('success', 'Agency assigned to service successfully!');
         }
-
-        $validated['assigned_by'] = auth()->id();
-        $validated['assigned_at'] = now();
-
-        $assignment = AgencyCountryAssignment::create($validated);
-
-        // Auto-assign existing visa requirements if applicable
-        if ($request->boolean('auto_assign_requirements', true) && $validated['country'] && $validated['visa_type']) {
-            VisaRequirement::where('country', $validated['country'])
-                ->where('visa_type', $validated['visa_type'])
-                ->whereNull('managed_by_agency')
-                ->update([
-                    'managed_by_agency' => $validated['agency_id'],
-                    'agency_assigned_at' => now(),
-                    'platform_commission_rate' => $validated['platform_commission_rate'],
-                    'agency_can_edit' => $validated['can_edit_requirements'] ?? true,
-                ]);
-        }
-
-        return redirect()
-            ->route('admin.agency-assignments.show', $assignment)
-            ->with('success', 'Agency assigned to service successfully!');
     }
 
     /**
