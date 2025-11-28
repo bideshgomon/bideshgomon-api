@@ -89,7 +89,7 @@
                         </div>
 
                         <RhythmicCard v-else variant="light" class="text-center py-rhythm-xl">
-                            <div class="w-16 h-16 bg-gradient-to-br from-ocean-500 to-sky-500 rounded-full flex items-center justify-center mx-auto mb-rhythm-md shadow-rhythmic-md">
+                            <div class="w-16 h-16 bg-ocean-500 rounded-full flex items-center justify-center mx-auto mb-rhythm-md shadow-rhythmic-md">
                                 <ChatBubbleLeftRightIcon class="w-8 h-8 text-white" />
                             </div>
                             <h3 class="font-display font-bold text-lg text-gray-900 mb-rhythm-xs">No support tickets yet</h3>

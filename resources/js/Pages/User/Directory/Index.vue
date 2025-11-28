@@ -3,10 +3,10 @@
 
     <AuthenticatedLayout>
         <!-- Hero Section -->
-        <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+        <div class="bg-ocean-500 text-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <h1 class="text-4xl font-bold mb-4">Directory</h1>
-                <p class="text-xl text-blue-100 mb-8">Find embassies, airlines, training centers, and more</p>
+                <p class="text-xl mb-8">Find embassies, airlines, training centers, and more</p>
                 
                 <!-- Search Bar -->
                 <div class="max-w-3xl">
@@ -137,7 +137,7 @@
                                     :alt="directory.name"
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                 />
-                                <div v-else class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-blue-600">
+                                <div v-else class="w-full h-full flex items-center justify-center bg-ocean-500">
                                     <BuildingOffice2Icon class="h-16 w-16 text-white/50" />
                                 </div>
                             </div>

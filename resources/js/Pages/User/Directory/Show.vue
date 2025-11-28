@@ -33,7 +33,7 @@
                                 :alt="directory.name"
                                 class="w-full h-full object-cover"
                             />
-                            <div v-else class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-blue-600">
+                            <div v-else class="w-full h-full flex items-center justify-center bg-ocean-500">
                                 <BuildingOffice2Icon class="h-24 w-24 text-white/50" />
                             </div>
                         </div>
@@ -259,7 +259,7 @@
                                 :alt="related.name"
                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
-                            <div v-else class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-blue-600">
+                            <div v-else class="w-full h-full flex items-center justify-center bg-ocean-500">
                                 <BuildingOffice2Icon class="h-12 w-12 text-white/50" />
                             </div>
                         </div>
