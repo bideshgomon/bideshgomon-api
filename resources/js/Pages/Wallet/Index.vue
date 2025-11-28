@@ -3,6 +3,10 @@ import { ref } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { useBangladeshFormat } from '@/Composables/useBangladeshFormat';
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
+import StatusBadge from '@/Components/Rhythmic/StatusBadge.vue';
+import FlowButton from '@/Components/Rhythmic/FlowButton.vue';
+import AnimatedSection from '@/Components/Rhythmic/AnimatedSection.vue';
 import PaymentGatewaySelector from '@/Components/PaymentGatewaySelector.vue';
 import {
     PlusCircleIcon,
@@ -107,15 +111,13 @@ const submitWithdraw = () => {
 
             <!-- Balance Card - Overlapping -->
             <div class="-mt-24 px-4 sm:px-0 mb-6">
-                <div class="bg-white rounded-3xl shadow-xl p-6 sm:p-8">
-                    <!-- Status Badge -->
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex items-center space-x-2">
-                            <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                            <span class="text-sm font-medium text-gray-700">{{ wallet.status === 'active' ? 'Active' : 'Inactive' }}</span>
+                <RhythmicCard variant="light" size="xl" class="animate-fadeInUp">
+                    <template #default>
+                        <!-- Status Badge -->
+                        <div class="flex justify-between items-start mb-4">
+                            <StatusBadge :status="wallet.status === 'active' ? 'active' : 'inactive'" />
+                            <span class="text-xs text-gray-500">#{{ wallet.id }}</span>
                         </div>
-                        <span class="text-xs text-gray-500">#{{ wallet.id }}</span>
-                    </div>
 
                     <!-- Balance Display -->
                     <div class="text-center py-4">
@@ -133,54 +135,63 @@ const submitWithdraw = () => {
 
                     <!-- Action Buttons -->
                     <div class="grid grid-cols-2 gap-3 mt-6">
-                        <button
+                        <FlowButton
                             @click="showAddFunds = true"
-                            class="flex items-center justify-center space-x-2 py-4 bg-emerald-600 text-white rounded-2xl font-semibold hover:bg-emerald-700 transition-colors touch-manipulation min-h-[48px]"
+                            variant="primary"
+                            size="lg"
+                            class="w-full"
                         >
-                            <PlusCircleIcon class="h-5 w-5" />
-                            <span>Add Funds</span>
-                        </button>
-                        <button
+                            <template #icon-left>
+                                <PlusCircleIcon class="h-5 w-5" />
+                            </template>
+                            Add Funds
+                        </FlowButton>
+                        <FlowButton
                             @click="showWithdraw = true"
-                            class="flex items-center justify-center space-x-2 py-4 bg-gray-100 text-gray-700 rounded-2xl font-semibold hover:bg-gray-200 transition-colors touch-manipulation min-h-[48px]"
+                            variant="secondary"
+                            size="lg"
+                            class="w-full"
                         >
-                            <MinusCircleIcon class="h-5 w-5" />
-                            <span>Withdraw</span>
-                        </button>
+                            <template #icon-left>
+                                <MinusCircleIcon class="h-5 w-5" />
+                            </template>
+                            Withdraw
+                        </FlowButton>
                     </div>
-                </div>
+                    </template>
+                </RhythmicCard>
             </div>
 
             <!-- Quick Stats -->
             <div class="px-4 sm:px-0 mb-6">
                 <div class="grid grid-cols-3 gap-3 sm:gap-4">
-                    <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm">
-                        <div class="flex flex-col">
-                            <div class="flex items-center justify-between mb-2">
-                                <p class="text-xs sm:text-sm text-gray-500">Total In</p>
-                                <ArrowTrendingUpIcon class="h-5 w-5 sm:h-6 sm:w-6 text-green-600" />
-                            </div>
-                            <p class="text-lg sm:text-xl font-bold text-green-600">{{ formatCurrency(totalIn || 0) }}</p>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm">
-                        <div class="flex flex-col">
-                            <div class="flex items-center justify-between mb-2">
-                                <p class="text-xs sm:text-sm text-gray-500">Total Out</p>
-                                <ArrowTrendingDownIcon class="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
-                            </div>
-                            <p class="text-lg sm:text-xl font-bold text-red-600">{{ formatCurrency(totalOut || 0) }}</p>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm">
-                        <div class="flex flex-col">
-                            <div class="flex items-center justify-between mb-2">
-                                <p class="text-xs sm:text-sm text-gray-500">Transactions</p>
-                                <ChartBarIcon class="h-5 w-5 sm:h-6 sm:w-6 text-indigo-600" />
-                            </div>
-                            <p class="text-lg sm:text-xl font-bold text-gray-900">{{ transactionCount || 0 }}</p>
-                        </div>
-                    </div>
+                    <RhythmicCard variant="growth" size="sm" class="animate-fadeIn" style="animation-delay: 100ms;">
+                        <template #icon>
+                            <ArrowTrendingUpIcon class="h-5 w-5 sm:h-6 sm:w-6" />
+                        </template>
+                        <template #default>
+                            <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1">Total In</p>
+                            <p class="text-lg sm:text-xl font-bold text-growth-600">{{ formatCurrency(totalIn || 0) }}</p>
+                        </template>
+                    </RhythmicCard>
+                    <RhythmicCard variant="sunrise" size="sm" class="animate-fadeIn" style="animation-delay: 200ms;">
+                        <template #icon>
+                            <ArrowTrendingDownIcon class="h-5 w-5 sm:h-6 sm:w-6" />
+                        </template>
+                        <template #default>
+                            <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1">Total Out</p>
+                            <p class="text-lg sm:text-xl font-bold text-sunrise-600">{{ formatCurrency(totalOut || 0) }}</p>
+                        </template>
+                    </RhythmicCard>
+                    <RhythmicCard variant="sky" size="sm" class="animate-fadeIn" style="animation-delay: 300ms;">
+                        <template #icon>
+                            <ChartBarIcon class="h-5 w-5 sm:h-6 sm:w-6" />
+                        </template>
+                        <template #default>
+                            <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mb-1">Transactions</p>
+                            <p class="text-lg sm:text-xl font-bold text-sky-600">{{ transactionCount || 0 }}</p>
+                        </template>
+                    </RhythmicCard>
                 </div>
             </div>
             
@@ -226,12 +237,16 @@ const submitWithdraw = () => {
 
                 <!-- Transaction List -->
                 <div v-if="recentTransactions.length > 0" class="space-y-3">
-                    <div
+                    <RhythmicCard
                         v-for="transaction in recentTransactions"
                         :key="transaction.id"
-                        class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-shadow"
+                        variant="light"
+                        size="md"
+                        :hover-lift="true"
+                        class="animate-fadeIn"
                     >
-                        <div class="flex items-start space-x-3">
+                        <template #default>
+                            <div class="flex items-start space-x-3">
                             <!-- Icon -->
                             <div
                                 class="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center"
@@ -250,12 +265,7 @@ const submitWithdraw = () => {
                                 <div class="flex items-center space-x-2 mt-1">
                                     <span class="text-xs text-gray-500">{{ formatDate(transaction.created_at) }}</span>
                                     <span class="text-xs text-gray-500">•</span>
-                                    <span
-                                        class="text-xs font-medium px-2 py-0.5 rounded-full"
-                                        :class="getStatusColor(transaction.status)"
-                                    >
-                                        {{ transaction.status }}
-                                    </span>
+                                    <StatusBadge :status="transaction.status" size="sm" />
                                 </div>
                             </div>
 
@@ -269,7 +279,8 @@ const submitWithdraw = () => {
                                 </p>
                             </div>
                         </div>
-                    </div>
+                        </template>
+                    </RhythmicCard>
                 </div>
 
                 <!-- Empty State -->

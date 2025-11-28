@@ -2,6 +2,9 @@
 import { ref, computed } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
+import StatusBadge from '@/Components/Rhythmic/StatusBadge.vue';
+import FlowButton from '@/Components/Rhythmic/FlowButton.vue';
 import {
   ClockIcon,
   DocumentTextIcon,
@@ -65,61 +68,45 @@ const getStatusText = (status) => {
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <!-- Stats Cards -->
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-          <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg">
-            <div class="p-6">
-              <div class="flex items-center">
-                <div class="flex-shrink-0 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                  <DocumentTextIcon class="h-8 w-8 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div class="ml-5">
-                  <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Applications</p>
-                  <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats?.total || 0 }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <RhythmicCard variant="sky" size="md" class="animate-fadeIn">
+            <template #icon>
+              <DocumentTextIcon class="h-8 w-8" />
+            </template>
+            <template #default>
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Applications</p>
+              <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats?.total || 0 }}</p>
+            </template>
+          </RhythmicCard>
 
-          <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg">
-            <div class="p-6">
-              <div class="flex items-center">
-                <div class="flex-shrink-0 p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
-                  <ClockIcon class="h-8 w-8 text-yellow-600 dark:text-yellow-400" />
-                </div>
-                <div class="ml-5">
-                  <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Pending</p>
-                  <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats?.pending || 0 }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <RhythmicCard variant="gold" size="md" class="animate-fadeIn" style="animation-delay: 100ms;">
+            <template #icon>
+              <ClockIcon class="h-8 w-8" />
+            </template>
+            <template #default>
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Pending</p>
+              <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats?.pending || 0 }}</p>
+            </template>
+          </RhythmicCard>
 
-          <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg">
-            <div class="p-6">
-              <div class="flex items-center">
-                <div class="flex-shrink-0 p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
-                  <ArrowPathIcon class="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
-                </div>
-                <div class="ml-5">
-                  <p class="text-sm font-medium text-gray-500 dark:text-gray-400">In Progress</p>
-                  <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats?.in_progress || 0 }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <RhythmicCard variant="ocean" size="md" class="animate-fadeIn" style="animation-delay: 200ms;">
+            <template #icon>
+              <ArrowPathIcon class="h-8 w-8" />
+            </template>
+            <template #default>
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">In Progress</p>
+              <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats?.in_progress || 0 }}</p>
+            </template>
+          </RhythmicCard>
 
-          <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg">
-            <div class="p-6">
-              <div class="flex items-center">
-                <div class="flex-shrink-0 p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                  <CheckCircleIcon class="h-8 w-8 text-green-600 dark:text-green-400" />
-                </div>
-                <div class="ml-5">
-                  <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Completed</p>
-                  <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats?.completed || 0 }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <RhythmicCard variant="growth" size="md" class="animate-fadeIn" style="animation-delay: 300ms;">
+            <template #icon>
+              <CheckCircleIcon class="h-8 w-8" />
+            </template>
+            <template #default>
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Completed</p>
+              <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ stats?.completed || 0 }}</p>
+            </template>
+          </RhythmicCard>
         </div>
 
         <!-- Applications List -->
@@ -129,25 +116,22 @@ const getStatusText = (status) => {
           </div>
 
           <div class="divide-y divide-gray-200 dark:divide-gray-700">
-            <div
+            <RhythmicCard
               v-for="application in applications.data"
               :key="application.id"
-              class="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+              variant="light"
+              size="lg"
+              :hover-lift="true"
+              class="animate-fadeIn"
             >
+              <template #default>
               <div class="flex items-start justify-between">
                 <div class="flex-1">
                   <div class="flex items-center gap-3 mb-2">
                     <h4 class="text-lg font-semibold text-gray-900 dark:text-white">
                       {{ application.service_module?.name || 'Service' }}
                     </h4>
-                    <span
-                      :class="[
-                        'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
-                        getStatusColor(application.status)
-                      ]"
-                    >
-                      {{ getStatusText(application.status) }}
-                    </span>
+                    <StatusBadge :status="application.status" size="md" />
                   </div>
 
                   <div class="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-3">
@@ -179,16 +163,20 @@ const getStatusText = (status) => {
                 </div>
 
                 <div class="ml-4">
-                  <Link
+                  <FlowButton
                     :href="`/my-applications/${application.id}`"
-                    class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                    variant="secondary"
+                    size="md"
                   >
-                    <EyeIcon class="h-4 w-4" />
+                    <template #icon-left>
+                      <EyeIcon class="h-4 w-4" />
+                    </template>
                     View Details
-                  </Link>
+                  </FlowButton>
                 </div>
               </div>
-            </div>
+              </template>
+            </RhythmicCard>
 
             <!-- Empty State -->
             <div v-if="!applications.data || applications.data.length === 0" class="p-12 text-center">

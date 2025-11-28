@@ -2,6 +2,9 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { useBangladeshFormat } from '@/Composables/useBangladeshFormat';
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
+import StatusBadge from '@/Components/Rhythmic/StatusBadge.vue';
+import FlowButton from '@/Components/Rhythmic/FlowButton.vue';
 import { ref } from 'vue';
 
 const props = defineProps({
@@ -55,8 +58,9 @@ const getTransactionSign = (transactionType) => {
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
                 <!-- Filters -->
-                <div class="bg-white shadow sm:rounded-lg p-6">
-                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <RhythmicCard variant="light" size="lg" class="animate-fadeIn">
+                    <template #default>
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
                             <input 
@@ -80,21 +84,24 @@ const getTransactionSign = (transactionType) => {
                             </select>
                         </div>
                         <div class="flex items-end space-x-2">
-                            <button 
+                            <FlowButton
                                 @click="filterTransactions"
-                                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
+                                variant="primary"
+                                size="md"
                             >
                                 Apply Filters
-                            </button>
-                            <button 
+                            </FlowButton>
+                            <FlowButton
                                 @click="clearFilters"
-                                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition"
+                                variant="secondary"
+                                size="md"
                             >
                                 Clear
-                            </button>
+                            </FlowButton>
                         </div>
                     </div>
-                </div>
+                    </template>
+                </RhythmicCard>
 
                 <!-- Transactions List -->
                 <div class="bg-white shadow sm:rounded-lg overflow-hidden">
@@ -137,12 +144,7 @@ const getTransactionSign = (transactionType) => {
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 py-1 text-xs font-medium rounded capitalize"
-                                                  :class="transaction.transaction_type === 'credit' ? 
-                                                          'bg-green-100 text-green-800' : 
-                                                          'bg-red-100 text-red-800'">
-                                                {{ transaction.transaction_type }}
-                                            </span>
+                                            <StatusBadge :status="transaction.transaction_type" size="sm" />
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold" 
                                             :class="getTransactionColor(transaction.transaction_type)">
@@ -152,13 +154,7 @@ const getTransactionSign = (transactionType) => {
                                             {{ formatCurrency(transaction.balance_after) }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 py-1 text-xs font-medium rounded capitalize"
-                                                  :class="transaction.status === 'completed' ? 'bg-green-100 text-green-800' : 
-                                                          transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                                                          transaction.status === 'reversed' ? 'bg-gray-100 text-gray-800' :
-                                                          'bg-red-100 text-red-800'">
-                                                {{ transaction.status }}
-                                            </span>
+                                            <StatusBadge :status="transaction.status" size="sm" />
                                         </td>
                                     </tr>
                                 </tbody>
