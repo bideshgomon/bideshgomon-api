@@ -179,7 +179,7 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                             </template>
                                             Profile
                                         </DropdownLink>
-                                        <DropdownLink :href="route('profile.ai-assessment')" icon-class="text-heritage-600">
+                                        <DropdownLink :href="route('profile.assessment.show')" icon-class="text-heritage-600">
                                             <template #icon>
                                                 <SparklesIcon class="w-5 h-5" />
                                             </template>
