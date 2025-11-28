@@ -134,9 +134,9 @@ const progressPercentage = computed(() => {
 
 const progressColorClass = computed(() => {
     const variants = {
-        ocean: 'bg-gradient-to-r from-ocean-500 to-sky-500',
-        growth: 'bg-gradient-to-r from-growth-500 to-emerald-600',
-        sunrise: 'bg-gradient-to-r from-sunrise-500 to-orange-600',
+        ocean: 'bg-ocean-500',
+        growth: 'bg-growth-500',
+        sunrise: 'bg-sunrise-500',
     };
     return variants[props.variant] || variants.ocean;
 });
@@ -172,17 +172,17 @@ const getStepClass = (index) => {
     if (index < props.currentStep) {
         // Completed steps
         const variants = {
-            ocean: 'bg-gradient-to-br from-ocean-500 to-sky-600',
-            growth: 'bg-gradient-to-br from-growth-500 to-emerald-600',
-            sunrise: 'bg-gradient-to-br from-sunrise-500 to-orange-600',
+            ocean: 'bg-ocean-500',
+            growth: 'bg-growth-500',
+            sunrise: 'bg-sunrise-500',
         };
         return variants[props.variant] || variants.ocean;
     } else if (index === props.currentStep) {
         // Current step
         const variants = {
-            ocean: 'bg-gradient-to-br from-ocean-500 to-sky-600 scale-110 shadow-glow-ocean',
-            growth: 'bg-gradient-to-br from-growth-500 to-emerald-600 scale-110 shadow-glow-growth',
-            sunrise: 'bg-gradient-to-br from-sunrise-500 to-orange-600 scale-110 shadow-glow-sunrise',
+            ocean: 'bg-ocean-500 scale-110 shadow-glow-ocean',
+            growth: 'bg-growth-500 scale-110 shadow-glow-growth',
+            sunrise: 'bg-sunrise-500 scale-110 shadow-glow-sunrise',
         };
         return variants[props.variant] || variants.ocean;
     } else {

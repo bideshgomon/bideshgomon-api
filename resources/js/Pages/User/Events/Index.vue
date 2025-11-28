@@ -78,7 +78,7 @@ const getEventTypeLabel = (type) => {
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <!-- Header -->
-                <div class="bg-gradient-to-r from-blue-600 to-indigo-600 overflow-hidden shadow-sm sm:rounded-lg mb-6 p-8 text-white">
+                <div class="bg-sky-500 overflow-hidden shadow-sm sm:rounded-lg mb-6 p-8 text-white">
                     <h1 class="text-4xl font-bold mb-2">Upcoming Events</h1>
                     <p class="text-blue-100">Join our seminars, workshops, and fairs to expand your opportunities.</p>
                 </div>

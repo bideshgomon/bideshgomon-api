@@ -32,7 +32,7 @@ const getBadgeClass = (color) => {
         <!-- Mobile-First Content -->
         <div class="min-h-screen bg-gray-50 pb-20">
             <!-- Header Section with Gradient -->
-            <div class="bg-gradient-to-br from-emerald-600 to-emerald-800 text-white px-4 pt-8 pb-32">
+            <div class="bg-growth-600 text-white px-4 pt-8 pb-32">
                 <div class="max-w-4xl mx-auto">
                     <div class="flex items-center space-x-3 mb-4">
                         <ShieldCheckIcon class="h-10 w-10" />

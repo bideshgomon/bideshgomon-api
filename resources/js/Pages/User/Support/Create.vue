@@ -4,7 +4,7 @@
 
         <div class="py-rhythm-xl">
             <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-                <RhythmicCard variant="gradient" class="mb-rhythm-lg">
+                <RhythmicCard variant="ocean" class="mb-rhythm-lg">
                     <template #icon>
                         <PlusCircleIcon class="w-6 h-6 text-white" />
                     </template>

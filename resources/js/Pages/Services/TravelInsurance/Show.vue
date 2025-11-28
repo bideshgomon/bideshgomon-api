@@ -40,7 +40,7 @@ const getBadgeClass = (color) => {
         <!-- Mobile-First Content -->
         <div class="min-h-screen bg-gray-50 pb-24">
             <!-- Header with Back Button -->
-            <div class="bg-gradient-to-br from-emerald-600 to-emerald-800 text-white px-4 pt-6 pb-32">
+            <div class="bg-growth-600 text-white px-4 pt-6 pb-32">
                 <div class="max-w-4xl mx-auto">
                     <Link
                         :href="route('travel-insurance.index')"
@@ -111,7 +111,7 @@ const getBadgeClass = (color) => {
                     <!-- Book Now Button -->
                     <Link
                         :href="route('travel-insurance.booking-form', package.slug)"
-                        class="block w-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white text-center font-bold py-4 rounded-2xl hover:from-emerald-700 hover:to-emerald-800 transition-all shadow-lg hover:shadow-xl touch-manipulation"
+                        class="block w-full bg-growth-600 text-white text-center font-bold py-4 rounded-2xl hover:bg-growth-700 transition-all shadow-lg hover:shadow-xl touch-manipulation"
                     >
                         Book This Package
                     </Link>
@@ -203,7 +203,7 @@ const getBadgeClass = (color) => {
                 <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 lg:hidden safe-area-inset-bottom">
                     <Link
                         :href="route('travel-insurance.booking-form', package.slug)"
-                        class="block w-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white text-center font-bold py-4 rounded-2xl hover:from-emerald-700 hover:to-emerald-800 transition-all shadow-lg touch-manipulation"
+                        class="block w-full bg-growth-600 text-white text-center font-bold py-4 rounded-2xl hover:bg-growth-700 transition-all shadow-lg touch-manipulation"
                     >
                         Book Now - {{ formatCurrency(package.price_per_day) }}/day
                     </Link>

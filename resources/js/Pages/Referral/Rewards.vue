@@ -21,7 +21,7 @@ const { formatCurrency, formatDate, formatTime } = useBangladeshFormat();
         <template #header>
             <div class="flex items-center justify-between animate-fadeIn">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold-500 to-sunrise-500 flex items-center justify-center shadow-rhythmic-md">
+                    <div class="w-10 h-10 rounded-xl bg-gold-500 flex items-center justify-center shadow-rhythmic-md">
                         <CurrencyDollarIcon class="h-5 w-5 text-white" />
                     </div>
                     <div>
@@ -49,7 +49,7 @@ const { formatCurrency, formatDate, formatTime } = useBangladeshFormat();
                         <div v-if="rewards.data.length > 0">
                             <div class="overflow-x-auto rounded-xl">
                                 <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gradient-to-r from-gold-50 to-sunrise-50">
+                                    <thead class="bg-gold-50">
                                         <tr>
                                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider hidden md:table-cell">Type</th>
                                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Description</th>
@@ -111,7 +111,7 @@ const { formatCurrency, formatDate, formatTime } = useBangladeshFormat();
                                         :key="link.label"
                                         :href="link.url"
                                         :class="{
-                                            'bg-gradient-to-r from-gold-600 to-sunrise-600 text-white shadow-rhythmic-md': link.active,
+                                            'bg-gold-600 text-white shadow-rhythmic-md': link.active,
                                             'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300': !link.active,
                                             'opacity-50 cursor-not-allowed': !link.url
                                         }"

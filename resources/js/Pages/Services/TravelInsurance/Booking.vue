@@ -108,7 +108,7 @@ const canProceedStep2 = computed(() => {
     <AuthenticatedLayout>
         <div class="min-h-screen bg-gray-50 pb-24">
             <!-- Header -->
-            <div class="bg-gradient-to-br from-emerald-600 to-emerald-800 text-white px-4 pt-6 pb-8">
+            <div class="bg-growth-600 text-white px-4 pt-6 pb-8">
                 <div class="max-w-4xl mx-auto">
                     <Link
                         :href="route('travel-insurance.show', package.slug)"
@@ -443,7 +443,7 @@ const canProceedStep2 = computed(() => {
                         <button
                             @click="submitBooking"
                             :disabled="form.processing"
-                            class="flex-1 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-bold py-4 rounded-2xl hover:from-emerald-700 hover:to-emerald-800 transition-all disabled:opacity-50"
+                            class="flex-1 bg-growth-600 text-white font-bold py-4 rounded-2xl hover:bg-growth-700 transition-all disabled:opacity-50"
                         >
                             {{ form.processing ? 'Processing...' : 'Confirm & Pay ' + formatCurrency(totalAmount) }}
                         </button>

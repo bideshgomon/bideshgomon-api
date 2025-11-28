@@ -97,7 +97,7 @@ const submitWithdraw = () => {
         <div class="py-6 sm:py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <!-- Header Section -->
-                <div class="bg-gradient-to-br from-emerald-600 to-emerald-700 px-4 sm:px-6 lg:px-8 pt-6 pb-32 sm:rounded-3xl mb-6">
+                <div class="bg-growth-600 px-4 sm:px-6 lg:px-8 pt-6 pb-32 sm:rounded-3xl mb-6">
                     <div class="flex items-center gap-3">
                         <Link :href="route('dashboard')" class="text-white hover:text-emerald-100 transition-colors">
                             <ChevronLeftIcon class="h-6 w-6" />
@@ -299,11 +299,11 @@ const submitWithdraw = () => {
             class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fadeIn"
             @click.self="showAddFunds = false"
         >
-            <div class="bg-gradient-to-br from-ocean-50 to-sky-50 rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md max-h-[85vh] sm:max-h-[90vh] overflow-y-auto shadow-rhythmic-2xl animate-slideIn">
+            <div class="bg-ocean-50 rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md max-h-[85vh] sm:max-h-[90vh] overflow-y-auto shadow-rhythmic-2xl animate-slideIn">
                 <div class="p-rhythm-lg pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]">
                     <!-- Modal Header with gradient accent -->
                     <div class="flex items-center gap-3 mb-rhythm-lg">
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-ocean-500 to-sky-500 flex items-center justify-center shadow-rhythmic-md">
+                        <div class="w-12 h-12 rounded-xl bg-ocean-500 flex items-center justify-center shadow-rhythmic-md">
                             <PlusCircleIcon class="h-6 w-6 text-white" />
                         </div>
                         <div>
@@ -336,7 +336,7 @@ const submitWithdraw = () => {
                     <!-- Payment Gateway Selector -->
                     <div v-if="addFundsForm.amount >= 100" class="animate-fadeIn">
                         <label class="block text-sm font-semibold text-gray-800 mb-rhythm-sm flex items-center gap-2">
-                            <span class="inline-block w-2 h-2 rounded-full bg-gradient-to-r from-ocean-500 to-sky-500"></span>
+                            <span class="inline-block w-2 h-2 rounded-full bg-ocean-500"></span>
                             Select Payment Gateway
                         </label>
                         <PaymentGatewaySelector
@@ -379,11 +379,11 @@ const submitWithdraw = () => {
             class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fadeIn"
             @click.self="showWithdraw = false"
         >
-            <div class="bg-gradient-to-br from-sunrise-50 to-gold-50 rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md max-h-[85vh] sm:max-h-[90vh] overflow-y-auto shadow-rhythmic-2xl animate-slideIn">
+            <div class="bg-sunrise-50 rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md max-h-[85vh] sm:max-h-[90vh] overflow-y-auto shadow-rhythmic-2xl animate-slideIn">
                 <div class="p-rhythm-lg pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]">
                     <!-- Modal Header with gradient accent -->
                     <div class="flex items-center gap-3 mb-rhythm-lg">
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-sunrise-500 to-gold-500 flex items-center justify-center shadow-rhythmic-md">
+                        <div class="w-12 h-12 rounded-xl bg-sunrise-500 flex items-center justify-center shadow-rhythmic-md">
                             <MinusCircleIcon class="h-6 w-6 text-white" />
                         </div>
                         <div>

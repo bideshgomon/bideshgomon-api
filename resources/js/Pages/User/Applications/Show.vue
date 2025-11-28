@@ -345,7 +345,7 @@ const currentStep = computed(() => {
             </RhythmicCard>
 
             <!-- Actions -->
-            <RhythmicCard variant="gradient" size="md" class="animate-fadeIn" style="animation-delay: 500ms;">
+            <RhythmicCard variant="ocean" size="md" class="animate-fadeIn" style="animation-delay: 500ms;">
               <template #default>
                 <h3 class="text-lg font-bold text-white mb-4">Need Help?</h3>
                 <p class="text-white/90 text-sm mb-4">

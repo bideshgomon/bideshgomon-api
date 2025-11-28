@@ -142,7 +142,7 @@ const testimonials = [
                 <!-- Heading with rhythmic typography -->
                 <h1 class="font-display font-bold text-rhythm mb-rhythm-lg leading-tight text-4xl sm:text-5xl md:text-6xl lg:text-display-xl">
                     Go Abroad with
-                    <span class="bg-gradient-to-r from-ocean-600 to-growth-600 bg-clip-text text-transparent"> Confidence</span>
+                    <span class="text-ocean-600"> Confidence</span>
                 </h1>
 
                 <p class="text-xl sm:text-2xl text-gray-700 mb-rhythm-2xl max-w-3xl mx-auto text-rhythm">
@@ -242,13 +242,13 @@ const testimonials = [
         >
             <div class="grid md:grid-cols-3 gap-rhythm-2xl relative">
                 <!-- Connection Lines (Desktop) -->
-                <div class="hidden md:block absolute top-24 left-1/4 right-1/4 h-1 bg-gradient-to-r from-ocean-200 via-sky-300 to-growth-200 rounded-full"></div>
+                <div class="hidden md:block absolute top-24 left-1/4 right-1/4 h-1 bg-ocean-200 rounded-full"></div>
                 
                 <!-- Step 1 -->
                 <RhythmicCard variant="growth" size="lg" class="relative">
                     <!-- Step Number Badge -->
                     <div class="absolute -top-6 left-1/2 -translate-x-1/2">
-                        <div class="w-14 h-14 gradient-growth text-white rounded-full flex items-center justify-center text-xl font-bold shadow-rhythm-lg animate-scale-in">
+                        <div class="w-14 h-14 bg-growth-500 text-white rounded-full flex items-center justify-center text-xl font-bold shadow-rhythm-lg animate-scale-in">
                             1
                         </div>
                     </div>
@@ -269,7 +269,7 @@ const testimonials = [
                 <RhythmicCard variant="ocean" size="lg" class="relative">
                     <!-- Step Number Badge -->
                     <div class="absolute -top-6 left-1/2 -translate-x-1/2">
-                        <div class="w-14 h-14 gradient-ocean text-white rounded-full flex items-center justify-center text-xl font-bold shadow-rhythm-lg animate-scale-in" style="animation-delay: 0.2s;">
+                        <div class="w-14 h-14 bg-ocean-500 text-white rounded-full flex items-center justify-center text-xl font-bold shadow-rhythm-lg animate-scale-in" style="animation-delay: 0.2s;">
                             2
                         </div>
                     </div>
@@ -290,7 +290,7 @@ const testimonials = [
                 <RhythmicCard variant="sunrise" size="lg" class="relative">
                     <!-- Step Number Badge -->
                     <div class="absolute -top-6 left-1/2 -translate-x-1/2">
-                        <div class="w-14 h-14 gradient-sunrise text-white rounded-full flex items-center justify-center text-xl font-bold shadow-rhythm-lg animate-scale-in" style="animation-delay: 0.4s;">
+                        <div class="w-14 h-14 bg-sunrise-500 text-white rounded-full flex items-center justify-center text-xl font-bold shadow-rhythm-lg animate-scale-in" style="animation-delay: 0.4s;">
                             3
                         </div>
                     </div>
@@ -323,7 +323,7 @@ const testimonials = [
                 <!-- Benefits List -->
                 <div class="space-y-rhythm-md animate-fade-in-up">
                     <div v-for="benefit in benefits" :key="benefit" class="flex items-start group">
-                        <div class="flex-shrink-0 w-8 h-8 rounded-full gradient-growth flex items-center justify-center mt-0.5 shadow-rhythm group-hover:shadow-rhythm-lg group-hover:scale-110 transition-all duration-400">
+                        <div class="flex-shrink-0 w-8 h-8 rounded-full bg-growth-500 flex items-center justify-center mt-0.5 shadow-rhythm group-hover:shadow-rhythm-lg group-hover:scale-110 transition-all duration-400">
                             <CheckCircleIcon class="h-5 w-5 text-white" />
                         </div>
                         <span class="ml-rhythm-md text-lg text-gray-700 text-rhythm group-hover:text-gray-900 transition-colors">{{ benefit }}</span>
@@ -454,7 +454,7 @@ const testimonials = [
             id="contact"
             title="Ready to Start Your Journey?"
             subtitle="Join thousands of successful applicants who trusted Bidesh Gomon with their international dreams."
-            variant="gradient"
+            variant="ocean"
             :animated="true"
             container="narrow"
         >
