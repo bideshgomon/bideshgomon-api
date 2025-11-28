@@ -100,64 +100,64 @@ const submit = () => {
         <form @submit.prevent="submit" class="space-y-rhythm-md">
             <RhythmicCard variant="light" class="space-y-rhythm-md">
             <!-- Bio -->
-            <div>
+            <div class="space-y-rhythm-sm">
                 <InputLabel for="bio" value="Bio" class="text-sm md:text-base" />
                 <textarea
                     id="bio"
                     v-model="form.bio"
-                    class="mt-1 md:mt-2 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-lg shadow-sm text-base py-3 px-4 touch-manipulation"
+                    class="block w-full border-gray-300 focus:border-ocean-500 focus:ring-ocean-500 rounded-lg shadow-sm text-base py-3 px-4 touch-manipulation"
                     rows="3"
                     placeholder="Tell us about yourself..."
                 />
-                <InputError class="mt-2" :message="form.errors.bio" />
+                <InputError class="mt-1" :message="form.errors.bio" />
             </div>
 
             <!-- Date of Birth, NID & Gender -->
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <div>
+                <div class="space-y-rhythm-xs">
                     <InputLabel for="dob" value="Date of Birth" />
                     <input
                         id="dob"
                         type="text"
                         v-model="displayDob"
                         @blur="updateDob(displayDob)"
-                        class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        class="block w-full border-gray-300 focus:border-ocean-500 focus:ring-ocean-500 rounded-lg shadow-sm py-2 px-3"
                         placeholder="DD/MM/YYYY"
                     />
-                    <p class="mt-1 text-xs text-gray-500">Format: DD/MM/YYYY (e.g., 15/08/1990)</p>
-                    <InputError class="mt-2" :message="form.errors.dob" />
+                    <p class="text-xs text-gray-500">Format: DD/MM/YYYY (e.g., 15/08/1990)</p>
+                    <InputError :message="form.errors.dob" />
                 </div>
 
-                <div>
+                <div class="space-y-rhythm-xs">
                     <InputLabel for="nid" value="National ID (NID)" />
                     <TextInput
                         id="nid"
                         type="text"
-                        class="mt-1 block w-full"
+                        class="block w-full"
                         v-model="form.nid"
                         placeholder="10 or 17 digits"
                     />
-                    <InputError class="mt-2" :message="form.errors.nid" />
+                    <InputError :message="form.errors.nid" />
                 </div>
 
-                <div>
+                <div class="space-y-rhythm-xs">
                     <InputLabel for="gender" value="Gender" />
                     <select
                         id="gender"
                         v-model="form.gender"
-                        class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        class="block w-full border-gray-300 focus:border-ocean-500 focus:ring-ocean-500 rounded-lg shadow-sm py-2 px-3"
                     >
                         <option value="">Select Gender</option>
                         <option v-for="gender in GENDER_OPTIONS" :key="gender" :value="gender.toLowerCase()">
                             {{ gender }}
                         </option>
                     </select>
-                    <InputError class="mt-2" :message="form.errors.gender" />
+                    <InputError :message="form.errors.gender" />
                 </div>
             </div>
 
             <!-- Nationality -->
-            <div>
+            <div class="space-y-rhythm-xs">
                 <InputLabel for="nationality" value="Nationality" />
                 <input
                     id="nationality"
@@ -165,14 +165,14 @@ const submit = () => {
                     list="nationalities-list"
                     type="text"
                     placeholder="Type to search nationality..."
-                    class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                    class="block w-full border-gray-300 focus:border-ocean-500 focus:ring-ocean-500 rounded-lg shadow-sm py-2 px-3"
                 />
                 <datalist id="nationalities-list">
                     <option v-for="country in countries" :key="country.id" :value="country.nationality">
                         {{ country.nationality }}
                     </option>
                 </datalist>
-                <InputError class="mt-2" :message="form.errors.nationality" />
+                <InputError :message="form.errors.nationality" />
             </div>
 
             <!-- Present Address -->

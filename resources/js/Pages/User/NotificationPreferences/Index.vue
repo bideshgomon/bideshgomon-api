@@ -82,17 +82,21 @@
                                         <span class="text-sm text-gray-700 font-medium">In-App</span>
                                     </div>
 
-                                    <!-- Push Toggle (Future Feature) -->
-                                    <div class="flex items-center gap-2 opacity-50" title="Coming soon">
+                                    <!-- Push Toggle (Coming Soon) -->
+                                    <div class="relative flex items-center gap-2 opacity-60" title="Push notifications require additional browser permissions. Coming soon!">
                                         <button
                                             type="button"
                                             disabled
-                                            class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-not-allowed rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out bg-gray-200"
+                                            class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-not-allowed rounded-full border-2 border-gray-300 transition-colors duration-200 ease-in-out bg-gray-100"
                                         >
-                                            <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-0" />
+                                            <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-gray-300 shadow-sm ring-0 transition duration-200 ease-in-out translate-x-0" />
                                         </button>
                                         <ComputerDesktopIcon class="h-4 w-4 text-gray-400" />
                                         <span class="text-sm text-gray-500 font-medium">Push</span>
+                                        <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
+                                            <span class="relative inline-flex rounded-full h-3 w-3 bg-gray-400"></span>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -100,9 +104,12 @@
                     </div>
 
                     <div class="px-6 py-4 bg-gray-50 border-t-2 border-gray-200 flex items-center justify-between rounded-b-xl">
-                        <p class="text-sm text-gray-600">
-                            <span class="font-medium">Note:</span> Push notifications are coming soon
-                        </p>
+                        <div class="flex items-center gap-2 text-sm text-gray-600">
+                            <InformationCircleIcon class="h-4 w-4 text-gray-500" />
+                            <p>
+                                <span class="font-medium">Note:</span> Push notifications require browser permissions and are being implemented.
+                            </p>
+                        </div>
                         <button
                             type="submit"
                             :disabled="form.processing"
@@ -134,8 +141,11 @@
                                     <p><strong>In-App:</strong> See notifications in the notification bell icon</p>
                                 </div>
                                 <div class="flex items-start gap-2">
-                                    <ComputerDesktopIcon class="h-4 w-4 mt-0.5 flex-shrink-0" />
-                                    <p><strong>Push:</strong> Browser push notifications (coming soon)</p>
+                                    <ComputerDesktopIcon class="h-4 w-4 mt-0.5 flex-shrink-0 text-gray-400" />
+                                    <div>
+                                        <p><strong>Push:</strong> Browser push notifications (Coming Soon)</p>
+                                        <p class="text-xs text-teal-700 mt-1 italic">Requires browser permission to send notifications even when the tab is closed. We're implementing this feature with proper security and privacy controls.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
