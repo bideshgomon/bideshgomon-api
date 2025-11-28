@@ -6,6 +6,8 @@ import { FIELDS_OF_STUDY } from '@/Constants/profileData'
 
 // Import necessary components
 import Modal from '@/Components/Modal.vue'
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue'
+import FlowButton from '@/Components/Rhythmic/FlowButton.vue'
 import PrimaryButton from '@/Components/PrimaryButton.vue'
 import SecondaryButton from '@/Components/SecondaryButton.vue'
 import DangerButton from '@/Components/DangerButton.vue'
@@ -237,21 +239,26 @@ const formatDate = (dateString) => {
 
 <template>
   <section>
-    <header class="mb-6">
-      <div class="flex flex-col gap-4">
-        <div>
-          <h2 class="text-lg font-medium text-gray-900 dark:text-white">Education History</h2>
-          <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            Add your academic qualifications and degrees
-          </p>
+    <header class="mb-rhythm-lg">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-growth-500 to-sky-500 flex items-center justify-center shadow-rhythmic-md">
+            <AcademicCapIcon class="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h2 class="font-display font-bold text-xl text-gray-800">Education History</h2>
+            <p class="text-xs text-gray-500">Academic qualifications and degrees</p>
+          </div>
         </div>
-        <button
+        <FlowButton
           @click="openAddModal"
-          class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+          variant="primary"
         >
-          <PlusIcon class="w-5 h-5 md:w-6 md:h-6" />
-          <span>ADD EDUCATION</span>
-        </button>
+          <template #icon-left>
+            <PlusIcon class="w-5 h-5" />
+          </template>
+          Add Education
+        </FlowButton>
       </div>
     </header>
 

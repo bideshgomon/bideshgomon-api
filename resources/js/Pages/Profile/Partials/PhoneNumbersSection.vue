@@ -3,6 +3,8 @@ import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { useBangladeshFormat } from '@/Composables/useBangladeshFormat'
 import Modal from '@/Components/Modal.vue'
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue'
+import FlowButton from '@/Components/Rhythmic/FlowButton.vue'
 import {
   PhoneIcon,
   CheckBadgeIcon,
@@ -308,26 +310,29 @@ onMounted(() => {
 </script>
 
 <template>
-    <section class="space-y-4">
+    <section class="space-y-rhythm-md">
         <!-- Section Header -->
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between mb-rhythm-md">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-sky-600 to-blue-600 flex items-center justify-center">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-ocean-500 flex items-center justify-center shadow-rhythmic-md">
                     <PhoneIcon class="w-6 h-6 text-white" />
                 </div>
                 <div>
-                    <h2 class="text-lg font-bold text-gray-900 dark:text-white">Phone Numbers</h2>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Manage contact numbers</p>
+                    <h2 class="font-display font-bold text-xl text-gray-800">Phone Numbers</h2>
+                    <p class="text-xs text-gray-500">Manage contact numbers</p>
                 </div>
             </div>
-            <button
+            <FlowButton
                 @click="openAddModal"
-                class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-sky-600 to-blue-600 rounded-lg hover:from-sky-700 hover:to-blue-700 transition-all shadow-md active:scale-95"
-                style="min-height: 44px"
+                size="sm"
+                variant="primary"
             >
-                <PlusIcon class="w-4 h-4" />
-                <span class="hidden sm:inline">Add</span>
-            </button>
+                <template #icon-left>
+                    <PlusIcon class="w-4 h-4" />
+                </template>
+                <span class="hidden sm:inline">Add Number</span>
+                <span class="sm:hidden">Add</span>
+            </FlowButton>
         </div>
 
         <!-- Alert Messages -->

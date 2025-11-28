@@ -11,6 +11,8 @@ import {
   CalendarIcon,
   AcademicCapIcon,
 } from '@heroicons/vue/24/outline'
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue'
+import FlowButton from '@/Components/Rhythmic/FlowButton.vue'
 import InputLabel from '@/Components/InputLabel.vue'
 import TextInput from '@/Components/TextInput.vue'
 import InputError from '@/Components/InputError.vue'
@@ -235,21 +237,24 @@ const formatDate = dateString => {
 
 <template>
   <section>
-    <header class="mb-6">
-      <div class="flex flex-col gap-4">
-        <div>
-          <h2 class="text-lg font-medium text-gray-900 dark:text-white">Language Proficiency</h2>
-          <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            Add languages with test scores and certificates
-          </p>
+    <header class="mb-rhythm-lg">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-ocean-500 to-sky-500 flex items-center justify-center shadow-rhythmic-md">
+            <GlobeAltIcon class="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h2 class="font-display font-bold text-xl text-gray-800">Language Proficiency</h2>
+            <p class="text-xs text-gray-500">
+              Languages with test scores and certificates
+            </p>
+          </div>
         </div>
-        <button
-          @click="openEditModal(null)"
-          class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
-        >
-          <PlusIcon class="h-6 w-6 md:h-7 md:w-7" />
-          <span>ADD LANGUAGE</span>
-        </button>
+        <FlowButton @click="openEditModal(null)" variant="primary">
+          <template #icon-left><PlusIcon class="w-4 h-4" /></template>
+          <span class="hidden sm:inline">Add Language</span>
+          <span class="sm:hidden">Add</span>
+        </FlowButton>
       </div>
     </header>
 
