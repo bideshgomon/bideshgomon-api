@@ -10,6 +10,10 @@ const props = defineProps({
     active: {
         type: Boolean,
     },
+    iconClass: {
+        type: String,
+        default: 'text-gray-400',
+    },
 });
 
 const classes = computed(() =>
@@ -21,6 +25,11 @@ const classes = computed(() =>
 
 <template>
     <Link :href="href" :class="classes">
-        <slot />
+        <div class="flex items-center gap-3">
+            <span v-if="$slots.icon" :class="iconClass">
+                <slot name="icon" />
+            </span>
+            <slot />
+        </div>
     </Link>
 </template>

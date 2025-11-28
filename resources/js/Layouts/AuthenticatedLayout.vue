@@ -13,7 +13,28 @@ import PWAInstallPrompt from '@/Components/PWAInstallPrompt.vue';
 import NetworkStatus from '@/Components/NetworkStatus.vue';
 import SlowConnectionWarning from '@/Components/SlowConnectionWarning.vue';
 import { Link } from '@inertiajs/vue3';
-import { SparklesIcon } from '@heroicons/vue/24/outline';
+import { 
+    SparklesIcon,
+    UserIcon,
+    GlobeAltIcon,
+    BellIcon,
+    LightBulbIcon,
+    DocumentMagnifyingGlassIcon,
+    WalletIcon,
+    UserGroupIcon,
+    CalendarIcon,
+    ChatBubbleLeftRightIcon,
+    TicketIcon,
+    QuestionMarkCircleIcon,
+    ArrowRightOnRectangleIcon,
+    ChartBarIcon,
+    Cog6ToothIcon,
+    BriefcaseIcon,
+    DocumentTextIcon,
+    HomeIcon,
+    BuildingOfficeIcon,
+    MapIcon
+} from '@heroicons/vue/24/outline';
 
 const showingNavigationDropdown = ref(false);
 const page = usePage();
@@ -27,7 +48,7 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
     <div>
         <div class="min-h-screen bg-gray-100">
             <!-- Impersonation Banner -->
-            <div v-if="$page.props.auth.user.impersonating" class="bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 text-white shadow-inner">
+            <div v-if="$page.props.auth.user.impersonating" class="bg-red-600 text-white shadow-inner">
                 <div class="max-w-7xl mx-auto px-4 py-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-[13px]">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-3">
                         <div class="flex items-center space-x-2">
@@ -85,15 +106,26 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                                 class="inline-flex items-center rounded-md px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
                                                 :class="{ 'border-b-2 border-indigo-400 text-gray-900': route().current('services.*') || route().current('user.applications.*') }"
                                             >
-                                                🔌 Services
+                                                <Cog6ToothIcon class="w-5 h-5 mr-1.5" />
+                                                Services
                                                 <svg class="ms-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                                 </svg>
                                             </button>
                                         </template>
                                         <template #content>
-                                            <DropdownLink :href="route('services.index')">🔍 Browse Services</DropdownLink>
-                                            <DropdownLink :href="route('user.applications.index')">📋 My Applications</DropdownLink>
+                                            <DropdownLink :href="route('services.index')" icon-class="text-sky-600">
+                                                <template #icon>
+                                                    <DocumentMagnifyingGlassIcon class="w-5 h-5" />
+                                                </template>
+                                                Browse Services
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('user.applications.index')" icon-class="text-sky-600">
+                                                <template #icon>
+                                                    <DocumentTextIcon class="w-5 h-5" />
+                                                </template>
+                                                My Applications
+                                            </DropdownLink>
                                         </template>
                                     </Dropdown>
                                 
@@ -141,51 +173,196 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                     </template>
 
                                     <template #content>
-                                        <DropdownLink :href="route('profile.edit')">👤 Profile</DropdownLink>
-                                        <DropdownLink :href="route('profile.assessment.show')">✨ AI Assessment</DropdownLink>
-                                        <DropdownLink :href="route('profile.public.settings')">🌐 Public Profile</DropdownLink>
-                                        <DropdownLink :href="route('notification-preferences.index')">🔔 Notification Preferences</DropdownLink>
+                                        <DropdownLink :href="route('profile.edit')" icon-class="text-ocean-600">
+                                            <template #icon>
+                                                <UserIcon class="w-5 h-5" />
+                                            </template>
+                                            Profile
+                                        </DropdownLink>
+                                        <DropdownLink :href="route('profile.assessment.show')" icon-class="text-heritage-600">
+                                            <template #icon>
+                                                <SparklesIcon class="w-5 h-5" />
+                                            </template>
+                                            AI Assessment
+                                        </DropdownLink>
+                                        <DropdownLink :href="route('profile.public.settings')" icon-class="text-sky-600">
+                                            <template #icon>
+                                                <GlobeAltIcon class="w-5 h-5" />
+                                            </template>
+                                            Public Profile
+                                        </DropdownLink>
+                                        <DropdownLink :href="route('notification-preferences.index')" icon-class="text-gold-600">
+                                            <template #icon>
+                                                <BellIcon class="w-5 h-5" />
+                                            </template>
+                                            Notification Preferences
+                                        </DropdownLink>
                                         
                                         <!-- Admin Menu -->
                                         <template v-if="isAdmin">
                                             <div class="border-t border-gray-100 my-1"></div>
                                             <div class="px-4 py-2 text-xs text-gray-400 uppercase font-semibold tracking-wider">Admin</div>
-                                            <DropdownLink :href="route('admin.dashboard')">📊 Dashboard</DropdownLink>
-                                            <DropdownLink :href="route('admin.service-modules.index')">🎯 Service Modules (39)</DropdownLink>
-                                            <DropdownLink :href="route('admin.visa-requirements.index')">📋 Visa Requirements</DropdownLink>
-                                            <DropdownLink :href="route('admin.services.index')">📋 Service Management</DropdownLink>
-                                            <DropdownLink :href="route('admin.hotels.index')">🏨 Hotels Management</DropdownLink>
-                                            <DropdownLink :href="route('admin.visa-applications.index')">🛂 Visa Applications</DropdownLink>
-                                            <DropdownLink :href="route('admin.jobs.index')">💼 Job Postings</DropdownLink>
-                                            <DropdownLink :href="route('admin.applications.index')">📝 Job Applications</DropdownLink>
-                                            <DropdownLink :href="route('admin.users.index')">👥 User Management</DropdownLink>
-                                            <DropdownLink :href="route('admin.analytics.index')">📈 Analytics & Reports</DropdownLink>
-                                            <DropdownLink :href="route('seo-settings.index')">🔍 SEO Settings</DropdownLink>
-                                            <DropdownLink :href="route('admin.settings.index')">⚙️ Platform Settings</DropdownLink>
-                                                <DropdownLink :href="route('admin.documents.verify.index')">📄 Verify Documents</DropdownLink>
-                                                <DropdownLink :href="route('admin.notifications.index')">🔔 Admin Notifications</DropdownLink>
+                                            <DropdownLink :href="route('admin.dashboard')" icon-class="text-ocean-600">
+                                                <template #icon>
+                                                    <ChartBarIcon class="w-5 h-5" />
+                                                </template>
+                                                Dashboard
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('admin.service-modules.index')" icon-class="text-heritage-600">
+                                                <template #icon>
+                                                    <Cog6ToothIcon class="w-5 h-5" />
+                                                </template>
+                                                Service Modules (39)
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('admin.visa-requirements.index')" icon-class="text-sky-600">
+                                                <template #icon>
+                                                    <DocumentTextIcon class="w-5 h-5" />
+                                                </template>
+                                                Visa Requirements
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('admin.services.index')" icon-class="text-growth-600">
+                                                <template #icon>
+                                                    <Cog6ToothIcon class="w-5 h-5" />
+                                                </template>
+                                                Service Management
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('admin.hotels.index')" icon-class="text-sunrise-600">
+                                                <template #icon>
+                                                    <BuildingOfficeIcon class="w-5 h-5" />
+                                                </template>
+                                                Hotels Management
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('admin.visa-applications.index')" icon-class="text-sky-600">
+                                                <template #icon>
+                                                    <DocumentTextIcon class="w-5 h-5" />
+                                                </template>
+                                                Visa Applications
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('admin.jobs.index')" icon-class="text-heritage-600">
+                                                <template #icon>
+                                                    <BriefcaseIcon class="w-5 h-5" />
+                                                </template>
+                                                Job Postings
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('admin.applications.index')" icon-class="text-ocean-600">
+                                                <template #icon>
+                                                    <DocumentTextIcon class="w-5 h-5" />
+                                                </template>
+                                                Job Applications
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('admin.users.index')" icon-class="text-growth-600">
+                                                <template #icon>
+                                                    <UserGroupIcon class="w-5 h-5" />
+                                                </template>
+                                                User Management
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('admin.analytics.index')" icon-class="text-sky-600">
+                                                <template #icon>
+                                                    <ChartBarIcon class="w-5 h-5" />
+                                                </template>
+                                                Analytics & Reports
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('seo-settings.index')" icon-class="text-heritage-600">
+                                                <template #icon>
+                                                    <DocumentMagnifyingGlassIcon class="w-5 h-5" />
+                                                </template>
+                                                SEO Settings
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('admin.settings.index')" icon-class="text-gold-600">
+                                                <template #icon>
+                                                    <Cog6ToothIcon class="w-5 h-5" />
+                                                </template>
+                                                Platform Settings
+                                            </DropdownLink>
+                                                <DropdownLink :href="route('admin.documents.verify.index')" icon-class="text-sky-600">
+                                                    <template #icon>
+                                                        <DocumentTextIcon class="w-5 h-5" />
+                                                    </template>
+                                                    Verify Documents
+                                                </DropdownLink>
+                                                <DropdownLink :href="route('admin.notifications.index')" icon-class="text-gold-600">
+                                                    <template #icon>
+                                                        <BellIcon class="w-5 h-5" />
+                                                    </template>
+                                                    Admin Notifications
+                                                </DropdownLink>
                                         </template>
                                         
                                         <!-- Agency Menu -->
                                         <template v-else-if="isAgency">
                                             <div class="border-t border-gray-100 my-1"></div>
                                             <div class="px-4 py-2 text-xs text-gray-400 uppercase font-semibold tracking-wider">Agency Panel</div>
-                                            <DropdownLink :href="route('agency.dashboard')">📊 Dashboard</DropdownLink>
-                                            <DropdownLink :href="route('agency.country-assignments.index')">🌍 My Countries</DropdownLink>
-                                            <DropdownLink :href="route('agency.applications.index')">📋 Applications</DropdownLink>
+                                            <DropdownLink :href="route('agency.dashboard')" icon-class="text-ocean-600">
+                                                <template #icon>
+                                                    <ChartBarIcon class="w-5 h-5" />
+                                                </template>
+                                                Dashboard
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('agency.country-assignments.index')" icon-class="text-growth-600">
+                                                <template #icon>
+                                                    <MapIcon class="w-5 h-5" />
+                                                </template>
+                                                My Countries
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('agency.applications')" icon-class="text-sky-600">
+                                                <template #icon>
+                                                    <DocumentTextIcon class="w-5 h-5" />
+                                                </template>
+                                                Applications
+                                            </DropdownLink>
                                         </template>
                                         
                                         <!-- Regular User Menu -->
                                         <template v-else>
-                                            <DropdownLink :href="route('suggestions.index')">✨ Smart Suggestions</DropdownLink>
+                                            <DropdownLink :href="route('suggestions.index')" icon-class="text-heritage-600">
+                                                <template #icon>
+                                                    <LightBulbIcon class="w-5 h-5" />
+                                                </template>
+                                                Smart Suggestions
+                                            </DropdownLink>
                                             <div class="border-t border-gray-100 my-1"></div>
-                                            <DropdownLink :href="route('document-scanner.index')">🔍 Document Scanner</DropdownLink>
-                                            <DropdownLink :href="route('wallet.index')">💰 My Wallet</DropdownLink>
-                                            <DropdownLink :href="route('referral.index')">🔗 Referrals</DropdownLink>
-                                            <DropdownLink :href="route('appointments.index')">📅 My Appointments</DropdownLink>
-                                            <DropdownLink :href="route('support.index')">💬 Support Tickets</DropdownLink>
-                                            <DropdownLink :href="route('events.index')">🎉 Events</DropdownLink>
-                                            <DropdownLink :href="route('faqs.index')">❓ FAQs</DropdownLink>
+                                            <DropdownLink :href="route('document-scanner.index')" icon-class="text-sky-600">
+                                                <template #icon>
+                                                    <DocumentMagnifyingGlassIcon class="w-5 h-5" />
+                                                </template>
+                                                Document Scanner
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('wallet.index')" icon-class="text-growth-600">
+                                                <template #icon>
+                                                    <WalletIcon class="w-5 h-5" />
+                                                </template>
+                                                My Wallet
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('referral.index')" icon-class="text-ocean-600">
+                                                <template #icon>
+                                                    <UserGroupIcon class="w-5 h-5" />
+                                                </template>
+                                                Referrals
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('appointments.index')" icon-class="text-sky-600">
+                                                <template #icon>
+                                                    <CalendarIcon class="w-5 h-5" />
+                                                </template>
+                                                My Appointments
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('support.index')" icon-class="text-sunrise-600">
+                                                <template #icon>
+                                                    <ChatBubbleLeftRightIcon class="w-5 h-5" />
+                                                </template>
+                                                Support Tickets
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('events.index')" icon-class="text-heritage-600">
+                                                <template #icon>
+                                                    <TicketIcon class="w-5 h-5" />
+                                                </template>
+                                                Events
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('faqs.index')" icon-class="text-ocean-600">
+                                                <template #icon>
+                                                    <QuestionMarkCircleIcon class="w-5 h-5" />
+                                                </template>
+                                                FAQs
+                                            </DropdownLink>
                                         </template>
                                         
                                         <div class="border-t border-gray-100 my-1"></div>
@@ -194,8 +371,12 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                             method="post"
                                             as="button"
                                             class="text-red-600 hover:text-red-800"
+                                            icon-class="text-red-600"
                                         >
-                                            🚪 Log Out
+                                            <template #icon>
+                                                <ArrowRightOnRectangleIcon class="w-5 h-5" />
+                                            </template>
+                                            Log Out
                                         </DropdownLink>
                                     </template>
                                 </Dropdown>
@@ -261,12 +442,18 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                             Dashboard
                         </ResponsiveNavLink>
                         
-                        <ResponsiveNavLink :href="route('services.index')" :active="route().current('services.*')">
-                            🔌 Services
+                        <ResponsiveNavLink :href="route('services.index')" :active="route().current('services.*')" icon-class="text-sky-600">
+                            <template #icon>
+                                <Cog6ToothIcon class="w-5 h-5" />
+                            </template>
+                            Services
                         </ResponsiveNavLink>
                         
-                        <ResponsiveNavLink :href="route('user.applications.index')" :active="route().current('user.applications.*')">
-                            📋 My Applications
+                        <ResponsiveNavLink :href="route('user.applications.index')" :active="route().current('user.applications.*')" icon-class="text-sky-600">
+                            <template #icon>
+                                <DocumentTextIcon class="w-5 h-5" />
+                            </template>
+                            My Applications
                         </ResponsiveNavLink>
                         
                         <ResponsiveNavLink
@@ -282,24 +469,84 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                             <div class="px-3 py-2">
                                 <div class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Admin</div>
                             </div>
-                            <ResponsiveNavLink :href="route('admin.dashboard')">📊 Dashboard</ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('admin.service-modules.index')">🎯 Service Modules (39)</ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('admin.visa-requirements.index')">📋 Visa Requirements</ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('admin.services.index')">📋 Service Management</ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('admin.dashboard')" icon-class="text-ocean-600">
+                                <template #icon>
+                                    <ChartBarIcon class="w-5 h-5" />
+                                </template>
+                                Dashboard
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('admin.service-modules.index')" icon-class="text-heritage-600">
+                                <template #icon>
+                                    <Cog6ToothIcon class="w-5 h-5" />
+                                </template>
+                                Service Modules (39)
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('admin.visa-requirements.index')" icon-class="text-sky-600">
+                                <template #icon>
+                                    <DocumentTextIcon class="w-5 h-5" />
+                                </template>
+                                Visa Requirements
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('admin.services.index')" icon-class="text-growth-600">
+                                <template #icon>
+                                    <Cog6ToothIcon class="w-5 h-5" />
+                                </template>
+                                Service Management
+                            </ResponsiveNavLink>
                             <div class="px-3 py-1">
                                 <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Services</div>
                             </div>
-                            <ResponsiveNavLink :href="route('admin.hotels.index')">🏨 Hotels</ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('admin.visa-applications.index')">🛂 Visa Applications</ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('admin.hotels.index')" icon-class="text-sunrise-600">
+                                <template #icon>
+                                    <BuildingOfficeIcon class="w-5 h-5" />
+                                </template>
+                                Hotels
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('admin.visa-applications.index')" icon-class="text-sky-600">
+                                <template #icon>
+                                    <DocumentTextIcon class="w-5 h-5" />
+                                </template>
+                                Visa Applications
+                            </ResponsiveNavLink>
                             <div class="px-3 py-1">
                                 <div class="text-xs font-medium text-gray-500 uppercase tracking-wide">Management</div>
                             </div>
-                            <ResponsiveNavLink :href="route('admin.jobs.index')">💼 Job Postings</ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('admin.applications.index')">📝 Job Applications</ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('admin.users.index')">👥 Users</ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('admin.analytics.index')">📈 Analytics</ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('seo-settings.index')">🔍 SEO</ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('admin.settings.index')">⚙️ Settings</ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('admin.jobs.index')" icon-class="text-heritage-600">
+                                <template #icon>
+                                    <BriefcaseIcon class="w-5 h-5" />
+                                </template>
+                                Job Postings
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('admin.applications.index')" icon-class="text-ocean-600">
+                                <template #icon>
+                                    <DocumentTextIcon class="w-5 h-5" />
+                                </template>
+                                Job Applications
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('admin.users.index')" icon-class="text-growth-600">
+                                <template #icon>
+                                    <UserGroupIcon class="w-5 h-5" />
+                                </template>
+                                Users
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('admin.analytics.index')" icon-class="text-sky-600">
+                                <template #icon>
+                                    <ChartBarIcon class="w-5 h-5" />
+                                </template>
+                                Analytics
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('seo-settings.index')" icon-class="text-heritage-600">
+                                <template #icon>
+                                    <DocumentMagnifyingGlassIcon class="w-5 h-5" />
+                                </template>
+                                SEO
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('admin.settings.index')" icon-class="text-gold-600">
+                                <template #icon>
+                                    <Cog6ToothIcon class="w-5 h-5" />
+                                </template>
+                                Settings
+                            </ResponsiveNavLink>
                         </template>
                         
                         <!-- Agency Section -->
@@ -308,9 +555,24 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                             <div class="px-3 py-2">
                                 <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Agency Panel</div>
                             </div>
-                            <ResponsiveNavLink :href="route('agency.dashboard')">📊 Dashboard</ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('agency.country-assignments.index')">🌍 My Countries</ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('agency.applications.index')">📋 Applications</ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('agency.dashboard')" icon-class="text-ocean-600">
+                                <template #icon>
+                                    <ChartBarIcon class="w-5 h-5" />
+                                </template>
+                                Dashboard
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('agency.country-assignments.index')" icon-class="text-growth-600">
+                                <template #icon>
+                                    <MapIcon class="w-5 h-5" />
+                                </template>
+                                My Countries
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('agency.applications.index')" icon-class="text-sky-600">
+                                <template #icon>
+                                    <DocumentTextIcon class="w-5 h-5" />
+                                </template>
+                                Applications
+                            </ResponsiveNavLink>
                         </template>
                     </div>
 
@@ -330,30 +592,51 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                         </div>
 
                         <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')">
-                                👤 Profile
+                            <ResponsiveNavLink :href="route('profile.edit')" icon-class="text-ocean-600">
+                                <template #icon>
+                                    <UserIcon class="w-5 h-5" />
+                                </template>
+                                Profile
                             </ResponsiveNavLink>
                             
                             <!-- Regular User Menu -->
                             <template v-if="!isAdmin">
                                 <div class="border-t border-gray-200 my-2"></div>
-                                <ResponsiveNavLink :href="route('wallet.index')">
-                                    💰 My Wallet
+                                <ResponsiveNavLink :href="route('wallet.index')" icon-class="text-growth-600">
+                                    <template #icon>
+                                        <WalletIcon class="w-5 h-5" />
+                                    </template>
+                                    My Wallet
                                 </ResponsiveNavLink>
-                                <ResponsiveNavLink :href="route('referral.index')">
-                                    🔗 Referrals
+                                <ResponsiveNavLink :href="route('referral.index')" icon-class="text-ocean-600">
+                                    <template #icon>
+                                        <UserGroupIcon class="w-5 h-5" />
+                                    </template>
+                                    Referrals
                                 </ResponsiveNavLink>
-                                <ResponsiveNavLink :href="route('appointments.index')">
-                                    📅 My Appointments
+                                <ResponsiveNavLink :href="route('appointments.index')" icon-class="text-sky-600">
+                                    <template #icon>
+                                        <CalendarIcon class="w-5 h-5" />
+                                    </template>
+                                    My Appointments
                                 </ResponsiveNavLink>
-                                <ResponsiveNavLink :href="route('support.index')">
-                                    💬 Support Tickets
+                                <ResponsiveNavLink :href="route('support.index')" icon-class="text-sunrise-600">
+                                    <template #icon>
+                                        <ChatBubbleLeftRightIcon class="w-5 h-5" />
+                                    </template>
+                                    Support Tickets
                                 </ResponsiveNavLink>
-                                <ResponsiveNavLink :href="route('events.index')">
-                                    🎉 Events
+                                <ResponsiveNavLink :href="route('events.index')" icon-class="text-heritage-600">
+                                    <template #icon>
+                                        <TicketIcon class="w-5 h-5" />
+                                    </template>
+                                    Events
                                 </ResponsiveNavLink>
-                                <ResponsiveNavLink :href="route('faqs.index')">
-                                    ❓ FAQs
+                                <ResponsiveNavLink :href="route('faqs.index')" icon-class="text-ocean-600">
+                                    <template #icon>
+                                        <QuestionMarkCircleIcon class="w-5 h-5" />
+                                    </template>
+                                    FAQs
                                 </ResponsiveNavLink>
                             </template>
                             
@@ -362,8 +645,12 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                 :href="route('logout')"
                                 method="post"
                                 as="button"
+                                icon-class="text-red-600"
                             >
-                                🚪 Log Out
+                                <template #icon>
+                                    <ArrowRightOnRectangleIcon class="w-5 h-5" />
+                                </template>
+                                Log Out
                             </ResponsiveNavLink>
                         </div>
                     </div>
