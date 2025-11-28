@@ -1,0 +1,95 @@
+# Platform Cleanup Report
+
+Generated: 2025-11-27 06:39:49
+
+## Console Statements (15)
+
+- Components/GlobalSearch.vue:162
+  ```
+  console.error('Failed to fetch suggestions:', error)
+  ```
+
+- Components/GlobalSearch.vue:188
+  ```
+  console.error('Search failed:', error)
+  ```
+
+- Components/ImpersonationBanner.vue:16
+  ```
+  console.log('Stopping impersonation...', route('admin.impersonate.stop'))
+  ```
+
+- Components/ImpersonationBanner.vue:23
+  ```
+  console.log('Stop impersonation success, redirecting to admin dashboard...')
+  ```
+
+- Components/ImpersonationBanner.vue:30
+  ```
+  console.error('Stop impersonation error', errors)
+  ```
+
+- Components/NotificationBell.vue:34
+  ```
+  console.error('Failed to fetch notifications:', error)
+  ```
+
+- Components/NotificationBell.vue:57
+  ```
+  console.error('Failed to fetch unread count:', error)
+  ```
+
+- Components/NotificationBell.vue:79
+  ```
+  console.error('Failed to mark as read:', error)
+  ```
+
+- Components/NotificationBell.vue:97
+  ```
+  console.error('Failed to mark all as read:', error)
+  ```
+
+- Utils/dateFormat.js:42
+  ```
+  console.error('Date formatting error:', error);
+  ```
+
+- Utils/dateFormat.js:70
+  ```
+  console.error('DateTime formatting error:', error);
+  ```
+
+- Utils/dateFormat.js:101
+  ```
+  console.error('Time formatting error:', error);
+  ```
+
+- Utils/dateFormat.js:135
+  ```
+  console.error('Date parsing error:', error);
+  ```
+
+- Utils/dateFormat.js:183
+  ```
+  console.error('Relative time formatting error:', error);
+  ```
+
+- Utils/dateFormat.js:206
+  ```
+  console.error('Date input formatting error:', error);
+  ```
+
+
+## TODO/FIXME Comments (1)
+
+- Components/GlobalSearch.vue:222
+  ```
+  // TODO: Implement keyboard navigation
+  ```
+
+
+## Button Text Issues (3)
+
+- Layouts/AdminLayout.vue:597: >Admin Panel<
+- Layouts/AuthenticatedLayout.vue:142: >Admin Panel<
+- Layouts/AuthenticatedLayout.vue:276: >Admin Panel<
