@@ -1,6 +1,8 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useForm } from '@inertiajs/vue3'
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue'
+import FlowButton from '@/Components/Rhythmic/FlowButton.vue'
 import InputLabel from '@/Components/InputLabel.vue'
 import TextInput from '@/Components/TextInput.vue'
 import DateInput from '@/Components/DateInput.vue'
@@ -120,24 +122,21 @@ const submitForm = () => {
 <template>
   <section class="space-y-4">
     <!-- Section Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-rhythm-lg">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold-500 to-sunrise-500 flex items-center justify-center shadow-rhythmic-md">
           <BanknotesIcon class="w-6 h-6 text-white" />
         </div>
         <div>
-          <h2 class="text-lg font-bold text-gray-900 dark:text-white">Financial Information</h2>
-          <p class="text-xs text-gray-500 dark:text-gray-400">Secure financial overview</p>
+          <h2 class="font-display font-bold text-xl text-gray-800">Financial Information</h2>
+          <p class="text-xs text-gray-500">Secure financial overview</p>
         </div>
       </div>
-      <button
-        @click="openEditModal"
-        class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-emerald-700 rounded-lg hover:from-green-700 hover:to-emerald-800 transition-all shadow-md active:scale-95"
-        style="min-height: 44px"
-      >
-        <PencilIcon class="w-4 h-4" />
-        <span class="hidden sm:inline">Edit</span>
-      </button>
+      <FlowButton @click="openEditModal" variant="primary">
+        <template #icon-left><PencilIcon class="w-4 h-4" /></template>
+        <span class="hidden sm:inline">Edit Details</span>
+        <span class="sm:hidden">Edit</span>
+      </FlowButton>
     </div>
 
     <!-- Privacy Controls -->

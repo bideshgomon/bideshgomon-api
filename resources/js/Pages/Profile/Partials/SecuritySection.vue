@@ -2,6 +2,8 @@
 import { ref, computed } from 'vue'
 import { useForm } from '@inertiajs/vue3'
 import Modal from '@/Components/Modal.vue'
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue'
+import FlowButton from '@/Components/Rhythmic/FlowButton.vue'
 import InputLabel from '@/Components/InputLabel.vue'
 import TextInput from '@/Components/TextInput.vue'
 import InputError from '@/Components/InputError.vue'
@@ -105,24 +107,21 @@ const securityStatus = computed(() => {
 <template>
   <section class="space-y-4">
     <!-- Section Header -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-rhythm-lg">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-red-600 to-orange-600 flex items-center justify-center">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-heritage-500 to-sunrise-500 flex items-center justify-center shadow-rhythmic-md">
           <ShieldCheckIcon class="w-6 h-6 text-white" />
         </div>
         <div>
-          <h2 class="text-lg font-bold text-gray-900 dark:text-white">Security & Background</h2>
-          <p class="text-xs text-gray-500 dark:text-gray-400">Background check information</p>
+          <h2 class="font-display font-bold text-xl text-gray-800">Security & Background</h2>
+          <p class="text-xs text-gray-500">Background check information</p>
         </div>
       </div>
-      <button
-        @click="openModal"
-        class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-600 to-orange-600 rounded-lg hover:from-red-700 hover:to-orange-700 transition-all shadow-md active:scale-95"
-        style="min-height: 44px"
-      >
-        <PencilIcon class="w-4 h-4" />
-        <span class="hidden sm:inline">Edit</span>
-      </button>
+      <FlowButton @click="openModal" variant="primary">
+        <template #icon-left><PencilIcon class="w-4 h-4" /></template>
+        <span class="hidden sm:inline">Edit Details</span>
+        <span class="sm:hidden">Edit</span>
+      </FlowButton>
     </div>
 
     <!-- Status Card -->

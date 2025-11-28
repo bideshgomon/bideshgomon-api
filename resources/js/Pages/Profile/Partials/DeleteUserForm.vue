@@ -1,5 +1,7 @@
 <script setup>
 import DangerButton from '@/Components/DangerButton.vue';
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
+import FlowButton from '@/Components/Rhythmic/FlowButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import Modal from '@/Components/Modal.vue';
@@ -7,6 +9,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
 import { nextTick, ref } from 'vue';
+import { ExclamationTriangleIcon } from '@heroicons/vue/24/outline';
 
 const confirmingUserDeletion = ref(false);
 const passwordInput = ref(null);
@@ -40,16 +43,21 @@ const closeModal = () => {
 
 <template>
     <section class="space-y-6">
-        <header>
-            <h2 class="text-base md:text-lg font-semibold text-gray-900">
-                Delete Account
-            </h2>
+        <header class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-heritage-500 flex items-center justify-center shadow-rhythmic-md flex-shrink-0">
+                <ExclamationTriangleIcon class="w-6 h-6 text-white" />
+            </div>
+            <div class="flex-1">
+                <h2 class="font-display font-bold text-xl text-gray-800">
+                    Delete Account
+                </h2>
 
-            <p class="mt-1 text-sm md:text-base text-gray-600">
-                Once your account is deleted, all of its resources and data will
-                be permanently deleted. Before deleting your account, please
-                download any data or information that you wish to retain.
-            </p>
+                <p class="mt-1 text-sm text-gray-600">
+                    Once your account is deleted, all of its resources and data will
+                    be permanently deleted. Before deleting your account, please
+                    download any data or information that you wish to retain.
+                </p>
+            </div>
         </header>
 
         <DangerButton @click="confirmUserDeletion" class="py-3 px-6 text-base touch-manipulation" style="min-height: 48px">Delete Account</DangerButton>

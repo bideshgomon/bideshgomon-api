@@ -2,6 +2,8 @@
 import { ref, onMounted, watch } from 'vue';
 import { useForm, router } from '@inertiajs/vue3';
 import axios from 'axios';
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
+import FlowButton from '@/Components/Rhythmic/FlowButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -162,21 +164,24 @@ onMounted(() => {
 
 <template>
     <section>
-        <header class="mb-6">
-            <div class="flex flex-col gap-4">
-                <div>
-                    <h2 class="text-lg font-medium text-gray-900">Travel History</h2>
-                    <p class="mt-1 text-sm text-gray-600">
-                        Keep track of your international travel history for visa applications
-                    </p>
+        <header class="mb-rhythm-lg">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-ocean-500 to-sky-500 flex items-center justify-center shadow-rhythmic-md">
+                        <GlobeAltIcon class="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                        <h2 class="font-display font-bold text-xl text-gray-800">Travel History</h2>
+                        <p class="text-xs text-gray-500">
+                            International travel history for visa applications
+                        </p>
+                    </div>
                 </div>
-                <button
-                    @click="openAddModal"
-                    class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
-                >
-                    <PlusIcon class="h-5 w-5" />
-                    <span>ADD TRAVEL</span>
-                </button>
+                <FlowButton @click="openAddModal" variant="primary">
+                    <template #icon-left><PlusIcon class="w-4 h-4" /></template>
+                    <span class="hidden sm:inline">Add Travel</span>
+                    <span class="sm:hidden">Add</span>
+                </FlowButton>
             </div>
         </header>
 

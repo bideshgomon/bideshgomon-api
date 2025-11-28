@@ -7,6 +7,8 @@ import { useBangladeshFormat } from '@/Composables/useBangladeshFormat'
 import PrimaryButton from '@/Components/PrimaryButton.vue'
 import SecondaryButton from '@/Components/SecondaryButton.vue'
 import DangerButton from '@/Components/DangerButton.vue'
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue'
+import FlowButton from '@/Components/Rhythmic/FlowButton.vue'
 import InputLabel from '@/Components/InputLabel.vue'
 import TextInput from '@/Components/TextInput.vue'
 import InputError from '@/Components/InputError.vue'
@@ -274,14 +276,24 @@ onMounted(() => {
 
 <template>
   <section>
-    <header class="mb-6">
+    <header class="mb-rhythm-lg">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h2 class="text-xl font-bold text-gray-900 dark:text-white">Family Information</h2>
-          <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-            Manage family members and dependents for visa applications
-          </p>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-heritage-500 to-gold-500 flex items-center justify-center shadow-rhythmic-md">
+            <UsersIcon class="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h2 class="font-display font-bold text-xl text-gray-800">Family Information</h2>
+            <p class="text-xs text-gray-500">
+              Family members and dependents for visa applications
+            </p>
+          </div>
         </div>
+        <FlowButton @click="openAddModal" variant="primary">
+          <template #icon-left><PlusIcon class="w-4 h-4" /></template>
+          <span class="hidden sm:inline">Add Member</span>
+          <span class="sm:hidden">Add</span>
+        </FlowButton>
       </div>
     </header>
 
