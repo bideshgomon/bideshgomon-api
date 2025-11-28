@@ -175,7 +175,7 @@ const getPriorityStatus = (priority) => {
                                     <DocumentCheckIcon class="h-8 w-8" />
                                     <h3 class="text-xl sm:text-2xl font-bold">Profile Completion</h3>
                                 </div>
-                                <p class="text-ocean-100 mb-rhythm-md">
+                                <p class="text-white/90 mb-rhythm-md">
                                     Complete your profile to unlock all features and increase your chances of success
                                 </p>
                                 <div class="flex items-center gap-rhythm-md">
