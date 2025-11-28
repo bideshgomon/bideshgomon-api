@@ -7,6 +7,11 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import MobileBottomNav from '@/Components/MobileBottomNav.vue';
+import LanguageSwitcher from '@/Components/LanguageSwitcher.vue';
+import NotificationBell from '@/Components/NotificationBell.vue';
+import PWAInstallPrompt from '@/Components/PWAInstallPrompt.vue';
+import NetworkStatus from '@/Components/NetworkStatus.vue';
+import SlowConnectionWarning from '@/Components/SlowConnectionWarning.vue';
 import { Link } from '@inertiajs/vue3';
 import { SparklesIcon } from '@heroicons/vue/24/outline';
 
@@ -48,21 +53,16 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                 </div>
             </div>
             <nav
-                class="border-b border-gray-100 bg-white"
+                class="border-b border-gray-100 bg-white sticky top-0 z-40"
             >
                 <!-- Primary Navigation Menu -->
-                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div class="flex h-16 justify-between">
+                <div class="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 lg:px-8">
+                    <div class="flex h-14 sm:h-16 justify-between">
                         <div class="flex">
                             <!-- Logo -->
                             <div class="flex shrink-0 items-center">
-                                <Link :href="route('dashboard')" class="flex items-center hover:opacity-80 transition">
-                                    <div class="bg-gradient-to-br from-indigo-600 to-purple-600 p-1.5 rounded-lg shadow-sm">
-                                        <SparklesIcon class="h-5 w-5 text-white" />
-                                    </div>
-                                    <div class="ml-2 hidden sm:block">
-                                        <div class="text-sm font-bold text-gray-900">Bidesh Gomon</div>
-                                    </div>
+                                <Link :href="route('dashboard')">
+                                    <ApplicationLogo class="h-10 w-auto" />
                                 </Link>
                             </div>
 
@@ -77,44 +77,25 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                     Dashboard
                                 </NavLink>
                                     
-                                    <!-- Plugin System: Services Marketplace -->
-                                    <NavLink :href="route('services.index')" :active="route().current('services.*')">
-                                        🔌 Services
-                                    </NavLink>
-                                    
-                                    <!-- Plugin System: My Applications -->
-                                    <NavLink :href="route('user.applications.index')" :active="route().current('user.applications.*')">
-                                        📋 My Applications
-                                    </NavLink>
-                                    
-                                    <NavLink :href="route('documents.index')" :active="route().current('documents.*')">
-                                        Documents
-                                    </NavLink>
-                                    <NavLink :href="route('notifications.index')" :active="route().current('notifications.*')">
-                                        <span class="inline-flex items-center gap-1">
-                                            Notifications
-                                            <span v-if="$page.props.auth?.user?.unread_notifications > 0" class="ml-1 inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-red-600 text-white">
-                                                {{ $page.props.auth.user.unread_notifications }}
-                                            </span>
-                                        </span>
-                                    </NavLink>
-                                
-                                <!-- Legacy Services Dropdown (Keep for backward compatibility) -->
-                                <div class="relative">
-                                    <Dropdown align="left" width="48">
+                                    <!-- Services Dropdown -->
+                                    <Dropdown align="left" width="48" class="hidden sm:block">
                                         <template #trigger>
-                                            <button class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out h-16">
-                                                Legacy
-                                                <svg class="ml-1 h-4 w-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                            <button
+                                                type="button"
+                                                class="inline-flex items-center rounded-md px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
+                                                :class="{ 'border-b-2 border-indigo-400 text-gray-900': route().current('services.*') || route().current('user.applications.*') }"
+                                            >
+                                                🔌 Services
+                                                <svg class="ms-1 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                                </svg>
                                             </button>
                                         </template>
                                         <template #content>
-                                            <DropdownLink :href="route('flight-requests.create')">✈️ Flight Requests</DropdownLink>
-                                            <DropdownLink :href="route('hotels.index')">🏨 Hotel Bookings</DropdownLink>
-                                            <DropdownLink :href="route('translation.index')">🌐 Translation</DropdownLink>
+                                            <DropdownLink :href="route('services.index')">🔍 Browse Services</DropdownLink>
+                                            <DropdownLink :href="route('user.applications.index')">📋 My Applications</DropdownLink>
                                         </template>
                                     </Dropdown>
-                                </div>
                                 
                                 <NavLink
                                     :href="route('jobs.index')"
@@ -125,7 +106,13 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                             </div>
                         </div>
 
-                        <div class="hidden sm:ms-6 sm:flex sm:items-center">
+                        <div class="hidden sm:ms-6 sm:flex sm:items-center sm:gap-2">
+                            <!-- Language Switcher -->
+                            <LanguageSwitcher />
+                            
+                            <!-- Notification Bell -->
+                            <NotificationBell />
+                            
                             <!-- Settings Dropdown -->
                             <div class="relative ms-3">
                                 <Dropdown align="right" width="48">
@@ -157,11 +144,12 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                         <DropdownLink :href="route('profile.edit')">👤 Profile</DropdownLink>
                                         <DropdownLink :href="route('profile.assessment.show')">✨ AI Assessment</DropdownLink>
                                         <DropdownLink :href="route('profile.public.settings')">🌐 Public Profile</DropdownLink>
+                                        <DropdownLink :href="route('notification-preferences.index')">🔔 Notification Preferences</DropdownLink>
                                         
                                         <!-- Admin Menu -->
                                         <template v-if="isAdmin">
                                             <div class="border-t border-gray-100 my-1"></div>
-                                            <div class="px-4 py-2 text-xs text-gray-400 uppercase font-semibold tracking-wider">Admin Panel</div>
+                                            <div class="px-4 py-2 text-xs text-gray-400 uppercase font-semibold tracking-wider">Admin</div>
                                             <DropdownLink :href="route('admin.dashboard')">📊 Dashboard</DropdownLink>
                                             <DropdownLink :href="route('admin.service-modules.index')">🎯 Service Modules (39)</DropdownLink>
                                             <DropdownLink :href="route('admin.visa-requirements.index')">📋 Visa Requirements</DropdownLink>
@@ -178,19 +166,26 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                                 <DropdownLink :href="route('admin.notifications.index')">🔔 Admin Notifications</DropdownLink>
                                         </template>
                                         
+                                        <!-- Agency Menu -->
+                                        <template v-else-if="isAgency">
+                                            <div class="border-t border-gray-100 my-1"></div>
+                                            <div class="px-4 py-2 text-xs text-gray-400 uppercase font-semibold tracking-wider">Agency Panel</div>
+                                            <DropdownLink :href="route('agency.dashboard')">📊 Dashboard</DropdownLink>
+                                            <DropdownLink :href="route('agency.country-assignments.index')">🌍 My Countries</DropdownLink>
+                                            <DropdownLink :href="route('agency.applications.index')">📋 Applications</DropdownLink>
+                                        </template>
+                                        
                                         <!-- Regular User Menu -->
                                         <template v-else>
-    <DropdownLink :href="route('suggestions.index')">✨ Smart Suggestions</DropdownLink>
+                                            <DropdownLink :href="route('suggestions.index')">✨ Smart Suggestions</DropdownLink>
                                             <div class="border-t border-gray-100 my-1"></div>
+                                            <DropdownLink :href="route('document-scanner.index')">🔍 Document Scanner</DropdownLink>
                                             <DropdownLink :href="route('wallet.index')">💰 My Wallet</DropdownLink>
                                             <DropdownLink :href="route('referral.index')">🔗 Referrals</DropdownLink>
-                                            <div class="border-t border-gray-100 my-1"></div>
-                                            <div class="px-4 py-2 text-xs text-gray-400 uppercase tracking-wider">My Services</div>
-                                            <DropdownLink :href="route('flight-requests.index')">✈️ My Flights</DropdownLink>
-                                            <DropdownLink :href="route('hotels.my-bookings')">🏨 My Hotels</DropdownLink>
-                                            <!-- <DropdownLink :href="route('visa.my-applications')">🛂 My Visas</DropdownLink> -->
-                                            <DropdownLink :href="route('translation.my-requests')">🌐 My Translations</DropdownLink>
-                                            <DropdownLink :href="route('jobs.my-applications')">📝 My Applications</DropdownLink>
+                                            <DropdownLink :href="route('appointments.index')">📅 My Appointments</DropdownLink>
+                                            <DropdownLink :href="route('support.index')">💬 Support Tickets</DropdownLink>
+                                            <DropdownLink :href="route('events.index')">🎉 Events</DropdownLink>
+                                            <DropdownLink :href="route('faqs.index')">❓ FAQs</DropdownLink>
                                         </template>
                                         
                                         <div class="border-t border-gray-100 my-1"></div>
@@ -266,13 +261,13 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                             Dashboard
                         </ResponsiveNavLink>
                         
-                        <div class="px-3 py-2">
-                            <div class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Services</div>
-                        </div>
-                        <ResponsiveNavLink :href="route('flight-requests.create')">✈️ Flight Requests</ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('hotels.index')">🏨 Hotel Bookings</ResponsiveNavLink>
-                        <!-- Visa Services removed - use bgproject's dedicated tourist-visa system -->
-                        <ResponsiveNavLink :href="route('translation.index')">🌐 Translation</ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('services.index')" :active="route().current('services.*')">
+                            🔌 Services
+                        </ResponsiveNavLink>
+                        
+                        <ResponsiveNavLink :href="route('user.applications.index')" :active="route().current('user.applications.*')">
+                            📋 My Applications
+                        </ResponsiveNavLink>
                         
                         <ResponsiveNavLink
                             :href="route('jobs.index')"
@@ -285,7 +280,7 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                         <template v-if="isAdmin">
                             <div class="border-t border-gray-200 my-2"></div>
                             <div class="px-3 py-2">
-                                <div class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Admin Panel</div>
+                                <div class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Admin</div>
                             </div>
                             <ResponsiveNavLink :href="route('admin.dashboard')">📊 Dashboard</ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('admin.service-modules.index')">🎯 Service Modules (39)</ResponsiveNavLink>
@@ -305,6 +300,17 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                             <ResponsiveNavLink :href="route('admin.analytics.index')">📈 Analytics</ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('seo-settings.index')">🔍 SEO</ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('admin.settings.index')">⚙️ Settings</ResponsiveNavLink>
+                        </template>
+                        
+                        <!-- Agency Section -->
+                        <template v-else-if="isAgency">
+                            <div class="border-t border-gray-200 my-2"></div>
+                            <div class="px-3 py-2">
+                                <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Agency Panel</div>
+                            </div>
+                            <ResponsiveNavLink :href="route('agency.dashboard')">📊 Dashboard</ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('agency.country-assignments.index')">🌍 My Countries</ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('agency.applications.index')">📋 Applications</ResponsiveNavLink>
                         </template>
                     </div>
 
@@ -337,14 +343,18 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                 <ResponsiveNavLink :href="route('referral.index')">
                                     🔗 Referrals
                                 </ResponsiveNavLink>
-                                
-                                <div class="border-t border-gray-200 my-2"></div>
-                                <div class="px-4 py-2 text-xs text-gray-400 uppercase">My Services</div>
-                                <ResponsiveNavLink :href="route('flight-requests.index')">✈️ My Flights</ResponsiveNavLink>
-                                <ResponsiveNavLink :href="route('hotels.my-bookings')">🏨 My Hotels</ResponsiveNavLink>
-                                <!-- <ResponsiveNavLink :href="route('visa.my-applications')">🛂 My Visas</ResponsiveNavLink> -->
-                                <ResponsiveNavLink :href="route('translation.my-requests')">🌐 My Translations</ResponsiveNavLink>
-                                <ResponsiveNavLink :href="route('jobs.my-applications')">📝 My Applications</ResponsiveNavLink>
+                                <ResponsiveNavLink :href="route('appointments.index')">
+                                    📅 My Appointments
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink :href="route('support.index')">
+                                    💬 Support Tickets
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink :href="route('events.index')">
+                                    🎉 Events
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink :href="route('faqs.index')">
+                                    ❓ FAQs
+                                </ResponsiveNavLink>
                             </template>
                             
                             <div class="border-t border-gray-200 my-2"></div>
@@ -378,5 +388,10 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
             <!-- Mobile Bottom Navigation -->
             <MobileBottomNav />
         </div>
+
+        <!-- PWA Components -->
+        <NetworkStatus />
+        <PWAInstallPrompt />
+        <SlowConnectionWarning />
     </div>
 </template>

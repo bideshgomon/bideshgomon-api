@@ -4,9 +4,13 @@ import { Link, usePage } from '@inertiajs/vue3'
 import ApplicationLogo from '@/Components/ApplicationLogo.vue'
 import Dropdown from '@/Components/Dropdown.vue'
 import DropdownLink from '@/Components/DropdownLink.vue'
-import NotificationBell from '@/Components/NotificationBell.vue'
+import RealtimeNotifications from '@/Components/RealtimeNotifications.vue'
 import GlobalSearch from '@/Components/GlobalSearch.vue'
+import LanguageSwitcher from '@/Components/LanguageSwitcher.vue'
 import ImpersonationBanner from '@/Components/ImpersonationBanner.vue'
+import PWAInstallPrompt from '@/Components/PWAInstallPrompt.vue'
+import NetworkStatus from '@/Components/NetworkStatus.vue'
+import SlowConnectionWarning from '@/Components/SlowConnectionWarning.vue'
 import {
   HomeIcon,
   Bars3Icon,
@@ -51,6 +55,7 @@ import {
   SunIcon,
   CommandLineIcon,
   ArrowRightOnRectangleIcon,
+  BookOpenIcon,
 } from '@heroicons/vue/24/outline'
 
 const showingNavigationDropdown = ref(false)
@@ -133,139 +138,48 @@ const toggleSidebar = () => {
 }
 
 // ========================================
-// ADMIN NAVIGATION - Clean Organized Structure
-// Based on actual routes and controllers available
+// ADMIN NAVIGATION - Reorganized Professional Structure
+// Grouped by functional areas for better UX
 // ========================================
 const navigation = [
-  // DASHBOARD
+  // ========== DASHBOARD & OVERVIEW ==========
   {
     name: 'Dashboard',
     href: route('admin.dashboard'),
     icon: HomeIcon,
     current: route().current('admin.dashboard'),
     section: 'dashboard',
+    badge: null,
+    description: 'Main admin overview',
+  },
+  {
+    name: 'Analytics',
+    href: route('admin.analytics.index'),
+    icon: ChartBarIcon,
+    current: route().current('admin.analytics.*'),
+    section: 'dashboard',
+    description: 'Platform insights & reports',
   },
 
-  // USER MANAGEMENT
+  // ========== USER & PEOPLE MANAGEMENT ==========
   {
     name: 'Users',
     href: route('admin.users.index'),
     icon: UsersIcon,
     current: route().current('admin.users.*'),
     section: 'users',
-  },
-
-  // JOBS & EMPLOYMENT
-  {
-    name: 'Job Postings',
-    href: route('admin.jobs.index'),
-    icon: BriefcaseIcon,
-    current: route().current('admin.jobs.*'),
-    section: 'jobs',
+    description: 'Manage platform users',
   },
   {
-    name: 'Job Applications',
-    href: route('admin.job-applications.index'),
-    icon: ClipboardDocumentListIcon,
-    current: route().current('admin.job-applications.*') || route().current('admin.applications.*'),
-    section: 'jobs',
-  },
-
-  // VISA & TRAVEL SERVICES
-  {
-    name: 'Visa Applications',
-    href: route('admin.visa-applications.index'),
-    icon: DocumentTextIcon,
-    current: route().current('admin.visa-applications.*'),
-    section: 'travel',
-  },
-  {
-    name: 'Visa Requirements',
-    href: route('admin.visa-requirements.index'),
-    icon: ClipboardDocumentListIcon,
-    current: route().current('admin.visa-requirements.*'),
-    section: 'travel',
-  },
-  {
-    name: 'Hotels',
-    href: route('admin.hotels.index'),
-    icon: BuildingLibraryIcon,
-    current: route().current('admin.hotels.*'),
-    section: 'travel',
-  },
-  {
-    name: 'Hotel Bookings',
-    href: route('admin.hotel-bookings.index'),
+    name: 'Impersonation Logs',
+    href: route('admin.impersonations.index'),
     icon: ClockIcon,
-    current: route().current('admin.hotel-bookings.*'),
-    section: 'travel',
-  },
-  {
-    name: 'Flight Requests',
-    href: route('admin.flight-requests.index'),
-    icon: TruckIcon,
-    current: route().current('admin.flight-requests.*'),
-    section: 'travel',
+    current: route().current('admin.impersonations.*'),
+    section: 'users',
+    description: 'Track admin impersonations',
   },
 
-  // AGENCY MANAGEMENT
-  {
-    name: 'Agency Assignments',
-    href: route('admin.agency-assignments.index'),
-    icon: UserGroupIcon,
-    current: route().current('admin.agency-assignments.*'),
-    section: 'agencies',
-  },
-
-  // FINANCIAL & REWARDS
-  {
-    name: 'Wallets',
-    href: route('admin.wallets.index'),
-    icon: BanknotesIcon,
-    current: route().current('admin.wallets.*'),
-    section: 'financial',
-  },
-  {
-    name: 'Rewards',
-    href: route('admin.rewards.index'),
-    icon: GiftIcon,
-    current: route().current('admin.rewards.*'),
-    section: 'financial',
-  },
-
-  // CONTENT & MARKETING
-  {
-    name: 'Marketing Campaigns',
-    href: route('admin.marketing-campaigns.index'),
-    icon: MegaphoneIcon,
-    current: route().current('admin.marketing-campaigns.*'),
-    section: 'content',
-  },
-  // Note: Blog routes are nested resources and need refactoring
-  // Temporarily disabled until routes are fixed
-  // {
-  //   name: 'Blog Posts',
-  //   href: route('admin.blog.posts.index'),
-  //   icon: NewspaperIcon,
-  //   current: route().current('admin.blog.posts.*'),
-  //   section: 'content',
-  // },
-  // {
-  //   name: 'Blog Categories',
-  //   href: route('admin.blog.categories.index'),
-  //   icon: FolderIcon,
-  //   current: route().current('admin.blog.categories.*'),
-  //   section: 'content',
-  // },
-  // {
-  //   name: 'Blog Tags',
-  //   href: route('admin.blog.tags.index'),
-  //   icon: TableCellsIcon,
-  //   current: route().current('admin.blog.tags.*'),
-  //   section: 'content',
-  // },
-
-  // PLUGIN SYSTEM - Service Applications & Quotes
+  // ========== PLUGIN SYSTEM (PRIORITY) ==========
   {
     name: 'Service Applications',
     href: route('service-applications.index'),
@@ -283,75 +197,246 @@ const navigation = [
     section: 'plugin-system',
     description: 'Agency Quotes & Pricing',
   },
-
-  // SERVICES & MODULES
   {
     name: 'Service Modules',
     href: route('admin.service-modules.index'),
     icon: RectangleStackIcon,
     current: route().current('admin.service-modules.*'),
-    section: 'services',
+    section: 'plugin-system',
     badge: '38',
     description: 'Configure 38 Active Services',
   },
+
+  // ========== JOBS & EMPLOYMENT ==========
   {
-    name: 'Service Management',
-    href: route('admin.services.index'),
-    icon: Cog6ToothIcon,
-    current: route().current('admin.services.*'),
-    section: 'services',
-    description: 'Legacy Service Management',
+    name: 'Job Postings',
+    href: route('admin.jobs.index'),
+    icon: BriefcaseIcon,
+    current: route().current('admin.jobs.*'),
+    section: 'jobs',
+    description: 'Manage job listings',
+  },
+  {
+    name: 'Job Applications',
+    href: route('admin.job-applications.index'),
+    icon: ClipboardDocumentListIcon,
+    current: route().current('admin.job-applications.*') || route().current('admin.applications.*'),
+    section: 'jobs',
+    description: 'Review applications',
   },
 
-  // DATA MANAGEMENT
+  // ========== VISA & TRAVEL SERVICES ==========
+  {
+    name: 'Visa Applications',
+    href: route('admin.visa-applications.index'),
+    icon: DocumentTextIcon,
+    current: route().current('admin.visa-applications.*'),
+    section: 'travel',
+    description: 'Process visa requests',
+  },
+  {
+    name: 'Visa Requirements',
+    href: route('admin.visa-requirements.index'),
+    icon: ClipboardDocumentListIcon,
+    current: route().current('admin.visa-requirements.*'),
+    section: 'travel',
+    description: 'Country visa rules',
+  },
+  {
+    name: 'Hotels',
+    href: route('admin.hotels.index'),
+    icon: BuildingLibraryIcon,
+    current: route().current('admin.hotels.*'),
+    section: 'travel',
+    description: 'Manage hotel inventory',
+  },
+  {
+    name: 'Hotel Bookings',
+    href: route('admin.hotel-bookings.index'),
+    icon: ClockIcon,
+    current: route().current('admin.hotel-bookings.*'),
+    section: 'travel',
+    description: 'Track reservations',
+  },
+  {
+    name: 'Flight Requests',
+    href: route('admin.flight-requests.index'),
+    icon: TruckIcon,
+    current: route().current('admin.flight-requests.*'),
+    section: 'travel',
+    description: 'Flight inquiries',
+  },
+
+  // ========== AGENCY MANAGEMENT ==========
+  {
+    name: 'Agency Assignments',
+    href: route('admin.agency-assignments.index'),
+    icon: UserGroupIcon,
+    current: route().current('admin.agency-assignments.*'),
+    section: 'agencies',
+    description: 'Agency service allocations',
+  },
+  {
+    name: 'Agency Resources',
+    href: route('admin.agency-resources.index'),
+    icon: FolderIcon,
+    current: route().current('admin.agency-resources.*'),
+    section: 'agencies',
+    description: 'Agency materials & docs',
+  },
+
+  // ========== FINANCIAL & PAYMENTS ==========
+  {
+    name: 'Wallets',
+    href: route('admin.wallets.index'),
+    icon: BanknotesIcon,
+    current: route().current('admin.wallets.*'),
+    section: 'financial',
+    description: 'User wallet management',
+  },
+  {
+    name: 'Rewards',
+    href: route('admin.rewards.index'),
+    icon: GiftIcon,
+    current: route().current('admin.rewards.*'),
+    section: 'financial',
+    description: 'Loyalty & rewards program',
+  },
+
+  // ========== CONTENT MANAGEMENT & CMS ==========
+  {
+    name: 'CMS Pages',
+    href: route('admin.pages.index'),
+    icon: DocumentTextIcon,
+    current: route().current('admin.pages.*'),
+    section: 'cms',
+    description: 'Terms, Privacy, About pages',
+  },
+  {
+    name: 'Blog Posts',
+    href: route('admin.blog.posts.index'),
+    icon: NewspaperIcon,
+    current: route().current('admin.blog.posts.*'),
+    section: 'cms',
+    description: 'Create articles & news',
+  },
+  {
+    name: 'Events',
+    href: route('admin.events.index'),
+    icon: ClockIcon,
+    current: route().current('admin.events.*'),
+    section: 'cms',
+    description: 'Manage platform events',
+  },
+  {
+    name: 'FAQs',
+    href: route('admin.faqs.index'),
+    icon: QuestionMarkCircleIcon,
+    current: route().current('admin.faqs.*'),
+    section: 'cms',
+    description: 'Help center content',
+  },
+  {
+    name: 'Testimonials',
+    href: route('admin.testimonials.index'),
+    icon: ChatBubbleBottomCenterTextIcon,
+    current: route().current('admin.testimonials.*'),
+    section: 'cms',
+    description: 'Customer reviews',
+  },
+  {
+    name: 'Partners',
+    href: route('admin.partners.index'),
+    icon: UserGroupIcon,
+    current: route().current('admin.partners.*'),
+    section: 'cms',
+    description: 'Partnership logos',
+  },
+  {
+    name: 'Directories',
+    href: route('admin.directories.index'),
+    icon: BookOpenIcon,
+    current: route().current('admin.directories.*'),
+    section: 'cms',
+    description: 'Embassies, Airlines, Training',
+  },
+  {
+    name: 'Marketing Campaigns',
+    href: route('admin.marketing-campaigns.index'),
+    icon: MegaphoneIcon,
+    current: route().current('admin.marketing-campaigns.*'),
+    section: 'cms',
+    description: 'Promotional campaigns',
+  },
+
+  // ========== SUPPORT & COMMUNICATION ==========
+  {
+    name: 'Support Tickets',
+    href: route('admin.support-tickets.index'),
+    icon: ChatBubbleLeftRightIcon,
+    current: route().current('admin.support-tickets.*'),
+    section: 'support',
+    description: 'Customer support',
+  },
+  {
+    name: 'Appointments',
+    href: route('admin.appointments.index'),
+    icon: ClockIcon,
+    current: route().current('admin.appointments.*'),
+    section: 'support',
+    description: 'Booking management',
+  },
+  {
+    name: 'Notifications',
+    href: route('admin.notifications.index'),
+    icon: BellIcon,
+    current: route().current('admin.notifications.*'),
+    section: 'support',
+    description: 'Push & email alerts',
+  },
+
+  // ========== DOCUMENT MANAGEMENT ==========
+  {
+    name: 'Document Verification',
+    href: route('admin.documents.verify.index'),
+    icon: ShieldCheckIcon,
+    current: route().current('admin.documents.verify.*'),
+    section: 'documents',
+    description: 'OCR & fraud detection',
+  },
+  {
+    name: 'Master Documents',
+    href: route('admin.master-documents.index'),
+    icon: DocumentTextIcon,
+    current: route().current('admin.master-documents.*'),
+    section: 'documents',
+    description: 'Document templates',
+  },
+  {
+    name: 'Document Categories',
+    href: route('admin.document-categories.index'),
+    icon: FolderIcon,
+    current: route().current('admin.document-categories.*'),
+    section: 'documents',
+    description: 'Organize documents',
+  },
+  {
+    name: 'Document Assignments',
+    href: route('admin.document-assignments.index'),
+    icon: ClipboardDocumentListIcon,
+    current: route().current('admin.document-assignments.*'),
+    section: 'documents',
+    description: 'Service requirements',
+  },
+
+  // ========== DATA MANAGEMENT ==========
   {
     name: 'Countries',
     href: route('admin.data.countries.index'),
     icon: GlobeAltIcon,
     current: route().current('admin.data.countries.*'),
     section: 'data',
-  },
-  {
-    name: 'Currencies',
-    href: route('admin.data.currencies.index'),
-    icon: BanknotesIcon,
-    current: route().current('admin.data.currencies.*'),
-    section: 'data',
-  },
-  {
-    name: 'Languages',
-    href: route('admin.data.languages.index'),
-    icon: LanguageIcon,
-    current: route().current('admin.data.languages.*'),
-    section: 'data',
-  },
-  {
-    name: 'Language Tests',
-    href: route('admin.data.language-tests.index'),
-    icon: AcademicCapIcon,
-    current: route().current('admin.data.language-tests.*'),
-    section: 'data',
-  },
-  {
-    name: 'Job Categories',
-    href: route('admin.data.job-categories.index'),
-    icon: BriefcaseIcon,
-    current: route().current('admin.data.job-categories.*'),
-    section: 'data',
-  },
-  {
-    name: 'Skill Categories',
-    href: route('admin.data.skill-categories.index'),
-    icon: FolderIcon,
-    current: route().current('admin.data.skill-categories.*'),
-    section: 'data',
-  },
-  {
-    name: 'Skills',
-    href: route('admin.data.skills.index'),
-    icon: AcademicCapIcon,
-    current: route().current('admin.data.skills.*'),
-    section: 'data',
+    description: 'Country database',
   },
   {
     name: 'Cities',
@@ -359,6 +444,7 @@ const navigation = [
     icon: MapPinIcon,
     current: route().current('admin.data.cities.*'),
     section: 'data',
+    description: 'City locations',
   },
   {
     name: 'Airports',
@@ -366,6 +452,31 @@ const navigation = [
     icon: PaperAirplaneIcon,
     current: route().current('admin.data.airports.*'),
     section: 'data',
+    description: 'Airport codes',
+  },
+  {
+    name: 'Currencies',
+    href: route('admin.data.currencies.index'),
+    icon: BanknotesIcon,
+    current: route().current('admin.data.currencies.*'),
+    section: 'data',
+    description: 'Currency rates',
+  },
+  {
+    name: 'Languages',
+    href: route('admin.data.languages.index'),
+    icon: LanguageIcon,
+    current: route().current('admin.data.languages.*'),
+    section: 'data',
+    description: 'Language database',
+  },
+  {
+    name: 'Language Tests',
+    href: route('admin.data.language-tests.index'),
+    icon: AcademicCapIcon,
+    current: route().current('admin.data.language-tests.*'),
+    section: 'data',
+    description: 'IELTS, TOEFL, etc.',
   },
   {
     name: 'Degrees',
@@ -373,6 +484,31 @@ const navigation = [
     icon: AcademicCapIcon,
     current: route().current('admin.data.degrees.*'),
     section: 'data',
+    description: 'Education levels',
+  },
+  {
+    name: 'Skills',
+    href: route('admin.data.skills.index'),
+    icon: AcademicCapIcon,
+    current: route().current('admin.data.skills.*'),
+    section: 'data',
+    description: 'Skill database',
+  },
+  {
+    name: 'Skill Categories',
+    href: route('admin.data.skill-categories.index'),
+    icon: FolderIcon,
+    current: route().current('admin.data.skill-categories.*'),
+    section: 'data',
+    description: 'Skill grouping',
+  },
+  {
+    name: 'Job Categories',
+    href: route('admin.data.job-categories.index'),
+    icon: BriefcaseIcon,
+    current: route().current('admin.data.job-categories.*'),
+    section: 'data',
+    description: 'Job classification',
   },
   {
     name: 'Service Categories',
@@ -380,6 +516,7 @@ const navigation = [
     icon: RectangleStackIcon,
     current: route().current('admin.data.service-categories.*'),
     section: 'data',
+    description: 'Service grouping',
   },
   {
     name: 'Blog Categories',
@@ -387,6 +524,7 @@ const navigation = [
     icon: FolderIcon,
     current: route().current('admin.data.blog-categories.*'),
     section: 'data',
+    description: 'Blog organization',
   },
   {
     name: 'Blog Tags',
@@ -394,82 +532,77 @@ const navigation = [
     icon: TagIcon,
     current: route().current('admin.data.blog-tags.*'),
     section: 'data',
+    description: 'Blog keywords',
   },
+  {
+    name: 'FAQ Categories',
+    href: route('admin.faq-categories.index'),
+    icon: FolderIcon,
+    current: route().current('admin.faq-categories.*'),
+    section: 'data',
+    description: 'Help center structure',
+  },
+  {
+    name: 'Directory Categories',
+    href: route('admin.directory-categories.index'),
+    icon: FolderIcon,
+    current: route().current('admin.directory-categories.*'),
+    section: 'data',
+    description: 'Directory organization',
+  },
+
+  // ========== TEMPLATES & EMAIL ==========
   {
     name: 'Email Templates',
     href: route('admin.data.email-templates.index'),
     icon: EnvelopeIcon,
     current: route().current('admin.data.email-templates.*'),
-    section: 'data',
+    section: 'templates',
+    description: 'Email automation',
   },
   {
     name: 'CV Templates',
     href: route('admin.data.cv-templates.index'),
     icon: ClipboardDocumentIcon,
     current: route().current('admin.data.cv-templates.*'),
-    section: 'data',
+    section: 'templates',
+    description: 'Resume layouts',
   },
-  {
-    name: 'SEO Settings',
-    href: route('admin.data.seo-settings.index'),
-    icon: MagnifyingGlassCircleIcon,
-    current: route().current('admin.data.seo-settings.*'),
-    section: 'data',
-  },
+
+  // ========== SYSTEM & TOOLS ==========
   {
     name: 'Smart Suggestions',
     href: route('admin.data.smart-suggestions.index'),
     icon: SparklesIcon,
     current: route().current('admin.data.smart-suggestions.*'),
-    section: 'data',
+    section: 'system',
+    description: 'AI recommendations',
   },
   {
     name: 'System Events',
     href: route('admin.data.system-events.index'),
     icon: ClockIcon,
     current: route().current('admin.data.system-events.*'),
-    section: 'data',
+    section: 'system',
+    description: 'Activity logs',
+  },
+  {
+    name: 'Sitemap',
+    href: route('admin.sitemap'),
+    icon: MapIcon,
+    current: route().current('admin.sitemap'),
+    section: 'system',
+    description: 'Test all admin routes',
   },
 
-  // ADMIN TOOLS
-  {
-    name: 'Document Verification',
-    href: route('admin.documents.verify.index'),
-    icon: ShieldCheckIcon,
-    current: route().current('admin.documents.verify.*'),
-    section: 'tools',
-  },
-  {
-    name: 'Notifications',
-    href: route('admin.notifications.index'),
-    icon: BellIcon,
-    current: route().current('admin.notifications.*'),
-    section: 'tools',
-  },
-  {
-    name: 'Impersonation Logs',
-    href: route('admin.impersonations.index'),
-    icon: ClockIcon,
-    current: route().current('admin.impersonations.*'),
-    section: 'tools',
-  },
-
-  // ANALYTICS & REPORTS
-  {
-    name: 'Analytics',
-    href: route('admin.analytics.index'),
-    icon: ChartBarIcon,
-    current: route().current('admin.analytics.*'),
-    section: 'analytics',
-  },
-
-  // SETTINGS
+  // ========== SETTINGS & CONFIGURATION ==========
   {
     name: 'General Settings',
     href: route('admin.settings.index'),
     icon: Cog6ToothIcon,
     current: route().current('admin.settings.index'),
     section: 'settings',
+    description: 'Platform configuration',
   },
   {
     name: 'SEO Settings',
@@ -477,24 +610,35 @@ const navigation = [
     icon: ChartBarIcon,
     current: route().current('seo-settings.*'),
     section: 'settings',
+    description: 'Search optimization',
+  },
+  {
+    name: 'API Keys',
+    href: route('admin.settings.index') + '?tab=api',
+    icon: CommandLineIcon,
+    current: false,
+    section: 'settings',
+    description: 'Third-party integrations',
   },
 ]
 
-// Navigation Sections Grouping - Clean Professional Structure
-// Dashboard is rendered separately at the top, so exclude it from sections
+// Navigation Sections Grouping - Reorganized for Better UX
 const navigationSections = {
-  '🔌 Plugin System': navigation.filter(item => item.section === 'plugin-system'),
-  '👥 People': navigation.filter(item => item.section === 'users'),
-  '💼 Education & Jobs': navigation.filter(item => item.section === 'jobs'),
-  '✈️ Visa & Travel': navigation.filter(item => item.section === 'travel'),
-  '🏢 Agencies': navigation.filter(item => item.section === 'agencies'),
-  '💰 Financial': navigation.filter(item => item.section === 'financial'),
-  '📝 Content': navigation.filter(item => item.section === 'content'),
-  '🛠️ Services': navigation.filter(item => item.section === 'services'),
-  '📊 Data Management': navigation.filter(item => item.section === 'data'),
-  '🔧 Tools': navigation.filter(item => item.section === 'tools'),
-  '📈 Analytics': navigation.filter(item => item.section === 'analytics'),
-  '⚙️ Settings': navigation.filter(item => item.section === 'settings'),
+  // Dashboard is rendered standalone at top, so only show Analytics here
+  'Analytics & Insights': navigation.filter(item => item.section === 'dashboard' && item.name !== 'Dashboard'),
+  'Users & Access': navigation.filter(item => item.section === 'users'),
+  '🚀 Plugin System': navigation.filter(item => item.section === 'plugin-system'),
+  'Jobs & Employment': navigation.filter(item => item.section === 'jobs'),
+  'Visa & Travel': navigation.filter(item => item.section === 'travel'),
+  'Agencies': navigation.filter(item => item.section === 'agencies'),
+  'Financial': navigation.filter(item => item.section === 'financial'),
+  'CMS & Content': navigation.filter(item => item.section === 'cms'),
+  'Support': navigation.filter(item => item.section === 'support'),
+  'Documents': navigation.filter(item => item.section === 'documents'),
+  'Data Management': navigation.filter(item => item.section === 'data'),
+  'Templates': navigation.filter(item => item.section === 'templates'),
+  'System Tools': navigation.filter(item => item.section === 'system'),
+  'Settings': navigation.filter(item => item.section === 'settings'),
 }
 </script>
 
@@ -589,11 +733,11 @@ const navigationSections = {
           class="flex flex-shrink-0 items-center justify-between px-4 h-16 border-b border-gray-200 dark:border-gray-700"
         >
           <Link :href="route('admin.dashboard')" class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
+            <ApplicationLogo class="h-10 w-auto" v-if="!sidebarCollapsed" />
+            <div v-else class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
               <SparklesIcon class="w-5 h-5 text-white" />
             </div>
-            <div v-if="!sidebarCollapsed" class="flex flex-col">
-              <span class="font-semibold text-gray-900 dark:text-white text-sm">BideshGomon</span>
+            <div v-if="!sidebarCollapsed" class="flex flex-col ml-2">
               <span class="text-xs text-gray-500 dark:text-gray-400">Admin</span>
             </div>
           </Link>
@@ -833,9 +977,12 @@ const navigationSections = {
               </svg>
             </button>
 
-            <!-- Notification Bell -->
+            <!-- Language Switcher -->
+            <LanguageSwitcher />
+
+            <!-- Real-time Notifications -->
             <div class="relative">
-              <NotificationBell />
+              <RealtimeNotifications />
             </div>
 
             <!-- User Menu - Premium Design -->
@@ -1087,6 +1234,11 @@ const navigationSections = {
         </div>
       </div>
     </div>
+
+    <!-- PWA Components -->
+    <NetworkStatus />
+    <PWAInstallPrompt />
+    <SlowConnectionWarning />
   </div>
 </template>
 
