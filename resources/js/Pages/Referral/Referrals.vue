@@ -21,14 +21,14 @@ const { formatDate, formatTime } = useBangladeshFormat();
         <template #header>
             <div class="flex items-center justify-between animate-fadeIn">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-ocean-500 flex items-center justify-center shadow-rhythmic-md">
-                        <UserGroupIcon class="h-5 w-5 text-white" />
+                    <div class="p-2 bg-sky-100 rounded-lg">
+                        <UserGroupIcon class="h-8 w-8 text-sky-600" />
                     </div>
                     <div>
-                        <h2 class="font-display font-bold text-xl text-gray-800 leading-tight">
+                        <h2 class="text-2xl font-bold text-gray-900">
                             My Referrals
                         </h2>
-                        <p class="text-xs text-gray-500">Track your referral network</p>
+                        <p class="text-sm text-gray-600">Track your referral network</p>
                     </div>
                 </div>
                 <FlowButton
@@ -49,7 +49,7 @@ const { formatDate, formatTime } = useBangladeshFormat();
                         <div v-if="referrals.data.length > 0">
                             <div class="overflow-x-auto rounded-xl">
                                 <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gradient-to-r from-ocean-50 to-sky-50">
+                                    <thead class="bg-sky-50">
                                         <tr>
                                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">User</th>
                                             <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Email</th>
@@ -97,19 +97,19 @@ const { formatDate, formatTime } = useBangladeshFormat();
                             <!-- Pagination -->
                             <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-gray-200">
                                 <div class="text-sm text-gray-600 font-medium">
-                                    <span class="text-ocean-600">{{ referrals.from }}</span> to <span class="text-ocean-600">{{ referrals.to }}</span> of <span class="font-bold">{{ referrals.total }}</span> referrals
+                                    <span class="text-sky-600">{{ referrals.from }}</span> to <span class="text-sky-600">{{ referrals.to }}</span> of <span class="font-bold">{{ referrals.total }}</span> referrals
                                 </div>
-                                <div class="flex space-x-1">
+                                <div class="flex gap-1">
                                     <Link 
                                         v-for="link in referrals.links" 
                                         :key="link.label"
                                         :href="link.url"
                                         :class="{
-                                            'bg-gradient-to-r from-ocean-600 to-sky-600 text-white shadow-rhythmic-md': link.active,
+                                            'bg-sky-600 text-white': link.active,
                                             'bg-white text-gray-700 hover:bg-gray-50 border border-gray-300': !link.active,
                                             'opacity-50 cursor-not-allowed': !link.url
                                         }"
-                                        class="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-rhythmic-sm"
+                                        class="px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-sm"
                                         v-html="link.label"
                                     />
                                 </div>

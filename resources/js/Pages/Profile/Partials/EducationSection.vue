@@ -242,7 +242,7 @@ const formatDate = (dateString) => {
     <header class="mb-rhythm-lg">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-growth-500 to-sky-500 flex items-center justify-center shadow-rhythmic-md">
+          <div class="w-10 h-10 rounded-xl bg-growth-500 flex items-center justify-center shadow-rhythmic-md">
             <AcademicCapIcon class="w-6 h-6 text-white" />
           </div>
           <div>
@@ -289,7 +289,7 @@ const formatDate = (dateString) => {
         class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
       >
         <!-- Card Header -->
-        <div class="h-1 bg-gradient-to-r from-purple-500 to-indigo-500"></div>
+        <div class="h-1 bg-heritage-500"></div>
         
         <!-- Card Content -->
         <div class="p-4 sm:p-6">
@@ -372,7 +372,7 @@ const formatDate = (dateString) => {
       <!-- Add More Button -->
       <button
         @click="openAddModal"
-        class="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-base"
+        class="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-heritage-600 hover:bg-heritage-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-base"
       >
         <PlusIcon class="h-5 w-5" />
         <span>ADD MORE EDUCATION</span>

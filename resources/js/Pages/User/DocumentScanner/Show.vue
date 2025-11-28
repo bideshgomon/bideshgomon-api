@@ -2,30 +2,27 @@
     <Head :title="`Document Scan - ${scan.document_type}`" />
 
     <AuthenticatedLayout>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-rhythm-2xl">
             <!-- Header -->
-            <div class="mb-8">
+            <div class="mb-rhythm-2xl">
                 <Link
                     :href="route('document-scanner.index')"
-                    class="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 mb-4"
+                    class="inline-flex items-center gap-rhythm-sm text-heritage-600 hover:text-heritage-700 mb-rhythm-md font-medium"
                 >
                     <ArrowLeftIcon class="h-5 w-5" />
                     Back to Scanner
                 </Link>
 
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-900 mb-2">Document Scan Details</h1>
-                        <div class="flex items-center gap-3">
-                            <span
-                                :class="[
-                                    'px-3 py-1 rounded-full text-sm font-medium capitalize',
-                                    getStatusColor(scan.status)
-                                ]"
-                            >
-                                {{ scan.status }}
-                            </span>
-                            <span class="text-gray-500 capitalize">
+                <div class="flex items-start justify-between gap-rhythm-md">
+                    <div class="flex-1">
+                        <h1 class="text-3xl font-bold text-gray-900 mb-rhythm-md">Document Scan Details</h1>
+                        <div class="flex flex-wrap items-center gap-rhythm-sm">
+                            <StatusBadge
+                                :status="getStatusType(scan.status)"
+                                :label="scan.status"
+                                size="md"
+                            />
+                            <span class="px-rhythm-sm py-1 bg-heritage-100 text-heritage-800 rounded-lg text-sm font-medium capitalize">
                                 {{ scan.document_type.replace('_', ' ') }}
                             </span>
                             <span class="text-gray-400 text-sm">
@@ -34,54 +31,67 @@
                         </div>
                     </div>
 
-                    <button
+                    <FlowButton
+                        variant="error"
+                        size="md"
                         @click="confirmDelete"
-                        class="px-4 py-2 text-red-600 border border-red-600 rounded-lg hover:bg-red-50 transition-colors"
                     >
+                        <template #icon-left>
+                            <TrashIcon class="h-4 w-4" />
+                        </template>
                         Delete Scan
-                    </button>
+                    </FlowButton>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-rhythm-xl">
                 <!-- Document Image -->
                 <div>
-                    <div class="bg-white rounded-lg shadow-sm p-6">
-                        <h2 class="text-xl font-semibold text-gray-900 mb-4">Document Image</h2>
-                        <div class="aspect-[3/2] bg-gray-100 rounded-lg overflow-hidden">
-                            <img
-                                :src="`/storage/${scan.original_image}`"
-                                alt="Document"
-                                class="w-full h-full object-contain"
-                            />
-                        </div>
-                        <div class="mt-4 space-y-2 text-sm text-gray-600">
-                            <p><span class="font-medium">Processing Method:</span> {{ scan.processing_method || 'N/A' }}</p>
-                            <p v-if="scan.confidence_score">
-                                <span class="font-medium">Confidence Score:</span> {{ scan.confidence_score }}%
-                            </p>
-                            <p v-if="scan.processing_time">
-                                <span class="font-medium">Processing Time:</span> {{ scan.processing_time }}s
-                            </p>
-                            <p v-if="scan.processed_at">
-                                <span class="font-medium">Processed:</span> {{ formatDate(scan.processed_at) }}
-                            </p>
-                        </div>
+                    <RhythmicCard variant="heritage" size="lg">
+                        <template #default>
+                            <h2 class="text-xl font-semibold text-gray-900 mb-rhythm-md">Document Image</h2>
+                            <div class="aspect-[3/2] bg-gray-100 rounded-xl overflow-hidden mb-rhythm-md">
+                                <img
+                                    :src="`/storage/${scan.original_image}`"
+                                    alt="Document"
+                                    class="w-full h-full object-contain"
+                                />
+                            </div>
+                            <div class="space-y-rhythm-sm text-sm text-gray-600">
+                                <div class="flex justify-between">
+                                    <span class="font-medium">Processing Method:</span>
+                                    <span>{{ scan.processing_method || 'N/A' }}</span>
+                                </div>
+                                <div v-if="scan.confidence_score" class="flex justify-between">
+                                    <span class="font-medium">Confidence Score:</span>
+                                    <StatusBadge
+                                        :status="scan.confidence_score >= 90 ? 'success' : scan.confidence_score >= 70 ? 'warning' : 'error'"
+                                        :label="`${scan.confidence_score}%`"
+                                        size="sm"
+                                    />
+                                </div>
+                                <div v-if="scan.processing_time" class="flex justify-between">
+                                    <span class="font-medium">Processing Time:</span>
+                                    <span>{{ scan.processing_time }}s</span>
+                                </div>
+                                <div v-if="scan.processed_at" class="flex justify-between">
+                                    <span class="font-medium">Processed:</span>
+                                    <span>{{ formatDate(scan.processed_at) }}</span>
+                                </div>
+                            </div>
 
                         <!-- Fraud Detection Metadata -->
-                        <div v-if="scan.metadata" class="mt-6 border-t pt-4">
-                            <h3 class="text-sm font-semibold text-gray-900 mb-3">Document Analysis</h3>
+                        <div v-if="scan.metadata" class="mt-rhythm-lg border-t-2 border-gray-100 pt-rhythm-lg">
+                            <h3 class="text-sm font-semibold text-gray-900 mb-rhythm-sm">Document Analysis</h3>
                             
                             <!-- Fraud Indicators Warning -->
                             <div v-if="scan.metadata.fraud_indicators && scan.metadata.fraud_indicators.length > 0" 
-                                 class="mb-4 bg-amber-50 border border-amber-200 rounded-lg p-3">
-                                <div class="flex gap-2 mb-2">
-                                    <svg class="h-5 w-5 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-                                    </svg>
+                                 class="mb-rhythm-md bg-sunrise-50 border-2 border-sunrise-200 rounded-xl p-rhythm-sm">
+                                <div class="flex gap-rhythm-sm mb-rhythm-xs">
+                                    <ExclamationTriangleIcon class="h-5 w-5 text-sunrise-600 flex-shrink-0" />
                                     <div>
-                                        <p class="text-sm font-semibold text-amber-900">Potential Issues Detected</p>
-                                        <ul class="mt-1 text-xs text-amber-800 list-disc list-inside space-y-1">
+                                        <p class="text-sm font-semibold text-sunrise-900">Potential Issues Detected</p>
+                                        <ul class="mt-rhythm-xs text-xs text-sunrise-800 list-disc list-inside space-y-1">
                                             <li v-for="(indicator, idx) in scan.metadata.fraud_indicators" :key="idx">
                                                 {{ indicator }}
                                             </li>
@@ -91,114 +101,128 @@
                             </div>
 
                             <!-- File Information -->
-                            <div class="grid grid-cols-2 gap-3 text-xs">
-                                <div v-if="scan.metadata.file_size">
+                            <div class="grid grid-cols-2 gap-rhythm-sm text-xs">
+                                <div v-if="scan.metadata.file_size" class="flex justify-between">
                                     <span class="text-gray-500">File Size:</span>
-                                    <span class="ml-1 text-gray-900 font-medium">{{ formatFileSize(scan.metadata.file_size) }}</span>
+                                    <span class="text-gray-900 font-medium">{{ formatFileSize(scan.metadata.file_size) }}</span>
                                 </div>
-                                <div v-if="scan.metadata.mime_type">
+                                <div v-if="scan.metadata.mime_type" class="flex justify-between">
                                     <span class="text-gray-500">Type:</span>
-                                    <span class="ml-1 text-gray-900 font-medium">{{ scan.metadata.mime_type }}</span>
+                                    <span class="text-gray-900 font-medium">{{ scan.metadata.mime_type }}</span>
                                 </div>
-                                <div v-if="scan.metadata.width && scan.metadata.height">
+                                <div v-if="scan.metadata.width && scan.metadata.height" class="flex justify-between">
                                     <span class="text-gray-500">Dimensions:</span>
-                                    <span class="ml-1 text-gray-900 font-medium">{{ scan.metadata.width }} × {{ scan.metadata.height }}</span>
+                                    <span class="text-gray-900 font-medium">{{ scan.metadata.width }} × {{ scan.metadata.height }}</span>
                                 </div>
-                                <div v-if="scan.metadata.aspect_ratio">
+                                <div v-if="scan.metadata.aspect_ratio" class="flex justify-between">
                                     <span class="text-gray-500">Aspect Ratio:</span>
-                                    <span class="ml-1 text-gray-900 font-medium">{{ scan.metadata.aspect_ratio }}</span>
+                                    <span class="text-gray-900 font-medium">{{ scan.metadata.aspect_ratio }}</span>
                                 </div>
                             </div>
 
                             <!-- EXIF Data -->
-                            <div v-if="hasExifData(scan.metadata)" class="mt-3 pt-3 border-t border-gray-200">
-                                <p class="text-xs font-semibold text-gray-700 mb-2">Camera Information</p>
-                                <div class="grid grid-cols-2 gap-2 text-xs">
-                                    <div v-if="scan.metadata.camera_make">
+                            <div v-if="hasExifData(scan.metadata)" class="mt-rhythm-sm pt-rhythm-sm border-t border-gray-200">
+                                <p class="text-xs font-semibold text-gray-700 mb-rhythm-xs">Camera Information</p>
+                                <div class="grid grid-cols-2 gap-rhythm-xs text-xs">
+                                    <div v-if="scan.metadata.camera_make" class="flex justify-between">
                                         <span class="text-gray-500">Make:</span>
-                                        <span class="ml-1 text-gray-900">{{ scan.metadata.camera_make }}</span>
+                                        <span class="text-gray-900">{{ scan.metadata.camera_make }}</span>
                                     </div>
-                                    <div v-if="scan.metadata.camera_model">
+                                    <div v-if="scan.metadata.camera_model" class="flex justify-between">
                                         <span class="text-gray-500">Model:</span>
-                                        <span class="ml-1 text-gray-900">{{ scan.metadata.camera_model }}</span>
+                                        <span class="text-gray-900">{{ scan.metadata.camera_model }}</span>
                                     </div>
-                                    <div v-if="scan.metadata.datetime_original">
+                                    <div v-if="scan.metadata.datetime_original" class="flex justify-between">
                                         <span class="text-gray-500">Taken:</span>
-                                        <span class="ml-1 text-gray-900">{{ scan.metadata.datetime_original }}</span>
+                                        <span class="text-gray-900">{{ scan.metadata.datetime_original }}</span>
                                     </div>
-                                    <div v-if="scan.metadata.software">
+                                    <div v-if="scan.metadata.software" class="flex justify-between">
                                         <span class="text-gray-500">Software:</span>
-                                        <span class="ml-1 text-gray-900">{{ scan.metadata.software }}</span>
+                                        <span class="text-gray-900">{{ scan.metadata.software }}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        </template>
+                    </RhythmicCard>
                 </div>
 
                 <!-- Extracted Data -->
                 <div>
-                    <div class="bg-white rounded-lg shadow-sm p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-xl font-semibold text-gray-900">Extracted Data</h2>
-                            <button
-                                v-if="scan.status === 'completed' && Object.keys(scan.extracted_data || {}).length > 0"
-                                @click="showApplyModal = true"
-                                class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
-                            >
-                                <ArrowDownTrayIcon class="h-4 w-4" />
-                                Apply to Profile
-                            </button>
-                        </div>
+                    <RhythmicCard variant="ocean" size="lg">
+                        <template #default>
+                            <div class="flex items-center justify-between mb-rhythm-md">
+                                <h2 class="text-xl font-semibold text-gray-900">Extracted Data</h2>
+                                <FlowButton
+                                    v-if="scan.status === 'completed' && Object.keys(scan.extracted_data || {}).length > 0"
+                                    variant="ocean"
+                                    size="sm"
+                                    @click="showApplyModal = true"
+                                >
+                                    <template #icon-left>
+                                        <ArrowDownTrayIcon class="h-4 w-4" />
+                                    </template>
+                                    Apply to Profile
+                                </FlowButton>
+                            </div>
 
                         <div v-if="scan.status === 'completed'">
-                            <div v-if="scan.extracted_data && Object.keys(scan.extracted_data).length > 0" class="space-y-4">
+                            <div v-if="scan.extracted_data && Object.keys(scan.extracted_data).length > 0" class="space-y-rhythm-sm">
                                 <div
                                     v-for="(value, key) in scan.extracted_data"
                                     :key="key"
-                                    class="flex justify-between items-start py-3 border-b border-gray-200 last:border-0"
+                                    class="flex justify-between items-start py-rhythm-sm border-b-2 border-ocean-100 last:border-0"
                                 >
                                     <span class="font-medium text-gray-700 capitalize">
                                         {{ key.replace(/_/g, ' ') }}
                                     </span>
-                                    <span class="text-gray-900 text-right max-w-xs">{{ value }}</span>
+                                    <span class="text-gray-900 text-right max-w-xs font-semibold">{{ value }}</span>
                                 </div>
                             </div>
-                            <div v-else class="text-center py-8 text-gray-500">
-                                No data extracted from this document
+                            <div v-else class="text-center py-rhythm-2xl text-gray-500">
+                                <DocumentIcon class="w-12 h-12 mx-auto mb-rhythm-sm text-gray-300" />
+                                <p>No data extracted from this document</p>
                             </div>
                         </div>
 
-                        <div v-else-if="scan.status === 'failed'" class="text-center py-8">
-                            <XCircleIcon class="mx-auto h-12 w-12 text-red-500 mb-4" />
-                            <p class="text-red-600 font-medium mb-2">Processing Failed</p>
-                            <p class="text-gray-600 text-sm mb-4">{{ scan.error_message || 'Unknown error occurred' }}</p>
-                            <button
+                        <div v-else-if="scan.status === 'failed'" class="text-center py-rhythm-2xl">
+                            <div class="w-16 h-16 mx-auto mb-rhythm-md rounded-2xl bg-red-100 flex items-center justify-center">
+                                <XCircleIcon class="h-10 w-10 text-red-600" />
+                            </div>
+                            <p class="text-red-600 font-medium mb-rhythm-sm text-lg">Processing Failed</p>
+                            <p class="text-gray-600 text-sm mb-rhythm-lg">{{ scan.error_message || 'Unknown error occurred' }}</p>
+                            <FlowButton
+                                variant="sunrise"
+                                size="md"
                                 @click="reprocess"
-                                class="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors"
                             >
-                                <ArrowPathIcon class="h-5 w-5" />
+                                <template #icon-left>
+                                    <ArrowPathIcon class="h-5 w-5" />
+                                </template>
                                 Retry Processing
-                            </button>
+                            </FlowButton>
                         </div>
 
-                        <div v-else class="text-center py-8">
-                            <ArrowPathIcon class="mx-auto h-12 w-12 text-indigo-500 animate-spin mb-4" />
-                            <p class="text-indigo-600 font-medium">Processing document...</p>
-                            <p class="text-gray-600 text-sm mt-2">This may take a few moments</p>
+                        <div v-else class="text-center py-rhythm-2xl">
+                            <div class="w-16 h-16 mx-auto mb-rhythm-md rounded-2xl bg-heritage-100 flex items-center justify-center">
+                                <ArrowPathIcon class="h-10 w-10 text-heritage-600 animate-spin" />
+                            </div>
+                            <p class="text-heritage-600 font-medium text-lg">Processing document...</p>
+                            <p class="text-gray-600 text-sm mt-rhythm-xs">This may take a few moments</p>
                         </div>
-                    </div>
+                        </template>
+                    </RhythmicCard>
 
                     <!-- Tips for Manual Entry -->
-                    <div v-if="scan.status === 'failed'" class="mt-6 bg-amber-50 border border-amber-200 rounded-lg p-4">
-                        <div class="flex gap-3">
-                            <InformationCircleIcon class="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                            <div class="text-sm text-amber-900">
-                                <p class="font-semibold mb-2">Extraction failed?</p>
-                                <p>You can manually enter your document information in your profile settings.</p>
-                            </div>
-                        </div>
-                    </div>
+                    <RhythmicCard v-if="scan.status === 'failed'" variant="sunrise" size="md" class="mt-rhythm-lg">
+                        <template #icon>
+                            <InformationCircleIcon class="h-5 w-5" />
+                        </template>
+                        <template #default>
+                            <p class="font-semibold mb-rhythm-xs text-gray-900">Extraction failed?</p>
+                            <p class="text-sm text-gray-700">You can manually enter your document information in your profile settings.</p>
+                        </template>
+                    </RhythmicCard>
                 </div>
             </div>
         </div>
@@ -282,12 +306,18 @@ import { ref } from 'vue';
 import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Modal from '@/Components/Modal.vue';
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
+import FlowButton from '@/Components/Rhythmic/FlowButton.vue';
+import StatusBadge from '@/Components/Rhythmic/StatusBadge.vue';
 import {
     ArrowLeftIcon,
     ArrowDownTrayIcon,
     ArrowPathIcon,
     XCircleIcon,
     InformationCircleIcon,
+    TrashIcon,
+    ExclamationTriangleIcon,
+    DocumentIcon,
 } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
@@ -326,6 +356,16 @@ const deleteScan = () => {
             router.visit(route('document-scanner.index'));
         },
     });
+};
+
+const getStatusType = (status) => {
+    const types = {
+        completed: 'success',
+        processing: 'info',
+        pending: 'pending',
+        failed: 'error',
+    };
+    return types[status] || 'pending';
 };
 
 const getStatusColor = (status) => {

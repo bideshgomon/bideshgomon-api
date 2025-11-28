@@ -3,26 +3,29 @@
 
     <AuthenticatedLayout>
         <!-- Hero Section -->
-        <div class="bg-heritage-600 text-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div class="flex items-center gap-4 mb-4">
-                    <DocumentMagnifyingGlassIcon class="h-12 w-12" />
+        <AnimatedSection variant="heritage" :show-blobs="true" class="mb-rhythm-2xl">
+            <div class="relative z-10 text-white">
+                <div class="flex items-center gap-rhythm-md mb-rhythm-md">
+                    <div class="p-rhythm-md rounded-2xl bg-white/20 backdrop-blur-sm">
+                        <DocumentMagnifyingGlassIcon class="h-12 w-12" />
+                    </div>
                     <div>
-                        <h1 class="text-4xl font-bold">Document Scanner</h1>
-                        <p class="text-xl text-indigo-100">AI-powered document scanning & data extraction</p>
+                        <h1 class="text-4xl font-bold mb-rhythm-xs">Document Scanner</h1>
+                        <p class="text-xl text-white/90">AI-powered document scanning & data extraction</p>
                     </div>
                 </div>
-                <p class="text-lg max-w-3xl">
+                <p class="text-lg max-w-3xl text-white/90">
                     Upload your passport, ID, or visa documents and let our AI extract the information automatically.
                     Save time and reduce errors in your applications.
                 </p>
             </div>
-        </div>
+        </AnimatedSection>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-rhythm-2xl">
             <!-- Upload Section -->
-            <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Upload New Document</h2>
+            <RhythmicCard variant="heritage" size="lg" class="mb-rhythm-2xl">
+                <template #default>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-rhythm-lg">Upload New Document</h2>
                 
                 <form @submit.prevent="uploadDocument" class="space-y-6">
                     <!-- Document Type -->
@@ -89,11 +92,11 @@
                     </div>
 
                     <!-- Tips -->
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <div class="flex gap-3">
-                            <InformationCircleIcon class="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                            <div class="text-sm text-blue-900">
-                                <p class="font-semibold mb-2">Tips for best results:</p>
+                    <div class="bg-ocean-50 border-2 border-ocean-200 rounded-xl p-rhythm-md">
+                        <div class="flex gap-rhythm-sm">
+                            <InformationCircleIcon class="h-5 w-5 text-ocean-600 flex-shrink-0 mt-0.5" />
+                            <div class="text-sm text-ocean-900">
+                                <p class="font-semibold mb-rhythm-sm">Tips for best results:</p>
                                 <ul class="list-disc list-inside space-y-1">
                                     <li>Ensure good lighting and avoid shadows</li>
                                     <li>Capture the entire document in the frame</li>
@@ -105,40 +108,44 @@
                     </div>
 
                     <!-- Submit Button -->
-                    <button
-                        type="submit"
+                    <FlowButton
+                        variant="heritage"
+                        size="lg"
+                        full-width
                         :disabled="form.processing || !form.document_type || !form.document_image"
-                        class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                        :loading="form.processing"
+                        @click="uploadDocument"
                     >
-                        <SparklesIcon class="h-5 w-5" />
-                        <span v-if="form.processing">Uploading...</span>
-                        <span v-else>Scan Document with AI</span>
-                    </button>
+                        <template #icon-left>
+                            <SparklesIcon class="h-5 w-5" />
+                        </template>
+                        {{ form.processing ? 'Uploading...' : 'Scan Document with AI' }}
+                    </FlowButton>
                 </form>
-            </div>
+                </template>
+            </RhythmicCard>
 
             <!-- Previous Scans -->
             <div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Scan History</h2>
+                <h2 class="text-2xl font-bold text-gray-900 mb-rhythm-lg">Scan History</h2>
 
-                <div v-if="scans.data.length > 0" class="space-y-4">
-                    <div
+                <div v-if="scans.data.length > 0" class="space-y-rhythm-md">
+                    <RhythmicCard
                         v-for="scan in scans.data"
                         :key="scan.id"
-                        class="bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow"
+                        variant="white"
+                        hover-lift
                     >
+                        <template #default>
                         <div class="flex items-start justify-between gap-4">
                             <!-- Document Info -->
                             <div class="flex-1">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <span
-                                        :class="[
-                                            'px-3 py-1 rounded-full text-sm font-medium capitalize',
-                                            getStatusColor(scan.status)
-                                        ]"
-                                    >
-                                        {{ scan.status }}
-                                    </span>
+                                <div class="flex items-center gap-rhythm-sm mb-rhythm-sm">
+                                    <StatusBadge
+                                        :status="getStatusType(scan.status)"
+                                        :label="scan.status"
+                                        size="md"
+                                    />
                                     <span class="text-sm text-gray-500 capitalize">
                                         {{ scan.document_type.replace('_', ' ') }}
                                     </span>
@@ -195,42 +202,55 @@
                             </div>
 
                             <!-- Actions -->
-                            <div class="flex items-center gap-2">
-                                <Link
+                            <div class="flex items-center gap-rhythm-sm">
+                                <FlowButton
                                     v-if="scan.status === 'completed'"
+                                    variant="heritage"
+                                    size="sm"
                                     :href="route('document-scanner.show', scan.id)"
-                                    class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
                                 >
-                                    <EyeIcon class="h-4 w-4" />
+                                    <template #icon-left>
+                                        <EyeIcon class="h-4 w-4" />
+                                    </template>
                                     View Details
-                                </Link>
+                                </FlowButton>
 
-                                <button
+                                <FlowButton
                                     v-if="scan.status === 'failed'"
+                                    variant="sunrise"
+                                    size="sm"
                                     @click="reprocess(scan.id)"
-                                    class="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors text-sm font-medium"
                                 >
-                                    <ArrowPathIcon class="h-4 w-4" />
+                                    <template #icon-left>
+                                        <ArrowPathIcon class="h-4 w-4" />
+                                    </template>
                                     Retry
-                                </button>
+                                </FlowButton>
 
                                 <button
                                     @click="confirmDelete(scan.id)"
-                                    class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                    class="p-rhythm-sm text-red-600 hover:bg-red-50 rounded-xl transition-colors"
                                 >
                                     <TrashIcon class="h-5 w-5" />
                                 </button>
                             </div>
                         </div>
-                    </div>
+                        </template>
+                    </RhythmicCard>
                 </div>
 
                 <!-- Empty State -->
-                <div v-else class="text-center py-12 bg-white rounded-lg shadow-sm">
-                    <DocumentMagnifyingGlassIcon class="mx-auto h-16 w-16 text-gray-400 mb-4" />
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">No scans yet</h3>
-                    <p class="text-gray-600">Upload your first document to get started with AI-powered extraction</p>
-                </div>
+                <RhythmicCard v-else variant="white" size="lg">
+                    <template #default>
+                        <div class="text-center py-rhythm-2xl">
+                            <div class="w-16 h-16 mx-auto mb-rhythm-md rounded-2xl bg-heritage-100 flex items-center justify-center">
+                                <DocumentMagnifyingGlassIcon class="h-10 w-10 text-heritage-600" />
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-rhythm-sm">No scans yet</h3>
+                            <p class="text-gray-600">Upload your first document to get started with AI-powered extraction</p>
+                        </div>
+                    </template>
+                </RhythmicCard>
 
                 <!-- Pagination -->
                 <div v-if="scans.data.length > 0" class="mt-6">
@@ -271,6 +291,10 @@ import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
 import Modal from '@/Components/Modal.vue';
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
+import FlowButton from '@/Components/Rhythmic/FlowButton.vue';
+import AnimatedSection from '@/Components/Rhythmic/AnimatedSection.vue';
+import StatusBadge from '@/Components/Rhythmic/StatusBadge.vue';
 import {
     DocumentMagnifyingGlassIcon,
     CloudArrowUpIcon,
@@ -351,6 +375,16 @@ const deleteScan = () => {
             },
         });
     }
+};
+
+const getStatusType = (status) => {
+    const types = {
+        completed: 'success',
+        processing: 'info',
+        pending: 'pending',
+        failed: 'error',
+    };
+    return types[status] || 'pending';
 };
 
 const getStatusColor = (status) => {

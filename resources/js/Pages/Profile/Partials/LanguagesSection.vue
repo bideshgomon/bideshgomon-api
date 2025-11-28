@@ -240,7 +240,7 @@ const formatDate = dateString => {
     <header class="mb-rhythm-lg">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-ocean-500 to-sky-500 flex items-center justify-center shadow-rhythmic-md">
+          <div class="w-10 h-10 rounded-xl bg-ocean-500 flex items-center justify-center shadow-rhythmic-md">
             <GlobeAltIcon class="w-6 h-6 text-white" />
           </div>
           <div>
@@ -285,7 +285,7 @@ const formatDate = dateString => {
         :key="lang.id"
         class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
       >
-        <div class="h-1 bg-gradient-to-r from-blue-500 to-cyan-500"></div>
+        <div class="h-1 bg-ocean-500"></div>
         <div class="p-4 sm:p-6">
           <div class="flex items-start justify-between gap-3 mb-3">
             <div class="flex-1 min-w-0">
@@ -381,7 +381,7 @@ const formatDate = dateString => {
       <!-- Add More Button -->
       <button
         @click="openEditModal(null)"
-        class="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-base"
+        class="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-ocean-600 hover:bg-ocean-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-base"
       >
         <PlusIcon class="h-5 w-5" />
         <span>ADD MORE LANGUAGES</span>
@@ -394,7 +394,7 @@ const formatDate = dateString => {
       <!-- Modal Header -->
       <div class="flex items-center gap-4 mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
         <div
-          class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg"
+          class="w-12 h-12 bg-ocean-600 rounded-xl flex items-center justify-center shadow-lg"
         >
           <GlobeAltIcon class="w-7 h-7 text-white" />
         </div>
@@ -452,7 +452,7 @@ const formatDate = dateString => {
 
         <!-- Language Test Section -->
         <div
-          class="p-4 bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/20 dark:to-blue-900/20 rounded-lg border border-cyan-200 dark:border-cyan-800"
+          class="p-4 bg-sky-50 dark:bg-sky-900/20 rounded-lg border border-sky-200 dark:border-sky-800"
         >
           <div class="flex items-center gap-2 mb-4">
             <AcademicCapIcon class="w-5 h-5 text-cyan-600 dark:text-cyan-400" />

@@ -2,57 +2,63 @@
     <AuthenticatedLayout>
         <Head :title="`Appointment - ${formatDate(appointment.appointment_date)}`" />
 
-        <div class="py-12">
+        <div class="py-rhythm-2xl">
             <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
                 <!-- Appointment Header -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <Link :href="route('appointments.index')" class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900">
+                <RhythmicCard variant="sky" size="lg" class="mb-rhythm-lg">
+                    <template #default>
+                        <div class="flex items-center justify-between mb-rhythm-md">
+                            <Link :href="route('appointments.index')" class="inline-flex items-center gap-rhythm-xs text-sky-700 hover:text-sky-900 font-medium">
                                 <ArrowLeftIcon class="w-4 h-4" />
                                 {{ __('Back to Appointments') }}
                             </Link>
-                            <div class="flex items-center gap-2">
-                                <button
+                            <div class="flex items-center gap-rhythm-xs">
+                                <FlowButton
                                     v-if="appointment.status === 'pending' || appointment.status === 'confirmed'"
+                                    variant="sky"
+                                    size="sm"
                                     @click="showRescheduleModal = true"
-                                    class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-sky-700 bg-sky-100 rounded-lg hover:bg-sky-200"
                                 >
-                                    <ArrowPathIcon class="w-4 h-4" />
+                                    <template #icon-left>
+                                        <ArrowPathIcon class="w-4 h-4" />
+                                    </template>
                                     {{ __('Reschedule') }}
-                                </button>
-                                <button
+                                </FlowButton>
+                                <FlowButton
                                     v-if="canCancel"
+                                    variant="error"
+                                    size="sm"
                                     @click="showCancelModal = true"
-                                    class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-red-700 bg-red-100 rounded-lg hover:bg-red-200"
                                 >
-                                    <XMarkIcon class="w-4 h-4" />
+                                    <template #icon-left>
+                                        <XMarkIcon class="w-4 h-4" />
+                                    </template>
                                     {{ __('Cancel') }}
-                                </button>
+                                </FlowButton>
                             </div>
                         </div>
 
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
-                                <div class="flex items-center gap-2 mb-3">
-                                    <span :class="statusClass(appointment.status)" class="px-3 py-1.5 text-sm font-semibold rounded-lg">
-                                        {{ statusLabel(appointment.status) }}
-                                    </span>
-                                    <span :class="typeClass(appointment.appointment_type)" class="px-3 py-1.5 text-sm font-semibold rounded-lg">
-                                        {{ typeLabel(appointment.appointment_type) }}
-                                    </span>
+                                <div class="flex items-center gap-rhythm-sm mb-rhythm-sm">
+                                    <StatusBadge :status="getStatusType(appointment.status)" :label="statusLabel(appointment.status)" size="md" />
+                                    <StatusBadge :status="'info'" :label="typeLabel(appointment.appointment_type)" size="md" />
                                 </div>
 
-                                <div class="grid grid-cols-2 gap-4 mb-4">
+                                <div class="grid grid-cols-2 gap-rhythm-md mb-rhythm-md">
                                     <div>
-                                        <div class="flex items-center text-gray-900 mb-1">
-                                            <CalendarDaysIcon class="w-5 h-5 mr-2 text-sky-600" />
+                                        <div class="flex items-center text-gray-900 mb-rhythm-xs">
+                                            <div class="p-rhythm-xs rounded-xl bg-sky-100 mr-rhythm-sm">
+                                                <CalendarDaysIcon class="w-5 h-5 text-sky-600" />
+                                            </div>
                                             <span class="font-semibold text-lg">{{ formatDate(appointment.appointment_date) }}</span>
                                         </div>
                                     </div>
                                     <div>
-                                        <div class="flex items-center text-gray-900 mb-1">
-                                            <ClockIcon class="w-5 h-5 mr-2 text-sky-600" />
+                                        <div class="flex items-center text-gray-900 mb-rhythm-xs">
+                                            <div class="p-rhythm-xs rounded-xl bg-sky-100 mr-rhythm-sm">
+                                                <ClockIcon class="w-5 h-5 text-sky-600" />
+                                            </div>
                                             <span class="font-semibold text-lg">{{ formatTime(appointment.appointment_time) }}</span>
                                         </div>
                                     </div>
@@ -79,25 +85,25 @@
                                     </div>
                                 </div>
 
-                                <div v-if="appointment.admin_notes" class="mt-4 p-4 bg-sky-50 border border-sky-200 rounded-xl">
-                                    <p class="text-sm font-medium text-sky-900 mb-1">{{ __('Admin Notes') }}:</p>
+                                <div v-if="appointment.admin_notes" class="mt-rhythm-md p-rhythm-md bg-sky-50 border-2 border-sky-200 rounded-xl">
+                                    <p class="text-sm font-medium text-sky-900 mb-rhythm-xs">{{ __('Admin Notes') }}:</p>
                                     <p class="text-sm text-sky-800">{{ appointment.admin_notes }}</p>
                                 </div>
 
-                                <div v-if="appointment.cancellation_reason" class="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl">
-                                    <p class="text-sm font-medium text-red-900 mb-1">{{ __('Cancellation Reason') }}:</p>
+                                <div v-if="appointment.cancellation_reason" class="mt-rhythm-md p-rhythm-md bg-red-50 border-2 border-red-200 rounded-xl">
+                                    <p class="text-sm font-medium text-red-900 mb-rhythm-xs">{{ __('Cancellation Reason') }}:</p>
                                     <p class="text-sm text-red-800">{{ appointment.cancellation_reason }}</p>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </template>
+                </RhythmicCard>
 
                 <!-- Appointment Timeline -->
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ __('Timeline') }}</h3>
-                        <div class="space-y-4">
+                <RhythmicCard variant="white" size="lg">
+                    <template #default>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-rhythm-md">{{ __('Timeline') }}</h3>
+                        <div class="space-y-rhythm-md">
                             <div class="flex items-start">
                                 <div class="flex-shrink-0">
                                     <div class="w-8 h-8 bg-sky-100 rounded-full flex items-center justify-center">
@@ -146,8 +152,8 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </template>
+                </RhythmicCard>
             </div>
         </div>
 
@@ -206,6 +212,9 @@ import { ref, computed } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Modal from '@/Components/Modal.vue';
+import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
+import FlowButton from '@/Components/Rhythmic/FlowButton.vue';
+import StatusBadge from '@/Components/Rhythmic/StatusBadge.vue';
 import { ArrowLeftIcon, CalendarDaysIcon, ClockIcon, XMarkIcon, ArrowPathIcon, ClockIcon as ClockIconSolid, CheckCircleIcon, XCircleIcon } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
@@ -242,6 +251,16 @@ const statusClass = (status) => {
         cancelled: 'bg-red-100 text-red-800',
     };
     return classes[status] || 'bg-gray-100 text-gray-800';
+};
+
+const getStatusType = (status) => {
+    const types = {
+        pending: 'warning',
+        confirmed: 'success',
+        completed: 'info',
+        cancelled: 'error',
+    };
+    return types[status] || 'pending';
 };
 
 const statusLabel = (status) => {
