@@ -155,7 +155,7 @@ const categoryList = computed(() => {
         
         <!-- Hero Section with AnimatedSection -->
         <AnimatedSection 
-          variant="gradient" 
+          variant="growth" 
           :show-blobs="true"
           class="mb-rhythm-xl animate-fadeInUp"
         >
@@ -265,7 +265,7 @@ const categoryList = computed(() => {
                   :class="[
                     'inline-flex items-center gap-rhythm-xs px-rhythm-md py-rhythm-sm rounded-xl font-medium text-sm transition-all duration-300',
                     selectedCategory === 'all'
-                      ? 'bg-gradient-to-r from-ocean-600 to-sky-600 text-white shadow-rhythmic-md shadow-ocean-500/30 scale-105'
+                      ? 'bg-ocean-600 text-white shadow-rhythmic-md shadow-ocean-500/30 scale-105'
                       : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 hover:scale-105'
                   ]"
                 >
@@ -289,7 +289,7 @@ const categoryList = computed(() => {
                   :class="[
                     'inline-flex items-center gap-rhythm-xs px-rhythm-md py-rhythm-sm rounded-xl font-medium text-sm transition-all duration-300',
                     selectedCategory === cat.name
-                      ? `bg-gradient-to-r ${cat.color} text-white shadow-rhythmic-md scale-105`
+                      ? `bg-${cat.color.split('-')[1]}-600 text-white shadow-rhythmic-md scale-105`
                       : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 hover:scale-105'
                   ]"
                 >
