@@ -17,15 +17,7 @@ const fetchNotifications = async () => {
   if (!isAuthenticated.value) {return}
 
   try {
-    // Check if route exists
-    if (!route().has('api.notifications.recent')) {
-      return
-    }
-    
-    // Get CSRF cookie first for session-based auth
-    await axios.get('/sanctum/csrf-cookie').catch(() => {})
-    
-    const response = await axios.get(route('api.notifications.recent'))
+    const response = await axios.get(route('notifications.dropdown'))
     notifications.value = response.data.notifications
     unreadCount.value = response.data.unread_count
   } catch (error) {
@@ -41,15 +33,7 @@ const fetchUnreadCount = async () => {
   if (!isAuthenticated.value) {return}
 
   try {
-    // Check if route exists
-    if (!route().has('api.notifications.unread-count')) {
-      return
-    }
-    
-    // Get CSRF cookie first for session-based auth
-    await axios.get('/sanctum/csrf-cookie').catch(() => {})
-    
-    const response = await axios.get(route('api.notifications.unread-count'))
+    const response = await axios.get(route('notifications.unread-count'))
     unreadCount.value = response.data.unread_count
   } catch (error) {
     // Silently fail - don't log 401/403 errors to avoid console spam
@@ -64,16 +48,8 @@ const fetchUnreadCount = async () => {
 }
 
 const markAsRead = async (id) => {
-  // Check if route exists
-  if (!route().has('api.notifications.mark-read')) {
-    return
-  }
-  
   try {
-    // Initialize Sanctum CSRF cookie for SPA authentication
-    await axios.get('/sanctum/csrf-cookie')
-
-    await axios.post(route('api.notifications.mark-read', { id }))
+    await axios.post(route('notifications.read', { notification: id }))
     await fetchNotifications()
   } catch (error) {
     console.error('Failed to mark as read:', error)
@@ -81,17 +57,9 @@ const markAsRead = async (id) => {
 }
 
 const markAllAsRead = async () => {
-  // Check if route exists
-  if (!route().has('api.notifications.mark-all-read')) {
-    return
-  }
-  
   loading.value = true
   try {
-    // Initialize Sanctum CSRF cookie for SPA authentication
-    await axios.get('/sanctum/csrf-cookie')
-
-    await axios.post(route('api.notifications.mark-all-read'))
+    await axios.post(route('notifications.read-all'))
     await fetchNotifications()
   } catch (error) {
     console.error('Failed to mark all as read:', error)
@@ -106,25 +74,26 @@ const viewAllNotifications = () => {
 }
 
 const getNotificationIcon = (notification) => {
-  // Use icon from notification if available
+  // Use icon from notification if available (direct emoji/text)
   if (notification.icon) {
-    const icons = {
-      'bell': '🔔',
-      'check-circle': '✅',
-      'x-circle': '❌',
-      'exclamation': '⚠️',
-      'currency-dollar': '💰',
-      'document': '📄',
-      'badge-check': '✓',
-      'gift': '🎁',
-      'calendar': '📅',
-      'chat': '💬',
-    }
-    return icons[notification.icon] || '🔔'
+    return notification.icon
   }
   
   // Fallback to type-based icons (legacy support)
   const typeIcons = {
+    // Verification notifications
+    verification_approved: '✅',
+    verification_rejected: '❌',
+    verification_requires_changes: '📝',
+    verification_pending: '⏳',
+    
+    // Wallet & Payment notifications
+    wallet_credited: '💰',
+    withdrawal_completed: '💸',
+    payment_success: '💳',
+    payment_failed: '❌',
+    
+    // Existing notification types
     referral_earned: '🎉',
     reward_received: '💰',
     cashout_approved: '✅',
@@ -247,7 +216,7 @@ const toggleDropdown = () => {
                   {{ notification.title }}
                 </p>
                 <p class="text-sm text-gray-600 mt-1">
-                  {{ notification.message }}
+                  {{ notification.body || notification.message }}
                 </p>
                 <p class="text-xs text-gray-400 mt-1">
                   {{ formatTime(notification.created_at) }}

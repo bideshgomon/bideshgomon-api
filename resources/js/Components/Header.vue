@@ -1,0 +1,108 @@
+<script setup>
+import { Link } from '@inertiajs/vue3'
+import ApplicationLogo from '@/Components/ApplicationLogo.vue'
+import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
+import { ref } from 'vue'
+
+defineProps({
+  canLogin: {
+    type: Boolean,
+    default: false
+  },
+  canRegister: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const mobileMenuOpen = ref(false)
+</script>
+
+<template>
+  <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200">
+    <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex h-16 items-center justify-between">
+        <!-- Logo -->
+        <div class="flex items-center">
+          <Link :href="route('welcome')" class="flex items-center">
+            <ApplicationLogo class="h-10 w-auto" />
+          </Link>
+        </div>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex md:items-center md:space-x-8">
+          <Link :href="route('welcome')" class="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
+            Home
+          </Link>
+          <a href="#services" class="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
+            Services
+          </a>
+          <a href="#about" class="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
+            About
+          </a>
+          <a href="#contact" class="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
+            Contact
+          </a>
+        </div>
+
+        <!-- Auth Buttons -->
+        <div class="flex items-center space-x-4">
+          <template v-if="canLogin">
+            <Link
+              :href="route('login')"
+              class="hidden md:inline-flex text-gray-700 hover:text-emerald-600 font-medium transition-colors"
+            >
+              Sign in
+            </Link>
+            <Link
+              v-if="canRegister"
+              :href="route('register')"
+              class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-lg font-medium hover:from-emerald-700 hover:to-green-700 transition-all shadow-sm hover:shadow-md"
+            >
+              Get Started
+            </Link>
+          </template>
+          
+          <!-- Mobile menu button -->
+          <button
+            @click="mobileMenuOpen = !mobileMenuOpen"
+            class="md:hidden inline-flex items-center justify-center p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+          >
+            <Bars3Icon v-if="!mobileMenuOpen" class="h-6 w-6" />
+            <XMarkIcon v-else class="h-6 w-6" />
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div
+        v-show="mobileMenuOpen"
+        class="md:hidden py-4 space-y-2 border-t border-gray-200"
+      >
+        <Link
+          :href="route('welcome')"
+          class="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg font-medium"
+        >
+          Home
+        </Link>
+        <a href="#services" class="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg font-medium">
+          Services
+        </a>
+        <a href="#about" class="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg font-medium">
+          About
+        </a>
+        <a href="#contact" class="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg font-medium">
+          Contact
+        </a>
+        <template v-if="canLogin">
+          <Link
+            :href="route('login')"
+            class="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg font-medium"
+          >
+            Sign in
+          </Link>
+        </template>
+      </div>
+    </nav>
+  </header>
+</template>
