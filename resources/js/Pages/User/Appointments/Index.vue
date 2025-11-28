@@ -7,26 +7,35 @@
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
                         <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-2xl font-bold text-gray-900">My Appointments</h2>
-                            <Link :href="route('appointments.create')" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 bg-sky-100 rounded-lg">
+                                    <CalendarDaysIcon class="w-8 h-8 text-sky-600" />
+                                </div>
+                                <div>
+                                    <h2 class="text-2xl font-bold text-gray-900">My Appointments</h2>
+                                    <p class="text-sm text-gray-600">Manage your appointments</p>
+                                </div>
+                            </div>
+                            <Link :href="route('appointments.create')" class="inline-flex items-center gap-2 px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 font-medium transition-colors">
+                                <PlusIcon class="w-5 h-5" />
                                 Book Appointment
                             </Link>
                         </div>
 
                         <!-- Filters -->
-                        <div class="mb-6 flex flex-wrap gap-4">
-                            <select v-model="filterStatus" @change="applyFilters" class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                <option value="">All Status</option>
-                                <option value="pending">Pending</option>
-                                <option value="confirmed">Confirmed</option>
-                                <option value="completed">Completed</option>
-                                <option value="cancelled">Cancelled</option>
-                            </select>
+                        <div class="mb-6 flex flex-wrap gap-3">
+                            <div class="flex items-center gap-2">
+                                <FunnelIcon class="w-4 h-4 text-gray-500" />
+                                <select v-model="filterStatus" @change="applyFilters" class="rounded-lg border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                                    <option value="">All Status</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="confirmed">Confirmed</option>
+                                    <option value="completed">Completed</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </div>
 
-                            <select v-model="filterType" @change="applyFilters" class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <select v-model="filterType" @change="applyFilters" class="rounded-lg border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500">
                                 <option value="">All Types</option>
                                 <option value="office_visit">Office Visit</option>
                                 <option value="online_meeting">Online Meeting</option>
@@ -34,29 +43,25 @@
                         </div>
 
                         <!-- Appointments List -->
-                        <div v-if="appointments.data.length > 0" class="space-y-4">
-                            <Link v-for="appointment in appointments.data" :key="appointment.id" :href="route('appointments.show', appointment.id)" class="block border rounded-lg p-4 hover:bg-gray-50 transition">
+                        <div v-if="appointments.data.length > 0" class="space-y-3">
+                            <Link v-for="appointment in appointments.data" :key="appointment.id" :href="route('appointments.show', appointment.id)" class="block border-2 border-gray-200 rounded-xl p-4 hover:border-sky-400 hover:bg-sky-50 transition-all group">
                                 <div class="flex justify-between items-start">
                                     <div class="flex-1">
-                                        <div class="flex items-center gap-2 mb-2">
-                                            <span :class="statusClass(appointment.status)" class="px-2 py-1 text-xs font-semibold rounded-full">
+                                        <div class="flex items-center gap-2 mb-3">
+                                            <span :class="statusClass(appointment.status)" class="px-2.5 py-1 text-xs font-semibold rounded-lg">
                                                 {{ statusLabel(appointment.status) }}
                                             </span>
-                                            <span :class="typeClass(appointment.appointment_type)" class="px-2 py-1 text-xs font-semibold rounded-full">
+                                            <span :class="typeClass(appointment.appointment_type)" class="px-2.5 py-1 text-xs font-semibold rounded-lg">
                                                 {{ typeLabel(appointment.appointment_type) }}
                                             </span>
                                         </div>
-                                        <div class="flex items-center gap-4 mb-2">
+                                        <div class="flex flex-wrap items-center gap-4 mb-2">
                                             <div class="flex items-center text-gray-700">
-                                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                </svg>
+                                                <CalendarIcon class="w-5 h-5 mr-2 text-sky-600" />
                                                 <span class="font-semibold">{{ formatDate(appointment.appointment_date) }}</span>
                                             </div>
                                             <div class="flex items-center text-gray-700">
-                                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
+                                                <ClockIcon class="w-5 h-5 mr-2 text-sky-600" />
                                                 <span class="font-semibold">{{ appointment.appointment_time }}</span>
                                             </div>
                                         </div>
@@ -69,20 +74,22 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                        </svg>
+                                        <ChevronRightIcon class="w-5 h-5 text-gray-400 group-hover:text-sky-600 transition-colors" />
                                     </div>
                                 </div>
                             </Link>
                         </div>
 
                         <div v-else class="text-center py-12">
-                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
+                            <CalendarDaysIcon class="mx-auto h-12 w-12 text-gray-400" />
                             <h3 class="mt-2 text-sm font-medium text-gray-900">No appointments</h3>
                             <p class="mt-1 text-sm text-gray-500">Get started by booking your first appointment.</p>
+                            <div class="mt-6">
+                                <Link :href="route('appointments.create')" class="inline-flex items-center gap-2 px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 font-medium transition-colors">
+                                    <PlusIcon class="w-5 h-5" />
+                                    Book Appointment
+                                </Link>
+                            </div>
                         </div>
 
                         <!-- Pagination -->
@@ -101,6 +108,7 @@ import { ref } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
+import { CalendarDaysIcon, PlusIcon, FunnelIcon, CalendarIcon, ClockIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
     appointments: Object,

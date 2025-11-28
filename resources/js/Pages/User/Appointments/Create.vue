@@ -7,9 +7,15 @@
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
                         <div class="flex items-center justify-between mb-6">
-                            <h2 class="text-2xl font-bold text-gray-900">Book Appointment</h2>
-                            <Link :href="route('appointments.index')" class="text-sm text-gray-600 hover:text-gray-900">
-                                ← Back to Appointments
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 bg-sky-100 rounded-lg">
+                                    <CalendarDaysIcon class="w-8 h-8 text-sky-600" />
+                                </div>
+                                <h2 class="text-2xl font-bold text-gray-900">Book Appointment</h2>
+                            </div>
+                            <Link :href="route('appointments.index')" class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900">
+                                <ArrowLeftIcon class="w-4 h-4" />
+                                Back
                             </Link>
                         </div>
 
@@ -20,30 +26,26 @@
                                     Appointment Type <span class="text-red-500">*</span>
                                 </label>
                                 <div class="grid grid-cols-2 gap-4">
-                                    <label class="relative flex cursor-pointer rounded-lg border p-4 focus:outline-none" :class="form.appointment_type === 'office_visit' ? 'border-blue-600 ring-2 ring-blue-600' : 'border-gray-300'">
+                                    <label class="relative flex cursor-pointer rounded-xl border-2 p-4 focus:outline-none" :class="form.appointment_type === 'office_visit' ? 'border-sky-600 bg-sky-50' : 'border-gray-300 hover:border-sky-300'">
                                         <input type="radio" v-model="form.appointment_type" value="office_visit" class="sr-only" />
                                         <div class="flex flex-1">
                                             <div class="flex flex-col">
-                                                <span class="block text-sm font-medium text-gray-900">Office Visit</span>
+                                                <span class="block text-sm font-semibold text-gray-900">Office Visit</span>
                                                 <span class="mt-1 flex items-center text-sm text-gray-500">In-person meeting</span>
                                             </div>
                                         </div>
-                                        <svg v-if="form.appointment_type === 'office_visit'" class="h-5 w-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                        </svg>
+                                        <CheckCircleIcon v-if="form.appointment_type === 'office_visit'" class="h-6 w-6 text-sky-600" />
                                     </label>
 
-                                    <label class="relative flex cursor-pointer rounded-lg border p-4 focus:outline-none" :class="form.appointment_type === 'online_meeting' ? 'border-blue-600 ring-2 ring-blue-600' : 'border-gray-300'">
+                                    <label class="relative flex cursor-pointer rounded-xl border-2 p-4 focus:outline-none" :class="form.appointment_type === 'online_meeting' ? 'border-sky-600 bg-sky-50' : 'border-gray-300 hover:border-sky-300'">
                                         <input type="radio" v-model="form.appointment_type" value="online_meeting" class="sr-only" />
                                         <div class="flex flex-1">
                                             <div class="flex flex-col">
-                                                <span class="block text-sm font-medium text-gray-900">Online Meeting</span>
+                                                <span class="block text-sm font-semibold text-gray-900">Online Meeting</span>
                                                 <span class="mt-1 flex items-center text-sm text-gray-500">Video call</span>
                                             </div>
                                         </div>
-                                        <svg v-if="form.appointment_type === 'online_meeting'" class="h-5 w-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                        </svg>
+                                        <CheckCircleIcon v-if="form.appointment_type === 'online_meeting'" class="h-6 w-6 text-sky-600" />
                                     </label>
                                 </div>
                                 <p v-if="form.errors.appointment_type" class="mt-1 text-sm text-red-600">{{ form.errors.appointment_type }}</p>
@@ -52,6 +54,7 @@
                             <!-- Date Selection -->
                             <div class="mb-4">
                                 <label for="appointment_date" class="block text-sm font-medium text-gray-700 mb-2">
+                                    <CalendarDaysIcon class="w-4 h-4 inline mr-1" />
                                     Select Date <span class="text-red-500">*</span>
                                 </label>
                                 <input
@@ -61,7 +64,7 @@
                                     :min="minDate"
                                     :max="maxDate"
                                     @change="loadTimeSlotsForDate"
-                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    class="w-full rounded-lg border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500"
                                     :class="{ 'border-red-500': form.errors.appointment_date }"
                                     required
                                 />
@@ -72,20 +75,19 @@
                             <!-- Time Selection -->
                             <div v-if="form.appointment_date" class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <ClockIcon class="w-4 h-4 inline mr-1" />
                                     Select Time <span class="text-red-500">*</span>
                                 </label>
                                 <div v-if="availableTimesForDate.length > 0" class="grid grid-cols-4 gap-2">
-                                    <label v-for="time in availableTimesForDate" :key="time" class="relative flex cursor-pointer rounded-md border p-2 text-center focus:outline-none" :class="form.appointment_time === time ? 'border-blue-600 ring-2 ring-blue-600 bg-blue-50' : 'border-gray-300 hover:border-blue-300'">
+                                    <label v-for="time in availableTimesForDate" :key="time" class="relative flex cursor-pointer rounded-lg border-2 p-2 text-center focus:outline-none" :class="form.appointment_time === time ? 'border-sky-600 bg-sky-50' : 'border-gray-300 hover:border-sky-300'">
                                         <input type="radio" v-model="form.appointment_time" :value="time" class="sr-only" />
-                                        <span class="flex-1 text-sm font-medium" :class="form.appointment_time === time ? 'text-blue-900' : 'text-gray-900'">
+                                        <span class="flex-1 text-sm font-medium" :class="form.appointment_time === time ? 'text-sky-900' : 'text-gray-900'">
                                             {{ formatTime(time) }}
                                         </span>
                                     </label>
                                 </div>
                                 <div v-else class="text-center py-8 text-gray-500">
-                                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
+                                    <ClockIcon class="mx-auto h-12 w-12 text-gray-400" />
                                     <p class="mt-2 font-medium">No available time slots for this date</p>
                                     <p v-if="isWeekend" class="mt-1 text-sm text-amber-600">Office is closed on weekends. Please select a weekday.</p>
                                     <p v-else class="mt-1 text-sm">All slots are booked. Please try another date.</p>
@@ -101,7 +103,7 @@
                                 <select
                                     id="purpose"
                                     v-model="form.purpose"
-                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    class="w-full rounded-lg border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500"
                                     :class="{ 'border-red-500': form.errors.purpose }"
                                     required
                                 >
@@ -124,7 +126,7 @@
                                     id="notes"
                                     v-model="form.notes"
                                     rows="4"
-                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    class="w-full rounded-lg border-gray-300 shadow-sm focus:border-sky-500 focus:ring-sky-500"
                                     :class="{ 'border-red-500': form.errors.notes }"
                                     placeholder="Any specific requirements or topics you'd like to discuss..."
                                 ></textarea>
@@ -132,16 +134,17 @@
                             </div>
 
                             <!-- Actions -->
-                            <div class="flex items-center justify-end gap-4">
-                                <Link :href="route('appointments.index')" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
+                            <div class="flex items-center justify-end gap-3">
+                                <Link :href="route('appointments.index')" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
                                     Cancel
                                 </Link>
                                 <button
                                     type="submit"
                                     :disabled="form.processing || !canSubmit"
-                                    class="px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                                    class="inline-flex items-center gap-2 px-6 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 font-medium transition-colors"
                                     :class="{ 'opacity-50 cursor-not-allowed': form.processing || !canSubmit }"
                                 >
+                                    <CalendarDaysIcon v-if="!form.processing" class="w-5 h-5" />
                                     <span v-if="form.processing">Booking...</span>
                                     <span v-else>Book Appointment</span>
                                 </button>
@@ -158,6 +161,7 @@
 import { ref, computed } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { CalendarDaysIcon, ArrowLeftIcon, ClockIcon, CheckCircleIcon } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
     availableSlots: Object,
