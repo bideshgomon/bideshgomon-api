@@ -19,7 +19,7 @@ const secondaryColor = props.cv.cv_template.color_scheme.secondary;
 
     <AuthenticatedLayout>
         <!-- Header with Actions -->
-        <div class="bg-gradient-to-br from-gray-800 to-gray-900 text-white">
+        <div class="bg-gray-800 text-white">
             <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
                     <div class="flex items-center space-x-3 w-full sm:w-auto">

@@ -124,7 +124,7 @@ const submitBooking = () => {
     <AuthenticatedLayout>
         <div class="min-h-screen bg-gray-50 pb-20">
             <!-- Header -->
-            <div class="bg-gradient-to-br from-sky-600 to-blue-800 text-white px-4 pt-6 pb-24">
+            <div class="bg-sky-600 text-white px-4 pt-6 pb-24">
                 <div class="max-w-4xl mx-auto">
                     <Link
                         :href="route('flight-booking.index')"
@@ -418,7 +418,7 @@ const submitBooking = () => {
                             Payment Method
                         </h2>
                         
-                        <div class="p-4 bg-gradient-to-r from-sky-50 to-blue-50 rounded-xl mb-4">
+                        <div class="p-4 bg-sky-50 dark:bg-sky-900/20 rounded-xl mb-4">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <div class="text-sm text-gray-600">Wallet Balance</div>
@@ -465,7 +465,7 @@ const submitBooking = () => {
                         <button
                             @click="submitBooking"
                             :disabled="!hasSufficientBalance || bookingForm.processing"
-                            class="flex-1 bg-gradient-to-r from-sky-600 to-blue-600 text-white py-4 rounded-xl font-semibold hover:from-sky-700 hover:to-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            class="flex-1 bg-sky-600 hover:bg-sky-700 text-white py-4 rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {{ bookingForm.processing ? 'Processing...' : 'Confirm Booking' }}
                         </button>

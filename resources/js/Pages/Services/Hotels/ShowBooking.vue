@@ -55,7 +55,7 @@ const cancelBooking = () => {
 
                 <div class="bg-white rounded-lg shadow-md overflow-hidden">
                     <!-- Header -->
-                    <div class="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white p-8">
+                    <div class="bg-heritage-600 text-white p-8">
                         <div class="flex justify-between items-start">
                             <div>
                                 <h1 class="text-3xl font-bold mb-2">Booking Details</h1>

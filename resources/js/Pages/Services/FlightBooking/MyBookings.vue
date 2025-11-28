@@ -104,7 +104,7 @@ const getPaymentStatusColor = (status) => {
     <AuthenticatedLayout>
         <div class="min-h-screen bg-gray-50 pb-24">
             <!-- Header -->
-            <div class="bg-gradient-to-br from-sky-600 to-blue-800 text-white px-4 pt-6 pb-20">
+            <div class="bg-sky-600 text-white px-4 pt-6 pb-20">
                 <div class="max-w-4xl mx-auto">
                     <Link
                         :href="route('flight-booking.index')"
@@ -169,7 +169,7 @@ const getPaymentStatusColor = (status) => {
                         class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all"
                     >
                         <!-- Booking Header -->
-                        <div class="p-4 bg-gradient-to-r from-sky-50 to-blue-50 border-b border-sky-100">
+                        <div class="p-4 bg-sky-50 dark:bg-sky-900/20 border-b border-sky-100 dark:border-sky-800">
                             <div class="flex items-center justify-between mb-2">
                                 <div>
                                     <div class="text-xs text-gray-600">Booking Reference</div>
@@ -308,7 +308,7 @@ const getPaymentStatusColor = (status) => {
                     </p>
                     <Link
                         :href="route('flight-booking.index')"
-                        class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-sky-600 to-blue-600 text-white rounded-xl font-semibold hover:from-sky-700 hover:to-blue-700 transition-all shadow-md"
+                        class="inline-flex items-center px-6 py-3 bg-sky-600 hover:bg-sky-700 text-white rounded-xl font-semibold transition-all shadow-md"
                     >
                         Search Flights
                         <ArrowRightIcon class="h-5 w-5 ml-2" />

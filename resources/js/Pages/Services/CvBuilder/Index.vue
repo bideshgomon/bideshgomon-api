@@ -30,7 +30,7 @@ const categoryIcons = {
 
     <AuthenticatedLayout>
         <!-- Header with gradient -->
-        <div class="bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 text-white">
+        <div class="bg-growth-600 text-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
                 <div class="flex items-center justify-between">
                     <div>
@@ -89,7 +89,7 @@ const categoryIcons = {
             </div>
 
             <!-- Why Use CV Builder -->
-            <div class="bg-gradient-to-r from-blue-50 to-emerald-50 rounded-lg p-4 sm:p-6 border border-blue-100">
+            <div class="bg-growth-50 dark:bg-growth-900/20 rounded-lg p-4 sm:p-6 border border-growth-200 dark:border-growth-800">
                 <h2 class="text-base sm:text-lg font-semibold text-gray-900 mb-3">Why Use Our CV Builder?</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
                     <div class="flex items-start space-x-3">

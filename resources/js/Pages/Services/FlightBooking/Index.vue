@@ -78,7 +78,7 @@ const getTomorrowDate = () => {
     <AuthenticatedLayout>
         <div class="min-h-screen bg-gray-50 pb-20">
             <!-- Hero Section with Search -->
-            <div class="bg-gradient-to-br from-sky-600 to-blue-800 text-white px-4 pt-8 pb-24">
+            <div class="bg-sky-600 text-white px-4 pt-8 pb-24">
                 <div class="max-w-4xl mx-auto">
                     <div class="flex items-center space-x-3 mb-4">
                         <div class="bg-white/20 p-3 rounded-xl">
@@ -329,7 +329,7 @@ const getTomorrowDate = () => {
                         <button
                             type="submit"
                             :disabled="searchForm.processing"
-                            class="w-full bg-gradient-to-r from-sky-600 to-blue-600 text-white py-4 rounded-xl font-semibold text-lg hover:from-sky-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                            class="w-full bg-sky-600 hover:bg-sky-700 text-white py-4 rounded-xl font-semibold text-lg transition-all shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                         >
                             <MagnifyingGlassIcon class="h-6 w-6" />
                             <span>{{ searchForm.processing ? 'Searching...' : 'Search Flights' }}</span>
