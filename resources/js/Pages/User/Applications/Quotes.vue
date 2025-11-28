@@ -142,7 +142,7 @@ const getAgencyRating = (agency) => {
               </div>
 
               <!-- Quote Amount -->
-              <div class="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-lg p-4 mb-4">
+              <div class="bg-heritage-50 dark:bg-heritage-900/20 rounded-lg p-4 mb-4">
                 <div class="flex items-center justify-between">
                   <div>
                     <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Amount</p>

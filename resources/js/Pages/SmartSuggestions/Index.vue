@@ -95,7 +95,7 @@ const getStrengthLabel = (score) => {
 
     <AuthenticatedLayout>
         <!-- Header -->
-        <div class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white">
+        <div class="bg-heritage-600 text-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div class="flex items-center justify-between">
                     <div>
@@ -159,7 +159,7 @@ const getStrengthLabel = (score) => {
                 </div>
 
                 <!-- Profile Strength -->
-                <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-lg border-2 border-purple-200 p-4">
+                <div class="bg-heritage-50 rounded-lg border-2 border-heritage-200 p-4">
                     <div class="flex items-center justify-between mb-2">
                         <StarIcon class="h-6 w-6 text-purple-600" />
                     </div>

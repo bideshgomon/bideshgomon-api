@@ -194,7 +194,7 @@ const getDaysUntilEvent = () => {
                                 
                                 <!-- Upcoming Event -->
                                 <div v-if="isUpcoming() && !hasRegistrationClosed()">
-                                    <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-lg mb-4 text-center">
+                                    <div class="bg-sky-500 text-white p-4 rounded-lg mb-4 text-center">
                                         <div class="text-3xl font-bold">{{ getDaysUntilEvent() }}</div>
                                         <div class="text-sm">{{ getDaysUntilEvent() === 1 ? 'Day' : 'Days' }} Until Event</div>
                                     </div>

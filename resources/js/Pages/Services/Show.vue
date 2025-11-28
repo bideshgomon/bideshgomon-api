@@ -213,7 +213,7 @@ const submitApplication = () => {
         </Link>
 
         <!-- Header (Only shows basic info, no price until country selected) -->
-        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-xl p-6 md:p-8 mb-6 text-white">
+        <div class="bg-sky-600 rounded-2xl shadow-xl p-6 md:p-8 mb-6 text-white">
           <div class="flex items-center justify-between flex-wrap gap-4">
             <div class="flex items-center gap-4">
               <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
@@ -350,7 +350,7 @@ const submitApplication = () => {
               </div>
 
               <!-- Selected Info Preview -->
-              <div v-if="selectedCountryData" class="p-5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+              <div v-if="selectedCountryData" class="p-5 bg-sky-50 dark:bg-sky-900/20 rounded-xl border border-sky-200 dark:border-sky-800">
                 <div class="flex items-start gap-4">
                   <div class="text-5xl">{{ selectedCountryData.flag }}</div>
                   <div class="flex-1">
@@ -395,7 +395,7 @@ const submitApplication = () => {
                 <button
                   @click="goToStep(2)"
                   :disabled="!canProceedToStep2"
-                  class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-8 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:shadow-xl"
+                  class="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 px-8 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:shadow-xl"
                 >
                   Continue
                   <ArrowRightIcon class="h-5 w-5" />
@@ -518,7 +518,7 @@ const submitApplication = () => {
               <button
                 @click="goToStep(3)"
                 :disabled="!form.travel_dates.departure || !form.travel_dates.return"
-                class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg"
+                class="flex-1 bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 px-6 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg"
               >
                 Continue to Review
                 <ArrowRightIcon class="h-5 w-5" />
@@ -576,7 +576,7 @@ const submitApplication = () => {
             </div>
 
             <!-- Cost Breakdown -->
-            <div class="mb-6 p-5 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl border border-green-200 dark:border-green-800">
+            <div class="mb-6 p-5 bg-growth-50 dark:bg-growth-900/20 rounded-xl border border-growth-200 dark:border-growth-800">
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                 <CurrencyDollarIcon class="h-6 w-6 text-green-600" />
                 Cost Breakdown
@@ -659,7 +659,7 @@ const submitApplication = () => {
               </button>
               <button
                 @click="proceedToApplication"
-                class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                class="flex-1 bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 px-6 rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
               >
                 <ShieldCheckIcon class="h-5 w-5" />
                 Start Application
@@ -686,7 +686,7 @@ const submitApplication = () => {
         </div>
 
         <!-- 360° Solution Banner -->
-        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 border border-blue-200 dark:border-blue-800 rounded-xl p-4 mb-6">
+        <div class="bg-sky-50 dark:bg-sky-900/30 border border-sky-200 dark:border-sky-800 rounded-xl p-4 mb-6">
           <div class="flex items-start gap-3">
             <InformationCircleIcon class="h-6 w-6 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
             <div>
@@ -748,7 +748,7 @@ const submitApplication = () => {
         </div>
 
         <!-- Cost Breakdown -->
-        <div class="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl p-6 mb-6">
+        <div class="bg-growth-50 dark:bg-growth-900/20 rounded-xl p-6 mb-6">
           <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
             <CurrencyDollarIcon class="h-5 w-5 text-green-600" />
             Estimated Cost Breakdown
@@ -791,7 +791,7 @@ const submitApplication = () => {
           </button>
           <button
             @click="proceedToApplication"
-            class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all"
+            class="flex-1 bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 px-6 rounded-xl transition-all"
           >
             Proceed to Application
           </button>
@@ -895,7 +895,7 @@ const submitApplication = () => {
           </div>
 
           <!-- Summary -->
-          <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-4 space-y-2 text-sm border border-blue-200 dark:border-blue-800">
+          <div class="bg-sky-50 dark:bg-sky-900/20 rounded-xl p-4 space-y-2 text-sm border border-sky-200 dark:border-sky-800">
             <h4 class="font-semibold text-gray-900 dark:text-white mb-3">Application Summary</h4>
             <div class="grid grid-cols-2 gap-3">
               <div>
@@ -950,7 +950,7 @@ const submitApplication = () => {
             <button
               type="submit"
               :disabled="form.processing || uploadedDocuments.length === 0"
-              class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+              class="flex-1 bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 px-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
             >
               <span v-if="form.processing">Submitting...</span>
               <span v-else>Submit Application</span>
