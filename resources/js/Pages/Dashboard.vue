@@ -164,7 +164,7 @@ const getPriorityStatus = (priority) => {
                 
                 <!-- Profile Completion Banner -->
                 <AnimatedSection 
-                    variant="gradient" 
+                    variant="sky" 
                     :show-blobs="true"
                     class="animate-fadeInUp"
                 >

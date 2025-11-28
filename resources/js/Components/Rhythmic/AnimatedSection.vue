@@ -108,10 +108,11 @@ const bgClass = computed(() => {
     const variants = {
         light: 'bg-white',
         dark: 'bg-gray-900',
-        ocean: 'bg-gradient-to-br from-ocean-50 via-sky-50 to-blue-50',
-        gradient: 'bg-gradient-to-br from-ocean-500 via-sky-600 to-growth-500',
-        sunrise: 'bg-gradient-to-br from-sunrise-50 via-orange-50 to-gold-50',
-        heritage: 'bg-gradient-to-br from-heritage-50 via-pink-50 to-purple-50',
+        ocean: 'bg-ocean-50',
+        sky: 'bg-sky-500',
+        growth: 'bg-growth-500',
+        sunrise: 'bg-sunrise-50',
+        heritage: 'bg-heritage-50',
     };
     return `relative ${variants[props.variant] || variants.light}`;
 });
@@ -139,7 +140,8 @@ const titleColorClass = computed(() => {
         light: 'text-gray-900',
         dark: 'text-white',
         ocean: 'text-ocean-900',
-        gradient: 'text-white',
+        sky: 'text-white',
+        growth: 'text-white',
         sunrise: 'text-sunrise-900',
         heritage: 'text-heritage-900',
     };
@@ -155,7 +157,8 @@ const subtitleColorClass = computed(() => {
         light: 'text-gray-600',
         dark: 'text-gray-300',
         ocean: 'text-ocean-700',
-        gradient: 'text-white/90',
+        sky: 'text-white/90',
+        growth: 'text-white/90',
         sunrise: 'text-sunrise-700',
         heritage: 'text-heritage-700',
     };
