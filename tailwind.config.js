@@ -13,8 +13,8 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Inter var', 'Inter', ...defaultTheme.fontFamily.sans],
-                display: ['Poppins', 'Inter var', ...defaultTheme.fontFamily.sans],
+                sans: ['Proxima Nova', 'Arial', ...defaultTheme.fontFamily.sans],
+                display: ['Proxima Nova', 'Arial', ...defaultTheme.fontFamily.sans],
             },
             colors: {
                 // Deep Ocean Blues - Primary brand color
