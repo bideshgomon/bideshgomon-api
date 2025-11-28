@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useForm } from '@inertiajs/vue3';
+import { ref, onMounted, watch } from 'vue';
+import { useForm, router } from '@inertiajs/vue3';
+import axios from 'axios';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -10,7 +11,11 @@ import TextInput from '@/Components/TextInput.vue';
 import Modal from '@/Components/Modal.vue';
 import { GlobeAltIcon, TrashIcon, PlusIcon, CalendarIcon, MapPinIcon } from '@heroicons/vue/24/outline';
 
-const travelHistory = ref([]);
+const props = defineProps({
+  travelHistory: Array,
+});
+
+const travelHistory = ref(props.travelHistory || []);
 const showAddModal = ref(false);
 const showEditModal = ref(false);
 const editingTravel = ref(null);
@@ -62,17 +67,15 @@ const transportationModes = {
     sea: 'Sea (Ship/Ferry)',
 };
 
-const loadTravelHistory = async () => {
-    loading.value = true;
-    try {
-        const response = await axios.get(route('profile.travel-history.index'));
-        travelHistory.value = response.data;
-    } catch (error) {
-        console.error('Failed to load travel history:', error);
-    } finally {
-        loading.value = false;
-    }
-};
+// Data is passed via props from ProfileController
+onMounted(() => {
+    travelHistory.value = props.travelHistory || [];
+});
+
+// Watch for prop changes
+watch(() => props.travelHistory, (newVal) => {
+    travelHistory.value = newVal || [];
+});
 
 const openAddModal = () => {
     form.reset();
@@ -109,8 +112,8 @@ const calculateDuration = () => {
 const submitAdd = async () => {
     try {
         await axios.post(route('profile.travel-history.store'), form.data());
-        await loadTravelHistory();
         closeModals();
+        router.reload({ only: ['travelHistory'] });
     } catch (error) {
         if (error.response?.data?.errors) {
             Object.keys(error.response.data.errors).forEach(key => {
@@ -123,8 +126,8 @@ const submitAdd = async () => {
 const submitEdit = async () => {
     try {
         await axios.put(route('profile.travel-history.update', editingTravel.value.id), form.data());
-        await loadTravelHistory();
         closeModals();
+        router.reload({ only: ['travelHistory'] });
     } catch (error) {
         if (error.response?.data?.errors) {
             Object.keys(error.response.data.errors).forEach(key => {
@@ -141,7 +144,7 @@ const deleteTravel = async (travelId) => {
 
     try {
         await axios.delete(route('profile.travel-history.destroy', travelId));
-        await loadTravelHistory();
+        router.reload({ only: ['travelHistory'] });
     } catch (error) {
         alert(error.response?.data?.message || 'Failed to delete travel record');
     }

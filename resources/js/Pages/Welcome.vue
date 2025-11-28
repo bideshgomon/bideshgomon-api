@@ -1,5 +1,8 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { onMounted } from 'vue';
+import Header from '@/Components/Header.vue';
+import Footer from '@/Components/Footer.vue';
 import {
     SparklesIcon,
     CheckCircleIcon,
@@ -8,7 +11,24 @@ import {
     BriefcaseIcon,
     AcademicCapIcon,
     DocumentTextIcon,
+    UserGroupIcon,
+    ShieldCheckIcon,
+    ClockIcon,
+    CurrencyDollarIcon,
+    StarIcon,
+    BuildingOffice2Icon,
+    MapPinIcon,
+    PaperAirplaneIcon,
+    LanguageIcon,
+    HeartIcon,
+    LightBulbIcon,
+    RocketLaunchIcon,
+    TrophyIcon,
 } from '@heroicons/vue/24/outline';
+import {
+    CheckBadgeIcon,
+    FireIcon,
+} from '@heroicons/vue/24/solid';
 
 const props = defineProps({
     canLogin: Boolean,
@@ -17,403 +37,502 @@ const props = defineProps({
     phpVersion: String,
 });
 
+const page = usePage();
+
+// Redirect authenticated users to dashboard
+onMounted(() => {
+    if (page.props.auth?.user) {
+        router.visit('/dashboard');
+    }
+});
+
 const features = [
     {
         icon: GlobeAltIcon,
         title: 'Visa Applications',
-        description: 'Apply for visas to 50+ countries with smart form auto-fill',
+        description: 'Apply for visas to 50+ countries with smart form auto-fill and document management.',
         color: 'from-blue-500 to-indigo-600',
+        iconBg: 'bg-blue-50',
+        badge: 'Most Popular',
+        badgeColor: 'bg-blue-100 text-blue-700',
     },
     {
         icon: BriefcaseIcon,
         title: 'Job Opportunities',
-        description: 'Find and apply for jobs abroad with one-click applications',
+        description: 'Find and apply for jobs abroad with one-click applications and profile matching.',
         color: 'from-purple-500 to-pink-600',
+        iconBg: 'bg-purple-50',
+        badge: 'High Demand',
+        badgeColor: 'bg-purple-100 text-purple-700',
     },
     {
-        icon: AcademicCapIcon,
+        icon: PaperAirplaneIcon,
         title: 'Travel Services',
-        description: 'Book flights, hotels, and travel insurance seamlessly',
+        description: 'Book flights, hotels, and travel insurance seamlessly in one platform.',
         color: 'from-green-500 to-teal-600',
+        iconBg: 'bg-green-50',
+        badge: 'Best Rates',
+        badgeColor: 'bg-green-100 text-green-700',
     },
     {
         icon: DocumentTextIcon,
-        title: 'Professional Documents',
-        description: 'Generate CVs, translate documents, and manage applications',
+        title: 'Document Services',
+        description: 'Generate CVs, translate documents, and manage all your applications efficiently.',
         color: 'from-orange-500 to-red-600',
+        iconBg: 'bg-orange-50',
+        badge: 'Professional',
+        badgeColor: 'bg-orange-100 text-orange-700',
     },
 ];
 
 const benefits = [
     'Fill your profile once, use everywhere',
-    'Smart suggestions based on your goals',
+    'Smart AI-powered suggestions',
     'Track all applications in one place',
-    'Get alerts for new opportunities',
-    'Professional document generation',
-    'Priority support for complete profiles',
+    'Get instant alerts for opportunities',
+    'Secure document storage',
+    '24/7 customer support',
+];
+
+const stats = [
+    { value: '50K+', label: 'Happy Users', icon: UserGroupIcon, color: 'text-blue-600' },
+    { value: '195', label: 'Countries', icon: MapPinIcon, color: 'text-purple-600' },
+    { value: '10K+', label: 'Successful Visas', icon: CheckBadgeIcon, color: 'text-green-600' },
+    { value: '98%', label: 'Success Rate', icon: TrophyIcon, color: 'text-orange-600' },
+];
+
+const testimonials = [
+    {
+        name: 'Ahmed Rahman',
+        role: 'Software Engineer',
+        image: 'https://ui-avatars.com/api/?name=Ahmed+Rahman&background=10b981&color=fff',
+        content: 'Bidesh Gomon made my visa application process so smooth! Got my work visa in just 2 weeks.',
+        rating: 5,
+    },
+    {
+        name: 'Fatima Khan',
+        role: 'Student',
+        image: 'https://ui-avatars.com/api/?name=Fatima+Khan&background=6366f1&color=fff',
+        content: 'The platform helped me find the perfect university and handled all the paperwork. Highly recommended!',
+        rating: 5,
+    },
+    {
+        name: 'Kamal Hossain',
+        role: 'Business Owner',
+        image: 'https://ui-avatars.com/api/?name=Kamal+Hossain&background=f59e0b&color=fff',
+        content: 'Professional service! They helped me expand my business internationally with proper documentation.',
+        rating: 5,
+    },
 ];
 </script>
 
 <template>
-    <Head title="Welcome to Bidesh Gomon" />
+    <Head title="Welcome to Bidesh Gomon - Your Gateway to Global Opportunities" />
 
-    <div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-        <!-- Navigation -->
-        <nav class="bg-white/80 backdrop-blur-md border-b border-gray-200 fixed w-full top-0 z-50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-16">
-                    <Link :href="route('welcome')" class="flex items-center hover:opacity-80 transition">
-                        <div class="flex items-center">
-                            <div class="bg-gradient-to-br from-indigo-600 to-purple-600 p-2 rounded-lg shadow-md">
-                                <SparklesIcon class="h-6 w-6 text-white" />
-                            </div>
-                            <div class="ml-3">
-                                <div class="text-xl font-bold text-gray-900">Bidesh Gomon</div>
-                                <div class="text-xs text-gray-500 -mt-1">Your Journey Abroad</div>
-                            </div>
-                        </div>
-                    </Link>
-                    
-                    <!-- Main Navigation Links -->
-                    <div class="hidden md:flex items-center gap-6">
-                        <Link :href="route('welcome')" class="text-gray-700 hover:text-indigo-600 font-medium transition border-b-2 border-indigo-600 pb-1">
-                            Home
-                        </Link>
-                        <Link href="#" class="text-gray-700 hover:text-indigo-600 font-medium transition">
-                            Services
-                        </Link>
-                        <Link href="#" class="text-gray-700 hover:text-indigo-600 font-medium transition">
-                            Jobs
-                        </Link>
-                        <Link href="#" class="text-gray-700 hover:text-indigo-600 font-medium transition">
-                            Visa
-                        </Link>
-                        <Link href="#" class="text-gray-700 hover:text-indigo-600 font-medium transition">
-                            Insurance
-                        </Link>
-                        <Link href="#" class="text-gray-700 hover:text-indigo-600 font-medium transition">
-                            Hotels
-                        </Link>
-                        <Link href="#" class="text-gray-700 hover:text-indigo-600 font-medium transition">
-                            Flights
-                        </Link>
-                        <Link href="#" class="text-gray-700 hover:text-indigo-600 font-medium transition">
-                            CV Builder
-                        </Link>
-                        <Link href="#" class="text-gray-700 hover:text-indigo-600 font-medium transition">
-                            About
-                        </Link>
-                        <Link href="#" class="text-gray-700 hover:text-indigo-600 font-medium transition">
-                            Contact
-                        </Link>
-                    </div>
-
-                    <div class="flex items-center gap-4" v-if="canLogin">
-                        <Link
-                            :href="route('login')"
-                            class="text-gray-700 hover:text-indigo-600 font-medium transition"
-                        >
-                            Log in
-                        </Link>
-                        <Link
-                            v-if="canRegister"
-                            :href="route('register')"
-                            class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-indigo-700 transition"
-                        >
-                            Get Started
-                        </Link>
-                    </div>
-                </div>
-            </div>
-        </nav>
+    <div class="min-h-screen bg-white">
+        <!-- Header -->
+        <Header :can-login="canLogin" :can-register="canRegister" />
 
         <!-- Hero Section -->
-        <div class="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-            <div class="max-w-7xl mx-auto">
+        <section class="relative pt-20 pb-12 sm:pt-24 md:pt-32 sm:pb-16 md:pb-24 overflow-hidden">
+            <!-- Background Effects -->
+            <div class="absolute inset-0 -z-10">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-br from-emerald-50 via-blue-50 to-purple-50 opacity-70"></div>
+                <div class="absolute top-10 sm:top-20 left-5 sm:left-10 w-48 h-48 sm:w-72 sm:h-72 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+                <div class="absolute top-20 sm:top-40 right-5 sm:right-10 w-48 h-48 sm:w-72 sm:h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+                <div class="absolute bottom-10 sm:bottom-20 left-1/2 w-48 h-48 sm:w-72 sm:h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
+            </div>
+
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="text-center">
-                    <h1 class="text-5xl md:text-6xl font-extrabold text-gray-900 mb-6">
-                        Your Journey Abroad
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
-                            Starts Here
-                        </span>
+                    <!-- Badge -->
+                    <div class="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-emerald-50 border border-emerald-200 mb-6 sm:mb-8 hover:bg-emerald-100 transition-colors">
+                        <SparklesIcon class="h-4 w-4 sm:h-5 sm:w-5 text-emerald-600 mr-1.5 sm:mr-2 animate-pulse" />
+                        <span class="text-xs sm:text-sm font-medium text-emerald-900">Your Gateway to Global Opportunities</span>
+                        <FireIcon class="h-3 w-3 sm:h-4 sm:w-4 text-orange-500 ml-1.5 sm:ml-2" />
+                    </div>
+
+                    <!-- Heading -->
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight px-2">
+                        Go Abroad with
+                        <span class="bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent"> Confidence</span>
                     </h1>
-                    <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-                        Complete your profile once, and apply for visas, jobs, and travel services with a single click. 
-                        We handle the paperwork, you focus on your dreams.
+
+                    <p class="text-lg sm:text-xl text-gray-600 mb-10 max-w-3xl mx-auto">
+                        All-in-one platform for visa applications, job search, travel booking, and document services. 
+                        Simplify your journey abroad with intelligent automation and expert guidance.
                     </p>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 mb-10 sm:mb-12 px-4 sm:px-0">
                         <Link
                             v-if="canRegister"
                             :href="route('register')"
-                            class="inline-flex items-center px-8 py-4 bg-indigo-600 text-white rounded-xl font-bold text-lg hover:bg-indigo-700 transform hover:scale-105 transition shadow-lg"
+                            class="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl font-semibold text-base sm:text-lg hover:from-emerald-700 hover:to-green-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 group"
                         >
-                            Start Your Journey
-                            <ArrowRightIcon class="ml-2 h-5 w-5" />
+                            <RocketLaunchIcon class="mr-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:rotate-12 transition-transform" />
+                            Get Started Free
+                            <ArrowRightIcon class="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
                         </Link>
-                        <Link
-                            :href="route('login')"
-                            class="inline-flex items-center px-8 py-4 bg-white text-indigo-600 rounded-xl font-bold text-lg hover:bg-gray-50 transform hover:scale-105 transition shadow-lg border-2 border-indigo-600"
+                        <a
+                            href="#features"
+                            class="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-white text-gray-900 rounded-xl font-semibold text-base sm:text-lg border-2 border-gray-200 hover:border-emerald-600 transition-all shadow-sm hover:shadow-md group"
                         >
-                            Already a Member? Sign In
-                        </Link>
+                            <LightBulbIcon class="mr-2 h-4 w-4 sm:h-5 sm:w-5 text-gray-600 group-hover:text-emerald-600 transition-colors" />
+                            Learn More
+                        </a>
                     </div>
 
-                    <!-- Quick Stats -->
-                    <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8">
-                        <div class="bg-white/60 backdrop-blur rounded-xl p-6 shadow-sm">
-                            <div class="text-3xl font-bold text-indigo-600">50+</div>
-                            <div class="text-sm text-gray-600 mt-1">Countries</div>
-                        </div>
-                        <div class="bg-white/60 backdrop-blur rounded-xl p-6 shadow-sm">
-                            <div class="text-3xl font-bold text-purple-600">1000+</div>
-                            <div class="text-sm text-gray-600 mt-1">Jobs</div>
-                        </div>
-                        <div class="bg-white/60 backdrop-blur rounded-xl p-6 shadow-sm">
-                            <div class="text-3xl font-bold text-green-600">95%</div>
-                            <div class="text-sm text-gray-600 mt-1">Success Rate</div>
-                        </div>
-                        <div class="bg-white/60 backdrop-blur rounded-xl p-6 shadow-sm">
-                            <div class="text-3xl font-bold text-orange-600">24/7</div>
-                            <div class="text-sm text-gray-600 mt-1">Support</div>
+                    <!-- Stats -->
+                    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 max-w-4xl mx-auto px-2">
+                        <div v-for="stat in stats" :key="stat.label" class="text-center group">
+                            <div class="mb-3 sm:mb-4 inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-white shadow-lg group-hover:shadow-xl transition-all group-hover:scale-110">
+                                <component :is="stat.icon" :class="`h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 ${stat.color}`" />
+                            </div>
+                            <div class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-1 sm:mb-2">{{ stat.value }}</div>
+                            <div class="text-xs sm:text-sm text-gray-600">{{ stat.label }}</div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Features Grid -->
-        <div class="py-20 bg-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Features Section -->
+        <section id="features" class="py-16 sm:py-24 bg-gray-50">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
-                    <h2 class="text-4xl font-bold text-gray-900 mb-4">Everything You Need</h2>
-                    <p class="text-xl text-gray-600">One platform for all your international travel and work needs</p>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                        Everything You Need in One Place
+                    </h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                        From visa applications to job searches, we've got all your international needs covered.
+                    </p>
                 </div>
 
                 <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                     <div
-                        v-for="(feature, index) in features"
-                        :key="index"
-                        class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-gray-100"
+                        v-for="feature in features"
+                        :key="feature.title"
+                        class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-2xl transition-all duration-300 border border-gray-100 group relative overflow-hidden"
                     >
-                        <div :class="['w-14 h-14 rounded-xl bg-gradient-to-br flex items-center justify-center mb-4', feature.color]">
-                            <component :is="feature.icon" class="h-7 w-7 text-white" />
+                        <!-- Badge -->
+                        <div :class="`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-semibold ${feature.badgeColor}`">
+                            {{ feature.badge }}
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">{{ feature.title }}</h3>
-                        <p class="text-gray-600">{{ feature.description }}</p>
+                        
+                        <!-- Icon Container with Gradient and Glow -->
+                        <div class="relative mb-6">
+                            <div :class="`absolute inset-0 ${feature.iconBg} rounded-xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity`"></div>
+                            <div :class="`relative w-14 h-14 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg`">
+                                <component :is="feature.icon" class="h-7 w-7 text-white" />
+                            </div>
+                        </div>
+                        
+                        <h3 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-emerald-600 transition-colors">
+                            {{ feature.title }}
+                        </h3>
+                        <p class="text-gray-600 leading-relaxed">{{ feature.description }}</p>
+                        
+                        <!-- Learn More Link -->
+                        <div class="mt-4 flex items-center text-emerald-600 font-semibold text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                            Learn more
+                            <ArrowRightIcon class="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- How It Works -->
-        <div class="py-20 bg-gradient-to-br from-indigo-50 to-purple-50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- How It Works Section -->
+        <section class="py-16 sm:py-24 bg-white relative overflow-hidden">
+            <!-- Background Decoration -->
+            <div class="absolute inset-0 -z-10">
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-emerald-100 to-blue-100 rounded-full blur-3xl opacity-20"></div>
+            </div>
+            
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
-                    <h2 class="text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
-                    <p class="text-xl text-gray-600">Get started in 3 simple steps</p>
+                    <div class="inline-flex items-center px-4 py-2 rounded-full bg-blue-50 border border-blue-200 mb-6">
+                        <RocketLaunchIcon class="h-5 w-5 text-blue-600 mr-2" />
+                        <span class="text-sm font-medium text-blue-900">Simple Process</span>
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                        How It Works
+                    </h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                        Get started in 3 simple steps and take control of your international journey
+                    </p>
                 </div>
 
-                <div class="grid md:grid-cols-3 gap-8">
+                <div class="grid md:grid-cols-3 gap-8 relative">
+                    <!-- Connection Lines (Desktop) -->
+                    <div class="hidden md:block absolute top-24 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-emerald-200 via-blue-200 to-purple-200"></div>
+                    
                     <!-- Step 1 -->
-                    <div class="relative">
-                        <div class="bg-white rounded-2xl p-8 shadow-lg">
-                            <div class="w-12 h-12 bg-indigo-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mb-4">
-                                1
+                    <div class="relative group">
+                        <div class="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all border-2 border-gray-100 group-hover:border-emerald-300">
+                            <!-- Step Number Badge -->
+                            <div class="absolute -top-6 left-1/2 -translate-x-1/2">
+                                <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-600 text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg group-hover:scale-110 transition-transform">
+                                    1
+                                </div>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-900 mb-3">Create Your Profile</h3>
-                            <p class="text-gray-600">
-                                Fill out your profile once with your personal details, education, work experience, and travel documents. 
-                                Takes only 5 minutes!
+                            
+                            <!-- Icon -->
+                            <div class="flex justify-center mb-6 mt-4">
+                                <div class="w-20 h-20 bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <UserGroupIcon class="h-10 w-10 text-emerald-600" />
+                                </div>
+                            </div>
+                            
+                            <h3 class="text-xl font-bold text-gray-900 mb-3 text-center">Create Your Profile</h3>
+                            <p class="text-gray-600 text-center leading-relaxed">
+                                Fill out your profile once with your personal details, education, work experience, and travel documents. Takes only 5 minutes!
                             </p>
                         </div>
-                        <div class="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-indigo-300"></div>
                     </div>
 
                     <!-- Step 2 -->
-                    <div class="relative">
-                        <div class="bg-white rounded-2xl p-8 shadow-lg">
-                            <div class="w-12 h-12 bg-purple-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mb-4">
-                                2
+                    <div class="relative group">
+                        <div class="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all border-2 border-gray-100 group-hover:border-blue-300">
+                            <!-- Step Number Badge -->
+                            <div class="absolute -top-6 left-1/2 -translate-x-1/2">
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg group-hover:scale-110 transition-transform">
+                                    2
+                                </div>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-900 mb-3">Choose Your Service</h3>
-                            <p class="text-gray-600">
-                                Browse visas, jobs, or travel services. Your profile data automatically fills all forms - 
-                                no repetitive data entry!
+                            
+                            <!-- Icon -->
+                            <div class="flex justify-center mb-6 mt-4">
+                                <div class="w-20 h-20 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <BuildingOffice2Icon class="h-10 w-10 text-blue-600" />
+                                </div>
+                            </div>
+                            
+                            <h3 class="text-xl font-bold text-gray-900 mb-3 text-center">Choose Your Service</h3>
+                            <p class="text-gray-600 text-center leading-relaxed">
+                                Browse visas, jobs, or travel services. Your profile data automatically fills all forms - no repetitive data entry!
                             </p>
                         </div>
-                        <div class="hidden md:block absolute top-1/2 -right-4 w-8 h-0.5 bg-purple-300"></div>
                     </div>
 
                     <!-- Step 3 -->
-                    <div class="bg-white rounded-2xl p-8 shadow-lg">
-                        <div class="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mb-4">
-                            3
+                    <div class="relative group">
+                        <div class="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all border-2 border-gray-100 group-hover:border-purple-300">
+                            <!-- Step Number Badge -->
+                            <div class="absolute -top-6 left-1/2 -translate-x-1/2">
+                                <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 text-white rounded-full flex items-center justify-center text-xl font-bold shadow-lg group-hover:scale-110 transition-transform">
+                                    3
+                                </div>
+                            </div>
+                            
+                            <!-- Icon -->
+                            <div class="flex justify-center mb-6 mt-4">
+                                <div class="w-20 h-20 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <TrophyIcon class="h-10 w-10 text-purple-600" />
+                                </div>
+                            </div>
+                            
+                            <h3 class="text-xl font-bold text-gray-900 mb-3 text-center">Track & Success</h3>
+                            <p class="text-gray-600 text-center leading-relaxed">
+                                Track all your applications in one dashboard. Get real-time updates and expert support throughout your journey.
+                            </p>
                         </div>
-                        <h3 class="text-2xl font-bold text-gray-900 mb-3">Track & Success</h3>
-                        <p class="text-gray-600">
-                            Track all your applications in one dashboard. Get real-time updates and expert support 
-                            throughout your journey.
-                        </p>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <!-- Benefits Section -->
-        <div class="py-20 bg-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section id="about" class="py-16 sm:py-24">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="grid lg:grid-cols-2 gap-12 items-center">
                     <div>
-                        <h2 class="text-4xl font-bold text-gray-900 mb-6">Why Choose Bidesh Gomon?</h2>
-                        <p class="text-xl text-gray-600 mb-8">
-                            We've helped thousands of Bangladeshis achieve their international dreams. 
-                            Here's what makes us different:
-                        </p>
-                        <div class="space-y-4">
-                            <div
-                                v-for="(benefit, index) in benefits"
-                                :key="index"
-                                class="flex items-start gap-3"
-                            >
-                                <CheckCircleIcon class="h-6 w-6 text-green-600 flex-shrink-0 mt-0.5" />
-                                <span class="text-gray-700 text-lg">{{ benefit }}</span>
-                            </div>
+                        <div class="inline-flex items-center px-4 py-2 rounded-full bg-emerald-50 border border-emerald-200 mb-6">
+                            <LightBulbIcon class="h-5 w-5 text-emerald-600 mr-2" />
+                            <span class="text-sm font-medium text-emerald-900">Why Choose Us</span>
                         </div>
-                    </div>
-                    <div class="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl p-8 text-white shadow-2xl">
-                        <h3 class="text-3xl font-bold mb-6">Start Your Free Trial</h3>
-                        <ul class="space-y-4 mb-8">
-                            <li class="flex items-center gap-3">
-                                <CheckCircleIcon class="h-6 w-6 flex-shrink-0" />
-                                <span>No credit card required</span>
-                            </li>
-                            <li class="flex items-center gap-3">
-                                <CheckCircleIcon class="h-6 w-6 flex-shrink-0" />
-                                <span>Access to all features</span>
-                            </li>
-                            <li class="flex items-center gap-3">
-                                <CheckCircleIcon class="h-6 w-6 flex-shrink-0" />
-                                <span>Expert consultation included</span>
-                            </li>
-                            <li class="flex items-center gap-3">
-                                <CheckCircleIcon class="h-6 w-6 flex-shrink-0" />
-                                <span>Cancel anytime</span>
+                        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
+                            Why Choose Bidesh Gomon?
+                        </h2>
+                        <p class="text-lg text-gray-600 mb-8">
+                            We combine cutting-edge technology with personalized service to make your international journey seamless and stress-free.
+                        </p>
+                        <ul class="space-y-4">
+                            <li v-for="benefit in benefits" :key="benefit" class="flex items-start group">
+                                <div class="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center mt-0.5 group-hover:bg-emerald-600 transition-colors">
+                                    <CheckCircleIcon class="h-4 w-4 text-emerald-600 group-hover:text-white transition-colors" />
+                                </div>
+                                <span class="ml-3 text-gray-700 group-hover:text-gray-900 transition-colors">{{ benefit }}</span>
                             </li>
                         </ul>
-                        <Link
-                            v-if="canRegister"
-                            :href="route('register')"
-                            class="block w-full text-center bg-white text-indigo-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-50 transition shadow-lg"
-                        >
-                            Create Free Account
-                        </Link>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl p-8 text-center border border-emerald-100 hover:border-emerald-300 transition-all group">
+                            <div class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-4 group-hover:shadow-xl group-hover:scale-110 transition-all">
+                                <ClockIcon class="h-8 w-8 text-emerald-600" />
+                            </div>
+                            <div class="text-3xl font-bold text-gray-900 mb-2">Fast</div>
+                            <p class="text-sm text-gray-600">Quick processing & approvals</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 text-center border border-blue-100 hover:border-blue-300 transition-all group">
+                            <div class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-4 group-hover:shadow-xl group-hover:scale-110 transition-all">
+                                <ShieldCheckIcon class="h-8 w-8 text-blue-600" />
+                            </div>
+                            <div class="text-3xl font-bold text-gray-900 mb-2">Secure</div>
+                            <p class="text-sm text-gray-600">Bank-level encryption</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 text-center border border-purple-100 hover:border-purple-300 transition-all group">
+                            <div class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-4 group-hover:shadow-xl group-hover:scale-110 transition-all">
+                                <UserGroupIcon class="h-8 w-8 text-purple-600" />
+                            </div>
+                            <div class="text-3xl font-bold text-gray-900 mb-2">Expert</div>
+                            <p class="text-sm text-gray-600">Professional guidance</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-8 text-center border border-orange-100 hover:border-orange-300 transition-all group">
+                            <div class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-4 group-hover:shadow-xl group-hover:scale-110 transition-all">
+                                <CurrencyDollarIcon class="h-8 w-8 text-orange-600" />
+                            </div>
+                            <div class="text-3xl font-bold text-gray-900 mb-2">Affordable</div>
+                            <p class="text-sm text-gray-600">Competitive pricing</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="py-16 sm:py-24 bg-gray-50">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <div class="inline-flex items-center px-4 py-2 rounded-full bg-yellow-50 border border-yellow-200 mb-6">
+                        <HeartIcon class="h-5 w-5 text-yellow-600 mr-2" />
+                        <span class="text-sm font-medium text-yellow-900">Customer Reviews</span>
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+                        Loved by Thousands
+                    </h2>
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                        See what our users have to say about their experience with Bidesh Gomon.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div
+                        v-for="testimonial in testimonials"
+                        :key="testimonial.name"
+                        class="bg-white rounded-3xl p-8 shadow-sm border-2 border-gray-100 hover:border-emerald-200 hover:shadow-xl transition-all group"
+                    >
+                        <!-- Quote Icon -->
+                        <div class="mb-4">
+                            <svg class="h-8 w-8 text-emerald-200" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+                            </svg>
+                        </div>
+                        
+                        <div class="flex items-center mb-6">
+                            <img :src="testimonial.image" :alt="testimonial.name" class="w-14 h-14 rounded-full mr-4 ring-4 ring-gray-100 group-hover:ring-emerald-100 transition-all" />
+                            <div>
+                                <div class="font-bold text-gray-900">{{ testimonial.name }}</div>
+                                <div class="text-sm text-gray-600">{{ testimonial.role }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex mb-4">
+                            <StarIcon v-for="i in testimonial.rating" :key="i" class="h-5 w-5 text-yellow-400 fill-current" />
+                        </div>
+                        
+                        <p class="text-gray-600 leading-relaxed italic">"{{ testimonial.content }}"</p>
+                        
+                        <!-- Verified Badge -->
+                        <div class="mt-4 flex items-center text-sm text-emerald-600">
+                            <CheckBadgeIcon class="h-5 w-5 mr-1" />
+                            <span class="font-semibold">Verified User</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trust Indicators -->
+                <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div class="text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-4">
+                            <FireIcon class="h-8 w-8 text-orange-500" />
+                        </div>
+                        <div class="text-2xl font-bold text-gray-900">4.9/5</div>
+                        <div class="text-sm text-gray-600">Average Rating</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-4">
+                            <UserGroupIcon class="h-8 w-8 text-blue-500" />
+                        </div>
+                        <div class="text-2xl font-bold text-gray-900">50K+</div>
+                        <div class="text-sm text-gray-600">Active Users</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-4">
+                            <TrophyIcon class="h-8 w-8 text-yellow-500" />
+                        </div>
+                        <div class="text-2xl font-bold text-gray-900">10K+</div>
+                        <div class="text-sm text-gray-600">Success Stories</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-4">
+                            <ShieldCheckIcon class="h-8 w-8 text-green-500" />
+                        </div>
+                        <div class="text-2xl font-bold text-gray-900">100%</div>
+                        <div class="text-sm text-gray-600">Secure Platform</div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <!-- CTA Section -->
-        <div class="py-20 bg-gradient-to-r from-indigo-600 to-purple-600">
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">
+        <section id="contact" class="py-16 sm:py-24 bg-gradient-to-br from-emerald-600 to-green-600">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">
                     Ready to Start Your Journey?
                 </h2>
-                <p class="text-xl text-indigo-100 mb-8">
+                <p class="text-xl text-emerald-50 mb-10 max-w-2xl mx-auto">
                     Join thousands of successful applicants who trusted Bidesh Gomon with their international dreams.
                 </p>
                 <Link
                     v-if="canRegister"
                     :href="route('register')"
-                    class="inline-flex items-center px-10 py-5 bg-white text-indigo-600 rounded-xl font-bold text-xl hover:bg-gray-50 transform hover:scale-105 transition shadow-2xl"
+                    class="inline-flex items-center px-8 py-4 bg-white text-emerald-600 rounded-xl font-semibold text-lg hover:bg-gray-50 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
-                    Get Started Free
-                    <ArrowRightIcon class="ml-3 h-6 w-6" />
+                    Create Free Account
+                    <ArrowRightIcon class="ml-2 h-5 w-5" />
                 </Link>
             </div>
-        </div>
+        </section>
 
         <!-- Footer -->
-        <footer class="bg-gray-900 text-gray-300 py-16">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid md:grid-cols-4 gap-8 mb-12">
-                    <!-- Brand -->
-                    <div class="md:col-span-1">
-                        <div class="flex items-center mb-4">
-                            <div class="bg-gradient-to-br from-indigo-600 to-purple-600 p-2 rounded-lg">
-                                <SparklesIcon class="h-6 w-6 text-white" />
-                            </div>
-                            <span class="ml-2 text-xl font-bold text-white">Bidesh Gomon</span>
-                        </div>
-                        <p class="text-gray-400 text-sm mb-4">Your trusted partner for international travel and work opportunities since 2020.</p>
-                        <div class="flex gap-3">
-                            <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-indigo-600 rounded-full flex items-center justify-center transition">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                            </a>
-                            <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-indigo-600 rounded-full flex items-center justify-center transition">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
-                            </a>
-                            <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-indigo-600 rounded-full flex items-center justify-center transition">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Services -->
-                    <div>
-                        <h4 class="text-white font-semibold mb-4">Our Services</h4>
-                        <ul class="space-y-2 text-sm">
-                            <li><a href="#" class="hover:text-indigo-400 transition">Visa Applications</a></li>
-                            <li><a href="#" class="hover:text-indigo-400 transition">Job Opportunities</a></li>
-                            <li><a href="#" class="hover:text-indigo-400 transition">Flight Bookings</a></li>
-                            <li><a href="#" class="hover:text-indigo-400 transition">Hotel Reservations</a></li>
-                            <li><a href="#" class="hover:text-indigo-400 transition">Travel Insurance</a></li>
-                            <li><a href="#" class="hover:text-indigo-400 transition">Document Translation</a></li>
-                        </ul>
-                    </div>
-
-                    <!-- Company -->
-                    <div>
-                        <h4 class="text-white font-semibold mb-4">Company</h4>
-                        <ul class="space-y-2 text-sm">
-                            <li><a href="#" class="hover:text-indigo-400 transition">About Us</a></li>
-                            <li><a href="#" class="hover:text-indigo-400 transition">How It Works</a></li>
-                            <li><a href="#" class="hover:text-indigo-400 transition">Success Stories</a></li>
-                            <li><a href="#" class="hover:text-indigo-400 transition">Careers</a></li>
-                            <li><a href="#" class="hover:text-indigo-400 transition">Blog</a></li>
-                            <li><a href="#" class="hover:text-indigo-400 transition">Contact</a></li>
-                        </ul>
-                    </div>
-
-                    <!-- Support -->
-                    <div>
-                        <h4 class="text-white font-semibold mb-4">Support</h4>
-                        <ul class="space-y-2 text-sm">
-                            <li><a href="#" class="hover:text-indigo-400 transition">Help Center</a></li>
-                            <li><a href="#" class="hover:text-indigo-400 transition">FAQs</a></li>
-                            <li><a href="#" class="hover:text-indigo-400 transition">Privacy Policy</a></li>
-                            <li><a href="#" class="hover:text-indigo-400 transition">Terms of Service</a></li>
-                            <li><a href="#" class="hover:text-indigo-400 transition">Refund Policy</a></li>
-                        </ul>
-                        <div class="mt-6">
-                            <p class="text-white font-semibold text-sm mb-2">Contact Us</p>
-                            <p class="text-gray-400 text-sm">📧 info@bideshgomon.com</p>
-                            <p class="text-gray-400 text-sm">📞 +880 1234-567890</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Bottom Bar -->
-                <div class="border-t border-gray-800 pt-8">
-                    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                        <p class="text-gray-500 text-sm">© 2025 Bidesh Gomon. All rights reserved.</p>
-                        <div class="flex gap-6 text-sm">
-                            <a href="#" class="text-gray-400 hover:text-indigo-400 transition">Privacy</a>
-                            <a href="#" class="text-gray-400 hover:text-indigo-400 transition">Terms</a>
-                            <a href="#" class="text-gray-400 hover:text-indigo-400 transition">Cookies</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
+        <Footer />
     </div>
 </template>
+
+<style scoped>
+@keyframes blob {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+    33% {
+        transform: translate(30px, -50px) scale(1.1);
+    }
+    66% {
+        transform: translate(-20px, 20px) scale(0.9);
+    }
+}
+
+.animate-blob {
+    animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+    animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+    animation-delay: 4s;
+}
+</style>

@@ -44,9 +44,6 @@ const form = useForm({
     permanent_division: props.userProfile?.permanent_division || '',
     permanent_district: props.userProfile?.permanent_district || '',
     nid: props.userProfile?.nid || '',
-    passport_number: props.userProfile?.passport_number || '',
-    passport_issue_date: formatDateForInput(props.userProfile?.passport_issue_date),
-    passport_expiry_date: formatDateForInput(props.userProfile?.passport_expiry_date),
 });
 
 // Get districts based on selected division
@@ -107,8 +104,8 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.bio" />
             </div>
 
-            <!-- Date of Birth & Gender -->
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <!-- Date of Birth, NID & Gender -->
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <div>
                     <InputLabel for="dob" value="Date of Birth" />
                     <input
@@ -121,6 +118,18 @@ const submit = () => {
                     />
                     <p class="mt-1 text-xs text-gray-500">Format: DD/MM/YYYY (e.g., 15/08/1990)</p>
                     <InputError class="mt-2" :message="form.errors.dob" />
+                </div>
+
+                <div>
+                    <InputLabel for="nid" value="National ID (NID)" />
+                    <TextInput
+                        id="nid"
+                        type="text"
+                        class="mt-1 block w-full"
+                        v-model="form.nid"
+                        placeholder="10 or 17 digits"
+                    />
+                    <InputError class="mt-2" :message="form.errors.nid" />
                 </div>
 
                 <div>
@@ -258,60 +267,6 @@ const submit = () => {
                             placeholder="House/Flat, Road, Area"
                         />
                         <InputError class="mt-2" :message="form.errors.permanent_address_line" />
-                    </div>
-                </div>
-            </div>
-
-            <!-- Documents -->
-            <div class="border-t pt-6">
-                <h3 class="text-md font-medium text-gray-900 mb-4">Identity Documents</h3>
-                <div class="space-y-4">
-                    <div>
-                        <InputLabel for="nid" value="National ID (NID)" />
-                        <TextInput
-                            id="nid"
-                            type="text"
-                            class="mt-1 block w-full"
-                            v-model="form.nid"
-                            placeholder="10 or 17 digits"
-                        />
-                        <InputError class="mt-2" :message="form.errors.nid" />
-                    </div>
-
-                    <div>
-                        <InputLabel for="passport_number" value="Passport Number" />
-                        <TextInput
-                            id="passport_number"
-                            type="text"
-                            class="mt-1 block w-full"
-                            v-model="form.passport_number"
-                            placeholder="e.g., BN1234567"
-                        />
-                        <InputError class="mt-2" :message="form.errors.passport_number" />
-                    </div>
-
-                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                        <div>
-                            <InputLabel for="passport_issue_date" value="Passport Issue Date" />
-                            <TextInput
-                                id="passport_issue_date"
-                                type="date"
-                                class="mt-1 block w-full"
-                                v-model="form.passport_issue_date"
-                            />
-                            <InputError class="mt-2" :message="form.errors.passport_issue_date" />
-                        </div>
-
-                        <div>
-                            <InputLabel for="passport_expiry_date" value="Passport Expiry Date" />
-                            <TextInput
-                                id="passport_expiry_date"
-                                type="date"
-                                class="mt-1 block w-full"
-                                v-model="form.passport_expiry_date"
-                            />
-                            <InputError class="mt-2" :message="form.errors.passport_expiry_date" />
-                        </div>
                     </div>
                 </div>
             </div>

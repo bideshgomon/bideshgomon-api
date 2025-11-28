@@ -1,7 +1,10 @@
 <script setup>
 import { ref } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { UserIcon, EnvelopeIcon, LockClosedIcon, EyeIcon, EyeSlashIcon, GiftIcon, PhoneIcon } from '@heroicons/vue/24/outline';
+import { UserIcon, EnvelopeIcon, LockClosedIcon, EyeIcon, EyeSlashIcon, GiftIcon, PhoneIcon, RocketLaunchIcon } from '@heroicons/vue/24/outline';
+import Header from '@/Components/Header.vue';
+import Footer from '@/Components/Footer.vue';
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 
 const props = defineProps({
     referralCode: String,
@@ -31,30 +34,31 @@ const submit = () => {
 <template>
     <Head title="Register | Bidesh Gomon" />
 
-    <!-- Mobile-First Full Screen Layout -->
-    <div class="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 flex flex-col">
-        <!-- Header with Logo -->
-        <div class="px-4 pt-8 pb-4 sm:px-6 lg:px-8">
-            <div class="flex justify-center">
-                <Link :href="route('welcome')" class="flex items-center space-x-2">
-                    <div class="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center">
-                        <span class="text-white text-xl font-bold">BG</span>
-                    </div>
-                    <span class="text-2xl font-bold text-gray-900">Bidesh Gomon</span>
-                </Link>
-            </div>
-        </div>
+    <div class="min-h-screen bg-white flex flex-col">
+        <!-- Header -->
+        <Header :can-login="true" :can-register="false" />
 
         <!-- Main Content -->
-        <div class="flex-1 flex items-center justify-center px-4 pb-8 sm:px-6 lg:px-8">
+        <div class="flex-1 flex items-center justify-center px-4 py-24 sm:px-6 lg:px-8 bg-gradient-to-br from-emerald-50 via-white to-blue-50">
             <div class="w-full max-w-md">
+                <!-- Logo -->
+                <div class="flex justify-center mb-8">
+                    <Link :href="route('welcome')">
+                        <ApplicationLogo class="h-16 w-auto" />
+                    </Link>
+                </div>
+
                 <!-- Welcome Text -->
                 <div class="text-center mb-8">
+                    <div class="inline-flex items-center px-4 py-2 rounded-full bg-emerald-50 border border-emerald-200 mb-4">
+                        <RocketLaunchIcon class="h-4 w-4 text-emerald-600 mr-2" />
+                        <span class="text-xs font-medium text-emerald-900">Start Your Journey</span>
+                    </div>
                     <h1 class="text-3xl font-bold text-gray-900 mb-2">
-                        Create Account
+                        Create Account 🚀
                     </h1>
                     <p class="text-gray-600">
-                        Sign up to get started
+                        Join <span class="font-semibold text-emerald-600">50,000+</span> users going abroad with confidence
                     </p>
                 </div>
 
@@ -72,7 +76,7 @@ const submit = () => {
                 </div>
 
                 <!-- Register Form Card -->
-                <div class="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-5">
+                <div class="bg-white rounded-3xl shadow-xl p-6 sm:p-8 space-y-5 border border-gray-100">
                     <form @submit.prevent="submit" class="space-y-4">
                         <!-- Passport Name Notice -->
                         <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl">
@@ -360,12 +364,10 @@ const submit = () => {
                         </p>
                     </div>
                 </div>
-
-                <!-- Footer -->
-                <div class="mt-8 text-center text-xs text-gray-500">
-                    <p>© 2025 Bidesh Gomon. All rights reserved.</p>
-                </div>
             </div>
         </div>
+
+        <!-- Footer -->
+        <Footer />
     </div>
 </template>

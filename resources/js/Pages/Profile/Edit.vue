@@ -202,12 +202,9 @@ const getSectionCompletion = (sectionId) => {
             return props.travelHistory?.length > 0 ? 100 : 0;
         },
         'documents': () => {
-            let completed = 0;
-            let total = 3;
-            if (profile?.passport_number) completed++;
-            if (profile?.passport_issue_date) completed++;
-            if (profile?.passport_expiry_date) completed++;
-            return Math.round((completed / total) * 100);
+            // Documents section now tracks uploaded files, not passport fields
+            // Passport fields moved to dedicated Passport Management section
+            return 0; // TODO: implement document upload tracking
         },
         'family': () => {
             return props.familyMembers?.length > 0 ? 100 : 0;

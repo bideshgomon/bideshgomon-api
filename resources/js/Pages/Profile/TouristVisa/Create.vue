@@ -1,7 +1,8 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import axios from 'axios';
 
 const props = defineProps({
     countries: Array,
@@ -11,7 +12,44 @@ const form = useForm({
     destination_country_id: '',
     intended_travel_date: '',
     duration_days: '',
+    profession: '',
     user_notes: '',
+});
+
+// Updated 10:12:06
+const professions = [
+    'Student',
+    'Job Holder',
+    'Business Person',
+];
+
+const requirements = ref(null);
+const loadingRequirements = ref(false);
+
+// Fetch requirements when both country and profession are selected
+watch([() => form.destination_country_id, () => form.profession], async ([countryId, profession]) => {
+    if (countryId && profession) {
+        loadingRequirements.value = true;
+        try {
+            const response = await axios.get(route('profile.tourist-visa.requirements', countryId), {
+                params: { profession }
+            });
+            requirements.value = response.data.requirements;
+        } catch (error) {
+            console.error('Error fetching requirements:', error);
+            requirements.value = null;
+        } finally {
+            loadingRequirements.value = false;
+        }
+    } else {
+        requirements.value = null;
+    }
+});
+
+const selectedCountryName = computed(() => {
+    if (!form.destination_country_id) return '';
+    const country = props.countries.find(c => c.id === form.destination_country_id);
+    return country ? country.name : '';
 });
 
 const submit = () => {
@@ -111,6 +149,30 @@ const submit = () => {
                             </p>
                         </div>
 
+                        <!-- Profession -->
+                        <div>
+                            <label for="profession" class="block text-sm font-medium text-gray-700 mb-2">
+                                Profession <span class="text-red-500">*</span>
+                            </label>
+                            <select
+                                id="profession"
+                                v-model="form.profession"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                required
+                            >
+                                <option value="">Select your profession</option>
+                                <option v-for="profession in professions" :key="profession" :value="profession">
+                                    {{ profession }}
+                                </option>
+                            </select>
+                            <p v-if="form.errors.profession" class="mt-2 text-sm text-red-600">
+                                {{ form.errors.profession }}
+                            </p>
+                            <p class="mt-2 text-sm text-gray-500">
+                                Your profession affects visa requirements and processing
+                            </p>
+                        </div>
+
                         <!-- User Notes -->
                         <div>
                             <label for="user_notes" class="block text-sm font-medium text-gray-700 mb-2">
@@ -129,6 +191,89 @@ const submit = () => {
                             <p class="mt-2 text-sm text-gray-500">
                                 Add any additional information that might be helpful for your application (Optional, max 5000 characters)
                             </p>
+                        </div>
+
+                        <!-- Document Requirements Display -->
+                        <div v-if="loadingRequirements" class="border border-gray-200 rounded-lg p-6 bg-gray-50">
+                            <div class="flex items-center justify-center">
+                                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                                <span class="ml-3 text-gray-600">Loading requirements...</span>
+                            </div>
+                        </div>
+
+                        <div v-else-if="requirements" class="border border-indigo-200 rounded-lg bg-indigo-50">
+                            <div class="p-4 border-b border-indigo-200 bg-indigo-100">
+                                <div class="flex items-start gap-2">
+                                    <svg class="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    <div>
+                                        <h3 class="text-base font-semibold text-indigo-900">
+                                            Required Documents for {{ selectedCountryName }}
+                                        </h3>
+                                        <p class="text-sm text-indigo-700 mt-1">
+                                            Based on your profession: <strong>{{ form.profession }}</strong>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="p-4 space-y-4">
+                                <!-- Mandatory Documents -->
+                                <div v-if="requirements.mandatory_documents && requirements.mandatory_documents.length > 0">
+                                    <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800">
+                                            Required
+                                        </span>
+                                        <span>Mandatory Documents ({{ requirements.mandatory_documents.length }})</span>
+                                    </h4>
+                                    <ul class="space-y-2">
+                                        <li v-for="doc in requirements.mandatory_documents" :key="doc.id" class="flex items-start gap-3 bg-white rounded-lg p-3 border border-gray-200">
+                                            <svg class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm font-medium text-gray-900">{{ doc.name }}</p>
+                                                <p v-if="doc.specific_notes" class="text-sm text-gray-600 mt-1">{{ doc.specific_notes }}</p>
+                                                <span class="inline-block mt-1 text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">{{ doc.category }}</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <!-- Optional Documents -->
+                                <div v-if="requirements.optional_documents && requirements.optional_documents.length > 0">
+                                    <h4 class="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                            Optional
+                                        </span>
+                                        <span>Recommended Documents ({{ requirements.optional_documents.length }})</span>
+                                    </h4>
+                                    <ul class="space-y-2">
+                                        <li v-for="doc in requirements.optional_documents" :key="doc.id" class="flex items-start gap-3 bg-white rounded-lg p-3 border border-gray-200">
+                                            <svg class="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm font-medium text-gray-900">{{ doc.name }}</p>
+                                                <p v-if="doc.specific_notes" class="text-sm text-gray-600 mt-1">{{ doc.specific_notes }}</p>
+                                                <span class="inline-block mt-1 text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">{{ doc.category }}</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                                    <div class="flex gap-2">
+                                        <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                        </svg>
+                                        <p class="text-sm text-yellow-800">
+                                            These requirements are specific to {{ selectedCountryName }} for tourist visa applications. Make sure to prepare all mandatory documents before proceeding.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Info Box -->
@@ -177,3 +322,4 @@ const submit = () => {
         </div>
     </AuthenticatedLayout>
 </template>
+

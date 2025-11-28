@@ -5,7 +5,7 @@ import { computed } from 'vue';
 import { 
     AcademicCapIcon, BriefcaseIcon, DocumentCheckIcon, UserCircleIcon,
     ArrowTrendingUpIcon, SparklesIcon, CurrencyDollarIcon, ClockIcon, ShieldCheckIcon, DocumentTextIcon,
-    LightBulbIcon, PhoneIcon, ExclamationCircleIcon, GlobeAltIcon
+    LightBulbIcon, PhoneIcon, ExclamationCircleIcon, GlobeAltIcon, TrophyIcon, FireIcon
 } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
@@ -14,6 +14,8 @@ const props = defineProps({
     recentActivity: Array,
     suggestions: Array,
     recommendedServices: Array,
+    topReferrers: Array,
+    userRank: Object,
 });
 
 const services = [
@@ -126,18 +128,18 @@ const completionText = computed(() => {
             </h2>
         </template>
 
-        <div class="py-12">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div class="py-6 sm:py-12 pb-20 sm:pb-12">
+            <div class="mx-auto max-w-7xl px-3 sm:px-4 md:px-6 lg:px-8">
                 <!-- Welcome Banner -->
-                <div class="mb-8 overflow-hidden rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 p-8 text-white shadow-lg">
-                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="mb-6 sm:mb-8 overflow-hidden rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 p-6 sm:p-8 text-white shadow-lg">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div>
-                            <h1 class="text-3xl font-bold mb-2">Welcome back!</h1>
-                            <p class="text-indigo-100 text-lg">Complete your profile to unlock all features</p>
+                            <h1 class="text-2xl sm:text-3xl font-bold mb-2">Welcome back!</h1>
+                            <p class="text-indigo-100 text-base sm:text-lg">Complete your profile to unlock all features</p>
                         </div>
                         <Link 
                             :href="route('profile.edit')" 
-                            class="rounded-lg bg-white px-6 py-3 text-indigo-600 font-semibold hover:bg-indigo-50 transition-colors whitespace-nowrap"
+                            class="w-full sm:w-auto rounded-lg bg-white px-4 sm:px-6 py-2.5 sm:py-3 text-indigo-600 font-semibold hover:bg-indigo-50 transition-colors whitespace-nowrap text-center"
                         >
                             Complete Profile
                         </Link>
@@ -145,9 +147,9 @@ const completionText = computed(() => {
                 </div>
 
                 <!-- Stats Grid -->
-                <div class="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
+                <div class="grid gap-4 sm:gap-6 mb-6 sm:mb-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
                     <!-- Profile Completion -->
-                    <div class="bg-white rounded-lg shadow p-6">
+                    <div class="bg-white rounded-lg shadow p-4 sm:p-6">
                         <div class="flex items-center justify-between mb-4">
                             <div>
                                 <p class="text-sm font-medium text-gray-600">Profile Completion</p>
@@ -343,41 +345,148 @@ const completionText = computed(() => {
                     </div>
                 </div>
 
+                <!-- Leaderboard Widget -->
+                <div v-if="topReferrers && topReferrers.length > 0" class="mb-6 sm:mb-8">
+                    <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-amber-200">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 sm:mb-6">
+                            <div class="flex items-center gap-2 sm:gap-3">
+                                <div class="bg-gradient-to-br from-amber-500 to-orange-600 p-2 sm:p-3 rounded-lg sm:rounded-xl">
+                                    <TrophyIcon class="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                                </div>
+                                <div>
+                                    <h3 class="text-lg sm:text-xl font-bold text-gray-900">Top Referrers</h3>
+                                    <p class="text-xs sm:text-sm text-gray-600">This month's leaderboard</p>
+                                </div>
+                            </div>
+                            <Link 
+                                :href="route('referral.index')" 
+                                class="text-sm font-semibold text-amber-700 hover:text-amber-800 flex items-center gap-1"
+                            >
+                                View Full Leaderboard
+                                <ArrowTrendingUpIcon class="h-4 w-4" />
+                            </Link>
+                        </div>
+
+                        <!-- User's Rank (if ranked) -->
+                        <div v-if="userRank" class="bg-white/60 backdrop-blur-sm rounded-lg p-3 sm:p-4 mb-4 border border-amber-200">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2 sm:gap-3">
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm sm:text-base">
+                                        #{{ userRank.rank }}
+                                    </div>
+                                    <div>
+                                        <p class="text-sm sm:text-base font-semibold text-gray-900">Your Rank</p>
+                                        <p class="text-xs text-gray-600">{{ userRank.referral_count }} referrals</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-base sm:text-lg font-bold text-emerald-600">৳{{ userRank.total_earnings?.toFixed(2) || '0.00' }}</p>
+                                    <p class="text-xs text-gray-500">Earned</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Top 3 Leaders -->
+                        <div class="space-y-2 sm:space-y-3">
+                            <div
+                                v-for="(leader, index) in topReferrers.slice(0, 5)"
+                                :key="leader.user_id"
+                                class="bg-white rounded-lg p-3 sm:p-4 flex items-center justify-between hover:shadow-md transition-shadow"
+                            >
+                                <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                                    <!-- Rank Badge -->
+                                    <div
+                                        class="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-sm sm:text-base flex-shrink-0"
+                                        :class="{
+                                            'bg-gradient-to-br from-yellow-400 to-yellow-600 text-white': index === 0,
+                                            'bg-gradient-to-br from-gray-300 to-gray-500 text-white': index === 1,
+                                            'bg-gradient-to-br from-orange-400 to-orange-600 text-white': index === 2,
+                                            'bg-gray-100 text-gray-700': index >= 3
+                                        }"
+                                    >
+                                        <span v-if="index === 0">🥇</span>
+                                        <span v-else-if="index === 1">🥈</span>
+                                        <span v-else-if="index === 2">🥉</span>
+                                        <span v-else>#{{ index + 1 }}</span>
+                                    </div>
+
+                                    <!-- User Info -->
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm sm:text-base font-semibold text-gray-900 truncate">
+                                            {{ leader.user?.name || 'Anonymous' }}
+                                        </p>
+                                        <p class="text-xs text-gray-600">
+                                            {{ leader.referral_count }} referrals
+                                        </p>
+                                    </div>
+
+                                    <!-- Earnings -->
+                                    <div class="text-right flex-shrink-0">
+                                        <p class="text-sm sm:text-base font-bold text-emerald-600">
+                                            ৳{{ leader.total_earnings?.toFixed(2) || '0.00' }}
+                                        </p>
+                                        <div class="flex items-center gap-1 justify-end" v-if="index < 3">
+                                            <FireIcon class="h-3 w-3 text-orange-500" />
+                                            <span class="text-[10px] text-orange-600 font-semibold">HOT</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Call to Action -->
+                        <div class="mt-4 pt-4 border-t border-amber-200">
+                            <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                                <p class="text-xs sm:text-sm text-gray-600 text-center sm:text-left">
+                                    <span class="font-semibold">Refer friends</span> and climb the leaderboard to win prizes!
+                                </p>
+                                <Link 
+                                    :href="route('referral.index')" 
+                                    class="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-sm font-semibold rounded-lg hover:from-amber-600 hover:to-orange-700 transition-all flex items-center justify-center gap-2 whitespace-nowrap"
+                                >
+                                    <SparklesIcon class="h-4 w-4" />
+                                    Start Referring
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Service Cards Grid -->
-                <div class="mb-8">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Our Services</h3>
+                <div class="mb-6 sm:mb-8">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 px-1">Our Services</h3>
                     
                     <!-- Travel Insurance Feature Card -->
                     <Link
                         :href="route('travel-insurance.index')"
-                        class="block mb-4 bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1"
+                        class="block mb-4 bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1"
                     >
-                        <div class="flex items-center justify-between text-white mb-4">
-                            <div class="flex items-center space-x-3">
-                                <div class="bg-white/20 p-3 rounded-xl">
-                                    <ShieldCheckIcon class="h-8 w-8" />
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between text-white mb-3 sm:mb-4 gap-3">
+                            <div class="flex items-center space-x-2 sm:space-x-3">
+                                <div class="bg-white/20 p-2 sm:p-3 rounded-lg sm:rounded-xl flex-shrink-0">
+                                    <ShieldCheckIcon class="h-6 w-6 sm:h-8 sm:w-8" />
                                 </div>
                                 <div>
-                                    <h3 class="text-xl font-bold">Travel Insurance</h3>
-                                    <p class="text-emerald-100 text-sm">Protect your journey worldwide</p>
+                                    <h3 class="text-lg sm:text-xl font-bold">Travel Insurance</h3>
+                                    <p class="text-emerald-100 text-xs sm:text-sm">Protect your journey worldwide</p>
                                 </div>
                             </div>
-                            <div class="bg-white/20 px-3 py-1 rounded-full text-xs font-semibold">
+                            <div class="bg-white/20 px-2.5 py-1 sm:px-3 rounded-full text-xs font-semibold self-start sm:self-auto">
                                 NEW
                             </div>
                         </div>
-                        <div class="grid grid-cols-3 gap-3 text-white/90 text-xs">
+                        <div class="grid grid-cols-3 gap-2 sm:gap-3 text-white/90 text-xs">
                             <div>
                                 <div class="font-semibold">6 Packages</div>
-                                <div class="text-white/70">Available now</div>
+                                <div class="text-white/70 text-[10px] sm:text-xs">Available now</div>
                             </div>
                             <div>
                                 <div class="font-semibold">From ৳150/day</div>
-                                <div class="text-white/70">Affordable rates</div>
+                                <div class="text-white/70 text-[10px] sm:text-xs">Affordable rates</div>
                             </div>
                             <div>
                                 <div class="font-semibold">24/7 Support</div>
-                                <div class="text-white/70">Global coverage</div>
+                                <div class="text-white/70 text-[10px] sm:text-xs">Global coverage</div>
                             </div>
                         </div>
                     </Link>
@@ -454,9 +563,9 @@ const completionText = computed(() => {
                 </div>
 
                 <!-- Profile Sections -->
-                <div class="mb-8">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Profile Sections</h3>
-                    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div class="mb-6 sm:mb-8">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 px-1">Profile Sections</h3>
+                    <div class="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                         <Link
                             v-for="service in services"
                             :key="service.id"

@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
-import { DocumentTextIcon, SparklesIcon, CheckCircleIcon, StarIcon } from '@heroicons/vue/24/outline';
+import { PencilSquareIcon, SparklesIcon, CheckCircleIcon, StarIcon, DocumentTextIcon } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
     templates: Object,
@@ -37,7 +37,7 @@ const categoryIcons = {
                         <h1 class="text-xl sm:text-2xl font-bold">CV Builder</h1>
                         <p class="mt-1 text-sm sm:text-base text-emerald-100">Create professional CVs in minutes</p>
                     </div>
-                    <DocumentTextIcon class="h-12 w-12 sm:h-16 sm:w-16 text-emerald-200 opacity-50" />
+                    <PencilSquareIcon class="h-12 w-12 sm:h-16 sm:w-16 text-emerald-200 opacity-50" />
                 </div>
 
                 <!-- Quick Stats -->

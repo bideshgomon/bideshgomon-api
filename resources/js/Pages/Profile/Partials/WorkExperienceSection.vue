@@ -76,23 +76,16 @@ const jobCategories = [
 
 const countries = computed(() => props.countries ? props.countries.map(c => c.name) : [])
 
-// Fetch work experiences
-const fetchWorkExperiences = async () => {
-  isLoading.value = true
-  try {
-    const response = await fetch(route('api.profile.work-experience.index'))
-    if (response.ok) {
-      workList.value = await response.json()
-    }
-  } catch (error) {
-    console.error('Failed to fetch work experiences:', error)
-  } finally {
-    isLoading.value = false
-  }
-}
-
+// Use props directly instead of fetching
 onMounted(() => {
-  fetchWorkExperiences()
+  // Data is passed via props from ProfileController
+  workList.value = props.workExperiences || []
+})
+
+// Watch for prop changes
+import { watch } from 'vue'
+watch(() => props.workExperiences, (newVal) => {
+  workList.value = newVal || []
 })
 
 // Open modal
