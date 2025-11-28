@@ -377,10 +377,10 @@ const getPriorityStatus = (priority) => {
                             </div>
 
                             <!-- User's Rank -->
-                            <div v-if="userRank" class="bg-gradient-to-r from-ocean-50 to-sky-50 rounded-xl p-rhythm-md mb-rhythm-lg border border-ocean-200">
+                            <div v-if="userRank" class="bg-ocean-50 rounded-xl p-rhythm-md mb-rhythm-lg border border-ocean-200">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-rhythm-sm">
-                                        <div class="w-12 h-12 rounded-full bg-gradient-ocean flex items-center justify-center text-white font-bold">
+                                        <div class="w-12 h-12 rounded-full bg-ocean-500 flex items-center justify-center text-white font-bold">
                                             #{{ userRank.rank }}
                                         </div>
                                         <div>
@@ -407,9 +407,9 @@ const getPriorityStatus = (priority) => {
                                         <div
                                             class="w-10 h-10 rounded-full flex items-center justify-center font-bold flex-shrink-0"
                                             :class="{
-                                                'bg-gradient-to-br from-gold-400 to-gold-600 text-white': index === 0,
-                                                'bg-gradient-to-br from-gray-300 to-gray-500 text-white': index === 1,
-                                                'bg-gradient-to-br from-sunrise-400 to-sunrise-600 text-white': index === 2,
+                                                'bg-gold-500 text-white': index === 0,
+                                                'bg-gray-400 text-white': index === 1,
+                                                'bg-sunrise-500 text-white': index === 2,
                                                 'bg-gray-100 text-gray-700': index >= 3
                                             }"
                                         >
