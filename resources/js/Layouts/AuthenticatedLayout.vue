@@ -33,7 +33,9 @@ import {
     DocumentTextIcon,
     HomeIcon,
     BuildingOfficeIcon,
-    MapIcon
+    MapIcon,
+    CurrencyDollarIcon,
+    UserCircleIcon
 } from '@heroicons/vue/24/outline';
 
 const showingNavigationDropdown = ref(false);
@@ -315,6 +317,18 @@ const leaveImpersonation = () => {
                                                 </template>
                                                 Applications
                                             </DropdownLink>
+                                            <DropdownLink :href="route('agency.earnings.index')" icon-class="text-green-600">
+                                                <template #icon>
+                                                    <CurrencyDollarIcon class="w-5 h-5" />
+                                                </template>
+                                                Earnings
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('agency.profile.show')" icon-class="text-indigo-600">
+                                                <template #icon>
+                                                    <UserCircleIcon class="w-5 h-5" />
+                                                </template>
+                                                Profile
+                                            </DropdownLink>
                                         </template>
                                         
                                         <!-- Regular User Menu -->
@@ -577,6 +591,18 @@ const leaveImpersonation = () => {
                                     <DocumentTextIcon class="w-5 h-5" />
                                 </template>
                                 Applications
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('agency.earnings.index')" icon-class="text-green-600">
+                                <template #icon>
+                                    <CurrencyDollarIcon class="w-5 h-5" />
+                                </template>
+                                Earnings
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('agency.profile.show')" icon-class="text-indigo-600">
+                                <template #icon>
+                                    <UserCircleIcon class="w-5 h-5" />
+                                </template>
+                                Profile
                             </ResponsiveNavLink>
                         </template>
                     </div>
