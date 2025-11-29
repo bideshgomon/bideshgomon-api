@@ -507,6 +507,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/{touristVisa}', [\App\Http\Controllers\Profile\TouristVisaController::class, 'show'])->name('show');
     });
 
+    // Student Visa Application routes (NEW!)
+    Route::prefix('profile/student-visa')->name('profile.student-visa.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Profile\StudentVisaController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Profile\StudentVisaController::class, 'create'])->name('create');
+        Route::get('/requirements/{country}', [\App\Http\Controllers\Profile\StudentVisaController::class, 'getRequirements'])->name('requirements');
+        Route::get('/{studentVisa}', [\App\Http\Controllers\Profile\StudentVisaController::class, 'show'])->name('show');
+    });
+
     // Service Quote routes (for users to view and accept quotes)
     Route::prefix('profile/service-applications')->name('profile.service-applications.')->group(function () {
         Route::get('/{application}/quotes', [\App\Http\Controllers\Api\Profile\ServiceQuoteController::class, 'index'])->name('quotes.index');
