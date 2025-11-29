@@ -31,7 +31,7 @@ import {
   HomeModernIcon,
   BoltIcon,
   MapPinIcon,
-  AirplaneIcon,
+  PaperAirplaneIcon,
   BuildingLibraryIcon,
   CurrencyDollarIcon,
   ScaleIcon,
@@ -64,7 +64,7 @@ const serviceIcons = {
   'family-reunion-visa': UserGroupIcon,
   
   // Travel Services
-  'flight-booking': AirplaneIcon,
+  'flight-booking': PaperAirplaneIcon,
   'hotel-booking': BuildingLibraryIcon,
   'travel-insurance': ShieldCheckIcon,
   'tour-packages': MapPinIcon,
