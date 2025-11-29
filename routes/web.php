@@ -523,6 +523,27 @@ Route::middleware('auth')->group(function () {
         Route::get('/{workVisa}', [\App\Http\Controllers\Profile\WorkVisaController::class, 'show'])->name('show');
     });
 
+    // Translation Service routes (NEW!)
+    Route::prefix('profile/translation')->name('profile.translation.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Profile\TranslationController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Profile\TranslationController::class, 'create'])->name('create');
+        Route::get('/{translation}', [\App\Http\Controllers\Profile\TranslationController::class, 'show'])->name('show');
+    });
+
+    // Attestation Service routes (NEW!)
+    Route::prefix('profile/attestation')->name('profile.attestation.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Profile\AttestationController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Profile\AttestationController::class, 'create'])->name('create');
+        Route::get('/{attestation}', [\App\Http\Controllers\Profile\AttestationController::class, 'show'])->name('show');
+    });
+
+    // Hajj & Umrah Service routes (NEW!)
+    Route::prefix('profile/hajj-umrah')->name('profile.hajj-umrah.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Profile\HajjUmrahController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Profile\HajjUmrahController::class, 'create'])->name('create');
+        Route::get('/{hajjUmrah}', [\App\Http\Controllers\Profile\HajjUmrahController::class, 'show'])->name('show');
+    });
+
     // Service Quote routes (for users to view and accept quotes)
     Route::prefix('profile/service-applications')->name('profile.service-applications.')->group(function () {
         Route::get('/{application}/quotes', [\App\Http\Controllers\Api\Profile\ServiceQuoteController::class, 'index'])->name('quotes.index');
