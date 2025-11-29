@@ -329,9 +329,9 @@ const leaveImpersonation = () => {
                                             </DropdownLink>
                                             <DropdownLink :href="route('agency.profile.show')" icon-class="text-indigo-600">
                                                 <template #icon>
-                                                    <UserCircleIcon class="w-5 h-5" />
+                                                    <BuildingOfficeIcon class="w-5 h-5" />
                                                 </template>
-                                                Profile
+                                                Company Profile
                                             </DropdownLink>
                                             <div class="border-t border-gray-100 my-1"></div>
                                             <DropdownLink :href="route('agency.team.index')" icon-class="text-purple-600">
@@ -629,9 +629,9 @@ const leaveImpersonation = () => {
                             </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('agency.profile.show')" icon-class="text-indigo-600">
                                 <template #icon>
-                                    <UserCircleIcon class="w-5 h-5" />
+                                    <BuildingOfficeIcon class="w-5 h-5" />
                                 </template>
-                                Profile
+                                Company Profile
                             </ResponsiveNavLink>
                             <div class="border-t border-gray-200 my-2"></div>
                             <ResponsiveNavLink :href="route('agency.team.index')" icon-class="text-purple-600">

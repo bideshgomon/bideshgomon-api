@@ -6,21 +6,34 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6">
-                        <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-2xl font-bold text-gray-900">Team Members</h2>
-                            <Link :href="route('agency.team.create')" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                                Add Team Member
-                            </Link>
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
+                            <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Team Members</h2>
+                            <div class="flex flex-wrap gap-2">
+                                <Link :href="route('agency.team.invite')" class="inline-flex items-center px-3 sm:px-4 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700">
+                                    <EnvelopeIcon class="h-4 w-4 mr-2" />
+                                    <span class="hidden sm:inline">Invite Consultant</span>
+                                    <span class="sm:hidden">Invite</span>
+                                </Link>
+                                <Link :href="route('agency.team.create')" class="inline-flex items-center px-3 sm:px-4 py-2 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700">
+                                    <PlusIcon class="h-4 w-4 mr-2" />
+                                    <span class="hidden sm:inline">Add Display Profile</span>
+                                    <span class="sm:hidden">Add</span>
+                                </Link>
+                            </div>
                         </div>
 
                         <div v-if="teamMembers.length === 0" class="text-center py-12">
                             <UsersIcon class="mx-auto h-12 w-12 text-gray-400" />
                             <h3 class="mt-2 text-sm font-medium text-gray-900">No team members</h3>
-                            <p class="mt-1 text-sm text-gray-500">Get started by adding your first team member.</p>
-                            <div class="mt-6">
-                                <Link :href="route('agency.team.create')" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                            <p class="mt-1 text-sm text-gray-500">Get started by inviting a consultant or adding a display profile.</p>
+                            <div class="mt-6 flex flex-col sm:flex-row justify-center gap-3">
+                                <Link :href="route('agency.team.invite')" class="inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
+                                    <EnvelopeIcon class="h-5 w-5 mr-2" />
+                                    Invite Consultant
+                                </Link>
+                                <Link :href="route('agency.team.create')" class="inline-flex items-center justify-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
                                     <PlusIcon class="h-5 w-5 mr-2" />
-                                    Add Team Member
+                                    Add Display Profile
                                 </Link>
                             </div>
                         </div>
@@ -108,7 +121,7 @@ import { ref } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import draggable from 'vuedraggable';
-import { UsersIcon, UserIcon, PlusIcon, PencilIcon, TrashIcon } from '@heroicons/vue/24/outline';
+import { UsersIcon, UserIcon, PlusIcon, PencilIcon, TrashIcon, EnvelopeIcon } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
     teamMembers: Array,

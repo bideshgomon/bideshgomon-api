@@ -1248,6 +1248,10 @@ Route::middleware(['auth', 'verified'])->prefix('agency')->name('agency.')->grou
     Route::delete('/team/{teamMember}', [\App\Http\Controllers\Agency\TeamMemberController::class, 'destroy'])->name('team.destroy');
     Route::post('/team/reorder', [\App\Http\Controllers\Agency\TeamMemberController::class, 'reorder'])->name('team.reorder');
     
+    // Consultant Invitations
+    Route::get('/team/invite', [\App\Http\Controllers\Agency\ConsultantInvitationController::class, 'create'])->name('team.invite');
+    Route::post('/team/invite', [\App\Http\Controllers\Agency\ConsultantInvitationController::class, 'store'])->name('team.invite.store');
+    
     // Verification
     Route::get('/verification', [\App\Http\Controllers\Agency\VerificationController::class, 'index'])->name('verification.index');
     Route::post('/verification/documents', [\App\Http\Controllers\Agency\VerificationController::class, 'uploadDocument'])->name('verification.upload-document');
@@ -1258,6 +1262,12 @@ Route::middleware(['auth', 'verified'])->prefix('agency')->name('agency.')->grou
 // Consultant Routes (for consultant users)
 Route::middleware(['auth', 'verified'])->prefix('consultant')->name('consultant.')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Consultant\DashboardController::class, 'index'])->name('dashboard');
+});
+
+// Consultant Invitation Routes (public - no auth)
+Route::prefix('consultant')->name('consultant.')->group(function () {
+    Route::get('/accept-invitation/{token}', [\App\Http\Controllers\Agency\ConsultantInvitationController::class, 'acceptInvitation'])->name('accept-invitation');
+    Route::post('/complete-invitation/{token}', [\App\Http\Controllers\Agency\ConsultantInvitationController::class, 'completeInvitation'])->name('complete-invitation');
 });
 
 // User Support Ticket Routes
