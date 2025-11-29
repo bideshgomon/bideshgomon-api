@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Agency;
 use App\Http\Controllers\Controller;
 use App\Models\ServiceApplication;
 use App\Models\AgencyCountryAssignment;
+use App\Models\Agency;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -41,7 +42,18 @@ class ApplicationController extends Controller
             $query->where('agency_id', $agency->id);
         }
 
-        $applications = $query->latest()->paginate(20);
+        // Search by application number or user name
+        if ($request->has('search') && $request->search) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('application_number', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $applications = $query->latest()->paginate(20)->withQueryString();
 
         // Filter available applications by country
         if ($request->filter === 'available') {
@@ -54,9 +66,28 @@ class ApplicationController extends Controller
             })->filter();
         }
 
+        // Calculate stats
+        $stats = [
+            'pending' => ServiceApplication::whereNull('agency_id')
+                ->where('status', 'pending')
+                ->count(),
+            'my_applications' => ServiceApplication::where('agency_id', $agency->id)
+                ->count(),
+            'quoted' => ServiceApplication::where('agency_id', $agency->id)
+                ->whereHas('quotes', function($q) use ($agency) {
+                    $q->where('agency_id', $agency->id)
+                      ->where('status', 'pending');
+                })
+                ->count(),
+            'accepted' => ServiceApplication::where('agency_id', $agency->id)
+                ->where('status', 'accepted')
+                ->count(),
+        ];
+
         return Inertia::render('Agency/Applications/Index', [
             'applications' => $applications,
-            'filters' => $request->only(['status', 'filter']),
+            'filters' => $request->only(['status', 'filter', 'search']),
+            'stats' => $stats,
         ]);
     }
 
@@ -68,7 +99,14 @@ class ApplicationController extends Controller
         $agency = auth()->user()->agency;
 
         if (!$agency) {
-            abort(403, 'Agency not found');
+            // Auto-create agency profile if not exists
+            $agency = Agency::create([
+                'user_id' => auth()->id(),
+                'name' => auth()->user()->name . "'s Agency",
+                'email' => auth()->user()->email,
+                'is_active' => true,
+                'is_verified' => false,
+            ]);
         }
 
         // Check if agency can view this application
