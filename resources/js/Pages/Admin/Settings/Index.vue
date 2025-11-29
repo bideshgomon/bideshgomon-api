@@ -95,10 +95,26 @@ const activeSettings = computed(() => {
 });
 
 const submit = () => {
-    form.post(route('admin.settings.update', { group: activeTab.value }), {
+    // Only submit settings for the active tab
+    const activeTabSettings = form.settings.filter(s => {
+        const originalSetting = props.settings.find(ps => ps.key === s.key);
+        return originalSetting && originalSetting.group === activeTab.value;
+    });
+    
+    console.log('Submitting settings for group:', activeTab.value);
+    console.log('Number of settings:', activeTabSettings.length);
+    
+    const submitForm = useForm({
+        settings: activeTabSettings
+    });
+    
+    submitForm.post(route('admin.settings.update', { group: activeTab.value }), {
         preserveScroll: true,
         onSuccess: () => {
-            // Success message handled by backend
+            console.log('Settings saved successfully');
+        },
+        onError: (errors) => {
+            console.error('Save errors:', errors);
         },
     });
 };

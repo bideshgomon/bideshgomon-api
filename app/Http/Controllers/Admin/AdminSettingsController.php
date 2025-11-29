@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\SiteSetting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class AdminSettingsController extends Controller
@@ -30,6 +31,8 @@ class AdminSettingsController extends Controller
             'settings.*.value' => 'nullable',
         ]);
 
+        $updatedCount = 0;
+        
         foreach ($validated['settings'] as $settingData) {
             $setting = SiteSetting::where('key', $settingData['key'])->first();
             
@@ -41,15 +44,21 @@ class AdminSettingsController extends Controller
                     $value = filter_var($value, FILTER_VALIDATE_BOOLEAN) ? '1' : '0';
                 } elseif ($setting->type === 'json' && is_array($value)) {
                     $value = json_encode($value);
+                } elseif ($value === null || $value === '') {
+                    // Keep empty values as null for optional fields
+                    $value = null;
                 }
 
                 $setting->update(['value' => $value]);
+                $updatedCount++;
+                
+                Log::info("Updated setting: {$setting->key} = " . ($value ?? '(null)'));
             }
         }
 
         SiteSetting::clearCache();
 
-        return back()->with('success', 'Settings updated successfully!');
+        return back()->with('success', "Successfully updated {$updatedCount} setting(s)!");
     }
 
     public function create()
