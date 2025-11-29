@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ServiceModule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class ServiceController extends Controller
@@ -14,10 +15,40 @@ class ServiceController extends Controller
     public function index()
     {
         $services = ServiceModule::with('category')
-            ->where('is_active', true)
+            ->select([
+                'id', 
+                'service_category_id', 
+                'name', 
+                'slug', 
+                'short_description', 
+                'full_description as description',
+                'service_type',
+                'is_active',
+                'coming_soon',
+                'is_featured',
+                'sort_order'
+            ])
             ->orderBy('sort_order')
             ->orderBy('name')
-            ->get();
+            ->get()
+            ->map(function ($service) {
+                return [
+                    'id' => $service->id,
+                    'name' => $service->name,
+                    'slug' => $service->slug,
+                    'short_description' => $service->short_description,
+                    'description' => $service->description,
+                    'service_type' => $service->service_type,
+                    'is_active' => $service->is_active,
+                    'coming_soon' => $service->coming_soon,
+                    'is_featured' => $service->is_featured,
+                    'category' => [
+                        'id' => $service->category->id ?? null,
+                        'name' => $service->category->name ?? 'Other',
+                        'slug' => $service->category->slug ?? 'other',
+                    ],
+                ];
+            });
 
         $featured = ServiceModule::with('category')
             ->where('is_active', true)
@@ -26,9 +57,8 @@ class ServiceController extends Controller
             ->limit(3)
             ->get();
 
-        $categories = \DB::table('service_categories')
+        $categories = DB::table('service_categories')
             ->join('service_modules', 'service_categories.id', '=', 'service_modules.service_category_id')
-            ->where('service_modules.is_active', true)
             ->select('service_categories.id', 'service_categories.name', 'service_categories.slug')
             ->distinct()
             ->orderBy('service_categories.name')

@@ -21,6 +21,20 @@ import {
   BanknotesIcon,
   WrenchScrewdriverIcon,
   GlobeAsiaAustraliaIcon,
+  UserGroupIcon,
+  BuildingOfficeIcon,
+  LanguageIcon,
+  HeartIcon,
+  ShieldCheckIcon,
+  ClipboardDocumentListIcon,
+  TruckIcon,
+  HomeModernIcon,
+  BoltIcon,
+  MapPinIcon,
+  AirplaneIcon,
+  BuildingLibraryIcon,
+  CurrencyDollarIcon,
+  ScaleIcon,
 } from '@heroicons/vue/24/outline';
 import {
   DocumentCheckIcon as DocumentCheckIconSolid,
@@ -38,6 +52,71 @@ const props = defineProps({
   categories: Array,
   featured: Array,
 });
+
+// Service icon mapping (matching agency type card style)
+const serviceIcons = {
+  // Visa Services
+  'tourist-visa': DocumentCheckIcon,
+  'student-visa': AcademicCapIcon,
+  'work-visa': BriefcaseIcon,
+  'business-visa': BuildingOfficeIcon,
+  'medical-visa': HeartIcon,
+  'family-reunion-visa': UserGroupIcon,
+  
+  // Travel Services
+  'flight-booking': AirplaneIcon,
+  'hotel-booking': BuildingLibraryIcon,
+  'travel-insurance': ShieldCheckIcon,
+  'tour-packages': MapPinIcon,
+  'airport-transfer': TruckIcon,
+  
+  // Education Services
+  'university-application': BuildingLibraryIcon,
+  'school-application': AcademicCapIcon,
+  'language-course': LanguageIcon,
+  'scholarship-assistance': BanknotesIcon,
+  'education-loan': CurrencyDollarIcon,
+  'student-accommodation': HomeModernIcon,
+  
+  // Employment Services
+  'job-posting': ClipboardDocumentListIcon,
+  'job-application-assistance': BriefcaseIcon,
+  'cv-builder': DocumentTextIcon,
+  'interview-preparation': UserGroupIcon,
+  'skill-verification': ShieldCheckIcon,
+  
+  // Document Services
+  'translation': LanguageIcon,
+  'attestation': ShieldCheckIcon,
+  'notary': ScaleIcon,
+  'certificate-verification': DocumentCheckIcon,
+  'police-clearance': ShieldCheckIcon,
+  'medical-certificate': HeartIcon,
+  
+  // Financial Services
+  'foreign-exchange': CurrencyDollarIcon,
+  'travel-money-card': BanknotesIcon,
+  'bank-account-opening': BuildingOfficeIcon,
+  
+  // Other Services
+  'hajj-umrah': GlobeAsiaAustraliaIcon,
+  'medical-tourism': HeartIcon,
+  'relocation-services': TruckIcon,
+  'sim-card-activation': BoltIcon,
+  'legal-consultation': ScaleIcon,
+};
+
+// Service type badge colors
+const serviceTypeBadges = {
+  query_based: { label: 'Query-Based', color: 'bg-blue-100 text-blue-800', icon: '💬' },
+  api_based: { label: 'Instant', color: 'bg-green-100 text-green-800', icon: '⚡' },
+  premade: { label: 'Self-Service', color: 'bg-purple-100 text-purple-800', icon: '🎯' },
+  marketplace: { label: 'Marketplace', color: 'bg-orange-100 text-orange-800', icon: '🛍️' },
+};
+
+const getServiceIcon = (slug) => {
+  return serviceIcons[slug] || DocumentCheckIcon;
+};
 
 const search = ref('');
 const selectedCategory = ref('all');
@@ -352,54 +431,107 @@ const categoryList = computed(() => {
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-rhythm-lg">
+        <!-- Visual Card Grid (Agency Type Style) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <Link
             v-for="(service, index) in filteredServices"
             :key="service.id"
             :href="`/services/${service.slug}`"
-            class="animate-fadeIn"
+            class="block group animate-fadeIn"
             :style="{ animationDelay: `${(index % 9) * 50}ms` }"
           >
-            <RhythmicCard 
-              :variant="getCategoryVariant(service.category)"
-              size="md"
-              hover-lift
-              class="h-full"
+            <div 
+              :class="[
+                'relative p-6 rounded-2xl border-2 transition-all duration-300 h-full',
+                'hover:shadow-lg hover:scale-[1.02] hover:border-ocean-400',
+                service.coming_soon 
+                  ? 'bg-gray-50 border-gray-200 opacity-60' 
+                  : 'bg-white border-gray-200 hover:bg-ocean-50/30',
+              ]"
             >
-              <template #icon>
-                <component :is="getCategoryIcon(service.category, true)" class="h-6 w-6" />
-              </template>
-              
-              <template #badge v-if="service.is_featured || service.is_coming_soon">
-                <div class="flex flex-col gap-1">
-                  <StatusBadge v-if="service.is_featured" status="featured" size="sm" />
-                  <StatusBadge v-if="service.is_coming_soon" status="inactive" size="sm">
-                    Coming Soon
-                  </StatusBadge>
-                </div>
-              </template>
+              <!-- Success Checkmark (for active services) -->
+              <div 
+                v-if="!service.coming_soon"
+                class="absolute top-4 right-4 w-6 h-6 rounded-full bg-green-100 flex items-center justify-center"
+              >
+                <CheckCircleIcon class="w-4 h-4 text-green-600" />
+              </div>
 
-              <template #default>
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-rhythm-sm">
-                  {{ service.name }}
-                </h3>
-                <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
-                  {{ service.description }}
-                </p>
-              </template>
+              <!-- Coming Soon Badge -->
+              <div 
+                v-else
+                class="absolute top-4 right-4"
+              >
+                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                  Coming Soon
+                </span>
+              </div>
 
-              <template #footer>
-                <div class="flex items-center justify-between pt-rhythm-md border-t border-gray-100 dark:border-gray-700">
-                  <span class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                    {{ service.category?.name || service.category }}
-                  </span>
-                  <div class="flex items-center gap-rhythm-xs text-ocean-600 dark:text-ocean-400 font-medium text-sm group-hover:gap-rhythm-sm transition-all">
-                    <span class="hidden sm:inline">Apply Now</span>
-                    <ArrowRightIcon class="h-4 w-4" />
-                  </div>
-                </div>
-              </template>
-            </RhythmicCard>
+              <!-- Service Icon (Large, Like Agency Types) -->
+              <div 
+                :class="[
+                  'w-16 h-16 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300',
+                  service.coming_soon 
+                    ? 'bg-gray-100' 
+                    : getCategoryColor(service.category).includes('ocean') ? 'bg-blue-100 group-hover:bg-blue-200' :
+                      getCategoryColor(service.category).includes('sky') ? 'bg-cyan-100 group-hover:bg-cyan-200' :
+                      getCategoryColor(service.category).includes('heritage') ? 'bg-purple-100 group-hover:bg-purple-200' :
+                      getCategoryColor(service.category).includes('sunrise') ? 'bg-orange-100 group-hover:bg-orange-200' :
+                      getCategoryColor(service.category).includes('growth') ? 'bg-green-100 group-hover:bg-green-200' :
+                      getCategoryColor(service.category).includes('gold') ? 'bg-yellow-100 group-hover:bg-yellow-200' :
+                      'bg-gray-100 group-hover:bg-gray-200'
+                ]"
+              >
+                <component 
+                  :is="getServiceIcon(service.slug)" 
+                  :class="[
+                    'w-8 h-8',
+                    service.coming_soon 
+                      ? 'text-gray-400' 
+                      : getCategoryColor(service.category).includes('ocean') ? 'text-blue-600' :
+                        getCategoryColor(service.category).includes('sky') ? 'text-cyan-600' :
+                        getCategoryColor(service.category).includes('heritage') ? 'text-purple-600' :
+                        getCategoryColor(service.category).includes('sunrise') ? 'text-orange-600' :
+                        getCategoryColor(service.category).includes('growth') ? 'text-green-600' :
+                        getCategoryColor(service.category).includes('gold') ? 'text-yellow-600' :
+                        'text-gray-600'
+                  ]"
+                />
+              </div>
+
+              <!-- Service Name -->
+              <h3 class="text-lg font-bold text-gray-900 mb-2">
+                {{ service.name }}
+              </h3>
+
+              <!-- Service Description -->
+              <p class="text-sm text-gray-600 line-clamp-2 mb-3">
+                {{ service.short_description || service.description }}
+              </p>
+
+              <!-- Service Type Badge -->
+              <div class="flex items-center gap-2 mt-auto">
+                <span 
+                  v-if="service.service_type && serviceTypeBadges[service.service_type]"
+                  :class="[
+                    'inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold',
+                    serviceTypeBadges[service.service_type].color
+                  ]"
+                >
+                  <span>{{ serviceTypeBadges[service.service_type].icon }}</span>
+                  <span>{{ serviceTypeBadges[service.service_type].label }}</span>
+                </span>
+
+                <!-- Featured Badge -->
+                <span 
+                  v-if="service.is_featured"
+                  class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-orange-100 to-yellow-100 text-orange-800"
+                >
+                  <FireIcon class="w-3 h-3" />
+                  <span>Popular</span>
+                </span>
+              </div>
+            </div>
           </Link>
 
           <!-- Empty State -->
