@@ -158,26 +158,26 @@ const tabs = [
                 </div>
 
                 <!-- Profile Header Card -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mb-6">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
                     <!-- Header Section -->
-                    <div class="bg-indigo-600 px-6 py-8">
+                    <div class="px-6 py-6 border-b border-gray-200">
                         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                             <!-- Avatar and Basic Info -->
                             <div class="flex items-center gap-4">
-                                <div class="h-24 w-24 rounded-lg bg-white flex items-center justify-center text-indigo-600 text-4xl font-bold shadow-md">
+                                <div class="h-20 w-20 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 text-3xl font-bold">
                                     {{ user.name.charAt(0).toUpperCase() }}
                                 </div>
                                 <div>
-                                    <h1 class="text-2xl font-bold text-white">{{ user.name }}</h1>
-                                    <p class="text-indigo-100 flex items-center gap-2 mt-1">
+                                    <h1 class="text-2xl font-bold text-gray-900">{{ user.name }}</h1>
+                                    <p class="text-gray-600 flex items-center gap-2 mt-1">
                                         <EnvelopeIcon class="h-4 w-4" />
                                         {{ user.email }}
                                     </p>
                                     <div class="flex flex-wrap items-center gap-2 mt-3">
                                         <span
                                             :class="[
-                                                'px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 bg-white',
-                                                user.role?.slug === 'admin' ? 'text-indigo-700' : 'text-indigo-600',
+                                                'px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5',
+                                                user.role?.slug === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-indigo-100 text-indigo-800',
                                             ]"
                                         >
                                             <ShieldCheckIcon class="h-4 w-4" />
@@ -185,8 +185,8 @@ const tabs = [
                                         </span>
                                         <span
                                             :class="[
-                                                'px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5',
-                                                user.suspended_at ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700',
+                                                'px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5',
+                                                user.suspended_at ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800',
                                             ]"
                                         >
                                             <component :is="user.suspended_at ? NoSymbolIcon : CheckCircleIcon" class="h-4 w-4" />
@@ -194,8 +194,8 @@ const tabs = [
                                         </span>
                                         <span
                                             :class="[
-                                                'px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5',
-                                                user.email_verified_at ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700',
+                                                'px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5',
+                                                user.email_verified_at ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800',
                                             ]"
                                         >
                                             <component :is="user.email_verified_at ? CheckBadgeIcon : XCircleIcon" class="h-4 w-4" />
@@ -228,23 +228,23 @@ const tabs = [
                     </div>
                     
                     <!-- Stats Row -->
-                    <div class="px-6 pb-6">
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="px-6 py-6">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                             <div class="text-center">
                                 <div class="text-2xl font-bold text-gray-900">{{ user.job_applications?.length || 0 }}</div>
-                                <div class="text-sm text-gray-600">Applications</div>
+                                <div class="text-sm text-gray-600 mt-1">Applications</div>
                             </div>
                             <div class="text-center">
                                 <div class="text-2xl font-bold text-gray-900">{{ user.cvs?.length || 0 }}</div>
-                                <div class="text-sm text-gray-600">CVs</div>
+                                <div class="text-sm text-gray-600 mt-1">CVs</div>
                             </div>
                             <div class="text-center">
-                                <div class="text-2xl font-bold text-green-600">{{ formatCurrency(user.wallet?.balance || 0) }}</div>
-                                <div class="text-sm text-gray-600">Wallet Balance</div>
+                                <div class="text-2xl font-bold text-gray-900">{{ formatCurrency(user.wallet?.balance || 0) }}</div>
+                                <div class="text-sm text-gray-600 mt-1">Wallet Balance</div>
                             </div>
                             <div class="text-center">
                                 <div class="text-2xl font-bold text-gray-900">{{ Math.floor((new Date() - new Date(user.created_at)) / (1000 * 60 * 60 * 24)) }}</div>
-                                <div class="text-sm text-gray-600">Days Active</div>
+                                <div class="text-sm text-gray-600 mt-1">Days Active</div>
                             </div>
                         </div>
                     </div>
@@ -281,13 +281,13 @@ const tabs = [
                             <!-- Contact Information -->
                             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                                 <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                    <EnvelopeIcon class="h-6 w-6 text-indigo-600" />
+                                    <EnvelopeIcon class="h-6 w-6 text-gray-600" />
                                     Contact Information
                                 </h2>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div class="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
-                                        <div class="p-2 bg-blue-100 rounded-lg">
-                                            <EnvelopeIcon class="h-5 w-5 text-blue-600" />
+                                        <div class="p-2 bg-gray-200 rounded-lg">
+                                            <EnvelopeIcon class="h-5 w-5 text-gray-700" />
                                         </div>
                                         <div class="flex-1">
                                             <p class="text-xs text-gray-600 uppercase font-semibold">Email</p>
@@ -295,8 +295,8 @@ const tabs = [
                                         </div>
                                     </div>
                                     <div class="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
-                                        <div class="p-2 bg-green-100 rounded-lg">
-                                            <PhoneIcon class="h-5 w-5 text-green-600" />
+                                        <div class="p-2 bg-gray-200 rounded-lg">
+                                            <PhoneIcon class="h-5 w-5 text-gray-700" />
                                         </div>
                                         <div class="flex-1">
                                             <p class="text-xs text-gray-600 uppercase font-semibold">Phone</p>
@@ -304,8 +304,8 @@ const tabs = [
                                         </div>
                                     </div>
                                     <div class="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
-                                        <div class="p-2 bg-purple-100 rounded-lg">
-                                            <MapPinIcon class="h-5 w-5 text-purple-600" />
+                                        <div class="p-2 bg-gray-200 rounded-lg">
+                                            <MapPinIcon class="h-5 w-5 text-gray-700" />
                                         </div>
                                         <div class="flex-1">
                                             <p class="text-xs text-gray-600 uppercase font-semibold">Country</p>
@@ -313,8 +313,8 @@ const tabs = [
                                         </div>
                                     </div>
                                     <div class="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
-                                        <div class="p-2 bg-orange-100 rounded-lg">
-                                            <CalendarIcon class="h-5 w-5 text-orange-600" />
+                                        <div class="p-2 bg-gray-200 rounded-lg">
+                                            <CalendarIcon class="h-5 w-5 text-gray-700" />
                                         </div>
                                         <div class="flex-1">
                                             <p class="text-xs text-gray-600 uppercase font-semibold">Member Since</p>
@@ -325,9 +325,9 @@ const tabs = [
                             </div>
 
                             <!-- Profile Details -->
-                            <div v-if="user.profile" class="bg-white rounded-xl shadow-sm p-6">
+                            <div v-if="user.profile" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                                 <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                    <UserCircleIcon class="h-6 w-6 text-blue-600" />
+                                    <UserCircleIcon class="h-6 w-6 text-gray-600" />
                                     Profile Details
                                 </h2>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
