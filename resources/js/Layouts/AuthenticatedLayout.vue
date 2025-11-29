@@ -39,7 +39,9 @@ import {
     ShieldCheckIcon,
     UsersIcon,
     DocumentCheckIcon,
-    PaperAirplaneIcon
+    PaperAirplaneIcon,
+    RectangleStackIcon,
+    ClipboardDocumentCheckIcon
 } from '@heroicons/vue/24/outline';
 
 const showingNavigationDropdown = ref(false);
@@ -125,15 +127,15 @@ const leaveImpersonation = () => {
                                             </button>
                                         </template>
                                         <template #content>
-                                            <DropdownLink :href="route('services.index')" icon-class="text-sky-600">
+                                            <DropdownLink :href="route('services.index')" icon-class="text-emerald-600">
                                                 <template #icon>
-                                                    <DocumentMagnifyingGlassIcon class="w-5 h-5" />
+                                                    <RectangleStackIcon class="w-5 h-5" />
                                                 </template>
                                                 Browse
                                             </DropdownLink>
-                                            <DropdownLink :href="route('user.applications.index')" icon-class="text-sky-600">
+                                            <DropdownLink :href="route('user.applications.index')" icon-class="text-indigo-600">
                                                 <template #icon>
-                                                    <DocumentTextIcon class="w-5 h-5" />
+                                                    <ClipboardDocumentCheckIcon class="w-5 h-5" />
                                                 </template>
                                                 My Applications
                                             </DropdownLink>
@@ -490,16 +492,16 @@ const leaveImpersonation = () => {
                             Dashboard
                         </ResponsiveNavLink>
                         
-                        <ResponsiveNavLink :href="route('services.index')" :active="route().current('services.*')" icon-class="text-sky-600">
+                        <ResponsiveNavLink :href="route('services.index')" :active="route().current('services.*')" icon-class="text-emerald-600">
                             <template #icon>
-                                <Cog6ToothIcon class="w-5 h-5" />
+                                <RectangleStackIcon class="w-5 h-5" />
                             </template>
                             Services
                         </ResponsiveNavLink>
                         
-                        <ResponsiveNavLink :href="route('user.applications.index')" :active="route().current('user.applications.*')" icon-class="text-sky-600">
+                        <ResponsiveNavLink :href="route('user.applications.index')" :active="route().current('user.applications.*')" icon-class="text-indigo-600">
                             <template #icon>
-                                <DocumentTextIcon class="w-5 h-5" />
+                                <ClipboardDocumentCheckIcon class="w-5 h-5" />
                             </template>
                             My Applications
                         </ResponsiveNavLink>
