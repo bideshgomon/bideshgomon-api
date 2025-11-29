@@ -1213,6 +1213,9 @@ Route::get('/profile/{slug}', [\App\Http\Controllers\PublicProfileController::cl
 Route::middleware(['auth', 'verified'])->prefix('agency')->name('agency.')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Agency\DashboardController::class, 'index'])->name('dashboard');
     
+    // Earnings & Analytics
+    Route::get('/earnings', [\App\Http\Controllers\Agency\EarningsController::class, 'index'])->name('earnings.index');
+    
     // Country Assignments
     Route::get('/country-assignments', [\App\Http\Controllers\Agency\CountryAssignmentController::class, 'index'])->name('country-assignments.index');
     
