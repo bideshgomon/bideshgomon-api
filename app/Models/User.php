@@ -297,6 +297,31 @@ class User extends Authenticatable
         return $this->hasMany(TouristVisa::class);
     }
 
+    public function studentVisas(): HasMany
+    {
+        return $this->hasMany(StudentVisa::class);
+    }
+
+    public function workVisas(): HasMany
+    {
+        return $this->hasMany(WorkVisa::class);
+    }
+
+    public function translations(): HasMany
+    {
+        return $this->hasMany(Translation::class);
+    }
+
+    public function attestations(): HasMany
+    {
+        return $this->hasMany(Attestation::class);
+    }
+
+    public function hajjUmrahs(): HasMany
+    {
+        return $this->hasMany(HajjUmrah::class);
+    }
+
     /**
      * Get the user's document scans.
      */
