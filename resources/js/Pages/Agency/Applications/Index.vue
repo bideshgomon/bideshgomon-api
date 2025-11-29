@@ -87,59 +87,59 @@ const clearSearch = () => {
       </div>
     </template>
 
-    <div class="py-8">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
+    <div class="py-4 sm:py-8">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
         
         <!-- Stats Cards -->
-        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
           <!-- Pending Applications -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-6">
             <div class="flex items-center">
-              <div class="flex-shrink-0 p-3 bg-yellow-100 rounded-lg">
-                <ClockIcon class="h-6 w-6 text-yellow-600" />
+              <div class="flex-shrink-0 p-2 sm:p-3 bg-yellow-100 rounded-lg">
+                <ClockIcon class="h-4 w-4 sm:h-6 sm:w-6 text-yellow-600" />
               </div>
-              <div class="ml-4">
-                <p class="text-sm font-medium text-gray-600">Available</p>
-                <p class="text-2xl font-bold text-gray-900">{{ stats?.pending || 0 }}</p>
+              <div class="ml-2 sm:ml-4 min-w-0">
+                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Available</p>
+                <p class="text-lg sm:text-2xl font-bold text-gray-900">{{ stats?.pending || 0 }}</p>
               </div>
             </div>
           </div>
 
           <!-- My Applications -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-6">
             <div class="flex items-center">
-              <div class="flex-shrink-0 p-3 bg-blue-100 rounded-lg">
-                <BriefcaseIcon class="h-6 w-6 text-blue-600" />
+              <div class="flex-shrink-0 p-2 sm:p-3 bg-blue-100 rounded-lg">
+                <BriefcaseIcon class="h-4 w-4 sm:h-6 sm:w-6 text-blue-600" />
               </div>
-              <div class="ml-4">
-                <p class="text-sm font-medium text-gray-600">My Applications</p>
-                <p class="text-2xl font-bold text-gray-900">{{ stats?.my_applications || 0 }}</p>
+              <div class="ml-2 sm:ml-4 min-w-0">
+                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">My Applications</p>
+                <p class="text-lg sm:text-2xl font-bold text-gray-900">{{ stats?.my_applications || 0 }}</p>
               </div>
             </div>
           </div>
 
           <!-- Pending Quotes -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-6">
             <div class="flex items-center">
-              <div class="flex-shrink-0 p-3 bg-orange-100 rounded-lg">
-                <DocumentTextIcon class="h-6 w-6 text-orange-600" />
+              <div class="flex-shrink-0 p-2 sm:p-3 bg-orange-100 rounded-lg">
+                <DocumentTextIcon class="h-4 w-4 sm:h-6 sm:w-6 text-orange-600" />
               </div>
-              <div class="ml-4">
-                <p class="text-sm font-medium text-gray-600">Pending Quotes</p>
-                <p class="text-2xl font-bold text-gray-900">{{ stats?.quoted || 0 }}</p>
+              <div class="ml-2 sm:ml-4 min-w-0">
+                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Pending Quotes</p>
+                <p class="text-lg sm:text-2xl font-bold text-gray-900">{{ stats?.quoted || 0 }}</p>
               </div>
             </div>
           </div>
 
           <!-- Accepted -->
-          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-6">
             <div class="flex items-center">
-              <div class="flex-shrink-0 p-3 bg-green-100 rounded-lg">
-                <CheckCircleIcon class="h-6 w-6 text-green-600" />
+              <div class="flex-shrink-0 p-2 sm:p-3 bg-green-100 rounded-lg">
+                <CheckCircleIcon class="h-4 w-4 sm:h-6 sm:w-6 text-green-600" />
               </div>
-              <div class="ml-4">
-                <p class="text-sm font-medium text-gray-600">Accepted</p>
-                <p class="text-2xl font-bold text-gray-900">{{ stats?.accepted || 0 }}</p>
+              <div class="ml-2 sm:ml-4 min-w-0">
+                <p class="text-xs sm:text-sm font-medium text-gray-600 truncate">Accepted</p>
+                <p class="text-lg sm:text-2xl font-bold text-gray-900">{{ stats?.accepted || 0 }}</p>
               </div>
             </div>
           </div>
@@ -147,15 +147,15 @@ const clearSearch = () => {
 
         <!-- Filters and Search Bar -->
         <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-          <div class="p-6">
-            <div class="flex flex-col sm:flex-row gap-4">
+          <div class="p-4 sm:p-6">
+            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
               
               <!-- View Toggle -->
               <div class="flex rounded-lg border border-gray-300 p-1 bg-gray-50">
                 <button
                   @click="viewFilter = 'available'; applyFilters()"
                   :class="[
-                    'px-4 py-2 text-sm font-medium rounded-md transition-colors',
+                    'px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors flex-1 sm:flex-none',
                     viewFilter === 'available'
                       ? 'bg-white text-indigo-600 shadow-sm'
                       : 'text-gray-700 hover:text-gray-900'
