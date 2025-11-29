@@ -10,7 +10,7 @@ const loading = ref(false);
 const fetchApplications = async (page = 1) => {
     loading.value = true;
     try {
-        const response = await axios.get(route('api.work-visa-applications.index'), {
+        const response = await axios.get(route('api.hajj-umrah-applications.index'), {
             params: { page },
         });
         applications.value = response.data;
@@ -47,7 +47,7 @@ const statusLabels = {
 
 const deleteApplication = (id) => {
     if (confirm('Are you sure you want to delete this application?')) {
-        axios.delete(route('api.work-visa-applications.destroy', id))
+        axios.delete(route('api.hajj-umrah-applications.destroy', id))
             .then(() => {
                 fetchApplications(applications.value.current_page);
             })
@@ -69,7 +69,7 @@ const formatDate = (date) => {
 </script>
 
 <template>
-    <Head title="Work Visa Applications" />
+    <Head title="Hajj & Umrah Applications" />
 
     <AuthenticatedLayout>
         <div class="py-6 sm:py-12">
@@ -77,11 +77,11 @@ const formatDate = (date) => {
                 <!-- Header -->
                 <div class="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Work Visa Applications</h1>
+                        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">Hajj & Umrah Applications</h1>
                         <p class="mt-2 text-sm text-gray-600">Manage your student visa applications for studying abroad</p>
                     </div>
                     <Link
-                        :href="route('profile.work-visa.create')"
+                        :href="route('profile.hajj-umrah.create')"
                         class="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 border border-transparent rounded-lg font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors w-full sm:w-auto"
                     >
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -190,7 +190,7 @@ const formatDate = (date) => {
                                 
                                 <div class="flex sm:flex-col gap-2 sm:ml-4">
                                     <Link
-                                        :href="route('profile.work-visa.show', application.id)"
+                                        :href="route('profile.hajj-umrah.show', application.id)"
                                         class="inline-flex items-center justify-center px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
                                     >
                                         View Details
@@ -236,13 +236,13 @@ const formatDate = (date) => {
                     <p class="mt-2 text-sm text-gray-500">Get started by creating your first student visa application.</p>
                     <div class="mt-6">
                         <Link
-                            :href="route('profile.work-visa.create')"
+                            :href="route('profile.hajj-umrah.create')"
                             class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-lg font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
                         >
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                             </svg>
-                            Create Work Visa Application
+                            Create Hajj & Umrah Application
                         </Link>
                     </div>
                 </div>
