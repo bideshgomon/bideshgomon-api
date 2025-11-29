@@ -322,8 +322,8 @@ const submitForm = () => {
       </button>
     </div>
 
-    <!-- Edit Modal -->
-    <Modal :show="showModal" @close="closeModal" max-width="4xl">
+    <!-- Edit Modal - Reduced width for better readability -->
+    <Modal :show="showModal" @close="closeModal" max-width="3xl">
       <div class="p-6">
         <div class="flex items-center gap-3 mb-6">
           <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center">

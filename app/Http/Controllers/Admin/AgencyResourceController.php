@@ -41,11 +41,23 @@ class AgencyResourceController extends Controller
             $query->where('agency_id', $request->agency_id);
         }
 
+        // Search by resource name, agency name, or code
+        if ($request->has('search') && $request->search) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('resource_name', 'like', '%' . $searchTerm . '%')
+                  ->orWhere('resource_code', 'like', '%' . $searchTerm . '%')
+                  ->orWhereHas('agency', function ($aq) use ($searchTerm) {
+                      $aq->where('name', 'like', '%' . $searchTerm . '%');
+                  });
+            });
+        }
+
         $resources = $query->paginate(20);
 
         return Inertia::render('Admin/AgencyResources/Index', [
             'resources' => $resources,
-            'filters' => $request->only(['status', 'resource_type', 'agency_id']),
+            'filters' => $request->only(['status', 'resource_type', 'agency_id', 'search']),
         ]);
     }
 
@@ -213,6 +225,18 @@ class AgencyResourceController extends Controller
             $request->admin_notes
         );
 
+        // Send notification to agency
+        \App\Models\UserNotification::create([
+            'user_id' => $agencyResource->agency->user_id,
+            'type' => 'resource_approved',
+            'title' => 'Resource Approved! ✅',
+            'body' => "Your resource '{$agencyResource->resource_name}' has been approved. You can now use this resource for service applications.",
+            'action_url' => route('agency.resources.index'),
+            'icon' => '✅',
+            'color' => 'green',
+            'priority' => 'high',
+        ]);
+
         return back()->with('success', 'Resource approved successfully.');
     }
 
@@ -226,6 +250,18 @@ class AgencyResourceController extends Controller
         ]);
 
         $agencyResource->reject($request->admin_notes);
+
+        // Send notification to agency
+        \App\Models\UserNotification::create([
+            'user_id' => $agencyResource->agency->user_id,
+            'type' => 'resource_rejected',
+            'title' => 'Resource Rejected',
+            'body' => "Your resource '{$agencyResource->resource_name}' was rejected. Reason: {$request->admin_notes}",
+            'action_url' => route('agency.resources.index'),
+            'icon' => '❌',
+            'color' => 'red',
+            'priority' => 'high',
+        ]);
 
         return back()->with('success', 'Resource rejected.');
     }

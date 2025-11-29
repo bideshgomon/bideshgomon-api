@@ -89,7 +89,7 @@ class AgencyAssignmentController extends Controller
             }
         }
 
-        $agencies = $agenciesQuery->with('agency')
+        $agencies = $agenciesQuery
             ->orderBy('name')
             ->get(['id', 'name', 'email']);
 
@@ -173,6 +173,9 @@ class AgencyAssignmentController extends Controller
                         if ($validated['visa_type_id']) {
                             $visaType = VisaType::find($validated['visa_type_id']);
                             $assignmentData['visa_type'] = $visaType->name;
+                        } else {
+                            // Set default for global assignments
+                            $assignmentData['visa_type'] = 'general';
                         }
                         
                         $assignmentData['assigned_by'] = auth()->id();
@@ -204,6 +207,9 @@ class AgencyAssignmentController extends Controller
                     if ($validated['visa_type_id']) {
                         $visaType = VisaType::find($validated['visa_type_id']);
                         $assignmentData['visa_type'] = $visaType->name;
+                    } else {
+                        // Set default for global assignments
+                        $assignmentData['visa_type'] = 'general';
                     }
                     
                     $assignmentData['assigned_by'] = auth()->id();
@@ -255,6 +261,9 @@ class AgencyAssignmentController extends Controller
                 if ($validated['visa_type_id']) {
                     $visaType = VisaType::find($validated['visa_type_id']);
                     $assignmentData['visa_type'] = $visaType->name;
+                } else {
+                    // Set default for global assignments
+                    $assignmentData['visa_type'] = 'general';
                 }
                 
                 $assignmentData['assigned_by'] = auth()->id();
@@ -310,6 +319,9 @@ class AgencyAssignmentController extends Controller
             if ($validated['visa_type_id']) {
                 $visaType = VisaType::find($validated['visa_type_id']);
                 $validated['visa_type'] = $visaType->name;
+            } else {
+                // Set default for global assignments
+                $validated['visa_type'] = 'general';
             }
 
             $validated['assigned_by'] = auth()->id();

@@ -26,7 +26,7 @@ const props = defineProps({
 
 const search = ref(props.filters.search || '');
 const selectedCountry = ref(props.filters.country_id || '');
-const selectedCategory = ref(props.filters.category || '');
+const selectedCategory = ref(props.filters.job_category_id || '');
 const selectedJobType = ref(props.filters.job_type || '');
 const salaryMin = ref(props.filters.salary_min || '');
 const salaryMax = ref(props.filters.salary_max || '');
@@ -36,7 +36,7 @@ const applyFilters = () => {
     router.get('/jobs', {
         search: search.value,
         country_id: selectedCountry.value,
-        category: selectedCategory.value,
+        job_category_id: selectedCategory.value,
         job_type: selectedJobType.value,
         salary_min: salaryMin.value,
         salary_max: salaryMax.value,
@@ -73,21 +73,9 @@ const formatSalary = (job) => {
 };
 
 const getCategoryColor = (category) => {
-    const colors = {
-        'hospitality': 'bg-blue-100 text-blue-800',
-        'construction': 'bg-orange-100 text-orange-800',
-        'healthcare': 'bg-green-100 text-green-800',
-        'it': 'bg-purple-100 text-purple-800',
-        'manufacturing': 'bg-gray-100 text-gray-800',
-        'education': 'bg-indigo-100 text-indigo-800',
-        'retail': 'bg-pink-100 text-pink-800',
-        'transportation': 'bg-yellow-100 text-yellow-800',
-        'security': 'bg-red-100 text-red-800',
-        'agriculture': 'bg-lime-100 text-lime-800',
-        'logistics': 'bg-cyan-100 text-cyan-800',
-        'automotive': 'bg-slate-100 text-slate-800',
-    };
-    return colors[category] || 'bg-gray-100 text-gray-800';
+    // Default colors if no specific mapping exists
+    // Categories now come from database with potential color fields
+    return 'bg-indigo-100 text-indigo-800';
 };
 
 const getJobTypeLabel = (type) => {
@@ -106,17 +94,17 @@ const getJobTypeLabel = (type) => {
     <Head title="Job Opportunities" />
 
     <AuthenticatedLayout>
-        <!-- Mobile Header -->
-        <div class="bg-white border-b border-gray-200 px-4 py-6 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="bg-gradient-to-br from-indigo-50 via-white to-purple-50 border-b border-gray-200 px-4 py-8 sm:px-6 lg:px-8">
             <div class="max-w-7xl mx-auto">
-                <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center justify-between mb-6">
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">Job Opportunities</h1>
-                        <p class="text-gray-600 text-sm mt-1">{{ jobs.total }} jobs available</p>
+                        <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Job Opportunities</h1>
+                        <p class="text-gray-600 text-sm mt-2">{{ jobs.total }} jobs available worldwide</p>
                     </div>
                     <Link
                         :href="route('jobs.my-applications')"
-                        class="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
+                        class="flex items-center space-x-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white px-5 py-2.5 rounded-xl transition-all shadow-md hover:shadow-lg font-medium"
                     >
                         <BriefcaseIcon class="h-5 w-5" />
                         <span class="hidden sm:inline">My Applications</span>
@@ -124,32 +112,36 @@ const getJobTypeLabel = (type) => {
                 </div>
 
                 <!-- Search Bar -->
-                <div class="relative">
-                    <MagnifyingGlassIcon class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <div class="relative mb-4">
+                    <MagnifyingGlassIcon class="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <input
                         v-model="search"
                         @keyup.enter="applyFilters"
                         type="text"
-                        placeholder="Search jobs, companies..."
-                        class="w-full pl-10 pr-4 py-3 rounded-xl border-0 focus:ring-2 focus:ring-white/50"
+                        placeholder="Search jobs, companies, skills..."
+                        class="w-full pl-12 pr-4 py-3.5 rounded-xl border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 placeholder-gray-400"
                     />
                 </div>
 
                 <!-- Filter Toggle -->
                 <button
                     @click="showFilters = !showFilters"
-                    class="mt-3 w-full flex items-center justify-center space-x-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-colors"
+                    class="w-full flex items-center justify-center space-x-2 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2.5 rounded-xl transition-colors border border-gray-200 shadow-sm font-medium"
                 >
                     <FunnelIcon class="h-5 w-5" />
                     <span>{{ showFilters ? 'Hide Filters' : 'Show Filters' }}</span>
-                    <span v-if="hasFilters" class="bg-white/30 px-2 py-0.5 rounded-full text-xs">Active</span>
+                    <span v-if="hasFilters" class="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full text-xs font-semibold">{{ Object.values(props.filters).filter(f => f).length }}</span>
                 </button>
             </div>
         </div>
 
         <!-- Filters Panel -->
-        <div v-if="showFilters" class="bg-white border-b px-4 py-4 sm:px-6 lg:px-8">
+        <div v-if="showFilters" class="bg-white border-b border-gray-200 px-4 py-6 sm:px-6 lg:px-8 shadow-sm">
             <div class="max-w-7xl mx-auto">
+                <h3 class="text-sm font-semibold text-gray-700 mb-4 flex items-center">
+                    <FunnelIcon class="h-4 w-4 mr-2" />
+                    Filter Jobs
+                </h3>
                 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <!-- Country Filter -->
                     <div>
@@ -175,8 +167,8 @@ const getJobTypeLabel = (type) => {
                             class="w-full rounded-lg border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
                         >
                             <option value="">All Categories</option>
-                            <option v-for="category in categories" :key="category" :value="category">
-                                {{ category.charAt(0).toUpperCase() + category.slice(1) }}
+                            <option v-for="category in categories" :key="category.id" :value="category.id">
+                                {{ category.name }}
                             </option>
                         </select>
                     </div>
@@ -201,10 +193,10 @@ const getJobTypeLabel = (type) => {
                         <button
                             v-if="hasFilters"
                             @click="clearFilters"
-                            class="w-full flex items-center justify-center space-x-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors"
+                            class="w-full flex items-center justify-center space-x-2 bg-red-50 hover:bg-red-100 text-red-700 px-4 py-2.5 rounded-xl transition-colors border border-red-200 font-medium"
                         >
                             <XMarkIcon class="h-5 w-5" />
-                            <span>Clear Filters</span>
+                            <span>Clear All</span>
                         </button>
                     </div>
                     
@@ -239,32 +231,42 @@ const getJobTypeLabel = (type) => {
         <!-- Job Listings -->
         <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
             <!-- No Results -->
-            <div v-if="jobs.data.length === 0" class="text-center py-12">
-                <BriefcaseIcon class="mx-auto h-12 w-12 text-gray-400" />
-                <h3 class="mt-2 text-lg font-medium text-gray-900">No jobs found</h3>
-                <p class="mt-1 text-sm text-gray-500">Try adjusting your filters</p>
+            <div v-if="jobs.data.length === 0" class="text-center py-16">
+                <div class="w-20 h-20 mx-auto mb-6 rounded-3xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+                    <BriefcaseIcon class="h-12 w-12 text-indigo-600" />
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">No jobs found</h3>
+                <p class="text-gray-500 mb-6">Try adjusting your filters or search terms</p>
+                <button
+                    v-if="hasFilters"
+                    @click="clearFilters"
+                    class="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all font-medium inline-flex items-center gap-2"
+                >
+                    <XMarkIcon class="h-5 w-5" />
+                    Clear Filters
+                </button>
             </div>
 
             <!-- Job Cards Grid -->
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 <Link
                     v-for="job in jobs.data"
                     :key="job.id"
                     :href="route('jobs.show', job.id)"
-                    class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-200 overflow-hidden"
+                    class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-200 border border-gray-100 overflow-hidden group"
                 >
                     <!-- Featured Badge -->
-                    <div v-if="job.is_featured" class="bg-amber-500 px-4 py-1 flex items-center justify-center space-x-1">
+                    <div v-if="job.is_featured" class="bg-gradient-to-r from-amber-400 to-orange-500 px-4 py-2 flex items-center justify-center space-x-1.5">
                         <SparklesIcon class="h-4 w-4 text-white" />
-                        <span class="text-white text-xs font-semibold">FEATURED</span>
+                        <span class="text-white text-xs font-bold tracking-wide">FEATURED</span>
                     </div>
 
-                    <div class="p-4">
+                    <div class="p-6">
                         <!-- Company & Location -->
-                        <div class="flex items-start justify-between mb-3">
+                        <div class="flex items-start justify-between mb-4">
                             <div class="flex-1">
-                                <h3 class="font-semibold text-gray-900 text-lg leading-tight mb-1">{{ job.title }}</h3>
-                                <p class="text-sm text-gray-600">{{ job.company_name }}</p>
+                                <h3 class="font-bold text-gray-900 text-lg leading-tight mb-2 group-hover:text-indigo-600 transition-colors">{{ job.title }}</h3>
+                                <p class="text-sm font-medium text-gray-600">{{ job.company_name }}</p>
                             </div>
                         </div>
 
@@ -276,8 +278,8 @@ const getJobTypeLabel = (type) => {
 
                         <!-- Tags -->
                         <div class="flex flex-wrap gap-2 mb-3">
-                            <span :class="['px-2 py-1 rounded-full text-xs font-medium', getCategoryColor(job.category)]">
-                                {{ job.category }}
+                            <span v-if="job.job_category" :class="['px-2 py-1 rounded-full text-xs font-medium', getCategoryColor(job.job_category.slug)]">
+                                {{ job.job_category.name }}
                             </span>
                             <span class="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
                                 {{ getJobTypeLabel(job.job_type) }}
@@ -288,8 +290,8 @@ const getJobTypeLabel = (type) => {
                         </div>
 
                         <!-- Salary -->
-                        <div class="flex items-center text-indigo-600 font-semibold mb-3">
-                            <CurrencyDollarIcon class="h-5 w-5 mr-1" />
+                        <div class="flex items-center text-indigo-600 font-bold text-lg mb-4">
+                            <CurrencyDollarIcon class="h-6 w-6 mr-2" />
                             <span>{{ formatSalary(job) }}/{{ job.salary_period }}</span>
                         </div>
 

@@ -21,6 +21,7 @@ class JobPosting extends Model
         'address',
         'job_type',
         'category',
+        'job_category_id',
         'description',
         'responsibilities',
         'requirements',
@@ -39,6 +40,12 @@ class JobPosting extends Model
         'age_min',
         'age_max',
         'application_fee',
+        'agency_posted_fee',
+        'admin_approved_fee',
+        'processing_fee',
+        'approval_status',
+        'approved_at',
+        'approved_by',
         'application_deadline',
         'contact_email',
         'contact_phone',
@@ -58,13 +65,17 @@ class JobPosting extends Model
         'salary_min' => 'decimal:2',
         'salary_max' => 'decimal:2',
         'application_fee' => 'decimal:2',
-        'salary_negotiable' => 'boolean',
+        'agency_posted_fee' => 'decimal:2',
+        'admin_approved_fee' => 'decimal:2',
+        'processing_fee' => 'decimal:2',
+        'approved_at' => 'datetime',
+        'published_at' => 'datetime',
+        'expires_at' => 'datetime',
+        'application_deadline' => 'date',
         'is_featured' => 'boolean',
         'is_active' => 'boolean',
         'is_urgent' => 'boolean',
-        'published_at' => 'datetime',
-        'application_deadline' => 'date',
-        'expires_at' => 'datetime',
+        'salary_negotiable' => 'boolean',
     ];
 
     // Relationships
@@ -73,9 +84,24 @@ class JobPosting extends Model
         return $this->belongsTo(Country::class);
     }
 
+    public function jobCategory()
+    {
+        return $this->belongsTo(JobCategory::class, 'job_category_id');
+    }
+
     public function applications()
     {
         return $this->hasMany(JobApplication::class);
+    }
+
+    public function approvedBy()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function postedBy()
+    {
+        return $this->belongsTo(User::class, 'posted_by');
     }
 
     // Scopes
@@ -103,9 +129,9 @@ class JobPosting extends Model
         return $query->where('country_id', $countryId);
     }
 
-    public function scopeByCategory(Builder $query, $category)
+    public function scopeByCategory(Builder $query, $categoryId)
     {
-        return $query->where('category', $category);
+        return $query->where('job_category_id', $categoryId);
     }
 
     public function scopeByJobType(Builder $query, $jobType)
@@ -141,6 +167,35 @@ class JobPosting extends Model
     public function isFree()
     {
         return $this->application_fee == 0;
+    }
+
+    public function hasProcessingFee()
+    {
+        return $this->processing_fee > 0;
+    }
+
+    public function isApproved()
+    {
+        return $this->approval_status === 'approved';
+    }
+
+    public function isPending()
+    {
+        return $this->approval_status === 'pending';
+    }
+
+    public function calculateProcessingFee()
+    {
+        if ($this->admin_approved_fee && $this->agency_posted_fee) {
+            return $this->admin_approved_fee - $this->agency_posted_fee;
+        }
+        return 0;
+    }
+
+    public function getFinalApplicationFee()
+    {
+        // Return admin approved fee if exists, otherwise agency posted fee, otherwise default application_fee
+        return $this->admin_approved_fee ?? $this->agency_posted_fee ?? $this->application_fee;
     }
 
     public function getSalaryRangeAttribute()

@@ -236,18 +236,23 @@
                                 results
                             </div>
                             <div class="flex space-x-2">
-                                <Link
-                                    v-for="link in assignments.links"
-                                    :key="link.label"
-                                    :href="link.url"
-                                    :class="{
-                                        'bg-blue-600 text-white': link.active,
-                                        'bg-white text-gray-700 hover:bg-gray-50': !link.active,
-                                        'opacity-50 cursor-not-allowed': !link.url
-                                    }"
-                                    class="px-3 py-2 text-sm font-medium rounded-md border border-gray-300"
-                                    v-html="link.label"
-                                />
+                                <template v-for="link in assignments.links" :key="link.label">
+                                    <Link
+                                        v-if="link.url"
+                                        :href="link.url"
+                                        :class="{
+                                            'bg-blue-600 text-white': link.active,
+                                            'bg-white text-gray-700 hover:bg-gray-50': !link.active
+                                        }"
+                                        class="px-3 py-2 text-sm font-medium rounded-md border border-gray-300"
+                                        v-html="link.label"
+                                    />
+                                    <span
+                                        v-else
+                                        class="px-3 py-2 text-sm font-medium rounded-md border border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed"
+                                        v-html="link.label"
+                                    />
+                                </template>
                             </div>
                         </div>
                     </div>

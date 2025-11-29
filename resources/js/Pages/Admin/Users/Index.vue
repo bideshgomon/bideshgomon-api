@@ -149,9 +149,24 @@ const canImpersonate = (user) => {
 
 const impersonateUser = (user) => {
     if (!canImpersonate(user)) return;
-    if (!confirm(`Impersonate ${user.name}? You will act as this user until you exit.`)) return;
-    router.post(route('admin.users.impersonate', user.id), {}, {
+    
+    const purpose = prompt(`Impersonate ${user.name}?\n\nPlease provide a reason (required for audit trail):`);
+    if (!purpose || purpose.trim() === '') {
+        return; // User cancelled or provided empty reason
+    }
+    
+    router.post(route('admin.users.impersonate', user.id), {
+        purpose: purpose.trim()
+    }, {
         preserveScroll: true,
+        onSuccess: () => {
+            // Redirect to dashboard after successful impersonation
+            router.visit(route('dashboard'));
+        },
+        onError: (errors) => {
+            console.error('Impersonation failed:', errors);
+            alert('Failed to impersonate user. ' + (errors.purpose || 'Please try again.'));
+        }
     });
 };
 </script>

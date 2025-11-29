@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { usePage } from '@inertiajs/vue3';
+import { usePage, router } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
@@ -42,6 +42,12 @@ const page = usePage();
 const isAdmin = computed(() => page.props.auth?.user?.role?.slug === 'admin');
 const isAgency = computed(() => page.props.auth?.user?.role?.slug === 'agency');
 const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consultant');
+
+const leaveImpersonation = () => {
+    router.post(route('admin.impersonation.leave'), {}, {
+        preserveScroll: false,
+    });
+};
 </script>
 
 <template>
@@ -65,8 +71,7 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                             <span class="px-2 py-0.5 rounded bg-black/20 text-xs">ID {{ $page.props.auth.user.impersonator.id }}</span>
                         </div>
                     </div>
-                    <form :action="route('admin.impersonation.leave')" method="post" class="flex items-center">
-                        <input type="hidden" name="_token" :value="$page.props.csrf_token" />
+                    <form @submit.prevent="leaveImpersonation" class="flex items-center">
                         <button type="submit" class="inline-flex items-center px-4 py-1.5 rounded-md bg-black/25 hover:bg-black/35 transition font-semibold text-xs tracking-wide">
                             Exit & Restore Admin
                         </button>
@@ -304,7 +309,7 @@ const isConsultant = computed(() => page.props.auth?.user?.role?.slug === 'consu
                                                 </template>
                                                 Countries
                                             </DropdownLink>
-                                            <DropdownLink :href="route('agency.applications')" icon-class="text-sky-600">
+                                            <DropdownLink :href="route('agency.applications.index')" icon-class="text-sky-600">
                                                 <template #icon>
                                                     <DocumentTextIcon class="w-5 h-5" />
                                                 </template>

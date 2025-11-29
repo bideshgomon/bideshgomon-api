@@ -19,6 +19,7 @@ const props = defineProps({
 const search = ref(props.filters.search || '');
 const country_id = ref(props.filters.country_id || '');
 const category = ref(props.filters.category || '');
+const approval_status = ref(props.filters.approval_status || '');
 const status = ref(props.filters.status || '');
 const is_featured = ref(props.filters.is_featured || '');
 const showFilters = ref(false);
@@ -29,6 +30,7 @@ const performSearch = () => {
         search: search.value,
         country_id: country_id.value,
         category: category.value,
+        approval_status: approval_status.value,
         status: status.value,
         is_featured: is_featured.value,
     }, {
@@ -41,13 +43,14 @@ const clearFilters = () => {
     search.value = '';
     country_id.value = '';
     category.value = '';
+    approval_status.value = '';
     status.value = '';
     is_featured.value = '';
     performSearch();
 };
 
 const hasActiveFilters = computed(() => {
-    return search.value || country_id.value || category.value || status.value || is_featured.value;
+    return search.value || country_id.value || category.value || approval_status.value || status.value || is_featured.value;
 });
 
 const toggleJobSelection = (jobId) => {
@@ -117,6 +120,20 @@ const getCategoryColor = (cat) => {
     };
     return colors[cat.toLowerCase()] || 'bg-gray-100 text-gray-700';
 };
+
+const getJobTypeLabel = (type) => {
+    const labels = {
+        'full-time': 'Full Time',
+        'full_time': 'Full Time',
+        'part-time': 'Part Time',
+        'part_time': 'Part Time',
+        'contract': 'Contract',
+        'temporary': 'Temporary',
+        'seasonal': 'Seasonal',
+        'internship': 'Internship',
+    };
+    return labels[type] || type.replace(/[_-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+};
 </script>
 
 <template>
@@ -142,22 +159,30 @@ const getCategoryColor = (cat) => {
                     </div>
 
                     <!-- Stats Cards -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-8">
                         <div class="bg-white rounded-lg p-4 border border-gray-200">
                             <div class="text-gray-600 text-sm">Total Jobs</div>
                             <div class="text-3xl font-bold text-gray-900 mt-1">{{ stats.total }}</div>
                         </div>
                         <div class="bg-white rounded-lg p-4 border border-gray-200">
                             <div class="text-gray-600 text-sm">Active</div>
-                            <div class="text-3xl font-bold text-gray-900 mt-1">{{ stats.active }}</div>
+                            <div class="text-3xl font-bold text-green-600 mt-1">{{ stats.active }}</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 border border-yellow-200 bg-yellow-50">
+                            <div class="text-yellow-700 text-sm font-medium">⏳ Pending</div>
+                            <div class="text-3xl font-bold text-yellow-700 mt-1">{{ stats.pending || 0 }}</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-4 border border-green-200 bg-green-50">
+                            <div class="text-green-700 text-sm font-medium">✓ Approved</div>
+                            <div class="text-3xl font-bold text-green-700 mt-1">{{ stats.approved || 0 }}</div>
                         </div>
                         <div class="bg-white rounded-lg p-4 border border-gray-200">
                             <div class="text-gray-600 text-sm">Featured</div>
-                            <div class="text-3xl font-bold text-gray-900 mt-1">{{ stats.featured }}</div>
+                            <div class="text-3xl font-bold text-amber-600 mt-1">{{ stats.featured }}</div>
                         </div>
                         <div class="bg-white rounded-lg p-4 border border-gray-200">
                             <div class="text-gray-600 text-sm">Expired</div>
-                            <div class="text-3xl font-bold text-gray-900 mt-1">{{ stats.expired }}</div>
+                            <div class="text-3xl font-bold text-red-600 mt-1">{{ stats.expired }}</div>
                         </div>
                     </div>
                 </div>
@@ -213,6 +238,19 @@ const getCategoryColor = (cat) => {
                                 >
                                     <option value="">All Categories</option>
                                     <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Approval Status</label>
+                                <select
+                                    v-model="approval_status"
+                                    @change="performSearch"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                                >
+                                    <option value="">All Approval Status</option>
+                                    <option value="pending">⏳ Pending Review</option>
+                                    <option value="approved">✓ Approved</option>
+                                    <option value="rejected">✗ Rejected</option>
                                 </select>
                             </div>
                             <div>
@@ -311,6 +349,20 @@ const getCategoryColor = (cat) => {
                                     <div class="flex-1">
                                         <div class="flex items-center gap-2 mb-2">
                                             <h3 class="text-xl font-bold text-gray-900">{{ job.title }}</h3>
+                                            
+                                            <!-- Approval Status Badge -->
+                                            <span v-if="job.approval_status === 'pending'" class="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-700 text-xs font-semibold rounded-full">
+                                                ⏳ Pending
+                                            </span>
+                                            <span v-else-if="job.approval_status === 'approved'" class="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+                                                <CheckCircleIcon class="h-3 w-3 mr-1" />
+                                                Approved
+                                            </span>
+                                            <span v-else-if="job.approval_status === 'rejected'" class="inline-flex items-center px-2 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded-full">
+                                                <XCircleIcon class="h-3 w-3 mr-1" />
+                                                Rejected
+                                            </span>
+                                            
                                             <span v-if="job.is_featured" class="inline-flex items-center px-2 py-1 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">
                                                 <SparklesIcon class="h-3 w-3 mr-1" />
                                                 Featured
@@ -339,6 +391,11 @@ const getCategoryColor = (cat) => {
                                                 <EyeIcon class="h-4 w-4 mr-1" />
                                                 {{ job.views_count }} views
                                             </div>
+                                            <!-- Processing Fee Indicator -->
+                                            <div v-if="job.processing_fee && job.processing_fee > 0" class="flex items-center text-indigo-600 font-semibold">
+                                                <CurrencyDollarIcon class="h-4 w-4 mr-1" />
+                                                +৳{{ Number(job.processing_fee).toLocaleString() }} fee
+                                            </div>
                                         </div>
 
                                         <div class="flex flex-wrap gap-2">
@@ -346,13 +403,17 @@ const getCategoryColor = (cat) => {
                                                 {{ job.category }}
                                             </span>
                                             <span class="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full">
-                                                {{ job.job_type }}
+                                                {{ getJobTypeLabel(job.job_type) }}
                                             </span>
                                             <span class="px-3 py-1 bg-gray-50 text-gray-700 text-xs font-medium rounded-full">
                                                 {{ job.applications_count }} applications
                                             </span>
                                             <span class="px-3 py-1 bg-purple-50 text-purple-700 text-xs font-medium rounded-full">
                                                 {{ job.positions_available }} positions
+                                            </span>
+                                            <!-- Application Fee Display -->
+                                            <span v-if="job.application_fee > 0" class="px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-medium rounded-full">
+                                                Fee: ৳{{ Number(job.application_fee).toLocaleString() }}
                                             </span>
                                         </div>
                                     </div>

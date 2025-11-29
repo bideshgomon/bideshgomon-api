@@ -72,7 +72,7 @@ class AdminImpersonationController extends Controller
             'acting_as_id' => $target->id,
         ]);
 
-        return redirect()->back()->with('success', 'Now impersonating ' . ($target->full_name ?? $target->name ?? 'user')); // Adjust name field as needed
+        return redirect()->route('dashboard')->with('success', 'Now impersonating ' . ($target->full_name ?? $target->name ?? 'user')); // Redirect to dashboard after impersonation
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\JobPosting;
 use App\Models\JobApplication;
+use App\Models\JobCategory;
 use App\Models\Country;
 use App\Services\WalletService;
 use Illuminate\Http\Request;
@@ -25,7 +26,7 @@ class JobController extends Controller
      */
     public function index(Request $request)
     {
-        $query = JobPosting::with('country')->active();
+        $query = JobPosting::with(['country', 'jobCategory'])->active();
 
         // Apply search filter
         if ($request->search) {
@@ -37,9 +38,9 @@ class JobController extends Controller
             $query->byCountry($request->country_id);
         }
 
-        // Apply category filter
-        if ($request->category) {
-            $query->byCategory($request->category);
+        // Apply category filter (now using job_category_id)
+        if ($request->job_category_id) {
+            $query->byCategory($request->job_category_id);
         }
 
         // Apply job type filter
@@ -67,11 +68,10 @@ class JobController extends Controller
             ->orderBy('name')
             ->get(['id', 'name']);
 
-        $categories = JobPosting::active()
-            ->distinct()
-            ->pluck('category')
-            ->sort()
-            ->values();
+        // Get categories from JobCategory model (parent categories only)
+        $categories = JobCategory::whereNull('parent_id')
+            ->orderBy('name')
+            ->get(['id', 'name', 'name_bn', 'slug']);
 
         $jobTypes = JobPosting::active()
             ->distinct()
@@ -95,7 +95,7 @@ class JobController extends Controller
             'filters' => [
                 'search' => $request->search,
                 'country_id' => $request->country_id,
-                'category' => $request->category,
+                'job_category_id' => $request->job_category_id,
                 'job_type' => $request->job_type,
                 'salary_min' => $request->salary_min,
                 'salary_max' => $request->salary_max,
@@ -109,10 +109,25 @@ class JobController extends Controller
      */
     public function show($id)
     {
-        $job = JobPosting::with('country')->findOrFail($id);
+        $job = JobPosting::with(['country', 'jobCategory'])->findOrFail($id);
 
         // Increment view count
         $job->incrementViews();
+
+        // Ensure benefits and skills are properly decoded as arrays
+        if (is_string($job->benefits) && !empty($job->benefits)) {
+            $decoded = json_decode($job->benefits, true);
+            $job->benefits = is_array($decoded) ? $decoded : [];
+        } elseif (!is_array($job->benefits)) {
+            $job->benefits = [];
+        }
+        
+        if (is_string($job->skills) && !empty($job->skills)) {
+            $decoded = json_decode($job->skills, true);
+            $job->skills = is_array($decoded) ? $decoded : [];
+        } elseif (!is_array($job->skills)) {
+            $job->skills = [];
+        }
 
         // Check if user has applied
         $hasApplied = false;
@@ -125,10 +140,10 @@ class JobController extends Controller
             $hasApplied = $application !== null;
         }
 
-        // Get related jobs (same category, different job)
-        $relatedJobs = JobPosting::with('country')
+        // Get related jobs (same category, different job) - now using job_category_id
+        $relatedJobs = JobPosting::with(['country', 'jobCategory'])
             ->active()
-            ->where('category', $job->category)
+            ->where('job_category_id', $job->job_category_id)
             ->where('id', '!=', $job->id)
             ->limit(3)
             ->get();
@@ -184,7 +199,7 @@ class JobController extends Controller
                 // Debit from wallet
                 $transaction = $this->walletService->debitWallet(
                     $user->wallet,
-                    $job->application_fee,
+                    (float) $job->application_fee,
                     "Application fee for {$job->title}",
                     'job_application',
                     $job->id,

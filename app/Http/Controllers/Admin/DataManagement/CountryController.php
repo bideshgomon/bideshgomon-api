@@ -96,6 +96,7 @@ class CountryController extends Controller
             'currency_code' => 'required|string|size:3',
             'flag_emoji' => 'nullable|string|max:10',
             'region' => 'nullable|string|max:50',
+            'nationality' => 'nullable|string|max:100',
             'is_active' => 'boolean',
         ]);
 
@@ -148,6 +149,7 @@ class CountryController extends Controller
             'currency_code' => 'required|string|size:3',
             'flag_emoji' => 'nullable|string|max:10',
             'region' => 'nullable|string|max:50',
+            'nationality' => 'nullable|string|max:100',
             'is_active' => 'boolean',
         ]);
 
@@ -212,6 +214,7 @@ class CountryController extends Controller
         return [
             'name',
             'name_bn',
+            'nationality',
             'iso_code_2',
             'iso_code_3',
             'phone_code',
@@ -238,6 +241,7 @@ class CountryController extends Controller
         return [
             'name' => 'required|string|max:100',
             'name_bn' => 'nullable|string|max:100',
+            'nationality' => 'nullable|string|max:100',
             'iso_code_2' => 'required|string|size:2',
             'iso_code_3' => 'required|string|size:3',
             'phone_code' => 'required|string|max:10',

@@ -1,7 +1,7 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
 import {
     ArrowLeftIcon,
     UserCircleIcon,
@@ -22,6 +22,7 @@ import {
     CheckBadgeIcon,
     XCircleIcon,
     CurrencyDollarIcon,
+    UserIcon,
 } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
@@ -74,6 +75,41 @@ const deleteUser = () => {
     if (confirm(`Are you sure you want to delete ${props.user.name}? This action cannot be undone.`)) {
         router.delete(route('admin.users.destroy', props.user.id));
     }
+};
+
+// Impersonation helpers
+const page = usePage();
+const isAdmin = computed(() => page.props.auth?.user?.role?.slug === 'admin');
+const impersonating = computed(() => page.props.auth?.user?.impersonating);
+
+const canImpersonate = computed(() => {
+    if (!isAdmin.value) return false;
+    if (impersonating.value) return false; // Already impersonating someone
+    // Do not impersonate admins (policy)
+    return props.user.role?.slug !== 'admin';
+});
+
+const impersonateUser = () => {
+    if (!canImpersonate.value) return;
+    
+    const purpose = prompt(`Impersonate ${props.user.name}?\n\nPlease provide a reason (required for audit trail):`);
+    if (!purpose || purpose.trim() === '') {
+        return; // User cancelled or provided empty reason
+    }
+    
+    router.post(route('admin.users.impersonate', props.user.id), {
+        purpose: purpose.trim()
+    }, {
+        preserveScroll: false,
+        onSuccess: () => {
+            // Redirect to dashboard after successful impersonation
+            router.visit(route('dashboard'));
+        },
+        onError: (errors) => {
+            console.error('Impersonation failed:', errors);
+            alert('Failed to impersonate user. ' + (errors.purpose || 'Please try again.'));
+        }
+    });
 };
 
 const formatDate = (date) => {
@@ -140,6 +176,21 @@ const tabs = [
                         Back to Users
                     </Link>
                     <div class="flex gap-2">
+                        <button
+                            v-if="canImpersonate"
+                            @click="impersonateUser"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition-colors"
+                            :title="`Debug: isAdmin=${isAdmin}, impersonating=${impersonating}, userRole=${user.role?.slug}`"
+                        >
+                            <UserIcon class="h-4 w-4" />
+                            Impersonate
+                        </button>
+                        <!-- Debug info -->
+                        <div v-else class="text-xs text-gray-500 flex items-center gap-1">
+                            <span v-if="!isAdmin">Not admin</span>
+                            <span v-else-if="impersonating">Already impersonating</span>
+                            <span v-else-if="user.role?.slug === 'admin'">Can't impersonate admin</span>
+                        </div>
                         <Link
                             :href="route('admin.users.edit', user.id)"
                             class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors"

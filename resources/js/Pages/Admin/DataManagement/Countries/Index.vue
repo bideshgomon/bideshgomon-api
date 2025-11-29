@@ -23,7 +23,7 @@
                             </Link>
                             <Link
                                 :href="route('admin.data.countries.create')"
-                                class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                                class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
                             >
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -123,8 +123,13 @@
                                 <tr v-for="country in countries.data" :key="country.id" class="hover:bg-gray-50 dark:hover:bg-gray-700">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center">
-                                            <span class="text-2xl mr-3">{{ country.flag_emoji || '🏳️' }}</span>
-                                            <div>
+                                            <CountryFlag 
+                                                :countryCode="country.iso_code_2"
+                                                :countryName="null"
+                                                size="md"
+                                                :useImage="true"
+                                            />
+                                            <div class="ml-3">
                                                 <div class="text-sm font-medium text-gray-900 dark:text-white">{{ country.name }}</div>
                                                 <div v-if="country.name_bn" class="text-sm text-gray-500 dark:text-gray-400">{{ country.name_bn }}</div>
                                             </div>
@@ -184,6 +189,7 @@ import { ref, reactive } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
+import CountryFlag from '@/Components/Rhythmic/CountryFlag.vue';
 
 const props = defineProps({
     countries: Object,

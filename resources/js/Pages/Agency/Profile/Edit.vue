@@ -19,16 +19,14 @@
                                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Business Information</h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700">Business Type</label>
-                                        <select v-model="form.business_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                            <option value="">Select Type</option>
-                                            <option value="recruitment">Recruitment Agency</option>
-                                            <option value="education">Education Consultancy</option>
-                                            <option value="immigration">Immigration Services</option>
-                                            <option value="travel">Travel Agency</option>
-                                            <option value="consulting">General Consulting</option>
+                                        <label class="block text-sm font-medium text-gray-700">Agency Type</label>
+                                        <select v-model="form.agency_type_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                            <option value="">Select Agency Type</option>
+                                            <option v-for="type in agencyTypes" :key="type.id" :value="type.id">
+                                                {{ type.name }}
+                                            </option>
                                         </select>
-                                        <p v-if="form.errors.business_type" class="mt-1 text-sm text-red-600">{{ form.errors.business_type }}</p>
+                                        <p v-if="form.errors.agency_type_id" class="mt-1 text-sm text-red-600">{{ form.errors.agency_type_id }}</p>
                                     </div>
 
                                     <div>
@@ -255,6 +253,7 @@ const props = defineProps({
     agency: Object,
     countries: Array,
     languages: Array,
+    agencyTypes: Array,
 });
 
 const availableServices = [
@@ -273,7 +272,8 @@ const availableServices = [
 ];
 
 const form = useForm({
-    business_type: props.agency.business_type || '',
+    agency_type_id: props.agency.agency_type_id || '',
+    business_type: props.agency.business_type || '', // Keep for backward compatibility
     established_year: props.agency.established_year || null,
     license_number: props.agency.license_number || '',
     license_expiry: props.agency.license_expiry || '',

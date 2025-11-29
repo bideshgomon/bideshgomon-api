@@ -36,7 +36,13 @@
                                 </div>
                                 <p v-if="agency.company_name" class="text-lg text-gray-600 mt-1">{{ agency.company_name }}</p>
                                 <div class="flex items-center space-x-4 mt-2">
-                                    <span v-if="agency.business_type" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+                                    <span v-if="agency.agency_type" :class="[
+                                        'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium',
+                                        `bg-${agency.agency_type.color}-100 text-${agency.agency_type.color}-800`
+                                    ]">
+                                        {{ agency.agency_type.name }}
+                                    </span>
+                                    <span v-else-if="agency.business_type" class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
                                         {{ formatBusinessType(agency.business_type) }}
                                     </span>
                                     <span v-if="agency.established_year" class="text-sm text-gray-500">

@@ -16,7 +16,7 @@ class AdminJobPostingController extends Controller
      */
     public function index(Request $request)
     {
-        $query = JobPosting::with(['country'])
+        $query = JobPosting::with(['country', 'jobCategory'])
             ->withCount('applications');
 
         // Search
@@ -34,9 +34,17 @@ class AdminJobPostingController extends Controller
             $query->where('country_id', $request->country_id);
         }
 
-        // Filter by category
+        // Filter by category (support both old varchar and new job_category_id)
         if ($request->filled('category')) {
             $query->where('category', $request->category);
+        }
+        if ($request->filled('job_category_id')) {
+            $query->where('job_category_id', $request->job_category_id);
+        }
+
+        // Filter by approval status
+        if ($request->filled('approval_status')) {
+            $query->where('approval_status', $request->approval_status);
         }
 
         // Filter by status
@@ -67,12 +75,14 @@ class AdminJobPostingController extends Controller
             'jobs' => $jobs,
             'countries' => $countries,
             'categories' => $categories,
-            'filters' => $request->only(['search', 'country_id', 'category', 'status', 'is_featured']),
+            'filters' => $request->only(['search', 'country_id', 'category', 'job_category_id', 'approval_status', 'status', 'is_featured']),
             'stats' => [
                 'total' => JobPosting::count(),
                 'active' => JobPosting::where('is_active', true)->count(),
                 'featured' => JobPosting::where('is_featured', true)->count(),
                 'expired' => JobPosting::where('application_deadline', '<', now())->count(),
+                'pending' => JobPosting::where('approval_status', 'pending')->count(),
+                'approved' => JobPosting::where('approval_status', 'approved')->count(),
             ],
         ]);
     }
@@ -117,13 +127,32 @@ class AdminJobPostingController extends Controller
             'age_min' => 'nullable|integer|min:18|max:100',
             'age_max' => 'nullable|integer|gte:age_min|max:100',
             'positions_available' => 'required|integer|min:1',
-            'application_fee' => 'required|numeric|min:0',
+            'agency_posted_fee' => 'nullable|numeric|min:0',
+            'admin_approved_fee' => 'nullable|numeric|min:0',
+            'approval_status' => 'nullable|in:pending,approved,rejected',
             'is_featured' => 'boolean',
             'is_active' => 'boolean',
             'deadline' => 'required|date|after:today',
             'contact_email' => 'nullable|email',
             'contact_phone' => 'nullable|string|max:20',
         ]);
+
+        // Set application_fee to admin_approved_fee (this is what public sees)
+        // If no admin_approved_fee, use agency_posted_fee, if neither then 0
+        $validated['application_fee'] = $validated['admin_approved_fee'] ?? $validated['agency_posted_fee'] ?? 0;
+
+        // Calculate processing fee if both fees are provided
+        if (isset($validated['admin_approved_fee']) && isset($validated['agency_posted_fee'])) {
+            $validated['processing_fee'] = $validated['admin_approved_fee'] - $validated['agency_posted_fee'];
+        } else {
+            $validated['processing_fee'] = 0;
+        }
+
+        // Set approval details if creating as approved
+        if (($validated['approval_status'] ?? 'approved') === 'approved') {
+            $validated['approved_at'] = now();
+            $validated['approved_by'] = \Illuminate\Support\Facades\Auth::id();
+        }
 
         $validated['published_at'] = now();
         $validated['views_count'] = 0;
@@ -140,9 +169,24 @@ class AdminJobPostingController extends Controller
      */
     public function show($id)
     {
-        $job = JobPosting::with(['country', 'applications.user.userProfile', 'applications.userCv'])
+        $job = JobPosting::with(['country', 'jobCategory', 'applications.user.userProfile', 'applications.userCv'])
             ->withCount('applications')
             ->findOrFail($id);
+
+        // Fix benefits and skills JSON decoding (same issue as JobController)
+        if (is_string($job->benefits) && !empty($job->benefits)) {
+            $decoded = json_decode($job->benefits, true);
+            $job->benefits = is_array($decoded) ? $decoded : [];
+        } elseif (!is_array($job->benefits)) {
+            $job->benefits = [];
+        }
+        
+        if (is_string($job->skills) && !empty($job->skills)) {
+            $decoded = json_decode($job->skills, true);
+            $job->skills = is_array($decoded) ? $decoded : [];
+        } elseif (!is_array($job->skills)) {
+            $job->skills = [];
+        }
 
         return Inertia::render('Admin/Jobs/Show', [
             'job' => $job,
@@ -297,4 +341,62 @@ class AdminJobPostingController extends Controller
 
         return back()->with('success', "{$updated} job posting(s) updated to {$validated['status']}!");
     }
+
+    /**
+     * Approve job posting with optional fee adjustment.
+     */
+    public function approve(Request $request, $id)
+    {
+        $job = JobPosting::findOrFail($id);
+
+        $validated = $request->validate([
+            'admin_approved_fee' => 'required|numeric|min:0',
+            'notes' => 'nullable|string',
+        ]);
+
+        // Store original agency fee if not already set
+        if (!$job->agency_posted_fee) {
+            $job->agency_posted_fee = $job->application_fee;
+        }
+
+        // Set admin approved fee
+        $job->admin_approved_fee = $validated['admin_approved_fee'];
+
+        // Calculate processing fee (admin markup)
+        $job->processing_fee = $validated['admin_approved_fee'] - $job->agency_posted_fee;
+
+        // Update application fee to admin approved amount
+        $job->application_fee = $validated['admin_approved_fee'];
+
+        // Set approval details
+        $job->approval_status = 'approved';
+        $job->approved_at = now();
+        $job->approved_by = \Illuminate\Support\Facades\Auth::id();
+        $job->is_active = true;
+
+        $job->save();
+
+        return back()->with('success', 'Job posting approved successfully! Processing fee: ৳' . number_format((float)$job->processing_fee, 2));
+    }
+
+    /**
+     * Reject job posting.
+     */
+    public function reject(Request $request, $id)
+    {
+        $job = JobPosting::findOrFail($id);
+
+        $validated = $request->validate([
+            'rejection_reason' => 'required|string',
+        ]);
+
+        $job->update([
+            'approval_status' => 'rejected',
+            'is_active' => false,
+            // Could add rejection_reason field to store this
+        ]);
+
+        return back()->with('success', 'Job posting rejected.');
+    }
 }
+

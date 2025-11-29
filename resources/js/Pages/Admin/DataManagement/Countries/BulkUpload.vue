@@ -57,6 +57,7 @@
                         <p class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 mt-3">Optional Columns:</p>
                         <div class="flex flex-wrap gap-2">
                             <span class="px-2 py-1 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded text-xs font-mono">name_bn</span>
+                            <span class="px-2 py-1 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded text-xs font-mono">nationality</span>
                             <span class="px-2 py-1 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded text-xs font-mono">flag_emoji</span>
                             <span class="px-2 py-1 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded text-xs font-mono">region</span>
                             <span class="px-2 py-1 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded text-xs font-mono">is_active</span>

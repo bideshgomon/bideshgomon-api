@@ -2,54 +2,88 @@
     <Head title="Document Scanner - AI-Powered OCR" />
 
     <AuthenticatedLayout>
-        <!-- Hero Section -->
-        <AnimatedSection variant="heritage" :show-blobs="true" class="mb-rhythm-2xl">
-            <div class="relative z-10">
-                <div class="flex items-center gap-rhythm-md mb-rhythm-md">
-                    <div class="p-rhythm-md rounded-2xl bg-heritage-600 shadow-lg">
-                        <DocumentMagnifyingGlassIcon class="h-12 w-12 text-white" />
+        <!-- Hero Section with better gradient -->
+        <div class="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50 border-b border-gray-200">
+            <div class="absolute inset-0 bg-grid-gray-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] -z-10"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="flex items-start gap-6">
+                    <div class="flex-shrink-0 p-4 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 shadow-xl shadow-indigo-200">
+                        <DocumentMagnifyingGlassIcon class="h-14 w-14 text-white" />
                     </div>
-                    <div>
-                        <h1 class="text-4xl font-bold mb-rhythm-xs text-heritage-900">Document Scanner</h1>
-                        <p class="text-xl text-heritage-700">AI-powered document scanning & data extraction</p>
+                    <div class="flex-1">
+                        <h1 class="text-4xl font-bold mb-2 bg-gradient-to-r from-indigo-900 to-purple-900 bg-clip-text text-transparent">
+                            AI Document Scanner
+                        </h1>
+                        <p class="text-xl text-gray-600 mb-4">
+                            Extract data from passports, IDs, and visas instantly with AI
+                        </p>
+                        <div class="flex flex-wrap gap-6 text-sm">
+                            <div class="flex items-center gap-2 text-gray-600">
+                                <SparklesIcon class="h-5 w-5 text-indigo-500" />
+                                <span>98% accuracy rate</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-600">
+                                <ClockIcon class="h-5 w-5 text-indigo-500" />
+                                <span>Process in 5-30 seconds</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-gray-600">
+                                <CheckCircleIcon class="h-5 w-5 text-indigo-500" />
+                                <span>Auto-fill your profile</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <p class="text-lg max-w-3xl text-heritage-600">
-                    Upload your passport, ID, or visa documents and let our AI extract the information automatically.
-                    Save time and reduce errors in your applications.
-                </p>
             </div>
-        </AnimatedSection>
+        </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-rhythm-2xl">
-            <!-- Upload Section -->
-            <RhythmicCard variant="heritage" size="lg" class="mb-rhythm-2xl">
-                <template #default>
-                    <h2 class="text-2xl font-bold text-gray-900 mb-rhythm-lg">Upload New Document</h2>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Upload Section with modern card design -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-8">
+                <div class="bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-4">
+                    <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                        <CloudArrowUpIcon class="h-7 w-7" />
+                        Upload New Document
+                    </h2>
+                </div>
                 
-                <form @submit.prevent="uploadDocument" class="space-y-6">
-                    <!-- Document Type -->
+                <form @submit.prevent="uploadDocument" class="p-6 space-y-6">
+                    <!-- Document Type with icons -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <label class="block text-sm font-semibold text-gray-900 mb-3">
                             Document Type <span class="text-red-500">*</span>
                         </label>
-                        <select
-                            v-model="form.document_type"
-                            required
-                            class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                        >
-                            <option value="">Select document type...</option>
-                            <option value="passport">Passport</option>
-                            <option value="national_id">National ID</option>
-                            <option value="visa">Visa</option>
-                            <option value="driving_license">Driving License</option>
-                            <option value="other">Other</option>
-                        </select>
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                            <label
+                                v-for="type in documentTypes"
+                                :key="type.value"
+                                :class="[
+                                    'relative flex flex-col items-center gap-2 p-4 border-2 rounded-xl cursor-pointer transition-all',
+                                    form.document_type === type.value
+                                        ? 'border-indigo-500 bg-indigo-50 shadow-md'
+                                        : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
+                                ]"
+                            >
+                                <input
+                                    type="radio"
+                                    v-model="form.document_type"
+                                    :value="type.value"
+                                    class="sr-only"
+                                />
+                                <component :is="type.icon" class="h-8 w-8" :class="form.document_type === type.value ? 'text-indigo-600' : 'text-gray-400'" />
+                                <span class="text-sm font-medium text-center" :class="form.document_type === type.value ? 'text-indigo-900' : 'text-gray-700'">
+                                    {{ type.label }}
+                                </span>
+                                <CheckCircleIcon 
+                                    v-if="form.document_type === type.value"
+                                    class="absolute top-2 right-2 h-5 w-5 text-indigo-600"
+                                />
+                            </label>
+                        </div>
                     </div>
 
-                    <!-- File Upload -->
+                    <!-- File Upload with better design -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <label class="block text-sm font-semibold text-gray-900 mb-3">
                             Document Image <span class="text-red-500">*</span>
                         </label>
                         <div
@@ -57,10 +91,13 @@
                             @dragleave="isDragging = false"
                             @drop.prevent="handleDrop"
                             :class="[
-                                'border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors',
-                                isDragging ? 'border-indigo-500 bg-indigo-50' : 'border-gray-300 hover:border-gray-400'
+                                'relative border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-200',
+                                isDragging 
+                                    ? 'border-indigo-500 bg-indigo-50 scale-[1.02]' 
+                                    : 'border-gray-300 hover:border-indigo-400 hover:bg-gray-50',
+                                previewUrl ? 'p-4' : ''
                             ]"
-                            @click="$refs.fileInput.click()"
+                            @click="!previewUrl && $refs.fileInput.click()"
                         >
                             <input
                                 ref="fileInput"
@@ -70,83 +107,112 @@
                                 class="hidden"
                             />
 
-                            <div v-if="!previewUrl">
-                                <CloudArrowUpIcon class="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                                <p class="text-gray-600 mb-2">
-                                    <span class="font-semibold text-indigo-600">Click to upload</span> or drag and drop
+                            <div v-if="!previewUrl" class="py-8">
+                                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+                                    <CloudArrowUpIcon class="h-10 w-10 text-white" />
+                                </div>
+                                <p class="text-lg font-semibold text-gray-900 mb-2">
+                                    <span class="text-indigo-600">Click to upload</span> or drag and drop
                                 </p>
-                                <p class="text-sm text-gray-500">PNG, JPG up to 10MB</p>
+                                <p class="text-sm text-gray-500 mb-4">PNG, JPG up to 10MB</p>
+                                <div class="flex items-center justify-center gap-4 text-xs text-gray-400">
+                                    <span class="flex items-center gap-1">
+                                        <SparklesIcon class="h-4 w-4" />
+                                        AI-powered
+                                    </span>
+                                    <span>•</span>
+                                    <span class="flex items-center gap-1">
+                                        <CheckCircleIcon class="h-4 w-4" />
+                                        Secure upload
+                                    </span>
+                                </div>
                             </div>
 
                             <div v-else class="space-y-4">
-                                <img :src="previewUrl" alt="Preview" class="max-h-64 mx-auto rounded" />
-                                <button
-                                    type="button"
-                                    @click.stop="clearFile"
-                                    class="text-sm text-red-600 hover:text-red-700"
-                                >
-                                    Remove
-                                </button>
+                                <div class="relative inline-block">
+                                    <img :src="previewUrl" alt="Preview" class="max-h-80 mx-auto rounded-xl shadow-lg" />
+                                    <button
+                                        type="button"
+                                        @click.stop="clearFile"
+                                        class="absolute top-2 right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg transition-colors"
+                                    >
+                                        <TrashIcon class="h-5 w-5" />
+                                    </button>
+                                </div>
+                                <p class="text-sm font-medium text-gray-600">Click trash icon to remove and upload a different image</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Tips -->
-                    <div class="bg-ocean-50 border-2 border-ocean-200 rounded-xl p-rhythm-md">
-                        <div class="flex gap-rhythm-sm">
-                            <InformationCircleIcon class="h-5 w-5 text-ocean-600 flex-shrink-0 mt-0.5" />
-                            <div class="text-sm text-ocean-900">
-                                <p class="font-semibold mb-rhythm-sm">Tips for best results:</p>
-                                <ul class="list-disc list-inside space-y-1">
-                                    <li>Ensure good lighting and avoid shadows</li>
-                                    <li>Capture the entire document in the frame</li>
-                                    <li>Keep the document flat and avoid glare</li>
-                                    <li>Use a high-resolution image</li>
-                                </ul>
-                            </div>
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+                        <div class="flex items-center gap-2 mb-4">
+                            <LightBulbIcon class="h-6 w-6 text-indigo-600" />
+                            <h3 class="font-semibold text-gray-900">Pro Tips for Best Results</h3>
                         </div>
+                        <ul class="space-y-3 text-sm text-gray-600">
+                            <li class="flex items-start gap-3">
+                                <CheckCircleIcon class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5" />
+                                <span>Ensure good lighting and avoid shadows on your document</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <CheckCircleIcon class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5" />
+                                <span>Capture the entire document within the frame for complete data</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <CheckCircleIcon class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5" />
+                                <span>Keep the document flat on a contrasting surface to avoid glare</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <CheckCircleIcon class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5" />
+                                <span>Use a high-resolution image for maximum OCR accuracy</span>
+                            </li>
+                        </ul>
                     </div>
 
                     <!-- Submit Button -->
-                    <FlowButton
-                        variant="heritage"
-                        size="lg"
-                        full-width
+                    <button
+                        type="button"
                         :disabled="form.processing || !form.document_type || !form.document_image"
-                        :loading="form.processing"
                         @click="uploadDocument"
+                        :class="[
+                            'w-full py-4 px-6 rounded-2xl font-semibold text-white shadow-lg transition-all duration-200',
+                            'bg-gradient-to-r from-indigo-500 to-purple-500',
+                            'hover:from-indigo-600 hover:to-purple-600 hover:shadow-xl hover:scale-[1.02]',
+                            'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100',
+                            'flex items-center justify-center gap-3'
+                        ]"
                     >
-                        <template #icon-left>
-                            <SparklesIcon class="h-5 w-5" />
-                        </template>
-                        {{ form.processing ? 'Uploading...' : 'Scan Document with AI' }}
-                    </FlowButton>
+                        <SparklesIcon class="h-6 w-6" />
+                        <span class="text-lg">{{ form.processing ? 'Processing with AI...' : 'Scan Document with AI' }}</span>
+                    </button>
                 </form>
-                </template>
-            </RhythmicCard>
+            </div>
 
             <!-- Previous Scans -->
             <div>
-                <h2 class="text-2xl font-bold text-gray-900 mb-rhythm-lg">Scan History</h2>
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-1 h-8 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-full"></div>
+                    <h2 class="text-2xl font-bold text-gray-900">Scan History</h2>
+                </div>
 
-                <div v-if="scans.data.length > 0" class="space-y-rhythm-md">
-                    <RhythmicCard
+                <div v-if="scans.data.length > 0" class="space-y-4">
+                    <div
                         v-for="scan in scans.data"
                         :key="scan.id"
-                        variant="white"
-                        hover-lift
+                        class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-200 overflow-hidden border border-gray-100"
                     >
-                        <template #default>
+                        <div class="p-6">
                         <div class="flex items-start justify-between gap-4">
                             <!-- Document Info -->
                             <div class="flex-1">
-                                <div class="flex items-center gap-rhythm-sm mb-rhythm-sm">
+                                <div class="flex items-center gap-3 mb-3">
                                     <StatusBadge
                                         :status="getStatusType(scan.status)"
                                         :label="scan.status"
                                         size="md"
                                     />
-                                    <span class="text-sm text-gray-500 capitalize">
+                                    <span class="text-sm font-medium text-gray-700 capitalize">
                                         {{ scan.document_type.replace('_', ' ') }}
                                     </span>
                                     <span class="text-sm text-gray-400">
@@ -155,102 +221,100 @@
                                 </div>
 
                                 <!-- Extracted Data Preview -->
-                                <div v-if="scan.status === 'completed' && scan.extracted_data" class="space-y-2">
+                                <div v-if="scan.status === 'completed' && scan.extracted_data" class="space-y-3">
                                     <div class="flex items-center gap-2 text-sm">
                                         <CheckCircleIcon class="h-5 w-5 text-green-500" />
-                                        <span class="font-medium text-gray-900">
+                                        <span class="font-semibold text-gray-900">
                                             Data extracted ({{ Object.keys(scan.extracted_data).length }} fields)
                                         </span>
-                                        <span v-if="scan.confidence_score" class="text-gray-500">
-                                            • {{ scan.confidence_score }}% confidence
+                                        <span v-if="scan.confidence_score" class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                                            {{ scan.confidence_score }}% confidence
                                         </span>
                                     </div>
                                     <div class="flex flex-wrap gap-2">
                                         <span
                                             v-for="(value, key) in Object.entries(scan.extracted_data).slice(0, 3)"
                                             :key="key"
-                                            class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs"
+                                            class="px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-medium"
                                         >
                                             {{ value[0].replace('_', ' ') }}: {{ value[1] }}
                                         </span>
-                                        <span v-if="Object.keys(scan.extracted_data).length > 3" class="text-xs text-gray-500 self-center">
-                                            +{{ Object.keys(scan.extracted_data).length - 3 }} more
+                                        <span v-if="Object.keys(scan.extracted_data).length > 3" class="px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg text-xs font-medium self-center">
+                                            +{{ Object.keys(scan.extracted_data).length - 3 }} more fields
                                         </span>
                                     </div>
                                 </div>
 
                                 <!-- Error Message -->
-                                <div v-else-if="scan.status === 'failed'" class="flex items-start gap-2 text-sm text-red-600">
-                                    <XCircleIcon class="h-5 w-5 flex-shrink-0" />
-                                    <span>{{ scan.error_message || 'Processing failed' }}</span>
+                                <div v-else-if="scan.status === 'failed'" class="flex items-start gap-3 p-4 bg-red-50 rounded-xl border border-red-100">
+                                    <XCircleIcon class="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+                                    <span class="text-sm text-red-700">{{ scan.error_message || 'Processing failed. Please try again.' }}</span>
                                 </div>
 
                                 <!-- Processing -->
-                                <div v-else-if="scan.status === 'processing'" class="flex items-center gap-2 text-sm text-indigo-600">
-                                    <ArrowPathIcon class="h-5 w-5 animate-spin" />
+                                <div v-else-if="scan.status === 'processing'" class="flex items-center gap-3 p-4 bg-indigo-50 rounded-xl border border-indigo-100">
+                                    <ArrowPathIcon class="h-5 w-5 animate-spin text-indigo-600" />
                                     <div>
-                                        <span class="font-medium">Processing document...</span>
-                                        <p class="text-xs text-indigo-500 mt-0.5">Estimated: 5-30 seconds</p>
+                                        <span class="font-medium text-indigo-900 text-sm">Processing document with AI...</span>
+                                        <p class="text-xs text-indigo-600 mt-1">Estimated: 5-30 seconds</p>
                                     </div>
                                 </div>
 
                                 <!-- Pending -->
-                                <div v-else class="flex items-center gap-2 text-sm text-gray-500">
-                                    <ClockIcon class="h-5 w-5" />
-                                    <span>Pending processing</span>
+                                <div v-else class="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                                    <ClockIcon class="h-5 w-5 text-gray-500" />
+                                    <span class="text-sm text-gray-600 font-medium">Waiting for processing...</span>
                                 </div>
                             </div>
 
                             <!-- Actions -->
-                            <div class="flex items-center gap-rhythm-sm">
-                                <FlowButton
+                            <div class="flex items-center gap-2">
+                                <Link
                                     v-if="scan.status === 'completed'"
-                                    variant="heritage"
-                                    size="sm"
                                     :href="route('document-scanner.show', scan.id)"
+                                    class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all flex items-center gap-2 text-sm font-medium"
                                 >
-                                    <template #icon-left>
-                                        <EyeIcon class="h-4 w-4" />
-                                    </template>
+                                    <EyeIcon class="h-4 w-4" />
                                     View Details
-                                </FlowButton>
+                                </Link>
 
-                                <FlowButton
+                                <button
                                     v-if="scan.status === 'failed'"
-                                    variant="sunrise"
-                                    size="sm"
                                     @click="reprocess(scan.id)"
+                                    class="px-4 py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-colors flex items-center gap-2 text-sm font-medium"
                                 >
-                                    <template #icon-left>
-                                        <ArrowPathIcon class="h-4 w-4" />
-                                    </template>
+                                    <ArrowPathIcon class="h-4 w-4" />
                                     Retry
-                                </FlowButton>
+                                </button>
 
                                 <button
                                     @click="confirmDelete(scan.id)"
-                                    class="p-rhythm-sm text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                                    class="p-2 text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                                    title="Delete scan"
                                 >
                                     <TrashIcon class="h-5 w-5" />
                                 </button>
                             </div>
                         </div>
-                        </template>
-                    </RhythmicCard>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Empty State -->
-                <RhythmicCard v-else variant="white" size="lg">
-                    <template #default>
-                        <div class="text-center py-rhythm-2xl">
-                            <div class="w-16 h-16 mx-auto mb-rhythm-md rounded-2xl bg-heritage-100 flex items-center justify-center">
-                                <DocumentMagnifyingGlassIcon class="h-10 w-10 text-heritage-600" />
-                            </div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-rhythm-sm">No scans yet</h3>
-                            <p class="text-gray-600">Upload your first document to get started with AI-powered extraction</p>
-                        </div>
-                    </template>
-                </RhythmicCard>
+                <div v-else class="bg-white rounded-2xl shadow-md p-12 text-center border border-gray-100">
+                    <div class="w-20 h-20 mx-auto mb-6 rounded-3xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+                        <DocumentMagnifyingGlassIcon class="h-12 w-12 text-indigo-600" />
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">No scans yet</h3>
+                    <p class="text-gray-500 mb-6 max-w-md mx-auto">Upload your first document to get started with AI-powered data extraction</p>
+                    <button
+                        @click="scrollToUpload"
+                        class="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all font-medium inline-flex items-center gap-2"
+                    >
+                        <CloudArrowUpIcon class="h-5 w-5" />
+                        Upload Document
+                    </button>
+                </div>
 
                 <!-- Pagination -->
                 <div v-if="scans.data.length > 0" class="mt-6">
@@ -261,23 +325,29 @@
 
         <!-- Delete Confirmation Modal -->
         <Modal :show="showDeleteModal" @close="showDeleteModal = false">
-            <div class="p-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Delete Document Scan</h3>
-                <p class="text-gray-600 mb-6">
-                    Are you sure you want to delete this scan? This action cannot be undone.
-                </p>
+            <div class="p-8">
+                <div class="mb-6">
+                    <div class="w-12 h-12 mx-auto mb-4 rounded-2xl bg-red-100 flex items-center justify-center">
+                        <TrashIcon class="h-7 w-7 text-red-600" />
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2 text-center">Delete Document Scan</h3>
+                    <p class="text-gray-600 text-center">
+                        Are you sure you want to delete this scan? This action cannot be undone and all extracted data will be lost.
+                    </p>
+                </div>
                 <div class="flex justify-end gap-3">
                     <button
                         @click="showDeleteModal = false"
-                        class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                        class="px-5 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-medium"
                     >
                         Cancel
                     </button>
                     <button
                         @click="deleteScan"
-                        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                        class="px-5 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors font-medium flex items-center gap-2"
                     >
-                        Delete
+                        <TrashIcon class="h-4 w-4" />
+                        Delete Scan
                     </button>
                 </div>
             </div>
@@ -291,21 +361,22 @@ import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Pagination from '@/Components/Pagination.vue';
 import Modal from '@/Components/Modal.vue';
-import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
-import FlowButton from '@/Components/Rhythmic/FlowButton.vue';
-import AnimatedSection from '@/Components/Rhythmic/AnimatedSection.vue';
 import StatusBadge from '@/Components/Rhythmic/StatusBadge.vue';
 import {
     DocumentMagnifyingGlassIcon,
     CloudArrowUpIcon,
     SparklesIcon,
-    InformationCircleIcon,
     CheckCircleIcon,
     XCircleIcon,
     ArrowPathIcon,
     ClockIcon,
     EyeIcon,
     TrashIcon,
+    LightBulbIcon,
+    IdentificationIcon,
+    CreditCardIcon,
+    DocumentIcon,
+    NewspaperIcon,
 } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
@@ -405,5 +476,9 @@ const formatDate = (dateString) => {
         hour: '2-digit',
         minute: '2-digit',
     });
+};
+
+const scrollToUpload = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 </script>

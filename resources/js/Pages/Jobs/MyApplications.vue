@@ -50,16 +50,16 @@ const getStatusLabel = (status) => {
 
     <AuthenticatedLayout>
         <!-- Header -->
-        <div class="bg-white border-b border-gray-200 px-4 py-6 sm:px-6 lg:px-8">
+        <div class="bg-gradient-to-br from-indigo-50 via-white to-purple-50 border-b border-gray-200 px-4 py-8 sm:px-6 lg:px-8">
             <div class="max-w-7xl mx-auto">
                 <div class="flex items-center justify-between mb-6">
                     <div>
-                        <h1 class="text-2xl font-bold text-gray-900">My Applications</h1>
-                        <p class="text-gray-600 text-sm mt-1">Track your job applications</p>
+                        <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">My Applications</h1>
+                        <p class="text-gray-600 text-sm mt-2">Track your job applications and status</p>
                     </div>
                     <Link
                         :href="route('jobs.index')"
-                        class="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
+                        class="flex items-center space-x-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white px-5 py-2.5 rounded-xl transition-all shadow-md hover:shadow-lg font-medium"
                     >
                         <BriefcaseIcon class="h-5 w-5" />
                         <span class="hidden sm:inline">Browse Jobs</span>
@@ -67,30 +67,30 @@ const getStatusLabel = (status) => {
                 </div>
 
                 <!-- Stats Cards -->
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                        <div class="text-white/80 text-xs mb-1">Total</div>
-                        <div class="text-2xl font-bold text-white">{{ stats.total }}</div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                        <div class="text-gray-500 text-xs font-medium mb-1">Total</div>
+                        <div class="text-2xl font-bold text-gray-900">{{ stats.total }}</div>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                        <div class="text-white/80 text-xs mb-1">Pending</div>
-                        <div class="text-2xl font-bold text-white">{{ stats.pending }}</div>
+                    <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                        <div class="text-gray-500 text-xs font-medium mb-1">Pending</div>
+                        <div class="text-2xl font-bold text-yellow-600">{{ stats.pending }}</div>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                        <div class="text-white/80 text-xs mb-1">Under Review</div>
-                        <div class="text-2xl font-bold text-white">{{ stats.under_review }}</div>
+                    <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                        <div class="text-gray-500 text-xs font-medium mb-1">Under Review</div>
+                        <div class="text-2xl font-bold text-blue-600">{{ stats.under_review }}</div>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                        <div class="text-white/80 text-xs mb-1">Shortlisted</div>
-                        <div class="text-2xl font-bold text-white">{{ stats.shortlisted }}</div>
+                    <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                        <div class="text-gray-500 text-xs font-medium mb-1">Shortlisted</div>
+                        <div class="text-2xl font-bold text-indigo-600">{{ stats.shortlisted }}</div>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                        <div class="text-white/80 text-xs mb-1">Rejected</div>
-                        <div class="text-2xl font-bold text-white">{{ stats.rejected }}</div>
+                    <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                        <div class="text-gray-500 text-xs font-medium mb-1">Rejected</div>
+                        <div class="text-2xl font-bold text-red-600">{{ stats.rejected }}</div>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                        <div class="text-white/80 text-xs mb-1">Accepted</div>
-                        <div class="text-2xl font-bold text-white">{{ stats.accepted }}</div>
+                    <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                        <div class="text-gray-500 text-xs font-medium mb-1">Accepted</div>
+                        <div class="text-2xl font-bold text-green-600">{{ stats.accepted }}</div>
                     </div>
                 </div>
             </div>
@@ -98,38 +98,41 @@ const getStatusLabel = (status) => {
 
         <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
             <!-- No Applications -->
-            <div v-if="applications.data.length === 0" class="text-center py-12">
-                <BriefcaseIcon class="mx-auto h-16 w-16 text-gray-400" />
-                <h3 class="mt-4 text-lg font-medium text-gray-900">No applications yet</h3>
-                <p class="mt-2 text-sm text-gray-500">Start applying for jobs to track them here</p>
+            <div v-if="applications.data.length === 0" class="text-center py-16">
+                <div class="w-24 h-24 mx-auto mb-6 rounded-3xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+                    <BriefcaseIcon class="h-14 w-14 text-indigo-600" />
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3">No applications yet</h3>
+                <p class="text-gray-600 mb-8 max-w-md mx-auto">Start applying for jobs to track them here and manage your career opportunities</p>
                 <Link
                     :href="route('jobs.index')"
-                    class="mt-6 inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors"
+                    class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all shadow-lg hover:shadow-xl"
                 >
+                    <BriefcaseIcon class="h-5 w-5 mr-2" />
                     Browse Jobs
                 </Link>
             </div>
 
             <!-- Applications List -->
-            <div v-else class="space-y-4">
+            <div v-else class="space-y-6">
                 <div
                     v-for="application in applications.data"
                     :key="application.id"
-                    class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+                    class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-200"
                 >
                     <div class="p-6">
-                        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4">
+                        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6">
                             <div class="flex-1">
-                                <div class="flex items-start justify-between mb-2">
+                                <div class="flex items-start justify-between mb-3">
                                     <div>
-                                        <h3 class="text-lg font-semibold text-gray-900">
+                                        <h3 class="text-xl font-bold text-gray-900 mb-2">
                                             {{ application.job_posting.title }}
                                         </h3>
-                                        <p class="text-sm text-gray-600 mt-1">
+                                        <p class="text-sm font-medium text-gray-600 mb-3">
                                             {{ application.job_posting.company_name }}
                                         </p>
                                     </div>
-                                    <span :class="['ml-3 px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap', getStatusColor(application.status)]">
+                                    <span :class="['ml-4 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap', getStatusColor(application.status)]">
                                         {{ getStatusLabel(application.status) }}
                                     </span>
                                 </div>
@@ -186,10 +189,10 @@ const getStatusLabel = (status) => {
                         <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-100">
                             <Link
                                 :href="route('jobs.show', application.job_posting.id)"
-                                class="flex-1 flex items-center justify-center space-x-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-lg font-medium hover:bg-indigo-100 transition-colors"
+                                class="flex-1 flex items-center justify-center space-x-2 px-5 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all shadow-md hover:shadow-lg"
                             >
                                 <EyeIcon class="h-5 w-5" />
-                                <span>View Job</span>
+                                <span>View Job Details</span>
                             </Link>
                             
                             <div v-if="application.status === 'accepted'" class="flex-1">

@@ -26,11 +26,12 @@ import {
 } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
-    settings: Object,
-    groups: Array,
+    settings: Array,          // Array of all settings
+    currentGroup: String,      // Active group
+    groups: Object,            // Available groups {key: label}
 });
 
-const activeTab = ref('general');
+const activeTab = ref(props.currentGroup || 'general');
 const visiblePasswords = ref({});
 
 const togglePasswordVisibility = (key) => {
@@ -79,28 +80,31 @@ const getApiServiceConfig = (key) => {
 };
 
 const form = useForm({
-    settings: Object.keys(props.settings).flatMap(group =>
-        props.settings[group].map(setting => ({
-            key: setting.key,
-            value: setting.type === 'boolean' 
-                ? setting.value === '1' || setting.value === true 
-                : setting.value,
-            type: setting.type,
-        }))
-    ),
+    settings: props.settings.map(setting => ({
+        key: setting.key,
+        value: setting.type === 'boolean' 
+            ? setting.value === '1' || setting.value === true 
+            : setting.value,
+        type: setting.type,
+    })),
+    group: activeTab.value,
 });
 
 const activeSettings = computed(() => {
-    return props.settings[activeTab.value] || [];
+    return props.settings.filter(s => s.group === activeTab.value);
 });
 
 const submit = () => {
-    form.post(route('admin.settings.update'), {
+    form.post(route('admin.settings.update', { group: activeTab.value }), {
         preserveScroll: true,
         onSuccess: () => {
             // Success message handled by backend
         },
     });
+};
+
+const switchTab = (group) => {
+    window.location.href = route('admin.settings.index', { group });
 };
 
 const getInputType = (type) => {
@@ -157,18 +161,18 @@ const updateSetting = (key, value) => {
                     <div class="border-b border-gray-200">
                         <nav class="flex space-x-4 px-6 overflow-x-auto" aria-label="Tabs">
                             <button
-                                v-for="group in groups"
-                                :key="group"
-                                @click="activeTab = group"
+                                v-for="(label, key) in groups"
+                                :key="key"
+                                @click="switchTab(key)"
                                 :class="[
-                                    activeTab === group
+                                    activeTab === key
                                         ? 'border-indigo-500 text-indigo-600'
                                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300',
                                     'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 transition-colors'
                                 ]"
                             >
-                                <component :is="groupConfig[group]?.icon || CogIcon" class="h-5 w-5" />
-                                {{ groupConfig[group]?.label || group }}
+                                <component :is="groupConfig[key]?.icon || CogIcon" class="h-5 w-5" />
+                                {{ label }}
                             </button>
                         </nav>
                     </div>

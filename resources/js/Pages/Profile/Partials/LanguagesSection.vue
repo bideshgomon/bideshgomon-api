@@ -15,6 +15,7 @@ import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue'
 import FlowButton from '@/Components/Rhythmic/FlowButton.vue'
 import InputLabel from '@/Components/InputLabel.vue'
 import TextInput from '@/Components/TextInput.vue'
+import DateInput from '@/Components/DateInput.vue'
 import InputError from '@/Components/InputError.vue'
 import PrimaryButton from '@/Components/PrimaryButton.vue'
 import SecondaryButton from '@/Components/SecondaryButton.vue'
@@ -225,13 +226,16 @@ const isExpired = expiryDate => {
   return new Date(expiryDate) < new Date()
 }
 
-// Format date for display
+// Format date for display - DD/MM/YYYY format for Bangladesh
 const formatDate = dateString => {
   if (!dateString) {
     return null
   }
   const date = new Date(dateString)
-  return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+  const day = String(date.getDate()).padStart(2, '0')
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const year = date.getFullYear()
+  return `${day}/${month}/${year}`
 }
 </script>
 
@@ -414,7 +418,7 @@ const formatDate = dateString => {
               class="mt-1 block w-full border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 rounded-lg dark:bg-gray-700 dark:text-white"
               required
             >
-              <option value="" disabled>Select a language</option>
+              <option :value="null" disabled>Select a language</option>
               <option v-for="langOption in languagesList" :key="langOption.id" :value="langOption.id">
                 {{ langOption.name }}
               </option>
@@ -572,7 +576,12 @@ const formatDate = dateString => {
             <div v-if="form.language_test_id" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <InputLabel for="test_date" value="Test Date" />
-                <TextInput type="date" id="test_date" v-model="form.test_date" class="mt-1 block w-full py-3 px-4 text-base rounded-lg touch-manipulation" />
+                <DateInput 
+                  id="test_date" 
+                  v-model="form.test_date" 
+                  class="mt-1 block w-full py-3 px-4 text-base rounded-lg touch-manipulation" 
+                  placeholder="DD/MM/YYYY"
+                />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                   When did you take the test?
                 </p>
@@ -581,7 +590,12 @@ const formatDate = dateString => {
 
               <div>
                 <InputLabel for="expiry_date" value="Expiry Date" />
-                <TextInput type="date" id="expiry_date" v-model="form.expiry_date" class="mt-1 block w-full py-3 px-4 text-base rounded-lg touch-manipulation" />
+                <DateInput 
+                  id="expiry_date" 
+                  v-model="form.expiry_date" 
+                  class="mt-1 block w-full py-3 px-4 text-base rounded-lg touch-manipulation" 
+                  placeholder="DD/MM/YYYY"
+                />
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                   When does the certificate expire?
                 </p>

@@ -13,10 +13,21 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $agency = auth()->user()->agency;
-
+        $user = auth()->user();
+        
+        // Get or create agency profile
+        $agency = $user->agency;
+        
         if (!$agency) {
-            abort(403, 'Agency not found');
+            // Auto-create agency profile for users with agency role
+            $agency = \App\Models\Agency::create([
+                'user_id' => $user->id,
+                'name' => $user->name . "'s Agency",
+                'email' => $user->email,
+                'phone' => $user->phone ?? '',
+                'is_verified' => false,
+                'is_active' => true,
+            ]);
         }
 
         // Get countries this agency is assigned to

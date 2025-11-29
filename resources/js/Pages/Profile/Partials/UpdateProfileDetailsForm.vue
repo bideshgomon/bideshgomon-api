@@ -41,11 +41,17 @@ const form = useForm({
     gender: props.userProfile?.gender || '',
     nationality: props.userProfile?.nationality || 'Bangladeshi',
     present_address_line: props.userProfile?.present_address_line || '',
+    present_country: props.userProfile?.present_country || 'Bangladesh',
     present_division: props.userProfile?.present_division || '',
     present_district: props.userProfile?.present_district || '',
+    present_city: props.userProfile?.present_city || '',
+    present_postal_code: props.userProfile?.present_postal_code || '',
     permanent_address_line: props.userProfile?.permanent_address_line || '',
+    permanent_country: props.userProfile?.permanent_country || 'Bangladesh',
     permanent_division: props.userProfile?.permanent_division || '',
     permanent_district: props.userProfile?.permanent_district || '',
+    permanent_city: props.userProfile?.permanent_city || '',
+    permanent_postal_code: props.userProfile?.permanent_postal_code || '',
     nid: props.userProfile?.nid || '',
 });
 
@@ -92,7 +98,7 @@ const submit = () => {
                 </div>
                 <div>
                     <h2 class="font-display font-bold text-xl text-gray-800">Profile Details</h2>
-                    <p class="text-xs text-gray-500">Bangladesh-specific information</p>
+                    <p class="text-xs text-gray-500">Personal information and address</p>
                 </div>
             </div>
         </header>
@@ -179,10 +185,31 @@ const submit = () => {
             <div class="border-t pt-6">
                 <h3 class="text-md font-medium text-gray-900 mb-4">Present Address</h3>
                 <div class="space-y-4">
+                    <!-- Country Selector -->
+                    <div>
+                        <InputLabel for="present_country" value="Country" />
+                        <select
+                            id="present_country"
+                            v-model="form.present_country"
+                            @change="form.present_division = ''; form.present_district = ''"
+                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        >
+                            <option value="">Select Country</option>
+                            <option v-for="country in countries" :key="country.id" :value="country.name">
+                                {{ country.flag_emoji }} {{ country.name }}
+                            </option>
+                        </select>
+                        <InputError class="mt-2" :message="form.errors.present_country" />
+                    </div>
+
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div>
-                            <InputLabel for="present_division" value="Division" />
+                            <InputLabel 
+                                for="present_division" 
+                                :value="form.present_country === 'Bangladesh' ? 'Division' : 'State/Province/Region'" 
+                            />
                             <select
+                                v-if="form.present_country === 'Bangladesh'"
                                 id="present_division"
                                 v-model="form.present_division"
                                 @change="form.present_district = ''"
@@ -193,34 +220,80 @@ const submit = () => {
                                     {{ division }}
                                 </option>
                             </select>
+                            <input
+                                v-else
+                                type="text"
+                                id="present_division"
+                                v-model="form.present_division"
+                                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                placeholder="Enter state/province/region"
+                            />
                             <InputError class="mt-2" :message="form.errors.present_division" />
                         </div>
 
                         <div>
-                            <InputLabel for="present_district" value="District" />
+                            <InputLabel 
+                                for="present_district" 
+                                :value="form.present_country === 'Bangladesh' ? 'District' : 'City/District'" 
+                            />
                             <select
+                                v-if="form.present_country === 'Bangladesh' && form.present_division"
                                 id="present_district"
                                 v-model="form.present_district"
-                                :disabled="!form.present_division"
-                                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                             >
-                                <option value="">{{ form.present_division ? 'Select District' : 'Select division first' }}</option>
+                                <option value="">Select District</option>
                                 <option v-for="district in presentDistricts" :key="district" :value="district">
                                     {{ district }}
                                 </option>
                             </select>
+                            <input
+                                v-else
+                                type="text"
+                                id="present_district"
+                                v-model="form.present_district"
+                                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                :placeholder="form.present_country === 'Bangladesh' ? 'Select division first' : 'Enter city/district'"
+                                :disabled="form.present_country === 'Bangladesh' && !form.present_division"
+                            />
                             <InputError class="mt-2" :message="form.errors.present_district" />
                         </div>
                     </div>
 
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                            <InputLabel for="present_city" value="City" />
+                            <TextInput
+                                id="present_city"
+                                v-model="form.present_city"
+                                type="text"
+                                class="mt-1 block w-full"
+                                placeholder="Enter city"
+                            />
+                            <InputError class="mt-2" :message="form.errors.present_city" />
+                        </div>
+
+                        <div>
+                            <InputLabel for="present_postal_code" value="Postal/ZIP Code" />
+                            <TextInput
+                                id="present_postal_code"
+                                v-model="form.present_postal_code"
+                                type="text"
+                                class="mt-1 block w-full"
+                                placeholder="Enter postal code"
+                            />
+                            <InputError class="mt-2" :message="form.errors.present_postal_code" />
+                        </div>
+                    </div>
+
                     <div>
-                        <InputLabel for="present_address_line" value="Full Address" />
+                        <InputLabel for="present_address_line" value="Street Address" />
                         <textarea
                             id="present_address_line"
                             v-model="form.present_address_line"
                             class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                             rows="2"
-                            placeholder="House/Flat, Road, Area"
+                            placeholder="House/Apartment number, Street, Area"
                         />
                         <InputError class="mt-2" :message="form.errors.present_address_line" />
                     </div>
@@ -231,10 +304,31 @@ const submit = () => {
             <div class="border-t pt-6">
                 <h3 class="text-md font-medium text-gray-900 mb-4">Permanent Address</h3>
                 <div class="space-y-4">
+                    <!-- Country Selector -->
+                    <div>
+                        <InputLabel for="permanent_country" value="Country" />
+                        <select
+                            id="permanent_country"
+                            v-model="form.permanent_country"
+                            @change="form.permanent_division = ''; form.permanent_district = ''"
+                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                        >
+                            <option value="">Select Country</option>
+                            <option v-for="country in countries" :key="country.id" :value="country.name">
+                                {{ country.flag_emoji }} {{ country.name }}
+                            </option>
+                        </select>
+                        <InputError class="mt-2" :message="form.errors.permanent_country" />
+                    </div>
+
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div>
-                            <InputLabel for="permanent_division" value="Division" />
+                            <InputLabel 
+                                for="permanent_division" 
+                                :value="form.permanent_country === 'Bangladesh' ? 'Division' : 'State/Province/Region'" 
+                            />
                             <select
+                                v-if="form.permanent_country === 'Bangladesh'"
                                 id="permanent_division"
                                 v-model="form.permanent_division"
                                 @change="form.permanent_district = ''"
@@ -245,34 +339,80 @@ const submit = () => {
                                     {{ division }}
                                 </option>
                             </select>
+                            <input
+                                v-else
+                                type="text"
+                                id="permanent_division"
+                                v-model="form.permanent_division"
+                                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                placeholder="Enter state/province/region"
+                            />
                             <InputError class="mt-2" :message="form.errors.permanent_division" />
                         </div>
 
                         <div>
-                            <InputLabel for="permanent_district" value="District" />
+                            <InputLabel 
+                                for="permanent_district" 
+                                :value="form.permanent_country === 'Bangladesh' ? 'District' : 'City/District'" 
+                            />
                             <select
+                                v-if="form.permanent_country === 'Bangladesh' && form.permanent_division"
                                 id="permanent_district"
                                 v-model="form.permanent_district"
-                                :disabled="!form.permanent_division"
-                                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                             >
-                                <option value="">{{ form.permanent_division ? 'Select District' : 'Select division first' }}</option>
+                                <option value="">Select District</option>
                                 <option v-for="district in permanentDistricts" :key="district" :value="district">
                                     {{ district }}
                                 </option>
                             </select>
+                            <input
+                                v-else
+                                type="text"
+                                id="permanent_district"
+                                v-model="form.permanent_district"
+                                class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                :placeholder="form.permanent_country === 'Bangladesh' ? 'Select division first' : 'Enter city/district'"
+                                :disabled="form.permanent_country === 'Bangladesh' && !form.permanent_division"
+                            />
                             <InputError class="mt-2" :message="form.errors.permanent_district" />
                         </div>
                     </div>
 
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                            <InputLabel for="permanent_city" value="City" />
+                            <TextInput
+                                id="permanent_city"
+                                v-model="form.permanent_city"
+                                type="text"
+                                class="mt-1 block w-full"
+                                placeholder="Enter city"
+                            />
+                            <InputError class="mt-2" :message="form.errors.permanent_city" />
+                        </div>
+
+                        <div>
+                            <InputLabel for="permanent_postal_code" value="Postal/ZIP Code" />
+                            <TextInput
+                                id="permanent_postal_code"
+                                v-model="form.permanent_postal_code"
+                                type="text"
+                                class="mt-1 block w-full"
+                                placeholder="Enter postal code"
+                            />
+                            <InputError class="mt-2" :message="form.errors.permanent_postal_code" />
+                        </div>
+                    </div>
+
                     <div>
-                        <InputLabel for="permanent_address_line" value="Full Address" />
+                        <InputLabel for="permanent_address_line" value="Street Address" />
                         <textarea
                             id="permanent_address_line"
                             v-model="form.permanent_address_line"
                             class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                             rows="2"
-                            placeholder="House/Flat, Road, Area"
+                            placeholder="House/Apartment number, Street, Area"
                         />
                         <InputError class="mt-2" :message="form.errors.permanent_address_line" />
                     </div>

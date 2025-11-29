@@ -120,7 +120,15 @@
                                         <CheckBadgeIcon v-if="agency.is_verified" class="h-5 w-5 text-blue-500 ml-1" />
                                     </h3>
                                     <p v-if="agency.company_name" class="text-sm text-gray-600 truncate">{{ agency.company_name }}</p>
-                                    <div v-if="agency.business_type" class="mt-1">
+                                    <div v-if="agency.agency_type" class="mt-1">
+                                        <span :class="[
+                                            'inline-flex items-center px-2 py-0.5 rounded text-xs font-medium',
+                                            `bg-${agency.agency_type.color}-100 text-${agency.agency_type.color}-800`
+                                        ]">
+                                            {{ agency.agency_type.name }}
+                                        </span>
+                                    </div>
+                                    <div v-else-if="agency.business_type" class="mt-1">
                                         <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
                                             {{ formatBusinessType(agency.business_type) }}
                                         </span>

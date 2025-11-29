@@ -32,6 +32,9 @@ const form = useForm({
     age_max: '',
     positions_available: 1,
     application_fee: 0,
+    agency_posted_fee: 0,
+    admin_approved_fee: 0,
+    approval_status: 'approved',
     is_featured: false,
     is_active: true,
     deadline: '',
@@ -414,16 +417,6 @@ const submit = () => {
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Application Fee (৳)</label>
-                                    <input
-                                        v-model.number="form.application_fee"
-                                        type="number"
-                                        min="0"
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                                    />
-                                </div>
-
-                                <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Application Deadline *</label>
                                     <input
                                         v-model="form.deadline"
@@ -450,6 +443,77 @@ const submit = () => {
                                         type="tel"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                                     />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Application Fee & Processing Fee -->
+                        <div class="border-b border-gray-200 pb-6">
+                            <h2 class="text-lg font-semibold text-gray-900 mb-4">Application Fees & Processing</h2>
+                            <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-6">
+                                <p class="text-sm text-indigo-800">
+                                    <strong>Note:</strong> Application fee is a small processing charge. Agency Posted Fee is the main fee amount. 
+                                    Admin sets the final approved fee (includes markup). <strong>Public users will only see the final approved fee.</strong>
+                                </p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        Application Fee (৳)
+                                        <span class="text-xs text-gray-500 block mt-1">Small processing charge</span>
+                                    </label>
+                                    <input
+                                        v-model.number="form.application_fee"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="e.g. 500"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        Agency Posted Fee (৳) *
+                                        <span class="text-xs text-indigo-600 block mt-1 font-medium">Main fee amount</span>
+                                    </label>
+                                    <input
+                                        v-model.number="form.agency_posted_fee"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="e.g. 300000"
+                                        class="w-full px-4 py-2 border border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-semibold"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        Admin Approved Fee (৳) *
+                                        <span class="text-xs text-gray-500 block mt-1">Final amount (shown to public)</span>
+                                    </label>
+                                    <input
+                                        v-model.number="form.admin_approved_fee"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        placeholder="e.g. 350000"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                                    />
+                                </div>
+
+                                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        Processing Fee (৳)
+                                        <span class="text-xs text-gray-500 block mt-1">Auto-calculated markup</span>
+                                    </label>
+                                    <div class="text-2xl font-bold text-indigo-600">
+                                        +৳{{ Number(Math.max(0, (form.admin_approved_fee || 0) - (form.agency_posted_fee || 0))).toLocaleString() }}
+                                    </div>
+                                    <div v-if="form.agency_posted_fee > 0 && form.admin_approved_fee > form.agency_posted_fee" class="text-xs text-gray-600 mt-1">
+                                        {{ (((form.admin_approved_fee - form.agency_posted_fee) / form.agency_posted_fee) * 100).toFixed(1) }}% markup
+                                    </div>
                                 </div>
                             </div>
 

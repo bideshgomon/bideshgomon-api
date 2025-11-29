@@ -1,8 +1,14 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
-import { ref, watch } from 'vue';
-import { FunnelIcon, ArrowDownTrayIcon } from '@heroicons/vue/24/outline';
+import { ref } from 'vue';
+import { 
+  FunnelIcon, 
+  ArrowDownTrayIcon, 
+  UserGroupIcon,
+  ClockIcon,
+  EyeIcon 
+} from '@heroicons/vue/24/outline';
 
 const props = defineProps({
   logs: Object,
@@ -40,20 +46,32 @@ const formatDateTime = (dt) => dt ? new Date(dt).toLocaleString('en-US', { month
   <Head title="Impersonation Logs" />
   <AdminLayout>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <h1 class="text-2xl font-bold text-gray-900">Admin Impersonation Logs</h1>
-          <p class="text-sm text-gray-600 mt-1">Audit trail of admin user session impersonations.</p>
-        </div>
-        <div class="flex items-center space-x-3">
-          <button @click="exportCsv" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700">
-            <ArrowDownTrayIcon class="h-5 w-5 mr-2" /> Export CSV
+      <!-- Header -->
+      <div class="bg-white border border-gray-200 rounded-lg">
+        <div class="px-6 py-4 flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="flex-shrink-0">
+              <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+                <EyeIcon class="w-6 h-6 text-gray-600" />
+              </div>
+            </div>
+            <div>
+              <h1 class="text-2xl font-bold text-gray-900">Impersonation Logs</h1>
+              <p class="text-sm text-gray-600 mt-1">Admin user impersonation audit trail</p>
+            </div>
+          </div>
+          <button
+            @click="exportCsv"
+            class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors duration-150"
+          >
+            <ArrowDownTrayIcon class="w-4 h-4 mr-2" />
+            Export CSV
           </button>
         </div>
       </div>
 
       <!-- Filters -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+      <div class="bg-white rounded-lg border border-gray-200 p-6">
         <div class="flex items-center mb-4">
           <FunnelIcon class="h-5 w-5 text-gray-500 mr-2" />
           <h2 class="text-sm font-semibold text-gray-700">Filters</h2>
@@ -84,14 +102,14 @@ const formatDateTime = (dt) => dt ? new Date(dt).toLocaleString('en-US', { month
           </div>
         </div>
         <div class="mt-4 flex items-center space-x-3">
-          <button @click="applyFilters" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700">Apply</button>
-          <button @click="resetFilters" class="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200">Reset</button>
+          <button @click="applyFilters" class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-150">Apply</button>
+          <button @click="resetFilters" class="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors duration-150">Reset</button>
         </div>
       </div>
 
       <!-- Logs Table -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-        <div class="overflow-x-auto">
+      <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <div class="overflow-x-auto p-4">
           <table class="min-w-full divide-y divide-gray-200 text-sm">
             <thead class="bg-gray-50">
               <tr>
@@ -134,9 +152,9 @@ const formatDateTime = (dt) => dt ? new Date(dt).toLocaleString('en-US', { month
           </table>
         </div>
         <!-- Pagination -->
-        <div v-if="logs.links" class="mt-4 flex flex-wrap gap-2">
+        <div v-if="logs.links" class="px-4 pb-4 flex flex-wrap gap-2">
           <Link v-for="link in logs.links" :key="link.url || link.label" :href="link.url || '#'" v-html="link.label" :class="[
-            'px-3 py-1 text-xs rounded border',
+            'px-3 py-1 text-xs rounded-lg border',
             link.active ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-700 hover:bg-gray-50 border-gray-300',
             !link.url ? 'opacity-50 cursor-not-allowed' : ''
           ]" />

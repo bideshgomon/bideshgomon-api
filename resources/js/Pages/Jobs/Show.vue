@@ -48,17 +48,20 @@ const formatSalary = (job) => {
 };
 
 const getCategoryColor = (category) => {
-    const colors = {
-        'hospitality': 'bg-blue-100 text-blue-800',
-        'construction': 'bg-orange-100 text-orange-800',
-        'healthcare': 'bg-green-100 text-green-800',
-        'it': 'bg-purple-100 text-purple-800',
-        'manufacturing': 'bg-gray-100 text-gray-800',
-        'education': 'bg-indigo-100 text-indigo-800',
-        'retail': 'bg-pink-100 text-pink-800',
-        'transportation': 'bg-yellow-100 text-yellow-800',
+    // Default color - can be extended with database color field later
+    return 'bg-indigo-100 text-indigo-800';
+};
+
+const getJobTypeLabel = (type) => {
+    const labels = {
+        'full_time': 'Full Time',
+        'part_time': 'Part Time',
+        'contract': 'Contract',
+        'temporary': 'Temporary',
+        'seasonal': 'Seasonal',
+        'internship': 'Internship',
     };
-    return colors[category] || 'bg-gray-100 text-gray-800';
+    return labels[type] || type.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase());
 };
 </script>
 
@@ -67,11 +70,11 @@ const getCategoryColor = (category) => {
 
     <AuthenticatedLayout>
         <!-- Header -->
-        <div class="bg-white border-b">
-            <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+        <div class="bg-gradient-to-br from-indigo-50 via-white to-purple-50 border-b border-gray-200">
+            <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
                 <Link
                     :href="route('jobs.index')"
-                    class="inline-flex items-center text-gray-600 hover:text-gray-900 mb-4"
+                    class="inline-flex items-center text-gray-600 hover:text-indigo-600 mb-6 font-medium transition-colors"
                 >
                     <ArrowLeftIcon class="h-5 w-5 mr-2" />
                     Back to Jobs
@@ -79,35 +82,35 @@ const getCategoryColor = (category) => {
 
                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between">
                     <div class="flex-1">
-                        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{{ job.title }}</h1>
-                        <p class="text-xl text-gray-600 mb-3">{{ job.company_name }}</p>
+                        <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">{{ job.title }}</h1>
+                        <p class="text-xl font-medium text-gray-700 mb-4">{{ job.company_name }}</p>
                         
-                        <div class="flex flex-wrap gap-3 text-sm text-gray-600">
-                            <div class="flex items-center">
-                                <MapPinIcon class="h-5 w-5 mr-1" />
+                        <div class="flex flex-wrap gap-4 text-sm text-gray-600">
+                            <div class="flex items-center font-medium">
+                                <MapPinIcon class="h-5 w-5 mr-2 text-indigo-500" />
                                 {{ job.city }}, {{ job.country.name }}
                             </div>
-                            <div class="flex items-center">
-                                <BriefcaseIcon class="h-5 w-5 mr-1" />
-                                {{ job.job_type }}
+                            <div class="flex items-center font-medium">
+                                <BriefcaseIcon class="h-5 w-5 mr-2 text-indigo-500" />
+                                {{ getJobTypeLabel(job.job_type) }}
                             </div>
-                            <div class="flex items-center">
-                                <CalendarIcon class="h-5 w-5 mr-1" />
+                            <div class="flex items-center font-medium">
+                                <CalendarIcon class="h-5 w-5 mr-2 text-indigo-500" />
                                 Posted {{ new Date(job.published_at).toLocaleDateString() }}
                             </div>
                         </div>
                     </div>
 
-                    <div class="mt-4 sm:mt-0 sm:ml-6">
+                    <div class="mt-6 sm:mt-0 sm:ml-6">
                         <button
                             v-if="!hasApplied"
                             @click="showApplicationModal = true"
-                            class="w-full sm:w-auto px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors flex items-center justify-center space-x-2"
+                            class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
                         >
                             <DocumentTextIcon class="h-5 w-5" />
                             <span>Apply Now</span>
                         </button>
-                        <div v-else class="flex items-center space-x-2 px-6 py-3 bg-green-50 text-green-700 rounded-xl font-semibold">
+                        <div v-else class="flex items-center space-x-2 px-8 py-3.5 bg-green-100 text-green-700 rounded-xl font-semibold border border-green-200">
                             <CheckCircleIcon class="h-5 w-5" />
                             <span>Already Applied</span>
                         </div>
@@ -121,16 +124,18 @@ const getCategoryColor = (category) => {
                 <!-- Main Content -->
                 <div class="lg:col-span-2 space-y-6">
                     <!-- Salary & Benefits -->
-                    <div class="bg-white rounded-lg p-6 border border-gray-200">
-                        <div class="flex items-center justify-between mb-4">
+                    <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-md">
+                        <div class="flex items-center justify-between mb-6">
                             <div>
-                                <div class="text-sm text-gray-600 mb-1">Salary Range</div>
-                                <div class="text-3xl font-bold text-indigo-600">
+                                <div class="text-sm font-medium text-gray-500 mb-2">Salary Range</div>
+                                <div class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                                     {{ formatSalary(job) }}
                                 </div>
-                                <div class="text-sm text-gray-500">per {{ job.salary_period }}</div>
+                                <div class="text-sm text-gray-600 mt-1">per {{ job.salary_period }}</div>
                             </div>
-                            <CurrencyDollarIcon class="h-12 w-12 text-indigo-400" />
+                            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
+                                <CurrencyDollarIcon class="h-10 w-10 text-indigo-600" />
+                            </div>
                         </div>
                         
                         <div v-if="job.benefits && job.benefits.length > 0" class="mt-4">
@@ -148,31 +153,31 @@ const getCategoryColor = (category) => {
                     </div>
 
                     <!-- Job Description -->
-                    <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
                         <h2 class="text-xl font-bold text-gray-900 mb-4">Job Description</h2>
                         <p class="text-gray-700 leading-relaxed whitespace-pre-line">{{ job.description }}</p>
                     </div>
 
                     <!-- Responsibilities -->
-                    <div v-if="job.responsibilities" class="bg-white rounded-xl shadow-sm p-6">
+                    <div v-if="job.responsibilities" class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
                         <h2 class="text-xl font-bold text-gray-900 mb-4">Responsibilities</h2>
                         <p class="text-gray-700 leading-relaxed whitespace-pre-line">{{ job.responsibilities }}</p>
                     </div>
 
                     <!-- Requirements -->
-                    <div v-if="job.requirements" class="bg-white rounded-xl shadow-sm p-6">
+                    <div v-if="job.requirements" class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
                         <h2 class="text-xl font-bold text-gray-900 mb-4">Requirements</h2>
                         <p class="text-gray-700 leading-relaxed whitespace-pre-line">{{ job.requirements }}</p>
                     </div>
 
                     <!-- Skills -->
-                    <div v-if="job.skills && job.skills.length > 0" class="bg-white rounded-xl shadow-sm p-6">
+                    <div v-if="job.skills && job.skills.length > 0" class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
                         <h2 class="text-xl font-bold text-gray-900 mb-4">Required Skills</h2>
                         <div class="flex flex-wrap gap-2">
                             <span
                                 v-for="skill in job.skills"
                                 :key="skill"
-                                class="px-3 py-2 bg-indigo-50 text-indigo-700 rounded-lg font-medium"
+                                class="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-xl font-medium border border-indigo-100"
                             >
                                 {{ skill }}
                             </span>
@@ -183,14 +188,14 @@ const getCategoryColor = (category) => {
                 <!-- Sidebar -->
                 <div class="space-y-6">
                     <!-- Job Details Card -->
-                    <div class="bg-white rounded-xl shadow-sm p-6">
-                        <h3 class="font-bold text-gray-900 mb-4">Job Details</h3>
+                    <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+                        <h3 class="font-bold text-gray-900 mb-4 text-lg">Job Details</h3>
                         
                         <div class="space-y-4">
-                            <div>
+                            <div v-if="job.job_category">
                                 <div class="text-sm text-gray-500 mb-1">Category</div>
-                                <span :class="['inline-block px-3 py-1 rounded-full text-sm font-medium', getCategoryColor(job.category)]">
-                                    {{ job.category }}
+                                <span :class="['inline-block px-3 py-1 rounded-full text-sm font-medium', getCategoryColor(job.job_category.slug)]">
+                                    {{ job.job_category.name }}
                                 </span>
                             </div>
 
@@ -245,8 +250,8 @@ const getCategoryColor = (category) => {
                     </div>
 
                     <!-- Contact Information -->
-                    <div v-if="job.contact_email || job.contact_phone" class="bg-white rounded-xl shadow-sm p-6">
-                        <h3 class="font-bold text-gray-900 mb-4">Contact Information</h3>
+                    <div v-if="job.contact_email || job.contact_phone" class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+                        <h3 class="font-bold text-gray-900 mb-4 text-lg">Contact Information</h3>
                         <div class="space-y-2 text-sm">
                             <div v-if="job.contact_email">
                                 <div class="text-gray-500">Email</div>
@@ -264,14 +269,14 @@ const getCategoryColor = (category) => {
                     </div>
 
                     <!-- Related Jobs -->
-                    <div v-if="relatedJobs.length > 0" class="bg-white rounded-xl shadow-sm p-6">
-                        <h3 class="font-bold text-gray-900 mb-4">Related Jobs</h3>
+                    <div v-if="relatedJobs.length > 0" class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+                        <h3 class="font-bold text-gray-900 mb-4 text-lg">Related Jobs</h3>
                         <div class="space-y-3">
                             <Link
                                 v-for="relatedJob in relatedJobs"
                                 :key="relatedJob.id"
                                 :href="route('jobs.show', relatedJob.id)"
-                                class="block p-3 border border-gray-200 rounded-lg hover:border-indigo-300 hover:bg-indigo-50/50 transition-colors"
+                                class="block p-4 border border-gray-200 rounded-xl hover:border-indigo-300 hover:bg-indigo-50/50 transition-all"
                             >
                                 <div class="font-medium text-gray-900 mb-1">{{ relatedJob.title }}</div>
                                 <div class="text-sm text-gray-600">{{ relatedJob.company_name }}</div>
@@ -288,12 +293,15 @@ const getCategoryColor = (category) => {
             <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
                 <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" @click="showApplicationModal = false"></div>
 
-                <div class="inline-block w-full max-w-2xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+                <div class="inline-block w-full max-w-2xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-3xl">
                     <!-- Modal Header -->
-                    <div class="bg-white border-b border-gray-200 px-6 py-4">
+                    <div class="bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-5">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-xl font-bold text-gray-900">Apply for this Job</h3>
-                            <button @click="showApplicationModal = false" class="text-gray-400 hover:text-gray-600">
+                            <h3 class="text-xl font-bold text-white flex items-center">
+                                <DocumentTextIcon class="h-6 w-6 mr-2" />
+                                Apply for this Job
+                            </h3>
+                            <button @click="showApplicationModal = false" class="text-white/80 hover:text-white transition-colors">
                                 <XMarkIcon class="h-6 w-6" />
                             </button>
                         </div>
@@ -332,14 +340,14 @@ const getCategoryColor = (category) => {
                             <button
                                 type="button"
                                 @click="showApplicationModal = false"
-                                class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
+                                class="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
                                 :disabled="form.processing"
-                                class="flex-1 px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50"
+                                class="flex-1 px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all shadow-lg disabled:opacity-50"
                             >
                                 {{ form.processing ? 'Submitting...' : 'Submit Application' }}
                             </button>

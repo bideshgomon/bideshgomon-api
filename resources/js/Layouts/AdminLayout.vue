@@ -936,7 +936,7 @@ const navigationSections = {
           <!-- Quick Search -->
           <button
             @click="showCommandPalette = true"
-            class="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors group flex-1 max-w-md"
+            class="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors group w-96"
           >
             <CommandLineIcon class="w-4 h-4 text-gray-400" />
             <span class="text-sm text-gray-500">Quick search...</span>
@@ -945,8 +945,8 @@ const navigationSections = {
             </kbd>
           </button>
 
-          <!-- Spacer -->
-          <div class="flex-1 md:hidden"></div>
+          <!-- Spacer to push right items to the end -->
+          <div class="flex-1"></div>
 
           <!-- Right Actions -->
           <div class="flex items-center gap-2">

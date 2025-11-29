@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Agency;
 use App\Http\Controllers\Controller;
 use App\Models\Agency;
 use App\Models\AgencyTeamMember;
+use App\Models\AgencyType;
 use App\Models\Country;
 use App\Models\Language;
 use Illuminate\Http\Request;
@@ -47,7 +48,7 @@ class ProfileController extends Controller
             'agency' => $agency,
             'countries' => Country::orderBy('name')->get(['id', 'name']),
             'languages' => Language::orderBy('name')->get(['id', 'name']),
-            'businessTypes' => $this->getBusinessTypes(),
+            'agencyTypes' => AgencyType::active()->get(['id', 'name', 'slug', 'description', 'icon', 'color']),
             'serviceOptions' => $this->getServiceOptions(),
         ]);
     }
@@ -78,7 +79,8 @@ class ProfileController extends Controller
             'linkedin_url' => 'nullable|url|max:255',
             'twitter_url' => 'nullable|url|max:255',
             'instagram_url' => 'nullable|url|max:255',
-            'business_type' => 'required|string|in:recruitment,education,immigration,travel,consulting',
+            'agency_type_id' => 'required|exists:agency_types,id',
+            'business_type' => 'nullable|string', // Keep for backward compatibility
             'established_year' => 'nullable|integer|min:1900|max:' . date('Y'),
             'license_number' => 'nullable|string|max:100',
             'license_expiry' => 'nullable|date|after:today',
@@ -193,17 +195,6 @@ class ProfileController extends Controller
         }
 
         return round(($completed / count($fields)) * 100);
-    }
-
-    private function getBusinessTypes()
-    {
-        return [
-            ['value' => 'recruitment', 'label' => 'Recruitment Agency'],
-            ['value' => 'education', 'label' => 'Education Consultancy'],
-            ['value' => 'immigration', 'label' => 'Immigration Services'],
-            ['value' => 'travel', 'label' => 'Travel & Tourism'],
-            ['value' => 'consulting', 'label' => 'General Consulting'],
-        ];
     }
 
     private function getServiceOptions()

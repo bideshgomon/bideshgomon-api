@@ -11,7 +11,7 @@ class AgencyPublicController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Agency::with('countryAssignments.country')
+        $query = Agency::with(['countryAssignments.country', 'agencyType'])
             ->active()
             ->verified();
 
@@ -70,6 +70,7 @@ class AgencyPublicController extends Controller
             ->active()
             ->verified()
             ->with([
+                'agencyType',
                 'teamMembers' => function ($query) {
                     $query->visible()->ordered();
                 },
@@ -83,7 +84,8 @@ class AgencyPublicController extends Controller
         $relatedAgencies = Agency::active()
             ->verified()
             ->where('id', '!=', $agency->id)
-            ->where('business_type', $agency->business_type)
+            ->where('agency_type_id', $agency->agency_type_id)
+            ->with('agencyType')
             ->withRating(4)
             ->limit(4)
             ->get();

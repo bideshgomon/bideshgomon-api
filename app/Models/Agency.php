@@ -30,6 +30,7 @@ class Agency extends Model
         'twitter_url',
         'instagram_url',
         'business_type',
+        'agency_type_id',
         'established_year',
         'license_number',
         'license_expiry',
@@ -107,6 +108,11 @@ class Agency extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function agencyType(): BelongsTo
+    {
+        return $this->belongsTo(AgencyType::class);
     }
 
     public function serviceApplications(): HasMany

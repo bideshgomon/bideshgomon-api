@@ -749,6 +749,46 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::post('/system-events-process-upload', [\App\Http\Controllers\Admin\DataManagement\SystemEventController::class, 'processBulkUpload'])->name('system-events.process-upload');
         Route::get('/system-events-template', [\App\Http\Controllers\Admin\DataManagement\SystemEventController::class, 'downloadTemplate'])->name('system-events.template');
         Route::get('/system-events-export', [\App\Http\Controllers\Admin\DataManagement\SystemEventController::class, 'export'])->name('system-events.export');
+
+        // Visa Types Management
+        Route::resource('visa-types', \App\Http\Controllers\Admin\DataManagement\VisaTypeController::class);
+        Route::post('/visa-types/{visaType}/toggle-status', [\App\Http\Controllers\Admin\DataManagement\VisaTypeController::class, 'toggleStatus'])->name('visa-types.toggle-status');
+        Route::get('/visa-types-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\VisaTypeController::class, 'bulkUpload'])->name('visa-types.bulk-upload');
+        Route::post('/visa-types-process-upload', [\App\Http\Controllers\Admin\DataManagement\VisaTypeController::class, 'processBulkUpload'])->name('visa-types.process-upload');
+        Route::get('/visa-types-template', [\App\Http\Controllers\Admin\DataManagement\VisaTypeController::class, 'downloadTemplate'])->name('visa-types.template');
+        Route::get('/visa-types-export', [\App\Http\Controllers\Admin\DataManagement\VisaTypeController::class, 'export'])->name('visa-types.export');
+
+        // Document Types Management
+        Route::resource('document-types', \App\Http\Controllers\Admin\DataManagement\DocumentTypeController::class);
+        Route::post('/document-types/{documentType}/toggle-status', [\App\Http\Controllers\Admin\DataManagement\DocumentTypeController::class, 'toggleStatus'])->name('document-types.toggle-status');
+        Route::get('/document-types-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\DocumentTypeController::class, 'bulkUpload'])->name('document-types.bulk-upload');
+        Route::post('/document-types-process-upload', [\App\Http\Controllers\Admin\DataManagement\DocumentTypeController::class, 'processBulkUpload'])->name('document-types.process-upload');
+        Route::get('/document-types-template', [\App\Http\Controllers\Admin\DataManagement\DocumentTypeController::class, 'downloadTemplate'])->name('document-types.template');
+        Route::get('/document-types-export', [\App\Http\Controllers\Admin\DataManagement\DocumentTypeController::class, 'export'])->name('document-types.export');
+
+        // Relationship Types Management
+        Route::resource('relationship-types', \App\Http\Controllers\Admin\DataManagement\RelationshipTypeController::class);
+        Route::post('/relationship-types/{relationshipType}/toggle-status', [\App\Http\Controllers\Admin\DataManagement\RelationshipTypeController::class, 'toggleStatus'])->name('relationship-types.toggle-status');
+        Route::get('/relationship-types-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\RelationshipTypeController::class, 'bulkUpload'])->name('relationship-types.bulk-upload');
+        Route::post('/relationship-types-process-upload', [\App\Http\Controllers\Admin\DataManagement\RelationshipTypeController::class, 'processBulkUpload'])->name('relationship-types.process-upload');
+        Route::get('/relationship-types-template', [\App\Http\Controllers\Admin\DataManagement\RelationshipTypeController::class, 'downloadTemplate'])->name('relationship-types.template');
+        Route::get('/relationship-types-export', [\App\Http\Controllers\Admin\DataManagement\RelationshipTypeController::class, 'export'])->name('relationship-types.export');
+
+        // Bank Names Management
+        Route::resource('bank-names', \App\Http\Controllers\Admin\DataManagement\BankNameController::class);
+        Route::post('/bank-names/{bankName}/toggle-status', [\App\Http\Controllers\Admin\DataManagement\BankNameController::class, 'toggleStatus'])->name('bank-names.toggle-status');
+        Route::get('/bank-names-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\BankNameController::class, 'bulkUpload'])->name('bank-names.bulk-upload');
+        Route::post('/bank-names-process-upload', [\App\Http\Controllers\Admin\DataManagement\BankNameController::class, 'processBulkUpload'])->name('bank-names.process-upload');
+        Route::get('/bank-names-template', [\App\Http\Controllers\Admin\DataManagement\BankNameController::class, 'downloadTemplate'])->name('bank-names.template');
+        Route::get('/bank-names-export', [\App\Http\Controllers\Admin\DataManagement\BankNameController::class, 'export'])->name('bank-names.export');
+
+        // Institution Types Management
+        Route::resource('institution-types', \App\Http\Controllers\Admin\DataManagement\InstitutionTypeController::class);
+        Route::post('/institution-types/{institutionType}/toggle-status', [\App\Http\Controllers\Admin\DataManagement\InstitutionTypeController::class, 'toggleStatus'])->name('institution-types.toggle-status');
+        Route::get('/institution-types-bulk-upload', [\App\Http\Controllers\Admin\DataManagement\InstitutionTypeController::class, 'bulkUpload'])->name('institution-types.bulk-upload');
+        Route::post('/institution-types-process-upload', [\App\Http\Controllers\Admin\DataManagement\InstitutionTypeController::class, 'processBulkUpload'])->name('institution-types.process-upload');
+        Route::get('/institution-types-template', [\App\Http\Controllers\Admin\DataManagement\InstitutionTypeController::class, 'downloadTemplate'])->name('institution-types.template');
+        Route::get('/institution-types-export', [\App\Http\Controllers\Admin\DataManagement\InstitutionTypeController::class, 'export'])->name('institution-types.export');
     });
     
     Route::get('/wallets', [\App\Http\Controllers\Admin\WalletController::class, 'index'])->name('wallets.index');
@@ -1010,6 +1050,8 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     ]);
     Route::post('/jobs/{id}/toggle-featured', [AdminJobPostingController::class, 'toggleFeatured'])->name('admin.jobs.toggle-featured');
     Route::post('/jobs/{id}/toggle-active', [AdminJobPostingController::class, 'toggleActive'])->name('admin.jobs.toggle-active');
+    Route::post('/jobs/{id}/approve', [AdminJobPostingController::class, 'approve'])->name('admin.jobs.approve');
+    Route::post('/jobs/{id}/reject', [AdminJobPostingController::class, 'reject'])->name('admin.jobs.reject');
     Route::post('/jobs/bulk-delete', [AdminJobPostingController::class, 'bulkDelete'])->name('admin.jobs.bulk-delete');
     Route::post('/jobs/bulk-update-status', [AdminJobPostingController::class, 'bulkUpdateStatus'])->name('admin.jobs.bulk-update-status');
     

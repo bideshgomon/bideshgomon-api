@@ -42,6 +42,18 @@
                             />
                         </div>
 
+                        <!-- Nationality -->
+                        <div>
+                            <label for="nationality" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nationality</label>
+                            <input
+                                id="nationality"
+                                v-model="form.nationality"
+                                type="text"
+                                placeholder="Bangladeshi"
+                                class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
+                            />
+                        </div>
+
                         <!-- ISO Code 2 -->
                         <div>
                             <label for="iso_code_2" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -183,6 +195,7 @@ const props = defineProps({
 const form = useForm({
     name: props.country.name,
     name_bn: props.country.name_bn,
+    nationality: props.country.nationality,
     iso_code_2: props.country.iso_code_2,
     iso_code_3: props.country.iso_code_3,
     phone_code: props.country.phone_code,
