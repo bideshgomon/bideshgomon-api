@@ -8,6 +8,7 @@ use App\Models\AgencyTeamMember;
 use App\Models\AgencyType;
 use App\Models\Country;
 use App\Models\Language;
+use App\Models\ServiceModule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -44,12 +45,31 @@ class ProfileController extends Controller
 
         $agency->load('teamMembers');
 
+        // Group service modules by category for better UX
+        $serviceModules = ServiceModule::active()
+            ->orderBy('id')
+            ->get(['id', 'name', 'slug', 'icon', 'color'])
+            ->groupBy(function ($service) {
+                // Categorize services based on name patterns
+                $name = strtolower($service->name);
+                
+                if (str_contains($name, 'visa')) return 'Visa Services';
+                if (in_array($service->id, [8, 9, 10, 11, 12, 13, 28])) return 'Travel & Booking';
+                if (in_array($service->id, [14, 15, 16, 17])) return 'Education Services';
+                if (in_array($service->id, [18, 19, 20, 21, 22])) return 'Employment Services';
+                if (in_array($service->id, [23, 24, 25, 26, 27])) return 'Document Services';
+                
+                return 'Support Services';
+            });
+
         return Inertia::render('Agency/Profile/Edit', [
             'agency' => $agency,
-            'countries' => Country::orderBy('name')->get(['id', 'name']),
-            'languages' => Language::orderBy('name')->get(['id', 'name']),
-            'agencyTypes' => AgencyType::active()->get(['id', 'name', 'slug', 'description', 'icon', 'color']),
-            'serviceOptions' => $this->getServiceOptions(),
+            'countries' => Country::orderBy('name')->pluck('name'),
+            'languages' => Language::orderBy('name')->pluck('name'),
+            'agencyTypes' => AgencyType::active()
+                ->orderBy('display_order')
+                ->get(['id', 'name', 'slug', 'description', 'icon', 'color', 'allowed_service_modules']),
+            'serviceModules' => $serviceModules,
         ]);
     }
 
