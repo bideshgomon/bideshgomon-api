@@ -61,7 +61,7 @@ class ServiceModuleController extends Controller
         $stats = [
             'total_services' => ServiceModule::count(),
             'active_services' => ServiceModule::where('is_active', true)->count(),
-            'coming_soon' => ServiceModule::where('coming_soon', true)->count(),
+            'coming_soon' => ServiceModule::where('is_active', false)->count(),
             'total_applications' => ServiceApplication::count(),
             'pending_applications' => ServiceApplication::pending()->count(),
             'completed_applications' => ServiceApplication::where('status', 'completed')->count(),
