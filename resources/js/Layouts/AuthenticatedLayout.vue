@@ -108,6 +108,7 @@ const leaveImpersonation = () => {
                                     :href="route('dashboard')"
                                     :active="route().current('dashboard')"
                                 >
+                                    <HomeIcon class="w-5 h-5 mr-1.5 inline" />
                                     Dashboard
                                 </NavLink>
                                     
@@ -146,6 +147,7 @@ const leaveImpersonation = () => {
                                     :href="route('jobs.index')"
                                     :active="route().current('jobs.*')"
                                 >
+                                    <BriefcaseIcon class="w-5 h-5 mr-1.5 inline" />
                                     Jobs
                                 </NavLink>
                             </div>
@@ -488,7 +490,11 @@ const leaveImpersonation = () => {
                         <ResponsiveNavLink
                             :href="route('dashboard')"
                             :active="route().current('dashboard')"
+                            icon-class="text-gray-600"
                         >
+                            <template #icon>
+                                <HomeIcon class="w-5 h-5" />
+                            </template>
                             Dashboard
                         </ResponsiveNavLink>
                         
@@ -509,7 +515,11 @@ const leaveImpersonation = () => {
                         <ResponsiveNavLink
                             :href="route('jobs.index')"
                             :active="route().current('jobs.*')"
+                            icon-class="text-blue-600"
                         >
+                            <template #icon>
+                                <BriefcaseIcon class="w-5 h-5" />
+                            </template>
                             Jobs
                         </ResponsiveNavLink>
                         

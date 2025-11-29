@@ -241,7 +241,7 @@ const categoryList = computed(() => {
           <div class="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-rhythm-lg">
             <div class="flex-1">
               <h1 class="text-2xl sm:text-3xl font-display font-bold text-white mb-rhythm-sm">
-                38 Services at Your Fingertips
+                {{ services.length }} Services at Your Fingertips
               </h1>
               <p class="text-white/90 text-sm sm:text-base md:text-lg">
                 From visa applications to career services - we've got you covered
