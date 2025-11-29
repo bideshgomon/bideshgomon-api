@@ -11,11 +11,14 @@ class AdminSettingsController extends Controller
 {
     public function index()
     {
-        $settings = SiteSetting::orderBy('group')->orderBy('sort_order')->get()->groupBy('group');
+        $settings = SiteSetting::orderBy('group')->orderBy('sort_order')->get();
 
         return Inertia::render('Admin/Settings/Index', [
             'settings' => $settings,
-            'groups' => SiteSetting::distinct('group')->pluck('group'),
+            'currentGroup' => 'general',
+            'groups' => SiteSetting::distinct('group')->pluck('group')->mapWithKeys(function($group) {
+                return [$group => ucfirst(str_replace('_', ' ', $group))];
+            }),
         ]);
     }
 
