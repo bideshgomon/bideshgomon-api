@@ -120,7 +120,8 @@ const submit = () => {
 };
 
 const switchTab = (group) => {
-    window.location.href = route('admin.settings.index', { group });
+    activeTab.value = group;
+    window.history.pushState({}, '', route('admin.settings.index', { group }));
 };
 
 const getInputType = (type) => {

@@ -39,6 +39,12 @@ class SocialAuthController extends Controller
                     'google_refresh_token' => $googleUser->refreshToken,
                 ]);
             } else {
+                // Get default 'user' role
+                $userRole = \App\Models\Role::where('slug', 'user')->first();
+                if (!$userRole) {
+                    return redirect()->route('login')->with('error', 'System configuration error. Please contact support.');
+                }
+                
                 // Create new user
                 $user = User::create([
                     'name' => $googleUser->name,
@@ -48,6 +54,7 @@ class SocialAuthController extends Controller
                     'google_refresh_token' => $googleUser->refreshToken,
                     'email_verified_at' => now(),
                     'password' => Hash::make(Str::random(16)), // Random password
+                    'role_id' => $userRole->id,
                 ]);
             }
             

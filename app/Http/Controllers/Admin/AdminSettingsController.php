@@ -10,13 +10,15 @@ use Inertia\Inertia;
 
 class AdminSettingsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $currentGroup = $request->get('group', 'general');
+        
         $settings = SiteSetting::orderBy('group')->orderBy('sort_order')->get();
 
         return Inertia::render('Admin/Settings/Index', [
             'settings' => $settings,
-            'currentGroup' => 'general',
+            'currentGroup' => $currentGroup,
             'groups' => SiteSetting::distinct('group')->pluck('group')->mapWithKeys(function($group) {
                 return [$group => ucfirst(str_replace('_', ' ', $group))];
             }),

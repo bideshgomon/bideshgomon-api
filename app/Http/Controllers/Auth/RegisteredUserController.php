@@ -58,11 +58,18 @@ class RegisteredUserController extends Controller
             $request->last_name,
         ])));
 
+        // Get default 'user' role
+        $userRole = \App\Models\Role::where('slug', 'user')->first();
+        if (!$userRole) {
+            throw new \Exception('Default user role not found. Please run seeders.');
+        }
+
         $user = User::create([
             'name' => $fullName,
             'email' => $request->email,
             'phone' => $request->phone,
             'password' => Hash::make($request->password),
+            'role_id' => $userRole->id,
         ]);
 
         // Create profile with passport-standard name fields
