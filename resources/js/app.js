@@ -11,8 +11,6 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 // Import PWA Manager
 import { pwa } from './pwa';
 
-// Import performance utilities
-import { clearExpiredCache } from './utils/performance';
 
 // Import lazy load directives
 import { lazyLoadDirective, lazyLoadBgDirective } from './directives/lazyLoad';
@@ -20,7 +18,7 @@ import { lazyLoadDirective, lazyLoadBgDirective } from './directives/lazyLoad';
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 // Clear expired cache on app start
-clearExpiredCache();
+
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
