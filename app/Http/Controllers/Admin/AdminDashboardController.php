@@ -110,9 +110,9 @@ class AdminDashboardController extends Controller
 
         // Marketing Campaigns Statistics
         $totalCampaigns = MarketingCampaign::count();
-        $activeCampaigns = MarketingCampaign::where('status', 'active')->count();
-        $completedCampaigns = MarketingCampaign::where('status', 'completed')->count();
-        $campaignReachThisMonth = MarketingCampaign::whereMonth('created_at', now()->month)->sum('target_audience');
+        $activeCampaigns = MarketingCampaign::where('status', 'sending')->orWhere('status', 'scheduled')->count();
+        $completedCampaigns = MarketingCampaign::where('status', 'sent')->count();
+        $campaignReachThisMonth = MarketingCampaign::whereMonth('created_at', now()->month)->sum('total_recipients');
 
         // Recent Activities
         $recentUsers = User::with('role')->latest()->take(10)->get(['id', 'name', 'email', 'created_at', 'role_id']);
