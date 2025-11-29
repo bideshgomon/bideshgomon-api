@@ -35,7 +35,11 @@ import {
     BuildingOfficeIcon,
     MapIcon,
     CurrencyDollarIcon,
-    UserCircleIcon
+    UserCircleIcon,
+    ShieldCheckIcon,
+    UsersIcon,
+    DocumentCheckIcon,
+    PaperAirplaneIcon
 } from '@heroicons/vue/24/outline';
 
 const showingNavigationDropdown = ref(false);
@@ -329,6 +333,31 @@ const leaveImpersonation = () => {
                                                 </template>
                                                 Profile
                                             </DropdownLink>
+                                            <div class="border-t border-gray-100 my-1"></div>
+                                            <DropdownLink :href="route('agency.team.index')" icon-class="text-purple-600">
+                                                <template #icon>
+                                                    <UsersIcon class="w-5 h-5" />
+                                                </template>
+                                                Team
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('agency.visa-management.index')" icon-class="text-blue-600">
+                                                <template #icon>
+                                                    <DocumentCheckIcon class="w-5 h-5" />
+                                                </template>
+                                                Visa Management
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('agency.flight-requests.index')" icon-class="text-orange-600">
+                                                <template #icon>
+                                                    <PaperAirplaneIcon class="w-5 h-5" />
+                                                </template>
+                                                Flight Requests
+                                            </DropdownLink>
+                                            <DropdownLink :href="route('agency.verification.index')" icon-class="text-teal-600">
+                                                <template #icon>
+                                                    <ShieldCheckIcon class="w-5 h-5" />
+                                                </template>
+                                                Verification
+                                            </DropdownLink>
                                         </template>
                                         
                                         <!-- Regular User Menu -->
@@ -603,6 +632,31 @@ const leaveImpersonation = () => {
                                     <UserCircleIcon class="w-5 h-5" />
                                 </template>
                                 Profile
+                            </ResponsiveNavLink>
+                            <div class="border-t border-gray-200 my-2"></div>
+                            <ResponsiveNavLink :href="route('agency.team.index')" icon-class="text-purple-600">
+                                <template #icon>
+                                    <UsersIcon class="w-5 h-5" />
+                                </template>
+                                Team
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('agency.visa-management.index')" icon-class="text-blue-600">
+                                <template #icon>
+                                    <DocumentCheckIcon class="w-5 h-5" />
+                                </template>
+                                Visa Management
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('agency.flight-requests.index')" icon-class="text-orange-600">
+                                <template #icon>
+                                    <PaperAirplaneIcon class="w-5 h-5" />
+                                </template>
+                                Flight Requests
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('agency.verification.index')" icon-class="text-teal-600">
+                                <template #icon>
+                                    <ShieldCheckIcon class="w-5 h-5" />
+                                </template>
+                                Verification
                             </ResponsiveNavLink>
                         </template>
                     </div>
