@@ -464,6 +464,55 @@ Route::middleware('auth')->group(function () {
     Route::get('/referrals/list', [ReferralController::class, 'referrals'])->name('referral.referrals');
     Route::get('/referrals/rewards', [ReferralController::class, 'rewards'])->name('referral.rewards');
 
+    // FAQ routes
+    Route::prefix('faqs')->name('faqs.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\User\FaqController::class, 'index'])->name('index');
+        Route::get('/{faq}', [\App\Http\Controllers\User\FaqController::class, 'show'])->name('show');
+    });
+
+    // Events routes
+    Route::prefix('events')->name('events.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\User\EventController::class, 'index'])->name('index');
+        Route::get('/{event}', [\App\Http\Controllers\User\EventController::class, 'show'])->name('show');
+        Route::post('/{event}/register', [\App\Http\Controllers\User\EventController::class, 'register'])->name('register');
+        Route::delete('/{event}/cancel', [\App\Http\Controllers\User\EventController::class, 'cancelRegistration'])->name('cancel');
+        Route::get('/my-events', [\App\Http\Controllers\User\EventController::class, 'myEvents'])->name('my-events');
+    });
+
+    // Support Ticket routes
+    Route::prefix('support')->name('support.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\User\SupportTicketController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\User\SupportTicketController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\User\SupportTicketController::class, 'store'])->name('store');
+        Route::get('/{ticket}', [\App\Http\Controllers\User\SupportTicketController::class, 'show'])->name('show');
+        Route::post('/{ticket}/reply', [\App\Http\Controllers\User\SupportTicketController::class, 'reply'])->name('reply');
+        Route::post('/{ticket}/close', [\App\Http\Controllers\User\SupportTicketController::class, 'close'])->name('close');
+    });
+
+    // Appointment routes
+    Route::prefix('appointments')->name('appointments.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\User\AppointmentController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\User\AppointmentController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\User\AppointmentController::class, 'store'])->name('store');
+        Route::get('/{appointment}', [\App\Http\Controllers\User\AppointmentController::class, 'show'])->name('show');
+        Route::put('/{appointment}', [\App\Http\Controllers\User\AppointmentController::class, 'update'])->name('update');
+        Route::delete('/{appointment}', [\App\Http\Controllers\User\AppointmentController::class, 'destroy'])->name('destroy');
+    });
+
+    // Document Scanner routes
+    Route::prefix('document-scanner')->name('document-scanner.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\User\DocumentScanController::class, 'index'])->name('index');
+        Route::post('/scan', [\App\Http\Controllers\User\DocumentScanController::class, 'scan'])->name('scan');
+        Route::get('/{scan}/download', [\App\Http\Controllers\User\DocumentScanController::class, 'download'])->name('download');
+    });
+
+    // Suggestions route (dynamic smart suggestions)
+    Route::get('/suggestions', function () {
+        return Inertia::render('User/Suggestions', [
+            'suggestions' => auth()->user()->getSmartSuggestions()
+        ]);
+    })->name('suggestions');
+
     // Profile Assessment routes
     Route::prefix('profile/assessment')->name('profile.assessment.')->group(function () {
         Route::get('/', [\App\Http\Controllers\ProfileAssessmentController::class, 'show'])->name('show');

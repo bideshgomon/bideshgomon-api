@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\UserPassport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -31,51 +32,59 @@ class PassportController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'passport_number' => [
-                'required',
-                'string',
-                'max:50',
-                'unique:user_passports,passport_number,NULL,id,user_id,' . Auth::id()
-            ],
-            'passport_type' => 'required|in:regular,diplomatic,official,service,emergency',
-            'issuing_country' => 'required|string|max:2',
-            'issuing_authority' => 'nullable|string|max:255',
-            'issue_date' => 'required|date',
-            'expiry_date' => 'required|date|after:issue_date',
-            'place_of_issue' => 'nullable|string|max:255',
-            'is_current_passport' => 'boolean',
-            'is_lost_or_stolen' => 'boolean',
-            'reported_lost_date' => 'nullable|date',
-            'surname' => 'nullable|string|max:255',
-            'given_names' => 'nullable|string|max:255',
-            'nationality' => 'nullable|string|max:2',
-            'sex' => 'nullable|in:M,F,X',
-            'date_of_birth' => 'nullable|date',
-            'place_of_birth' => 'nullable|string|max:255',
-            'passport_scan' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
-            'additional_pages' => 'nullable|file|mimes:pdf|max:10240',
-            'notes' => 'nullable|string|max:1000',
-        ]);
+        try {
+            $validated = $request->validate([
+                'passport_number' => [
+                    'nullable',
+                    'string',
+                    'max:50',
+                    'unique:user_passports,passport_number,NULL,id,user_id,' . Auth::id()
+                ],
+                'passport_type' => 'nullable|in:regular,diplomatic,official,service,emergency',
+                'issuing_country' => 'nullable|string|max:2',
+                'issuing_authority' => 'nullable|string|max:255',
+                'issue_date' => 'nullable|date',
+                'expiry_date' => 'nullable|date',
+                'place_of_issue' => 'nullable|string|max:255',
+                'is_current_passport' => 'boolean',
+                'is_lost_or_stolen' => 'boolean',
+                'reported_lost_date' => 'nullable|date',
+                'surname' => 'nullable|string|max:255',
+                'given_names' => 'nullable|string|max:255',
+                'nationality' => 'nullable|string|max:2',
+                'sex' => 'nullable|in:M,F,X',
+                'date_of_birth' => 'nullable|date',
+                'place_of_birth' => 'nullable|string|max:255',
+                'passport_scan' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+                'additional_pages' => 'nullable|file|mimes:pdf|max:10240',
+                'notes' => 'nullable|string|max:1000',
+            ]);
 
-        // Handle file uploads
-        if ($request->hasFile('passport_scan')) {
-            $validated['passport_scan_path'] = $request->file('passport_scan')
-                ->store('passports/scans', 'public');
-            unset($validated['passport_scan']);
+            // Handle file uploads
+            if ($request->hasFile('passport_scan')) {
+                $validated['passport_scan_path'] = $request->file('passport_scan')
+                    ->store('passports/scans', 'public');
+                unset($validated['passport_scan']);
+            }
+
+            if ($request->hasFile('additional_pages')) {
+                $validated['additional_pages_path'] = $request->file('additional_pages')
+                    ->store('passports/pages', 'public');
+                unset($validated['additional_pages']);
+            }
+
+            $validated['user_id'] = Auth::id();
+
+            $passport = UserPassport::create($validated);
+
+            return redirect()->back()->with('success', 'Passport added successfully.');
+        } catch (\Exception $e) {
+            Log::error('Passport creation failed', [
+                'error' => $e->getMessage(),
+                'user_id' => Auth::id()
+            ]);
+            return redirect()->back()->withErrors(['error' => 'Failed to add passport. Please check your input.'])->withInput();
         }
-
-        if ($request->hasFile('additional_pages')) {
-            $validated['additional_pages_path'] = $request->file('additional_pages')
-                ->store('passports/pages', 'public');
-            unset($validated['additional_pages']);
-        }
-
-        $validated['user_id'] = Auth::id();
-
-        $passport = UserPassport::create($validated);
-
-        return redirect()->back()->with('success', 'Passport added successfully.');
     }
 
     /**

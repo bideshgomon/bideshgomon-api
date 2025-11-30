@@ -66,6 +66,7 @@ const props = defineProps({
     user: Object,
     userProfile: Object,
     familyMembers: Array,
+    userLanguages: Array,
     languages: Array,
     languageTests: Array,
     securityInformation: Object,
@@ -176,7 +177,7 @@ const getSectionCompletion = (sectionId) => {
             return props.skills?.length > 0 ? 100 : 0;
         },
         'languages': () => {
-            return props.languages?.length > 0 ? 100 : 0;
+            return props.userLanguages?.length > 0 ? 100 : 0;
         },
         'certifications': () => {
             // Check if certifications data exists in profile

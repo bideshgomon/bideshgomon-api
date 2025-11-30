@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\FamilyMember;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class FamilyMemberController extends Controller
@@ -19,13 +20,14 @@ class FamilyMemberController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'relationship' => 'required|string|in:spouse,child,parent,sibling,grandparent,grandchild,uncle,aunt,cousin,nephew,niece,in-law,other',
-            'full_name' => 'required|string|max:255',
-            'date_of_birth' => 'required|date|before:today',
-            'place_of_birth' => 'nullable|string|max:255',
-            'gender' => 'required|string|in:male,female,other',
-            'nationality' => 'required|string|max:100',
+        try {
+            $validated = $request->validate([
+                'relationship' => 'required|string|in:spouse,child,parent,sibling,grandparent,grandchild,uncle,aunt,cousin,nephew,niece,in-law,other',
+                'full_name' => 'required|string|max:255',
+                'date_of_birth' => 'required|date|before:today',
+                'place_of_birth' => 'nullable|string|max:255',
+                'gender' => 'nullable|string|in:male,female,other',
+                'nationality' => 'nullable|string|max:100',
             'country_of_residence' => 'nullable|string|max:100',
             'city' => 'nullable|string|max:100',
             'occupation' => 'nullable|string|max:255',
@@ -60,9 +62,16 @@ class FamilyMemberController extends Controller
             $validated['relationship_proof_uploaded'] = false;
         }
 
-    $familyMember = Auth::user()->familyMembers()->create($validated);
+            $familyMember = Auth::user()->familyMembers()->create($validated);
 
-        return response()->json($familyMember, 201);
+            return response()->json($familyMember, 201);
+        } catch (\Exception $e) {
+            Log::error('Family member creation failed', [
+                'error' => $e->getMessage(),
+                'user_id' => Auth::id()
+            ]);
+            return response()->json(['message' => 'Failed to add family member. Please check your input.', 'error' => $e->getMessage()], 422);
+        }
     }
 
     public function update(Request $request, FamilyMember $familyMember)
@@ -71,13 +80,14 @@ class FamilyMemberController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $validated = $request->validate([
-            'relationship' => 'required|string|in:spouse,child,parent,sibling,grandparent,grandchild,uncle,aunt,cousin,nephew,niece,in-law,other',
-            'full_name' => 'required|string|max:255',
-            'date_of_birth' => 'required|date|before:today',
-            'place_of_birth' => 'nullable|string|max:255',
-            'gender' => 'required|string|in:male,female,other',
-            'nationality' => 'required|string|max:100',
+        try {
+            $validated = $request->validate([
+                'relationship' => 'required|string|in:spouse,child,parent,sibling,grandparent,grandchild,uncle,aunt,cousin,nephew,niece,in-law,other',
+                'full_name' => 'required|string|max:255',
+                'date_of_birth' => 'required|date|before:today',
+                'place_of_birth' => 'nullable|string|max:255',
+                'gender' => 'nullable|string|in:male,female,other',
+                'nationality' => 'nullable|string|max:100',
             'country_of_residence' => 'nullable|string|max:100',
             'city' => 'nullable|string|max:100',
             'occupation' => 'nullable|string|max:255',
@@ -118,6 +128,13 @@ class FamilyMemberController extends Controller
         $familyMember->update($validated);
 
         return response()->json($familyMember);
+        } catch (\Exception $e) {
+            Log::error('Family member update failed', [
+                'error' => $e->getMessage(),
+                'user_id' => Auth::id()
+            ]);
+            return response()->json(['message' => 'Failed to update family member. Please check your input.', 'error' => $e->getMessage()], 422);
+        }
     }
 
     public function destroy(FamilyMember $familyMember)

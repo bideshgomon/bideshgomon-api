@@ -424,7 +424,7 @@ class User extends Authenticatable
     public function calculateProfileCompletion(): int
     {
         $completion = 0;
-        $totalSections = 12;
+        $totalSections = 13; // Updated from 12 to 13
 
         // 1. Basic Information (10 points)
         if ($this->name && $this->email) {
@@ -498,6 +498,21 @@ class User extends Authenticatable
         // 12. Passport Information (10 points)
         if ($this->profile && $this->profile->passport_number) {
             $completion += 10;
+        }
+
+        // 13. Social Media & Contact (5 points)
+        if ($this->profile) {
+            $socialFields = [
+                $this->profile->facebook_url,
+                $this->profile->linkedin_url,
+                $this->profile->twitter_url,
+                $this->profile->instagram_url,
+                $this->profile->whatsapp_number,
+            ];
+            $socialFilled = count(array_filter($socialFields, fn($v) => !empty($v)));
+            if ($socialFilled > 0) {
+                $completion += 5;
+            }
         }
 
         return min(100, $completion);

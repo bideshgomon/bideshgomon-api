@@ -31,6 +31,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Public routes for data
+Route::get('/countries', function () {
+    return \App\Models\Country::where('is_active', true)
+        ->orderBy('name')
+        ->get(['id', 'name', 'phone_code', 'flag_emoji', 'iso_code']);
+});
+
 // Search API routes
 Route::middleware(['auth:web'])->prefix('search')->name('api.search.')->group(function () {
     Route::get('/suggestions', [SearchController::class, 'suggestions'])->name('suggestions');

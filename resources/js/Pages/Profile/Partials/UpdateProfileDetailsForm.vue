@@ -35,6 +35,8 @@ const formatDateForInput = (dateStr) => {
     return dateStr.split(' ')[0];
 };
 
+const sameAsPresent = ref(false)
+
 const form = useForm({
     bio: props.userProfile?.bio || '',
     dob: props.userProfile?.dob || '',
@@ -54,6 +56,32 @@ const form = useForm({
     permanent_postal_code: props.userProfile?.permanent_postal_code || '',
     nid: props.userProfile?.nid || '',
 });
+
+watch(sameAsPresent, (newValue) => {
+    if (newValue) {
+        form.permanent_address_line = form.present_address_line
+        form.permanent_country = form.present_country
+        form.permanent_division = form.present_division
+        form.permanent_district = form.present_district
+        form.permanent_city = form.present_city
+        form.permanent_postal_code = form.present_postal_code
+    }
+})
+
+// Auto-sync permanent address when "same as present" is checked
+watch(
+    () => [form.present_address_line, form.present_country, form.present_division, form.present_district, form.present_city, form.present_postal_code],
+    () => {
+        if (sameAsPresent.value) {
+            form.permanent_address_line = form.present_address_line
+            form.permanent_country = form.present_country
+            form.permanent_division = form.present_division
+            form.permanent_district = form.present_district
+            form.permanent_city = form.present_city
+            form.permanent_postal_code = form.present_postal_code
+        }
+    }
+)
 
 // Get districts based on selected division
 const presentDistricts = computed(() => {
@@ -302,7 +330,17 @@ const submit = () => {
 
             <!-- Permanent Address -->
             <div class="border-t pt-6">
-                <h3 class="text-md font-medium text-gray-900 mb-4">Permanent Address</h3>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-md font-medium text-gray-900">Permanent Address</h3>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input
+                            v-model="sameAsPresent"
+                            type="checkbox"
+                            class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                        />
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Same as Present Address</span>
+                    </label>
+                </div>
                 <div class="space-y-4">
                     <!-- Country Selector -->
                     <div>
@@ -410,7 +448,8 @@ const submit = () => {
                         <textarea
                             id="permanent_address_line"
                             v-model="form.permanent_address_line"
-                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                            :disabled="sameAsPresent"
+                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed"
                             rows="2"
                             placeholder="House/Apartment number, Street, Area"
                         />

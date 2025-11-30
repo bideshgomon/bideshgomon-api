@@ -135,6 +135,10 @@ const openAddModal = () => {
 }
 
 const openEditModal = (education) => {
+  if (!education) {
+    console.error('Education data is undefined')
+    return
+  }
   form.value = {
     institution_name: education.institution_name || '',
     degree: education.degree || '',

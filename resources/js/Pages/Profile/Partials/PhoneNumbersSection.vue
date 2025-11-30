@@ -55,23 +55,37 @@ const phoneTypes = [
     { value: 'other', label: 'Other', icon: '📞' },
 ]
 
-// Common country codes (can be extended or fetched from API)
-const countryCodes = [
-    { code: '+880', name: 'Bangladesh', flag: '🇧🇩' },
-    { code: '+91', name: 'India', flag: '🇮🇳' },
-    { code: '+92', name: 'Pakistan', flag: '🇵🇰' },
-    { code: '+1', name: 'USA/Canada', flag: '🇺🇸' },
-    { code: '+44', name: 'United Kingdom', flag: '🇬🇧' },
-    { code: '+971', name: 'UAE', flag: '🇦🇪' },
-    { code: '+966', name: 'Saudi Arabia', flag: '🇸🇦' },
-    { code: '+974', name: 'Qatar', flag: '🇶🇦' },
-    { code: '+65', name: 'Singapore', flag: '🇸🇬' },
-    { code: '+60', name: 'Malaysia', flag: '🇲🇾' },
-]
+// Country codes - will be loaded from database
+const countryCodes = ref([])
+const isLoadingCountries = ref(false)
 
 const primaryPhone = computed(() => {
     return phoneNumbers.value.find(phone => phone.is_primary)
 })
+
+const fetchCountries = async () => {
+    try {
+        isLoadingCountries.value = true
+        const response = await axios.get('/api/countries')
+        countryCodes.value = response.data.map(country => ({
+            code: country.phone_code || '+880',
+            name: country.name,
+            flag: country.flag_emoji || '🌐'
+        }))
+        // Sort: Bangladesh first, then alphabetically
+        countryCodes.value.sort((a, b) => {
+            if (a.name === 'Bangladesh') return -1
+            if (b.name === 'Bangladesh') return 1
+            return a.name.localeCompare(b.name)
+        })
+    } catch (err) {
+        console.error('Failed to fetch countries:', err)
+        // Fallback to Bangladesh
+        countryCodes.value = [{ code: '+880', name: 'Bangladesh', flag: '🇧🇩' }]
+    } finally {
+        isLoadingCountries.value = false
+    }
+}
 
 const fetchPhoneNumbers = async () => {
     try {
@@ -318,6 +332,7 @@ const closeVerifyModal = () => {
 }
 
 onMounted(() => {
+    fetchCountries()
     fetchPhoneNumbers()
 })
 </script>
@@ -478,18 +493,32 @@ onMounted(() => {
                 <form @submit.prevent="savePhoneNumber" class="space-y-4">
                     <!-- Country Code -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Country Code <span class="text-red-500">*</span>
                         </label>
-                        <select
-                            v-model="form.country_code"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                            style="font-size: 16px; min-height: 44px"
-                        >
-                            <option v-for="country in countryCodes" :key="country.code" :value="country.code">
-                                {{ country.flag }} {{ country.code }} - {{ country.name }}
-                            </option>
-                        </select>
+                        <div class="relative">
+                            <select
+                                v-model="form.country_code"
+                                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none bg-white dark:bg-gray-800 shadow-sm hover:border-gray-400 transition-colors cursor-pointer"
+                                style="font-size: 15px; min-height: 48px; padding-right: 40px;"
+                            >
+                                <option value="" disabled>Select country</option>
+                                <option 
+                                    v-for="country in countryCodes" 
+                                    :key="country.code" 
+                                    :value="country.code"
+                                    class="py-2"
+                                >
+                                    {{ country.flag }} {{ country.code }} — {{ country.name }}
+                                </option>
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <p v-if="isLoadingCountries" class="text-xs text-gray-500 mt-1">Loading countries...</p>
                     </div>
 
                     <!-- Phone Number -->

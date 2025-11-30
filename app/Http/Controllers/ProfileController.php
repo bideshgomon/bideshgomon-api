@@ -84,6 +84,13 @@ class ProfileController extends Controller
             },
             'phoneNumbers' => function ($query) {
                 $query->orderBy('is_primary', 'desc');
+            },
+            'passports' => function ($query) {
+                $query->orderBy('is_current_passport', 'desc')
+                     ->orderBy('expiry_date', 'desc');
+            },
+            'visaHistory' => function ($query) {
+                $query->orderBy('application_date', 'desc');
             }
         ]);
 
@@ -107,18 +114,18 @@ class ProfileController extends Controller
             'status' => session('status'),
             'user' => $user,
             'userProfile' => $user->profile,
-            'familyMembers' => $user->familyMembers,
-            'userLanguages' => $user->languages()->with(['language', 'languageTest'])->get(),
+            'familyMembers' => $user->familyMembers ?? [],
+            'userLanguages' => $user->languages ?? [],
             'languages' => \App\Models\Language::where('is_active', true)->orderBy('name')->get(['id', 'name']),
             'languageTests' => \App\Models\LanguageTest::where('is_active', true)->orderBy('name')->get(['id', 'name', 'language_id']),
             'securityInformation' => $user->securityInformation,
-            'educations' => $user->educations,
-            'workExperiences' => $user->workExperiences,
-            'skills' => $user->skills,
-            'travelHistory' => $user->travelHistory,
-            'phoneNumbers' => $user->phoneNumbers,
-            'passports' => $user->passports,
-            'visaHistory' => $user->visaHistory,
+            'educations' => $user->educations ?? [],
+            'workExperiences' => $user->workExperiences ?? [],
+            'skills' => $user->skills ?? [],
+            'travelHistory' => $user->travelHistory ?? [],
+            'phoneNumbers' => $user->phoneNumbers ?? [],
+            'passports' => $user->passports ?? [],
+            'visaHistory' => $user->visaHistory ?? [],
             'divisions' => get_bd_divisions(),
             'countries' => \App\Models\Country::where('is_active', true)->orderBy('name')->get(['id', 'name', 'nationality']),
             'degrees' => \App\Models\Degree::where('is_active', true)->orderBy('name')->get(['id', 'name']),
@@ -279,7 +286,15 @@ class ProfileController extends Controller
             return !empty(trim($value));
         });
         
-        $profile->update(['social_links' => $socialLinks]);
+        // Update both JSON field and individual columns for backward compatibility
+        $profile->update([
+            'social_links' => $socialLinks,
+            'facebook_url' => $socialLinks['facebook'] ?? null,
+            'linkedin_url' => $socialLinks['linkedin'] ?? null,
+            'twitter_url' => $socialLinks['twitter'] ?? null,
+            'instagram_url' => $socialLinks['instagram'] ?? null,
+            'whatsapp_number' => $socialLinks['whatsapp'] ?? null,
+        ]);
 
         return Redirect::back()->with('success', 'Social links updated successfully!');
     }
@@ -308,23 +323,28 @@ class ProfileController extends Controller
      */
     public function updateMedicalInfo(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'blood_group' => ['required', 'string', 'max:10'],
-            'allergies' => ['nullable', 'string'],
-            'medical_conditions' => ['nullable', 'string'],
-            'vaccinations' => ['nullable', 'array'],
-            'vaccinations.*.id' => ['required', 'string'],
-            'vaccinations.*.name' => ['required', 'string'],
-            'vaccinations.*.date' => ['required', 'date'],
-            'health_insurance_provider' => ['nullable', 'string', 'max:255'],
-            'health_insurance_policy_number' => ['nullable', 'string', 'max:255'],
-            'health_insurance_expiry_date' => ['nullable', 'date'],
-        ]);
+        try {
+            $validated = $request->validate([
+                'blood_group' => ['nullable', 'string', 'max:10'],
+                'allergies' => ['nullable', 'string'],
+                'medical_conditions' => ['nullable', 'string'],
+                'vaccinations' => ['nullable', 'array'],
+                'vaccinations.*.id' => ['nullable', 'string'],
+                'vaccinations.*.name' => ['nullable', 'string'],
+                'vaccinations.*.date' => ['nullable', 'date'],
+                'health_insurance_provider' => ['nullable', 'string', 'max:255'],
+                'health_insurance_policy_number' => ['nullable', 'string', 'max:255'],
+                'health_insurance_expiry_date' => ['nullable', 'date'],
+            ]);
 
-        $profile = $request->user()->profile()->firstOrCreate([]);
-        $profile->update($validated);
+            $profile = $request->user()->profile()->firstOrCreate([]);
+            $profile->update($validated);
 
-        return Redirect::back()->with('success', 'Medical information updated successfully!');
+            return Redirect::back()->with('success', 'Medical information updated successfully!');
+        } catch (\Exception $e) {
+            Log::error('Medical info update failed', ['error' => $e->getMessage(), 'user_id' => $request->user()->id]);
+            return Redirect::back()->withErrors(['error' => 'Failed to update medical information. Please check your input.']);
+        }
     }
 
     /**
@@ -332,25 +352,30 @@ class ProfileController extends Controller
      */
     public function updateReferences(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'references' => ['required', 'array'],
-            'references.*.id' => ['required'],
-            'references.*.type' => ['required', 'string', 'in:professional,academic,personal'],
-            'references.*.name' => ['required', 'string', 'max:255'],
-            'references.*.relationship' => ['required', 'string', 'max:100'],
-            'references.*.organization' => ['required', 'string', 'max:255'],
-            'references.*.position' => ['required', 'string', 'max:255'],
-            'references.*.email' => ['required', 'email', 'max:255'],
-            'references.*.phone' => ['required', 'string', 'max:20'],
-            'references.*.address' => ['nullable', 'string', 'max:500'],
-            'references.*.years_known' => ['nullable', 'integer', 'min:0', 'max:50'],
-            'references.*.can_contact' => ['boolean'],
-        ]);
+        try {
+            $validated = $request->validate([
+                'references' => ['nullable', 'array'],
+                'references.*.id' => ['nullable'],
+                'references.*.type' => ['required', 'string', 'in:professional,academic,personal'],
+                'references.*.name' => ['required', 'string', 'max:255'],
+                'references.*.relationship' => ['nullable', 'string', 'max:100'],
+                'references.*.organization' => ['nullable', 'string', 'max:255'],
+                'references.*.position' => ['nullable', 'string', 'max:255'],
+                'references.*.email' => ['nullable', 'email', 'max:255'],
+                'references.*.phone' => ['nullable', 'string', 'max:20'],
+                'references.*.address' => ['nullable', 'string', 'max:500'],
+                'references.*.years_known' => ['nullable', 'integer', 'min:0', 'max:50'],
+                'references.*.can_contact' => ['nullable', 'boolean'],
+            ]);
 
-        $profile = $request->user()->profile()->firstOrCreate([]);
-        $profile->update($validated);
+            $profile = $request->user()->profile()->firstOrCreate([]);
+            $profile->update(['references' => $validated['references'] ?? []]);
 
-        return Redirect::back()->with('success', 'References updated successfully!');
+            return Redirect::back()->with('success', 'References updated successfully!');
+        } catch (\Exception $e) {
+            Log::error('References update failed', ['error' => $e->getMessage(), 'user_id' => $request->user()->id]);
+            return Redirect::back()->withErrors(['error' => 'Failed to update references. Please check your input.']);
+        }
     }
 
     /**
@@ -358,23 +383,28 @@ class ProfileController extends Controller
      */
     public function updateCertifications(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'certifications' => ['required', 'array'],
-            'certifications.*.id' => ['required'],
-            'certifications.*.type' => ['required', 'string', 'in:professional,trade,driving,technical,language,other'],
-            'certifications.*.name' => ['required', 'string', 'max:255'],
-            'certifications.*.issuing_organization' => ['required', 'string', 'max:255'],
-            'certifications.*.issue_date' => ['required', 'date'],
-            'certifications.*.expiry_date' => ['nullable', 'date', 'after:issue_date'],
-            'certifications.*.credential_id' => ['nullable', 'string', 'max:100'],
-            'certifications.*.credential_url' => ['nullable', 'string', 'url', 'max:500'],
-            'certifications.*.never_expires' => ['boolean'],
-        ]);
+        try {
+            $validated = $request->validate([
+                'certifications' => ['nullable', 'array'],
+                'certifications.*.id' => ['nullable'],
+                'certifications.*.type' => ['required', 'string', 'in:professional,trade,driving,technical,language,other'],
+                'certifications.*.name' => ['required', 'string', 'max:255'],
+                'certifications.*.issuing_organization' => ['nullable', 'string', 'max:255'],
+                'certifications.*.issue_date' => ['nullable', 'date'],
+                'certifications.*.expiry_date' => ['nullable', 'date'],
+                'certifications.*.credential_id' => ['nullable', 'string', 'max:100'],
+                'certifications.*.credential_url' => ['nullable', 'string', 'url', 'max:500'],
+                'certifications.*.never_expires' => ['nullable', 'boolean'],
+            ]);
 
-        $profile = $request->user()->profile()->firstOrCreate([]);
-        $profile->update($validated);
+            $profile = $request->user()->profile()->firstOrCreate([]);
+            $profile->update(['certifications' => $validated['certifications'] ?? []]);
 
-        return Redirect::back()->with('success', 'Certifications updated successfully!');
+            return Redirect::back()->with('success', 'Certifications updated successfully!');
+        } catch (\Exception $e) {
+            Log::error('Certifications update failed', ['error' => $e->getMessage(), 'user_id' => $request->user()->id]);
+            return Redirect::back()->withErrors(['error' => 'Failed to update certifications. Please check your input.']);
+        }
     }
 
     /**

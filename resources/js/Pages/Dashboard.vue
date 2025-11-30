@@ -24,87 +24,132 @@ const props = defineProps({
 });
 
 const services = [
+    // Core Platform Services (Main Features)
+    {
+        id: 'profile-assessment',
+        name: 'AI Profile Assessment',
+        description: 'Get intelligent profile evaluation and visa recommendations',
+        icon: SparklesIcon,
+        route: 'profile.assessment.show',
+        variant: 'sunrise',
+        badge: null,
+        category: 'featured'
+    },
+    {
+        id: 'wallet',
+        name: 'Wallet',
+        description: 'Manage your funds and transactions',
+        icon: CurrencyDollarIcon,
+        route: 'wallet.index',
+        variant: 'gold',
+        badge: null,
+        category: 'featured'
+    },
+    {
+        id: 'referrals',
+        name: 'Referrals',
+        description: 'Invite friends and earn rewards',
+        icon: TrophyIcon,
+        route: 'referral.index',
+        variant: 'heritage',
+        badge: null,
+        category: 'featured'
+    },
+    
+    // Support & Help Services
+    {
+        id: 'support',
+        name: 'Support Tickets',
+        description: 'Get help from our support team',
+        icon: ShieldCheckIcon,
+        route: 'support.index',
+        variant: 'ocean',
+        badge: null,
+        category: 'support'
+    },
+    {
+        id: 'appointments',
+        name: 'Appointments',
+        description: 'Schedule consultations with experts',
+        icon: ClockIcon,
+        route: 'appointments.index',
+        variant: 'sky',
+        badge: null,
+        category: 'support'
+    },
+    {
+        id: 'faqs',
+        name: 'FAQs',
+        description: 'Find answers to common questions',
+        icon: LightBulbIcon,
+        route: 'faqs.index',
+        variant: 'growth',
+        badge: null,
+        category: 'support'
+    },
+    {
+        id: 'events',
+        name: 'Events',
+        description: 'Register for webinars and workshops',
+        icon: GlobeAltIcon,
+        route: 'events.index',
+        variant: 'sunrise',
+        badge: null,
+        category: 'support'
+    },
+    
+    // Document Services
+    {
+        id: 'document-scanner',
+        name: 'Document Scanner',
+        description: 'Scan and digitize your documents',
+        icon: DocumentTextIcon,
+        route: 'document-scanner.index',
+        variant: 'ocean',
+        badge: null,
+        category: 'documents'
+    },
+    
+    // Profile Management (Quick Links)
+    {
+        id: 'profile',
+        name: 'Edit Profile',
+        description: 'Update your personal information',
+        icon: UserCircleIcon,
+        route: 'profile.edit',
+        variant: 'sky',
+        badge: null,
+        category: 'profile'
+    },
     {
         id: 'education',
         name: 'Education',
-        description: 'Manage your academic records',
+        description: 'Manage academic records',
         icon: AcademicCapIcon,
         route: 'profile.edit',
         params: { section: 'education' },
-        variant: 'ocean',
-        badge: props.stats?.education_count || 0
+        variant: 'growth',
+        badge: props.stats?.education_count || 0,
+        category: 'profile'
     },
     {
         id: 'experience',
         name: 'Work Experience',
-        description: 'Track your employment history',
+        description: 'Track employment history',
         icon: BriefcaseIcon,
         route: 'profile.edit',
         params: { section: 'experience' },
-        variant: 'sky',
-        badge: props.stats?.experience_count || 0
-    },
-    {
-        id: 'skills',
-        name: 'Skills & Expertise',
-        description: 'Professional skills and competencies',
-        icon: LightBulbIcon,
-        route: 'profile.edit',
-        params: { section: 'skills' },
-        variant: 'sunrise',
-        badge: props.stats?.skills_count || 0
-    },
-    {
-        id: 'travel',
-        name: 'Travel History',
-        description: 'International travel records',
-        icon: GlobeAltIcon,
-        route: 'profile.edit',
-        params: { section: 'travel' },
-        variant: 'growth',
-        badge: props.stats?.travel_count || 0
-    },
-    {
-        id: 'family',
-        name: 'Family',
-        description: 'Family members & relationships',
-        icon: UserCircleIcon,
-        route: 'profile.edit',
-        params: { section: 'family' },
         variant: 'heritage',
-        badge: props.stats?.family_count || 0
-    },
-    {
-        id: 'financial',
-        name: 'Financial',
-        description: 'Income & financial details',
-        icon: CurrencyDollarIcon,
-        route: 'profile.edit',
-        params: { section: 'financial' },
-        variant: 'gold',
-        badge: null
-    },
-    {
-        id: 'languages',
-        name: 'Languages',
-        description: 'Language proficiency levels',
-        icon: SparklesIcon,
-        route: 'profile.edit',
-        params: { section: 'languages' },
-        variant: 'ocean',
-        badge: props.stats?.languages_count || 0
-    },
-    {
-        id: 'security',
-        name: 'Security',
-        description: 'Background & police clearance',
-        icon: ShieldCheckIcon,
-        route: 'profile.edit',
-        params: { section: 'security' },
-        variant: 'sunrise',
-        badge: null
+        badge: props.stats?.experience_count || 0,
+        category: 'profile'
     },
 ];
+
+// Group services by category
+const featuredServices = computed(() => services.filter(s => s.category === 'featured'));
+const supportServices = computed(() => services.filter(s => s.category === 'support'));
+const documentServices = computed(() => services.filter(s => s.category === 'documents'));
+const profileServices = computed(() => services.filter(s => s.category === 'profile'));
 
 // Profile completion progress steps
 const profileSteps = computed(() => services.map((service, index) => ({
@@ -585,12 +630,15 @@ const getPriorityStatus = (priority) => {
                     </div>
                 </div>
 
-                <!-- Profile Sections -->
+                <!-- Featured Platform Services -->
                 <div class="animate-fadeInUp">
-                    <h3 class="text-xl font-bold text-gray-900 mb-rhythm-lg">Profile Sections</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-rhythm-lg">
+                    <h3 class="text-xl font-bold text-gray-900 mb-rhythm-lg flex items-center gap-rhythm-sm">
+                        <FireIcon class="h-6 w-6 text-sunrise-500" />
+                        Featured Services
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-rhythm-lg">
                         <RhythmicCard
-                            v-for="service in services"
+                            v-for="service in featuredServices"
                             :key="service.id"
                             :variant="service.variant"
                             hover-lift
@@ -598,11 +646,42 @@ const getPriorityStatus = (priority) => {
                             <template #icon>
                                 <component :is="service.icon" class="h-6 w-6" />
                             </template>
-                            <template #badge v-if="service.badge !== null">
-                                <StatusBadge 
-                                    :status="service.badge > 0 ? 'success' : 'pending'"
-                                    :label="`${service.badge} items`"
-                                />
+                            <template #badge>
+                                <StatusBadge status="featured" />
+                            </template>
+                            <template #default>
+                                <h4 class="font-semibold text-gray-900 mb-rhythm-xs text-lg">{{ service.name }}</h4>
+                                <p class="text-sm text-gray-600">{{ service.description }}</p>
+                            </template>
+                            <template #footer>
+                                <FlowButton 
+                                    :variant="service.variant"
+                                    :href="route(service.route, service.params)"
+                                    size="md"
+                                    full-width
+                                >
+                                    Open {{ service.name }}
+                                </FlowButton>
+                            </template>
+                        </RhythmicCard>
+                    </div>
+                </div>
+
+                <!-- Support & Help Services -->
+                <div class="animate-fadeInUp">
+                    <h3 class="text-xl font-bold text-gray-900 mb-rhythm-lg flex items-center gap-rhythm-sm">
+                        <ShieldCheckIcon class="h-6 w-6 text-ocean-500" />
+                        Support & Help
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-rhythm-lg">
+                        <RhythmicCard
+                            v-for="service in supportServices"
+                            :key="service.id"
+                            :variant="service.variant"
+                            hover-lift
+                        >
+                            <template #icon>
+                                <component :is="service.icon" class="h-6 w-6" />
                             </template>
                             <template #default>
                                 <h4 class="font-semibold text-gray-900 mb-rhythm-xs">{{ service.name }}</h4>
@@ -615,11 +694,96 @@ const getPriorityStatus = (priority) => {
                                     size="sm"
                                     full-width
                                 >
-                                    Manage
+                                    Access
                                 </FlowButton>
                             </template>
                         </RhythmicCard>
                     </div>
+                </div>
+
+                <!-- Document Services -->
+                <div class="animate-fadeInUp" v-if="documentServices.length > 0">
+                    <h3 class="text-xl font-bold text-gray-900 mb-rhythm-lg flex items-center gap-rhythm-sm">
+                        <DocumentTextIcon class="h-6 w-6 text-growth-500" />
+                        Document Management
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-rhythm-lg">
+                        <RhythmicCard
+                            v-for="service in documentServices"
+                            :key="service.id"
+                            :variant="service.variant"
+                            hover-lift
+                        >
+                            <template #icon>
+                                <component :is="service.icon" class="h-6 w-6" />
+                            </template>
+                            <template #default>
+                                <h4 class="font-semibold text-gray-900 mb-rhythm-xs">{{ service.name }}</h4>
+                                <p class="text-sm text-gray-600">{{ service.description }}</p>
+                            </template>
+                            <template #footer>
+                                <FlowButton 
+                                    :variant="service.variant"
+                                    :href="route(service.route, service.params)"
+                                    size="sm"
+                                    full-width
+                                >
+                                    Open
+                                </FlowButton>
+                            </template>
+                        </RhythmicCard>
+                    </div>
+                </div>
+
+                <!-- Profile Quick Links (Collapsed Section) -->
+                <div class="animate-fadeInUp">
+                    <details class="group">
+                        <summary class="cursor-pointer list-none">
+                            <div class="flex items-center justify-between p-rhythm-md bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                                <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-rhythm-sm">
+                                    <UserCircleIcon class="h-5 w-5 text-gray-600" />
+                                    Profile Quick Links
+                                    <span class="text-sm text-gray-500">(Click to expand)</span>
+                                </h3>
+                                <svg class="w-5 h-5 text-gray-600 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </summary>
+                        <div class="mt-rhythm-lg grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-rhythm-lg">
+                            <RhythmicCard
+                                v-for="service in profileServices"
+                                :key="service.id"
+                                :variant="service.variant"
+                                hover-lift
+                                size="sm"
+                            >
+                                <template #icon>
+                                    <component :is="service.icon" class="h-5 w-5" />
+                                </template>
+                                <template #badge v-if="service.badge !== null && service.badge !== undefined">
+                                    <StatusBadge 
+                                        :status="service.badge > 0 ? 'success' : 'pending'"
+                                        :label="`${service.badge}`"
+                                    />
+                                </template>
+                                <template #default>
+                                    <h4 class="font-semibold text-gray-900 text-sm mb-rhythm-xs">{{ service.name }}</h4>
+                                    <p class="text-xs text-gray-600">{{ service.description }}</p>
+                                </template>
+                                <template #footer>
+                                    <FlowButton 
+                                        :variant="service.variant"
+                                        :href="route(service.route, service.params)"
+                                        size="sm"
+                                        full-width
+                                    >
+                                        Edit
+                                    </FlowButton>
+                                </template>
+                            </RhythmicCard>
+                        </div>
+                    </details>
                 </div>
 
                 <!-- Recent Activity -->
