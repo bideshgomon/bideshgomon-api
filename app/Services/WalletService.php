@@ -157,8 +157,8 @@ class WalletService
             'active_wallets' => Wallet::where('status', 'active')->count(),
             'total_balance' => Wallet::sum('balance'),
             'total_transactions' => WalletTransaction::count(),
-            'total_credits' => WalletTransaction::where('transaction_type', 'credit')->sum('amount'),
-            'total_debits' => WalletTransaction::where('transaction_type', 'debit')->sum('amount'),
+            'total_credits' => WalletTransaction::where('type', 'credit')->sum('amount'),
+            'total_debits' => WalletTransaction::where('type', 'debit')->sum('amount'),
         ];
     }
 }

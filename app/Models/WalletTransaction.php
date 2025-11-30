@@ -12,7 +12,8 @@ class WalletTransaction extends Model
 
     protected $fillable = [
         'wallet_id',
-        'transaction_type',
+        'user_id',
+        'type',
         'amount',
         'balance_before',
         'balance_after',
@@ -32,6 +33,27 @@ class WalletTransaction extends Model
         'metadata' => 'array',
         'processed_at' => 'datetime',
     ];
+
+    /**
+     * Attributes to append to model's array/JSON form.
+     */
+    protected $appends = ['transaction_type'];
+
+    /**
+     * Get transaction_type attribute (for backward compatibility).
+     */
+    public function getTransactionTypeAttribute(): string
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set transaction_type attribute (for backward compatibility).
+     */
+    public function setTransactionTypeAttribute($value): void
+    {
+        $this->attributes['type'] = $value;
+    }
 
     /**
      * Get the wallet that owns the transaction.
@@ -83,7 +105,7 @@ class WalletTransaction extends Model
         $wallet = $this->wallet;
         
         // Reverse the transaction effect
-        if ($this->transaction_type === 'credit') {
+        if ($this->type === 'credit') {
             $wallet->balance -= $this->amount;
         } else {
             $wallet->balance += $this->amount;
@@ -105,7 +127,7 @@ class WalletTransaction extends Model
      */
     public function isCredit(): bool
     {
-        return $this->transaction_type === 'credit';
+        return $this->type === 'credit';
     }
 
     /**
@@ -113,7 +135,7 @@ class WalletTransaction extends Model
      */
     public function isDebit(): bool
     {
-        return $this->transaction_type === 'debit';
+        return $this->type === 'debit';
     }
 
     /**

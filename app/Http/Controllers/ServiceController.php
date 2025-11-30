@@ -11,6 +11,8 @@ class ServiceController extends Controller
 {
     /**
      * Display all available services
+     * Only shows revenue_service type (services that generate revenue)
+     * Profile management is in dashboard, platform tools are user utilities
      */
     public function index()
     {
@@ -28,6 +30,8 @@ class ServiceController extends Controller
                 'is_featured',
                 'sort_order'
             ])
+            // Only show revenue-generating services
+            ->where('service_type', 'revenue_service')
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get()
@@ -53,6 +57,8 @@ class ServiceController extends Controller
         $featured = ServiceModule::with('category')
             ->where('is_active', true)
             ->where('is_featured', true)
+            // Only show revenue-generating services
+            ->where('service_type', 'revenue_service')
             ->orderBy('sort_order')
             ->limit(3)
             ->get();
@@ -72,7 +78,7 @@ class ServiceController extends Controller
     }
 
     /**
-     * Display a specific service
+     * Display a specific service - routes to dedicated service pages
      */
     public function show($slug)
     {
@@ -81,36 +87,30 @@ class ServiceController extends Controller
             ->where('is_active', true)
             ->firstOrFail();
 
-        // Get all countries from database
+        // Route to dedicated service pages based on slug
+        $routeMap = [
+            'travel-insurance' => 'travel-insurance.index',
+            'flight-requests' => 'flight-requests.index',
+            'cv-builder' => 'cv-builder.index',
+        ];
+
+        // If service has a dedicated page, redirect to it
+        if (isset($routeMap[$slug])) {
+            return redirect()->route($routeMap[$slug]);
+        }
+
+        // Otherwise show generic service detail page
         $countries = \App\Models\Country::select('id', 'name', 'iso_code_2 as code', 'flag_emoji as flag')
             ->where('is_active', true)
             ->orderBy('name')
             ->get();
 
-        // Get professions list
         $professions = [
-            'Student',
-            'Engineer',
-            'Doctor',
-            'Teacher',
-            'Business Owner',
-            'IT Professional',
-            'Accountant',
-            'Manager',
-            'Consultant',
-            'Lawyer',
-            'Architect',
-            'Designer',
-            'Nurse',
-            'Chef',
-            'Artist',
-            'Writer',
-            'Freelancer',
-            'Government Employee',
-            'Private Employee',
-            'Retired',
-            'Self Employed',
-            'Other'
+            'Student', 'Engineer', 'Doctor', 'Teacher', 'Business Owner',
+            'IT Professional', 'Accountant', 'Manager', 'Consultant', 'Lawyer',
+            'Architect', 'Designer', 'Nurse', 'Chef', 'Artist', 'Writer',
+            'Freelancer', 'Government Employee', 'Private Employee', 'Retired',
+            'Self Employed', 'Other'
         ];
 
         return Inertia::render('Services/Show', [

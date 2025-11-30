@@ -36,14 +36,14 @@ class AdminAnalyticsController extends Controller
 
         // Revenue Analytics
         $revenueStats = [
-            'total_revenue' => WalletTransaction::where('transaction_type', 'credit')
+            'total_revenue' => WalletTransaction::where('type', 'credit')
                 ->where('status', 'completed')
                 ->sum('amount'),
-            'period_revenue' => WalletTransaction::where('transaction_type', 'credit')
+            'period_revenue' => WalletTransaction::where('type', 'credit')
                 ->where('status', 'completed')
                 ->where('created_at', '>=', $startDate)
                 ->sum('amount'),
-            'avg_transaction' => WalletTransaction::where('transaction_type', 'credit')
+            'avg_transaction' => WalletTransaction::where('type', 'credit')
                 ->where('status', 'completed')
                 ->where('created_at', '>=', $startDate)
                 ->avg('amount'),
@@ -84,7 +84,7 @@ class AdminAnalyticsController extends Controller
             $date = now()->subDays($i);
             $revenueChart[] = [
                 'date' => $date->format('M d'),
-                'amount' => WalletTransaction::where('transaction_type', 'credit')
+                'amount' => WalletTransaction::where('type', 'credit')
                     ->where('status', 'completed')
                     ->whereDate('created_at', $date)
                     ->sum('amount'),
@@ -122,13 +122,13 @@ class AdminAnalyticsController extends Controller
             });
 
         // Monthly Revenue Comparison (Current vs Previous Month)
-        $currentMonthRevenue = WalletTransaction::where('transaction_type', 'credit')
+        $currentMonthRevenue = WalletTransaction::where('type', 'credit')
             ->where('status', 'completed')
             ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->sum('amount');
 
-        $previousMonthRevenue = WalletTransaction::where('transaction_type', 'credit')
+        $previousMonthRevenue = WalletTransaction::where('type', 'credit')
             ->where('status', 'completed')
             ->whereMonth('created_at', now()->subMonth()->month)
             ->whereYear('created_at', now()->subMonth()->year)
@@ -217,7 +217,7 @@ class AdminAnalyticsController extends Controller
     private function exportRevenue($startDate)
     {
         $transactions = WalletTransaction::with('wallet.user')
-            ->where('transaction_type', 'credit')
+            ->where('type', 'credit')
             ->where('created_at', '>=', $startDate)
             ->get();
 

@@ -49,7 +49,7 @@ class Wallet extends Model
         $this->save();
 
         return $this->transactions()->create([
-            'transaction_type' => 'credit',
+            'type' => 'credit',
             'amount' => $amount,
             'balance_before' => $balanceBefore,
             'balance_after' => $balanceAfter,
@@ -77,7 +77,7 @@ class Wallet extends Model
         $this->save();
 
         return $this->transactions()->create([
-            'transaction_type' => 'debit',
+            'type' => 'debit',
             'amount' => $amount,
             'balance_before' => $balanceBefore,
             'balance_after' => $balanceAfter,

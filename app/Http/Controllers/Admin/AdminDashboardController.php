@@ -32,14 +32,14 @@ class AdminDashboardController extends Controller
         $newUsersThisMonth = User::whereMonth('created_at', now()->month)->count();
 
         // Revenue Statistics
-        $totalRevenue = WalletTransaction::where('transaction_type', 'credit')
+        $totalRevenue = WalletTransaction::where('type', 'credit')
             ->where('description', 'like', '%payment%')
             ->sum('amount');
-        $revenueToday = WalletTransaction::where('transaction_type', 'credit')
+        $revenueToday = WalletTransaction::where('type', 'credit')
             ->where('description', 'like', '%payment%')
             ->whereDate('created_at', today())
             ->sum('amount');
-        $revenueThisMonth = WalletTransaction::where('transaction_type', 'credit')
+        $revenueThisMonth = WalletTransaction::where('type', 'credit')
             ->where('description', 'like', '%payment%')
             ->whereMonth('created_at', now()->month)
             ->sum('amount');
@@ -75,7 +75,7 @@ class AdminDashboardController extends Controller
         // Wallet Statistics
         $totalWalletBalance = DB::table('wallets')->sum('balance');
         $totalTransactions = WalletTransaction::count();
-        $pendingWithdrawals = WalletTransaction::where('transaction_type', 'debit')
+        $pendingWithdrawals = WalletTransaction::where('type', 'debit')
             ->where('status', 'pending')
             ->count();
 
@@ -154,7 +154,7 @@ class AdminDashboardController extends Controller
             $date = now()->subDays($i);
             $revenueChartData[] = [
                 'date' => $date->format('M d'),
-                'amount' => WalletTransaction::where('transaction_type', 'credit')
+                'amount' => WalletTransaction::where('type', 'credit')
                     ->where('description', 'like', '%payment%')
                     ->whereDate('created_at', $date)
                     ->sum('amount')

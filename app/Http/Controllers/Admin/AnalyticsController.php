@@ -17,10 +17,10 @@ class AnalyticsController extends Controller
         $stats = [
             'totalUsers' => User::count(),
             'newUsersToday' => User::whereDate('created_at', today())->count(),
-            'totalRevenue' => WalletTransaction::where('transaction_type', 'credit')
+            'totalRevenue' => WalletTransaction::where('type', 'credit')
                 ->where('status', 'completed')
                 ->sum('amount'),
-            'revenueToday' => WalletTransaction::where('transaction_type', 'credit')
+            'revenueToday' => WalletTransaction::where('type', 'credit')
                 ->where('status', 'completed')
                 ->whereDate('created_at', today())
                 ->sum('amount'),
@@ -88,7 +88,7 @@ class AnalyticsController extends Controller
         for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::today()->subDays($i);
             $labels[] = $date->format('M d');
-            $data[] = WalletTransaction::where('transaction_type', 'credit')
+            $data[] = WalletTransaction::where('type', 'credit')
                 ->where('status', 'completed')
                 ->whereDate('created_at', $date)
                 ->sum('amount');

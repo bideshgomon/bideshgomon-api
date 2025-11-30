@@ -113,7 +113,7 @@ const leaveImpersonation = () => {
                                 </NavLink>
                                     
                                     <!-- Services Dropdown -->
-                                    <Dropdown align="left" width="48" class="hidden sm:block">
+                                    <Dropdown align="left" width="48">
                                         <template #trigger>
                                             <button
                                                 type="button"
@@ -132,7 +132,7 @@ const leaveImpersonation = () => {
                                                 <template #icon>
                                                     <RectangleStackIcon class="w-5 h-5" />
                                                 </template>
-                                                Browse
+                                                Browse Services
                                             </DropdownLink>
                                             <DropdownLink :href="route('user.applications.index')" icon-class="text-indigo-600">
                                                 <template #icon>

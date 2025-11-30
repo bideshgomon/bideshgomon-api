@@ -88,8 +88,17 @@ Route::get('/dashboard', function () {
     // Calculate profile completion using User model method (12-section system)
     $completion = $user->calculateProfileCompletion();
     
-    // Load active services from database for dashboard
-    $activeServices = [];
+    // Load services from database - categorized by service_type for clear intent
+    // Service Types:
+    // - core_profile: Always visible profile essentials (Edit, Education, Work) - HARDCODED in frontend
+    // - extended_profile: Conditional profile sections - shown as SUGGESTIONS when needed
+    // - platform_tool: Digital utilities shown in dashboard (AI Assessment, CV Builder, Wallet, etc.)
+    // - revenue_service: Bookable services that generate revenue - shown on /services page ONLY
+    // - support: Help and support features
+    
+    $platformTools = [];  // For dashboard display (wallet, cv, ai, etc.)
+    $suggestions = [];    // Profile completion suggestions (context-aware)
+    
     try {
         if (class_exists('App\Models\ServiceModule')) {
             // Map slugs to actual routes
@@ -113,29 +122,58 @@ Route::get('/dashboard', function () {
                 'public-profile' => 'profile.public.settings',
                 'travel-insurance' => 'travel-insurance.index',
                 'flight-requests' => 'flight-requests.index',
-                'payments' => 'payments.index',
+                'payments' => 'payment.index',
                 'financial' => 'profile.edit',
                 'security' => 'profile.edit',
                 'visa-history' => 'profile.visa-history.index',
             ];
             
-            $activeServices = \App\Models\ServiceModule::with('category')
+            // Fetch platform tools and support services for dashboard
+            // Exclude: core_profile (hardcoded), extended_profile (as suggestions), revenue_service (on /services page)
+            $allServices = \App\Models\ServiceModule::with('category')
                 ->where('is_active', true)
                 ->where('coming_soon', false)
-                ->orderBy('is_featured', 'desc')
+                ->whereIn('service_type', ['platform_tool', 'support'])  // Only dashboard utilities
                 ->orderBy('sort_order')
-                ->get()
-                ->map(function ($service) use ($routeMapping) {
-                    $route = $routeMapping[$service->slug] ?? null;
+                ->get();
+                
+            foreach ($allServices as $service) {
+                $route = $routeMapping[$service->slug] ?? null;
+                $params = null;
+                
+                $serviceData = [
+                    'id' => $service->id,
+                    'name' => $service->name,
+                    'slug' => $service->slug,
+                    'description' => $service->short_description ?? $service->full_description,
+                    'icon' => $service->icon ?? 'document',
+                    'is_featured' => $service->is_featured,
+                    'service_type' => $service->service_type,
+                    'category' => $service->category->name ?? 'Other',
+                    'route' => $route,
+                    'route_params' => $params,
+                ];
+                
+                $platformTools[] = $serviceData;
+            }
+            
+            // Create profile completion suggestions (context-aware)
+            // Only suggest extended_profile sections if profile is incomplete
+            if ($completion < 80) {
+                $extendedProfileSuggestions = \App\Models\ServiceModule::with('category')
+                    ->where('is_active', true)
+                    ->where('service_type', 'extended_profile')
+                    ->orderBy('sort_order')
+                    ->limit(3)
+                    ->get();
+                    
+                foreach ($extendedProfileSuggestions as $service) {
+                    $route = $routeMapping[$service->slug] ?? 'profile.edit';
                     $params = null;
                     
                     // Handle profile.edit with section params
                     if ($route === 'profile.edit') {
-                        if ($service->slug === 'education') {
-                            $params = ['section' => 'education'];
-                        } elseif ($service->slug === 'work-experience') {
-                            $params = ['section' => 'experience'];
-                        } elseif ($service->slug === 'languages') {
+                        if ($service->slug === 'languages') {
                             $params = ['section' => 'languages'];
                         } elseif ($service->slug === 'family') {
                             $params = ['section' => 'family'];
@@ -146,18 +184,15 @@ Route::get('/dashboard', function () {
                         }
                     }
                     
-                    return [
-                        'id' => $service->id,
-                        'name' => $service->name,
-                        'slug' => $service->slug,
-                        'description' => $service->short_description ?? $service->full_description,
+                    $suggestions[] = [
+                        'title' => 'Complete ' . $service->name,
+                        'message' => $service->short_description ?? 'Improve your profile strength by adding this information.',
+                        'action_route' => $route,
+                        'action_text' => 'Add Now',
                         'icon' => $service->icon ?? 'document',
-                        'is_featured' => $service->is_featured,
-                        'category' => $service->category->name ?? 'Other',
-                        'route' => $route,
-                        'route_params' => $params,
                     ];
-                })->toArray();
+                }
+            }
         }
     } catch (\Exception $e) {
         \Log::warning('Failed to load services: ' . $e->getMessage());
@@ -292,7 +327,8 @@ Route::get('/dashboard', function () {
         'recommendedServices' => $recommendedServices,
         'topReferrers' => $topReferrers,
         'userRank' => $userRank,
-        'availableServices' => $activeServices,
+        'availableServices' => $platformTools,  // Platform utilities for dashboard
+        'extendedProfileServices' => [],  // No longer permanently shown
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 

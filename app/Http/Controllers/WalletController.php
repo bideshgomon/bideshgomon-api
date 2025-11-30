@@ -39,12 +39,12 @@ class WalletController extends Controller
         
         // Calculate statistics
         $totalIn = $wallet->transactions()
-            ->where('transaction_type', 'credit')
+            ->where('type', 'credit')
             ->where('status', 'completed')
             ->sum('amount');
             
         $totalOut = $wallet->transactions()
-            ->where('transaction_type', 'debit')
+            ->where('type', 'debit')
             ->where('status', 'completed')
             ->sum('amount');
             
@@ -78,7 +78,7 @@ class WalletController extends Controller
         $query = $user->wallet->transactions();
 
         if ($type && in_array($type, ['credit', 'debit'])) {
-            $query->where('transaction_type', $type);
+            $query->where('type', $type);
         }
 
         if ($search) {
