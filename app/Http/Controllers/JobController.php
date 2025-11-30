@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class JobController extends Controller
 {
@@ -26,6 +27,18 @@ class JobController extends Controller
      */
     public function index(Request $request)
     {
+        // Check if job_postings table exists
+        if (!Schema::hasTable('job_postings')) {
+            return Inertia::render('Jobs/Index', [
+                'jobs' => ['data' => [], 'links' => []],
+                'countries' => [],
+                'categories' => [],
+                'jobTypes' => [],
+                'filters' => $request->only(['search', 'country_id', 'job_category_id', 'job_type', 'salary_min', 'salary_max']),
+                'comingSoon' => true,
+            ]);
+        }
+
         $query = JobPosting::with(['country', 'jobCategory'])->active();
 
         // Apply search filter
