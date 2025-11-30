@@ -485,13 +485,9 @@ const currentSection = computed(() => sections.find(s => s.id === activeSection.
 const changeSection = (sectionId) => {
     activeSection.value = sectionId;
     
-    // Update URL to reflect the current section
-    router.visit(route('profile.edit', { section: sectionId }), {
-        preserveState: true,
-        preserveScroll: false,
-        only: ['section'],
-        replace: true // Use replace to avoid polluting browser history
-    });
+    // Update URL without full page reload (just update browser history)
+    const url = route('profile.edit', { section: sectionId });
+    window.history.replaceState(window.history.state, '', url);
     
     // Scroll to top on mobile
     if (window.innerWidth < 1024) {
@@ -503,12 +499,9 @@ const changeSection = (sectionId) => {
 const backToCards = () => {
     activeSection.value = null;
     
-    // Update URL to remove section parameter
-    router.visit(route('profile.edit'), {
-        preserveState: true,
-        preserveScroll: false,
-        replace: true
-    });
+    // Update URL without full page reload
+    const url = route('profile.edit');
+    window.history.replaceState(window.history.state, '', url);
 };
 
 
