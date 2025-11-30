@@ -144,8 +144,9 @@ $expectedSchema = [
         'created_at', 'updated_at', 'deleted_at'
     ],
     'support_tickets' => [
-        'id', 'user_id', 'ticket_number', 'subject', 'message',
-        'category', 'priority', 'status', 'assigned_to', 'resolved_at',
+        'id', 'user_id', 'ticket_number', 'subject', 'message', 'attachments',
+        'category', 'priority', 'status', 'admin_reply', 'assigned_to', 
+        'satisfaction_rating', 'satisfaction_feedback', 'replied_at', 'resolved_at', 'closed_at',
         'created_at', 'updated_at', 'deleted_at'
     ],
     'events' => [
