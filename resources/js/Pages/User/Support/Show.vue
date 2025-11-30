@@ -12,6 +12,22 @@
                                 ← {{ __('Back to Tickets') }}
                             </Link>
                             <div class="flex items-center gap-2">
+                                <Link
+                                    v-if="ticket.status === 'open'"
+                                    :href="route('support.edit', ticket.id)"
+                                    class="px-3 py-1 text-xs font-semibold text-blue-700 bg-blue-100 rounded-md hover:bg-blue-200"
+                                >
+                                    {{ __('Edit') }}
+                                </Link>
+                                <button
+                                    v-if="ticket.status === 'open' && !hasReplies"
+                                    @click="deleteTicket"
+                                    :disabled="deletingTicket"
+                                    class="px-3 py-1 text-xs font-semibold text-red-700 bg-red-100 rounded-md hover:bg-red-200"
+                                    :class="{ 'opacity-50 cursor-not-allowed': deletingTicket }"
+                                >
+                                    {{ __('Delete') }}
+                                </button>
                                 <button
                                     v-if="ticket.status !== 'closed' && ticket.status !== 'resolved'"
                                     @click="closeTicket"
@@ -230,6 +246,8 @@ const props = defineProps({
 });
 
 const closingTicket = ref(false);
+const deletingTicket = ref(false);
+const hasReplies = ref(props.ticket.replies && props.ticket.replies.length > 0);
 
 const replyForm = useForm({
     message: '',
@@ -270,6 +288,19 @@ const closeTicket = () => {
         preserveScroll: true,
         onFinish: () => {
             closingTicket.value = false;
+        },
+    });
+};
+
+const deleteTicket = () => {
+    if (!confirm('Are you sure you want to delete this ticket? This action cannot be undone.')) {
+        return;
+    }
+
+    deletingTicket.value = true;
+    router.delete(route('support.destroy', props.ticket.id), {
+        onFinish: () => {
+            deletingTicket.value = false;
         },
     });
 };

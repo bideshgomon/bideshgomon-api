@@ -607,6 +607,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', [\App\Http\Controllers\User\SupportTicketController::class, 'create'])->name('create');
         Route::post('/', [\App\Http\Controllers\User\SupportTicketController::class, 'store'])->name('store');
         Route::get('/{ticket}', [\App\Http\Controllers\User\SupportTicketController::class, 'show'])->name('show');
+        Route::get('/{ticket}/edit', [\App\Http\Controllers\User\SupportTicketController::class, 'edit'])->name('edit');
+        Route::put('/{ticket}', [\App\Http\Controllers\User\SupportTicketController::class, 'update'])->name('update');
+        Route::delete('/{ticket}', [\App\Http\Controllers\User\SupportTicketController::class, 'destroy'])->name('destroy');
         Route::post('/{ticket}/reply', [\App\Http\Controllers\User\SupportTicketController::class, 'reply'])->name('reply');
         Route::post('/{ticket}/close', [\App\Http\Controllers\User\SupportTicketController::class, 'close'])->name('close');
     });

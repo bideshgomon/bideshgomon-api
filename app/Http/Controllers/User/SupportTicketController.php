@@ -145,6 +145,77 @@ class SupportTicketController extends Controller
         return back()->with('success', __('Ticket closed successfully'));
     }
 
+    public function edit(SupportTicket $ticket)
+    {
+        // Ensure user can only edit their own tickets
+        if ($ticket->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Only allow editing if ticket is still open
+        if ($ticket->status !== 'open') {
+            return redirect()->route('support.show', $ticket)
+                ->with('error', __('You can only edit open tickets'));
+        }
+
+        return Inertia::render('User/Support/Edit', [
+            'ticket' => $ticket,
+        ]);
+    }
+
+    public function update(Request $request, SupportTicket $ticket)
+    {
+        // Ensure user can only update their own tickets
+        if ($ticket->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Only allow updating if ticket is still open
+        if ($ticket->status !== 'open') {
+            return redirect()->route('support.show', $ticket)
+                ->with('error', __('You can only edit open tickets'));
+        }
+
+        $validated = $request->validate([
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string',
+            'category' => 'required|in:technical,billing,general,service_inquiry,complaint',
+            'priority' => 'required|in:low,normal,high,urgent',
+        ]);
+
+        $ticket->update($validated);
+
+        return redirect()->route('support.show', $ticket)
+            ->with('success', __('Ticket updated successfully'));
+    }
+
+    public function destroy(SupportTicket $ticket)
+    {
+        // Ensure user can only delete their own tickets
+        if ($ticket->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        // Only allow deletion if ticket is open and has no replies
+        if ($ticket->status !== 'open' || $ticket->replies()->count() > 0) {
+            return back()->with('error', __('You can only delete open tickets with no replies'));
+        }
+
+        // Delete attachments from storage
+        if ($ticket->attachments) {
+            foreach ($ticket->attachments as $attachment) {
+                if (isset($attachment['path'])) {
+                    Storage::disk('public')->delete($attachment['path']);
+                }
+            }
+        }
+
+        $ticket->delete();
+
+        return redirect()->route('support.index')
+            ->with('success', __('Ticket deleted successfully'));
+    }
+
     public function rate(Request $request, SupportTicket $ticket)
     {
         // Ensure user can only rate their own tickets
