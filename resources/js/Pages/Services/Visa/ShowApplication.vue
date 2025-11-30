@@ -34,7 +34,7 @@
                                 <div v-if="application.payment_status === 'pending'" class="text-right">
                                     <Link
                                         :href="route('visa.payment', application.id)"
-                                        class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700"
+                                        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700"
                                     >
                                         Make Payment
                                     </Link>
@@ -153,7 +153,7 @@
                             <div v-else class="text-center py-8">
                                 <p class="text-sm text-gray-600">No documents uploaded yet</p>
                                 <button
-                                    class="mt-3 inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700"
+                                    class="mt-3 inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700"
                                 >
                                     Upload Documents
                                 </button>
@@ -181,7 +181,7 @@
                                 </div>
                                 <div class="pt-3 border-t border-gray-200 flex justify-between">
                                     <dt class="text-base font-semibold text-gray-900">Total</dt>
-                                    <dd class="text-base font-bold text-indigo-600">৳{{ application.total_amount.toLocaleString() }}</dd>
+                                    <dd class="text-base font-bold text-green-600">৳{{ application.total_amount.toLocaleString() }}</dd>
                                 </div>
                                 <div class="pt-2">
                                     <span :class="application.payment_status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium">
@@ -250,8 +250,8 @@ const getStatusClass = (status) => {
         submitted: 'bg-blue-100 text-blue-800',
         under_review: 'bg-yellow-100 text-yellow-800',
         documents_requested: 'bg-orange-100 text-orange-800',
-        documents_received: 'bg-purple-100 text-purple-800',
-        interview_scheduled: 'bg-indigo-100 text-indigo-800',
+        documents_received: 'bg-blue-100 text-blue-800',
+        interview_scheduled: 'bg-blue-100 text-blue-800',
         approved: 'bg-green-100 text-green-800',
         rejected: 'bg-red-100 text-red-800',
         cancelled: 'bg-gray-100 text-gray-800',

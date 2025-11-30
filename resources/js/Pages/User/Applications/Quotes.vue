@@ -103,7 +103,7 @@ const getAgencyRating = (agency) => {
             :class="[
               'bg-white dark:bg-gray-800 rounded-xl shadow-sm border-2 transition-all duration-200',
               selectedQuote?.id === quote.id
-                ? 'border-indigo-500 shadow-lg'
+                ? 'border-blue-500 shadow-lg'
                 : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
             ]"
           >
@@ -111,8 +111,8 @@ const getAgencyRating = (agency) => {
               <!-- Agency Header -->
               <div class="flex items-start justify-between mb-4">
                 <div class="flex items-center gap-3">
-                  <div class="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
-                    <BuildingOfficeIcon class="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+                  <div class="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                    <BuildingOfficeIcon class="h-6 w-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
                     <h3 class="text-lg font-bold text-gray-900 dark:text-white">
@@ -153,7 +153,7 @@ const getAgencyRating = (agency) => {
                       {{ quote.currency || 'USD' }}
                     </p>
                   </div>
-                  <CurrencyDollarIcon class="h-12 w-12 text-indigo-400 opacity-50" />
+                  <CurrencyDollarIcon class="h-12 w-12 text-blue-400 opacity-50" />
                 </div>
               </div>
 
@@ -190,7 +190,7 @@ const getAgencyRating = (agency) => {
                 <button
                   @click="selectQuote(quote); showAcceptModal = true"
                   :disabled="quote.status !== 'pending'"
-                  class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
+                  class="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
                 >
                   <CheckCircleIcon class="h-5 w-5" />
                   Accept Quote
@@ -249,7 +249,7 @@ const getAgencyRating = (agency) => {
           <button
             @click="acceptQuote"
             :disabled="acceptingQuote"
-            class="flex-1 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white py-2 rounded-lg font-medium transition-colors"
+            class="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-2 rounded-lg font-medium transition-colors"
           >
             {{ acceptingQuote ? 'Processing...' : 'Confirm' }}
           </button>

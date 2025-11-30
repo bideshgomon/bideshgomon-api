@@ -27,7 +27,7 @@ const statusColor = computed(() => {
     pending: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400',
     quoted: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400',
     accepted: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400',
-    in_progress: 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400',
+    in_progress: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400',
     completed: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400',
     cancelled: 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400',
     rejected: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400',
@@ -146,8 +146,8 @@ const currentStep = computed(() => {
             </div>
 
             <div class="flex items-center gap-3">
-              <div class="p-3 bg-purple-100 dark:bg-purple-900/20 rounded-lg">
-                <DocumentTextIcon class="h-6 w-6 text-purple-600 dark:text-purple-400" />
+              <div class="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+                <DocumentTextIcon class="h-6 w-6 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
                 <p class="text-sm text-gray-600 dark:text-gray-400">Quotes Received</p>
