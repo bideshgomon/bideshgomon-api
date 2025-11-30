@@ -60,6 +60,7 @@ const countryCodes = ref([])
 const isLoadingCountries = ref(false)
 
 const primaryPhone = computed(() => {
+    if (!Array.isArray(phoneNumbers.value)) return null
     return phoneNumbers.value.find(phone => phone.is_primary)
 })
 
@@ -92,9 +93,10 @@ const fetchPhoneNumbers = async () => {
         isLoading.value = true
         error.value = null
         const response = await axios.get(route('api.profile.phone-numbers.index'))
-        phoneNumbers.value = response.data
+        phoneNumbers.value = Array.isArray(response.data) ? response.data : []
     } catch (err) {
         error.value = 'Failed to load phone numbers'
+        phoneNumbers.value = [] // Ensure it's always an array
         console.error('Failed to fetch phone numbers:', err)
     } finally {
         isLoading.value = false

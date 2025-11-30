@@ -459,7 +459,7 @@ Route::middleware('auth')->group(function () {
     
     // API routes for data management lookups
     Route::get('/api/countries', function () {
-        return response()->json(\App\Models\Country::where('is_active', true)->orderBy('name')->get(['id', 'code', 'name', 'name_bn']));
+        return response()->json(\App\Models\Country::where('is_active', true)->orderBy('name')->get(['id', 'code', 'name', 'name_bn', 'phone_code', 'flag_emoji']));
     })->name('api.countries');
     
     Route::get('/api/cities', function (Illuminate\Http\Request $request) {
