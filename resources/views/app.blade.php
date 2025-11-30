@@ -31,6 +31,9 @@
             @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @endif
         @inertiaHead
+        
+        <!-- Cache Buster -->
+        <meta name="asset-version" content="{{ config('app.asset_version', time()) }}">
     </head>
     <body class="font-sans antialiased">
         @inertia
