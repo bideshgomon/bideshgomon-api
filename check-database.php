@@ -46,7 +46,7 @@ $expectedSchema = [
         'is_primary', 'notes', 'created_at', 'updated_at'
     ],
     'user_educations' => [
-        'id', 'user_id', 'institution_name', 'degree', 'field_of_study', 
+        'id', 'user_id', 'institution_name', 'degree', 'degree_level', 'field_of_study', 
         'start_date', 'end_date', 'country', 'city', 'is_completed', 'gpa_or_grade',
         'language_of_instruction', 'courses_completed', 'honors_awards',
         'degree_certificate_path', 'transcript_path', 'created_at', 'updated_at', 'deleted_at'

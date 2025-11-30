@@ -201,8 +201,12 @@ runTest("Count all educations", function() {
 });
 
 runTest("Fetch educations with degree_certificate_path", function() {
-    return UserEducation::select('id', 'user_id', 'institution_name', 'degree_certificate_path', 
-        'transcript_path')->first();
+    return UserEducation::select('id', 'user_id', 'institution_name', 'degree', 'degree_level',
+        'degree_certificate_path', 'transcript_path')->first();
+});
+
+runTest("Check degree_level query", function() {
+    return UserEducation::whereIn('degree_level', ['bachelors', 'masters', 'phd'])->count();
 });
 
 runTest("Count all work experiences", function() {
