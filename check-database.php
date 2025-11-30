@@ -102,6 +102,27 @@ $expectedSchema = [
         'australia_readiness', 'europe_readiness',
         'last_assessed_at', 'created_at', 'updated_at'
     ],
+    'appointments' => [
+        'id', 'user_id', 'appointment_type', 'appointment_number',
+        'preferred_date', 'preferred_time', 'duration', 'status',
+        'purpose', 'notes', 'admin_notes', 'is_online', 'meeting_link',
+        'location', 'assigned_to', 'confirmed_at', 'completed_at',
+        'created_at', 'updated_at', 'deleted_at'
+    ],
+    'support_tickets' => [
+        'id', 'user_id', 'ticket_number', 'subject', 'message',
+        'category', 'priority', 'status', 'assigned_to', 'resolved_at',
+        'created_at', 'updated_at', 'deleted_at'
+    ],
+    'events' => [
+        'id', 'title', 'slug', 'description', 'content', 'event_type',
+        'start_date', 'end_date', 'event_date', 'event_time',
+        'location', 'venue', 'address', 'city', 'country',
+        'is_online', 'meeting_link', 'image', 'banner',
+        'max_participants', 'registered_count', 'price', 'is_free',
+        'is_published', 'is_featured', 'registration_deadline',
+        'created_by', 'created_at', 'updated_at', 'deleted_at'
+    ],
 ];
 
 $allTables = DB::select('SHOW TABLES');
