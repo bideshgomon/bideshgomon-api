@@ -7,7 +7,7 @@ import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
 import FlowButton from '@/Components/Rhythmic/FlowButton.vue';
 import { DocumentTextIcon } from '@heroicons/vue/24/solid';
 import { useForm } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useBangladeshFormat } from '@/Composables/useBangladeshFormat';
 import {
     GENDER_OPTIONS,
