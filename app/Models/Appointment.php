@@ -36,6 +36,17 @@ class Appointment extends Model
         'cancelled_at' => 'datetime',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($appointment) {
+            if (empty($appointment->appointment_number)) {
+                $appointment->appointment_number = 'APT-' . strtoupper(uniqid());
+            }
+        });
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
