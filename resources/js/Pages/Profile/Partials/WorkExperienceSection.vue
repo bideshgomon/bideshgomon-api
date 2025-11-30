@@ -18,8 +18,14 @@ import Checkbox from '@/Components/Checkbox.vue'
 import { BriefcaseIcon, PlusIcon, PencilSquareIcon, TrashIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
-  workExperiences: Array,
-  countries: Array,
+  workExperiences: {
+    type: Array,
+    default: () => []
+  },
+  countries: {
+    type: Array,
+    default: () => []
+  },
 })
 
 // State

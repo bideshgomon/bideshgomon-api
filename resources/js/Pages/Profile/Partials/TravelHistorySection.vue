@@ -14,7 +14,10 @@ import Modal from '@/Components/Modal.vue';
 import { GlobeAltIcon, TrashIcon, PlusIcon, CalendarIcon, MapPinIcon } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
-  travelHistory: Array,
+  travelHistory: {
+    type: Array,
+    default: () => []
+  },
 });
 
 const travelHistory = ref(props.travelHistory || []);
