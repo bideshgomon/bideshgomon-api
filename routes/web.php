@@ -110,7 +110,7 @@ Route::get('/dashboard', function () {
                 'events' => 'events.index',
                 'document-scanner' => 'document-scanner.index',
                 'cv-builder' => 'cv-builder.index',
-                'public-profile' => 'public-profile.settings',
+                'public-profile' => 'profile.public.settings',
                 'travel-insurance' => 'travel-insurance.index',
                 'flight-requests' => 'flight-requests.index',
                 'payments' => 'payments.index',
