@@ -248,8 +248,54 @@ class ProfileController extends Controller
             'financial_sponsor_info' => ['nullable', 'string', 'max:1000'],
         ]);
 
+        // Split validated data into profile fields and financial fields
+        $financialFields = [
+            'employment_start_date', 'employer_address', 'bank_branch', 
+            'bank_account_type', 'bank_statement_path', 'owns_property', 
+            'property_type', 'property_address', 'property_value_bdt', 
+            'property_documents_path', 'owns_vehicle', 'vehicle_type', 
+            'vehicle_make_model', 'vehicle_year', 'vehicle_value_bdt', 
+            'has_investments', 'investment_types', 'investment_value_bdt', 
+            'has_liabilities', 'liability_types', 'liabilities_amount_bdt', 
+            'total_assets_bdt', 'net_worth_bdt', 'tax_return_path', 
+            'salary_certificate_path', 'financial_sponsor_info'
+        ];
+
+        // Fields that exist in both tables (update in both places)
+        $sharedFields = [
+            'employer_name', 'monthly_income_bdt', 'annual_income_bdt',
+            'bank_name', 'bank_account_number', 'bank_balance_bdt'
+        ];
+
+        // Separate profile data and financial data
+        $profileData = [];
+        $financialData = [];
+
+        foreach ($validated as $key => $value) {
+            if (in_array($key, $financialFields)) {
+                $financialData[$key] = $value;
+            } elseif (in_array($key, $sharedFields)) {
+                // Update in both
+                $profileData[$key] = $value;
+                $financialData[$key] = $value;
+            } else {
+                $profileData[$key] = $value;
+            }
+        }
+
+        // Update user profile
         $profile = $request->user()->profile()->firstOrCreate([]);
-        $profile->update($validated);
+        if (!empty($profileData)) {
+            $profile->update($profileData);
+        }
+
+        // Update financial information if any financial data exists
+        if (!empty($financialData)) {
+            $request->user()->financialInformation()->updateOrCreate(
+                ['user_id' => $request->user()->id],
+                $financialData
+            );
+        }
 
         return Redirect::route('profile.edit')->with('success', 'Profile updated successfully!');
     }

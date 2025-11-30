@@ -364,14 +364,9 @@ const leaveImpersonation = () => {
                                             </DropdownLink>
                                         </template>
                                         
-                                        <!-- Regular User Menu -->
+                                        <!-- Regular User Menu - Removed suggestions link -->
                                         <template v-else>
-                                            <DropdownLink :href="route('suggestions.index')" icon-class="text-heritage-600">
-                                                <template #icon>
-                                                    <LightBulbIcon class="w-5 h-5" />
-                                                </template>
-                                                Suggestions
-                                            </DropdownLink>
+                                            <!-- Suggestions feature not available for regular users yet -->
                                             <div class="border-t border-gray-100 my-1"></div>
                                             <DropdownLink :href="route('document-scanner.index')" icon-class="text-sky-600">
                                                 <template #icon>
