@@ -59,7 +59,7 @@ const isActive = (routeName) => {
                 :href="route(item.route)"
                 class="flex flex-col items-center justify-center min-w-[64px] py-2 px-3 rounded-2xl transition-all touch-manipulation"
                 :class="isActive(item.route) 
-                    ? 'text-emerald-600 bg-emerald-50' 
+                    ? 'text-green-600 bg-green-50' 
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'"
             >
                 <component 

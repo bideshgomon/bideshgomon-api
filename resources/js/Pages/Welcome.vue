@@ -92,7 +92,7 @@ const benefits = [
 
 const stats = [
     { value: '50K+', label: 'Happy Users', icon: UserGroupIcon, color: 'text-blue-600' },
-    { value: '195', label: 'Countries', icon: MapPinIcon, color: 'text-purple-600' },
+    { value: '195', label: 'Countries', icon: MapPinIcon, color: 'text-blue-600' },
     { value: '10K+', label: 'Successful Visas', icon: CheckBadgeIcon, color: 'text-green-600' },
     { value: '98%', label: 'Success Rate', icon: TrophyIcon, color: 'text-orange-600' },
 ];

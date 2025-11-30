@@ -31,16 +31,16 @@ const mobileMenuOpen = ref(false)
 
         <!-- Desktop Navigation -->
         <div class="hidden md:flex md:items-center md:space-x-8">
-          <Link :href="route('welcome')" class="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
+          <Link :href="route('welcome')" class="text-gray-700 hover:text-green-600 font-medium transition-colors">
             Home
           </Link>
-          <a href="#services" class="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
+          <a href="#services" class="text-gray-700 hover:text-green-600 font-medium transition-colors">
             Services
           </a>
-          <a href="#about" class="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
+          <a href="#about" class="text-gray-700 hover:text-green-600 font-medium transition-colors">
             About
           </a>
-          <a href="#contact" class="text-gray-700 hover:text-emerald-600 font-medium transition-colors">
+          <a href="#contact" class="text-gray-700 hover:text-green-600 font-medium transition-colors">
             Contact
           </a>
         </div>
@@ -50,14 +50,14 @@ const mobileMenuOpen = ref(false)
           <template v-if="canLogin">
             <Link
               :href="route('login')"
-              class="hidden md:inline-flex text-gray-700 hover:text-emerald-600 font-medium transition-colors"
+              class="hidden md:inline-flex text-gray-700 hover:text-green-600 font-medium transition-colors"
             >
               Sign in
             </Link>
             <Link
               v-if="canRegister"
               :href="route('register')"
-              class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-lg font-medium hover:from-emerald-700 hover:to-green-700 transition-all shadow-sm hover:shadow-md"
+              class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-green-600 text-white rounded-lg font-medium hover:from-green-700 hover:to-green-700 transition-all shadow-sm hover:shadow-md"
             >
               Get Started
             </Link>
