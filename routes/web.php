@@ -88,6 +88,81 @@ Route::get('/dashboard', function () {
     // Calculate profile completion using User model method (12-section system)
     $completion = $user->calculateProfileCompletion();
     
+    // Load active services from database for dashboard
+    $activeServices = [];
+    try {
+        if (class_exists('App\Models\ServiceModule')) {
+            // Map slugs to actual routes
+            $routeMapping = [
+                'ai-profile-assessment' => 'profile.assessment.show',
+                'wallet' => 'wallet.index',
+                'referrals' => 'referral.index',
+                'profile-edit' => 'profile.edit',
+                'education' => 'profile.edit',
+                'work-experience' => 'profile.edit',
+                'passports' => 'profile.passports.index',
+                'travel-history' => 'profile.travel-history.index',
+                'languages' => 'profile.edit',
+                'family' => 'profile.edit',
+                'support' => 'support.index',
+                'appointments' => 'appointments.index',
+                'faqs' => 'faqs.index',
+                'events' => 'events.index',
+                'document-scanner' => 'document-scanner.index',
+                'cv-builder' => 'cv-builder.index',
+                'public-profile' => 'public-profile.settings',
+                'travel-insurance' => 'travel-insurance.index',
+                'flight-requests' => 'flight-requests.index',
+                'payments' => 'payments.index',
+                'financial' => 'profile.edit',
+                'security' => 'profile.edit',
+                'visa-history' => 'profile.visa-history.index',
+            ];
+            
+            $activeServices = \App\Models\ServiceModule::with('category')
+                ->where('is_active', true)
+                ->where('coming_soon', false)
+                ->orderBy('is_featured', 'desc')
+                ->orderBy('sort_order')
+                ->get()
+                ->map(function ($service) use ($routeMapping) {
+                    $route = $routeMapping[$service->slug] ?? null;
+                    $params = null;
+                    
+                    // Handle profile.edit with section params
+                    if ($route === 'profile.edit') {
+                        if ($service->slug === 'education') {
+                            $params = ['section' => 'education'];
+                        } elseif ($service->slug === 'work-experience') {
+                            $params = ['section' => 'experience'];
+                        } elseif ($service->slug === 'languages') {
+                            $params = ['section' => 'languages'];
+                        } elseif ($service->slug === 'family') {
+                            $params = ['section' => 'family'];
+                        } elseif ($service->slug === 'financial') {
+                            $params = ['section' => 'financial'];
+                        } elseif ($service->slug === 'security') {
+                            $params = ['section' => 'security'];
+                        }
+                    }
+                    
+                    return [
+                        'id' => $service->id,
+                        'name' => $service->name,
+                        'slug' => $service->slug,
+                        'description' => $service->short_description ?? $service->full_description,
+                        'icon' => $service->icon ?? 'document',
+                        'is_featured' => $service->is_featured,
+                        'category' => $service->category->name ?? 'Other',
+                        'route' => $route,
+                        'route_params' => $params,
+                    ];
+                })->toArray();
+        }
+    } catch (\Exception $e) {
+        \Log::warning('Failed to load services: ' . $e->getMessage());
+    }
+    
     // Get leaderboard data
     $topReferrers = [];
     $userRank = null;
@@ -217,6 +292,7 @@ Route::get('/dashboard', function () {
         'recommendedServices' => $recommendedServices,
         'topReferrers' => $topReferrers,
         'userRank' => $userRank,
+        'availableServices' => $activeServices,
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 

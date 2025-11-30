@@ -1,188 +1,132 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
-import { computed } from 'vue';
-import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
-import FlowButton from '@/Components/Rhythmic/FlowButton.vue';
-import AnimatedSection from '@/Components/Rhythmic/AnimatedSection.vue';
-import ProgressWave from '@/Components/Rhythmic/ProgressWave.vue';
-import StatusBadge from '@/Components/Rhythmic/StatusBadge.vue';
 import { 
-    AcademicCapIcon, BriefcaseIcon, DocumentCheckIcon, UserCircleIcon,
-    ArrowTrendingUpIcon, SparklesIcon, CurrencyDollarIcon, ClockIcon, ShieldCheckIcon, DocumentTextIcon,
-    LightBulbIcon, PhoneIcon, ExclamationCircleIcon, GlobeAltIcon, TrophyIcon, FireIcon, CheckCircleIcon
+    SparklesIcon, 
+    CurrencyDollarIcon, 
+    TrophyIcon, 
+    ShieldCheckIcon, 
+    ClockIcon, 
+    LightBulbIcon, 
+    GlobeAltIcon, 
+    DocumentTextIcon,
+    UserCircleIcon,
+    AcademicCapIcon,
+    BriefcaseIcon,
+    DocumentCheckIcon,
+    ChevronRightIcon,
+    FireIcon
 } from '@heroicons/vue/24/outline';
+import { computed } from 'vue';
 
 const props = defineProps({
-    profileCompletion: Number,
     stats: Object,
+    profileCompletion: Number,
     recentActivity: Array,
     suggestions: Array,
     recommendedServices: Array,
     topReferrers: Array,
-    userRank: Object,
+    userRank: [Number, null],
+    availableServices: Array
 });
 
-const services = [
-    // Core Platform Services (Main Features)
-    {
-        id: 'profile-assessment',
-        name: 'AI Profile Assessment',
-        description: 'Get intelligent profile evaluation and visa recommendations',
-        icon: SparklesIcon,
-        route: 'profile.assessment.show',
-        variant: 'sunrise',
-        badge: null,
-        category: 'featured'
-    },
-    {
-        id: 'wallet',
-        name: 'Wallet',
-        description: 'Manage your funds and transactions',
-        icon: CurrencyDollarIcon,
-        route: 'wallet.index',
-        variant: 'gold',
-        badge: null,
-        category: 'featured'
-    },
-    {
-        id: 'referrals',
-        name: 'Referrals',
-        description: 'Invite friends and earn rewards',
-        icon: TrophyIcon,
-        route: 'referral.index',
-        variant: 'heritage',
-        badge: null,
-        category: 'featured'
-    },
-    
-    // Support & Help Services
-    {
-        id: 'support',
-        name: 'Support Tickets',
-        description: 'Get help from our support team',
-        icon: ShieldCheckIcon,
-        route: 'support.index',
-        variant: 'ocean',
-        badge: null,
-        category: 'support'
-    },
-    {
-        id: 'appointments',
-        name: 'Appointments',
-        description: 'Schedule consultations with experts',
-        icon: ClockIcon,
-        route: 'appointments.index',
-        variant: 'sky',
-        badge: null,
-        category: 'support'
-    },
-    {
-        id: 'faqs',
-        name: 'FAQs',
-        description: 'Find answers to common questions',
-        icon: LightBulbIcon,
-        route: 'faqs.index',
-        variant: 'growth',
-        badge: null,
-        category: 'support'
-    },
-    {
-        id: 'events',
-        name: 'Events',
-        description: 'Register for webinars and workshops',
-        icon: GlobeAltIcon,
-        route: 'events.index',
-        variant: 'sunrise',
-        badge: null,
-        category: 'support'
-    },
-    
-    // Document Services
-    {
-        id: 'document-scanner',
-        name: 'Document Scanner',
-        description: 'Scan and digitize your documents',
-        icon: DocumentTextIcon,
-        route: 'document-scanner.index',
-        variant: 'ocean',
-        badge: null,
-        category: 'documents'
-    },
-    
-    // Profile Management (Quick Links)
-    {
-        id: 'profile',
-        name: 'Edit Profile',
-        description: 'Update your personal information',
-        icon: UserCircleIcon,
-        route: 'profile.edit',
-        variant: 'sky',
-        badge: null,
-        category: 'profile'
-    },
-    {
-        id: 'education',
-        name: 'Education',
-        description: 'Manage academic records',
-        icon: AcademicCapIcon,
-        route: 'profile.edit',
-        params: { section: 'education' },
-        variant: 'growth',
-        badge: props.stats?.education_count || 0,
-        category: 'profile'
-    },
-    {
-        id: 'experience',
-        name: 'Work Experience',
-        description: 'Track employment history',
-        icon: BriefcaseIcon,
-        route: 'profile.edit',
-        params: { section: 'experience' },
-        variant: 'heritage',
-        badge: props.stats?.experience_count || 0,
-        category: 'profile'
-    },
-];
-
-// Group services by category
-const featuredServices = computed(() => services.filter(s => s.category === 'featured'));
-const supportServices = computed(() => services.filter(s => s.category === 'support'));
-const documentServices = computed(() => services.filter(s => s.category === 'documents'));
-const profileServices = computed(() => services.filter(s => s.category === 'profile'));
-
-// Profile completion progress steps
-const profileSteps = computed(() => services.map((service, index) => ({
-    label: service.name,
-    completed: service.badge > 0 || (service.id === 'financial' || service.id === 'security')
-})));
-
-const completionColor = computed(() => {
-    const completion = props.profileCompletion || 0;
-    if (completion < 25) return 'text-red-600';
-    if (completion < 50) return 'text-yellow-600';
-    if (completion < 75) return 'text-blue-600';
-    return 'text-green-600';
-});
-
-const completionText = computed(() => {
-    const completion = props.profileCompletion || 0;
-    if (completion < 25) return 'Just Started';
-    if (completion < 50) return 'In Progress';
-    if (completion < 75) return 'Almost There';
-    return 'Completed';
-});
-
-const getPriorityVariant = (priority) => {
-    if (priority === 'high') return 'sunrise';
-    if (priority === 'medium') return 'gold';
-    return 'sky';
+// Icon mapping for dynamic service icons
+const iconMap = {
+    'sparkles': SparklesIcon,
+    'currency': CurrencyDollarIcon,
+    'trophy': TrophyIcon,
+    'shield': ShieldCheckIcon,
+    'clock': ClockIcon,
+    'lightbulb': LightBulbIcon,
+    'globe': GlobeAltIcon,
+    'document': DocumentTextIcon,
+    'user': UserCircleIcon,
+    'academic': AcademicCapIcon,
+    'briefcase': BriefcaseIcon,
+    'check': DocumentCheckIcon,
+    'fire': FireIcon
 };
 
-const getPriorityStatus = (priority) => {
-    if (priority === 'high') return 'error';
-    if (priority === 'medium') return 'warning';
-    return 'info';
+// Get icon component by name, fallback to DocumentCheckIcon
+const getIcon = (iconName) => iconMap[iconName?.toLowerCase()] || DocumentCheckIcon;
+
+// Profile completion color
+const completionColor = computed(() => {
+    if (props.profileCompletion >= 80) return 'bg-green-500';
+    if (props.profileCompletion >= 50) return 'bg-orange-500';
+    return 'bg-red-500';
+});
+
+// Always show profile shortcuts first
+const profileShortcuts = [
+    { 
+        name: 'Edit Profile', 
+        icon: 'user', 
+        route: 'profile.edit', 
+        description: 'Update your information',
+        color: 'blue'
+    },
+    { 
+        name: 'Education', 
+        icon: 'academic', 
+        route: 'profile.edit', 
+        params: { section: 'education' }, 
+        badge: props.stats?.education_count, 
+        description: 'Manage academic records',
+        color: 'green'
+    },
+    { 
+        name: 'Work Experience', 
+        icon: 'briefcase', 
+        route: 'profile.edit', 
+        params: { section: 'experience' }, 
+        badge: props.stats?.experience_count, 
+        description: 'Track employment history',
+        color: 'purple'
+    }
+];
+
+// Featured services from database
+const featuredServices = computed(() => {
+    if (!props.availableServices?.length) return [];
+    return props.availableServices
+        .filter(s => s.is_featured)
+        .slice(0, 3)
+        .map(s => ({
+            name: s.name,
+            icon: s.icon,
+            route: s.route || 'services.show',
+            params: s.route_params,
+            description: s.description,
+            color: 'orange'
+        }));
+});
+
+// Other services from database
+const otherServices = computed(() => {
+    if (!props.availableServices?.length) return [];
+    return props.availableServices
+        .filter(s => !s.is_featured)
+        .map(s => ({
+            name: s.name,
+            icon: s.icon,
+            route: s.route || 'services.show',
+            params: s.route_params,
+            description: s.description,
+            color: 'gray'
+        }));
+});
+
+// Get color classes for buttons
+const getColorClasses = (color) => {
+    const colors = {
+        blue: 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500',
+        orange: 'bg-orange-600 hover:bg-orange-700 focus:ring-orange-500',
+        green: 'bg-green-600 hover:bg-green-700 focus:ring-green-500',
+        purple: 'bg-purple-600 hover:bg-purple-700 focus:ring-purple-500',
+        gray: 'bg-gray-600 hover:bg-gray-700 focus:ring-gray-500'
+    };
+    return colors[color] || colors.gray;
 };
 </script>
 
@@ -190,647 +134,185 @@ const getPriorityStatus = (priority) => {
     <Head title="Dashboard" />
 
     <AuthenticatedLayout>
-        <!-- Page Header -->
-        <template #header>
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-rhythm-md">
-                <div>
-                    <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">
-                        Welcome Back! 👋
-                    </h2>
-                    <p class="mt-rhythm-xs text-sm text-gray-600">
-                        Track your profile, applications, and referral rewards
-                    </p>
-                </div>
-            </div>
-        </template>
-
-        <div class="py-rhythm-2xl">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-rhythm-2xl">
+        <div class="py-6 sm:py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 
-                <!-- Profile Completion Banner -->
-                <AnimatedSection 
-                    variant="sky" 
-                    :show-blobs="true"
-                    class="animate-fadeInUp"
-                >
-                    <div class="relative z-10 text-white">
-                        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-rhythm-lg">
-                            <div class="flex-1">
-                                <div class="flex items-center gap-rhythm-sm mb-rhythm-sm">
-                                    <DocumentCheckIcon class="h-8 w-8" />
-                                    <h3 class="text-xl sm:text-2xl font-bold">Profile Completion</h3>
-                                </div>
-                                <p class="text-white/90 mb-rhythm-md">
-                                    Complete your profile to unlock all features and increase your chances of success
-                                </p>
-                                <div class="flex items-center gap-rhythm-md">
-                                    <div class="text-4xl font-bold">{{ profileCompletion }}%</div>
-                                    <StatusBadge :status="completionText" size="lg" />
-                                </div>
-                            </div>
-                            <FlowButton 
-                                variant="white-outline"
-                                :href="route('profile.edit')"
-                                size="lg"
-                            >
-                                Complete Profile
-                            </FlowButton>
+                <!-- Profile Completion Card -->
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden mb-6 sm:mb-8">
+                    <div class="p-6 sm:p-8">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Profile Strength</h2>
+                            <span class="text-2xl sm:text-3xl font-bold" :class="profileCompletion >= 80 ? 'text-green-600' : 'text-orange-600'">
+                                {{ profileCompletion }}%
+                            </span>
                         </div>
-                        
-                        <!-- Progress Wave -->
-                        <div class="mt-rhythm-xl">
-                            <ProgressWave 
-                                :steps="profileSteps"
-                                :current-step="Math.floor(profileCompletion / 12.5)"
-                                variant="white"
-                            />
+                        <div class="w-full bg-gray-200 rounded-full h-3 sm:h-4 mb-4">
+                            <div 
+                                :class="completionColor" 
+                                class="h-3 sm:h-4 rounded-full transition-all duration-500"
+                                :style="{ width: profileCompletion + '%' }"
+                            ></div>
                         </div>
+                        <p class="text-sm text-gray-600">
+                            {{ profileCompletion >= 80 ? 'Great! Your profile is strong.' : 'Complete your profile to improve your chances.' }}
+                        </p>
                     </div>
-                </AnimatedSection>
-
-                <!-- Stats Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-rhythm-lg animate-fadeIn">
-                    <!-- Education Count -->
-                    <RhythmicCard 
-                        variant="ocean"
-                        size="md"
-                        hover-lift
-                    >
-                        <template #icon>
-                            <AcademicCapIcon class="h-6 w-6" />
-                        </template>
-                        <template #default>
-                            <div class="text-3xl font-bold text-gray-900">
-                                {{ stats?.education_count || 0 }}
-                            </div>
-                            <p class="text-sm text-gray-600 mt-rhythm-xs">Education Records</p>
-                        </template>
-                    </RhythmicCard>
-
-                    <!-- Experience Count -->
-                    <RhythmicCard 
-                        variant="sky"
-                        size="md"
-                        hover-lift
-                    >
-                        <template #icon>
-                            <BriefcaseIcon class="h-6 w-6" />
-                        </template>
-                        <template #default>
-                            <div class="text-3xl font-bold text-gray-900">
-                                {{ stats?.experience_count || 0 }}
-                            </div>
-                            <p class="text-sm text-gray-600 mt-rhythm-xs">Work Experiences</p>
-                        </template>
-                    </RhythmicCard>
-
-                    <!-- Profile Strength -->
-                    <RhythmicCard 
-                        variant="growth"
-                        size="md"
-                        hover-lift
-                    >
-                        <template #icon>
-                            <ArrowTrendingUpIcon class="h-6 w-6" />
-                        </template>
-                        <template #default>
-                            <div class="text-3xl font-bold text-gray-900">
-                                {{ stats?.profile_strength || 0 }}/100
-                            </div>
-                            <p class="text-sm text-gray-600 mt-rhythm-xs">Profile Strength</p>
-                        </template>
-                    </RhythmicCard>
-
-                    <!-- Applications -->
-                    <RhythmicCard 
-                        variant="sunrise"
-                        size="md"
-                        hover-lift
-                    >
-                        <template #icon>
-                            <DocumentTextIcon class="h-6 w-6" />
-                        </template>
-                        <template #default>
-                            <div class="text-3xl font-bold text-gray-900">
-                                {{ stats?.applications_count || 0 }}
-                            </div>
-                            <p class="text-sm text-gray-600 mt-rhythm-xs">Applications</p>
-                        </template>
-                    </RhythmicCard>
                 </div>
 
-                <!-- Smart Suggestions -->
-                <div v-if="suggestions && suggestions.length > 0" class="animate-fadeInUp">
-                    <h3 class="text-xl font-bold text-gray-900 mb-rhythm-lg flex items-center gap-rhythm-sm">
-                        <SparklesIcon class="h-6 w-6 text-sunrise-500" />
-                        Recommended for You
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-rhythm-lg">
-                        <RhythmicCard
-                            v-for="suggestion in suggestions"
-                            :key="suggestion.id"
-                            :variant="getPriorityVariant(suggestion.priority)"
-                            hover-lift
+                <!-- Profile Management -->
+                <section class="mb-8 sm:mb-12">
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6 px-1">Profile Management</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                        <Link 
+                            v-for="service in profileShortcuts" 
+                            :key="service.route"
+                            :href="route(service.route, service.params || {})"
+                            class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group"
                         >
-                            <template #badge>
-                                <StatusBadge :status="getPriorityStatus(suggestion.priority)" />
-                            </template>
-                            <template #default>
-                                <h4 class="font-semibold text-gray-900 mb-rhythm-sm">
-                                    {{ suggestion.title }}
-                                </h4>
-                                <p class="text-sm text-gray-600">
-                                    {{ suggestion.description }}
-                                </p>
-                            </template>
-                            <template #footer>
-                                <FlowButton 
-                                    :variant="getPriorityVariant(suggestion.priority)"
-                                    :href="suggestion.action_url"
-                                    size="sm"
-                                    full-width
-                                >
-                                    {{ suggestion.action_text }}
-                                </FlowButton>
-                            </template>
-                        </RhythmicCard>
-                    </div>
-                </div>
-
-                <!-- Recommended Services -->
-                <div v-if="recommendedServices && recommendedServices.length > 0" class="animate-fadeInUp">
-                    <h3 class="text-xl font-bold text-gray-900 mb-rhythm-lg flex items-center gap-rhythm-sm">
-                        <GlobeAltIcon class="h-6 w-6 text-growth-500" />
-                        Services for You
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-rhythm-lg">
-                        <RhythmicCard
-                            v-for="service in recommendedServices"
-                            :key="service.id"
-                            variant="growth"
-                            hover-lift
-                        >
-                            <template #icon>
-                                <GlobeAltIcon class="h-6 w-6" />
-                            </template>
-                            <template #default>
-                                <h4 class="font-semibold text-gray-900 mb-rhythm-sm">
-                                    {{ service.name }}
-                                </h4>
-                                <p class="text-sm text-gray-600">
-                                    {{ service.description }}
-                                </p>
-                            </template>
-                            <template #footer>
-                                <FlowButton 
-                                    variant="growth"
-                                    :href="service.url"
-                                    size="sm"
-                                    full-width
-                                >
-                                    View Details
-                                </FlowButton>
-                            </template>
-                        </RhythmicCard>
-                    </div>
-                </div>
-
-                <!-- Leaderboard Widget -->
-                <div v-if="topReferrers && topReferrers.length > 0" class="animate-fadeInUp">
-                    <RhythmicCard variant="gold" size="lg">
-                        <template #default>
-                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-rhythm-md mb-rhythm-lg">
-                                <div class="flex items-center gap-rhythm-sm">
-                                    <div class="p-rhythm-sm rounded-xl bg-gold-500">
-                                        <TrophyIcon class="h-6 w-6 text-white" />
+                            <div class="p-6">
+                                <div class="flex items-start justify-between mb-4">
+                                    <div class="p-3 rounded-lg" :class="`bg-${service.color}-100`">
+                                        <component 
+                                            :is="getIcon(service.icon)" 
+                                            class="h-6 w-6 sm:h-7 sm:w-7" 
+                                            :class="`text-${service.color}-600`"
+                                        />
                                     </div>
-                                    <div>
-                                        <h3 class="text-xl font-bold text-gray-900">Top Referrers</h3>
-                                        <p class="text-sm text-gray-600">This month's leaderboard</p>
-                                    </div>
-                                </div>
-                                <FlowButton 
-                                    variant="gold"
-                                    :href="route('referral.index')"
-                                    size="sm"
-                                >
-                                    <template #icon-right>
-                                        <ArrowTrendingUpIcon class="h-4 w-4" />
-                                    </template>
-                                    View Leaderboard
-                                </FlowButton>
-                            </div>
-
-                            <!-- User's Rank -->
-                            <div v-if="userRank" class="bg-ocean-50 rounded-xl p-rhythm-md mb-rhythm-lg border border-ocean-200">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center gap-rhythm-sm">
-                                        <div class="w-12 h-12 rounded-full bg-ocean-500 flex items-center justify-center text-white font-bold">
-                                            #{{ userRank.rank }}
-                                        </div>
-                                        <div>
-                                            <p class="font-semibold text-gray-900">Your Rank</p>
-                                            <p class="text-sm text-gray-600">{{ userRank.referral_count }} referrals</p>
-                                        </div>
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="text-lg font-bold text-growth-600">৳{{ userRank.total_earnings?.toFixed(2) || '0.00' }}</p>
-                                        <p class="text-xs text-gray-500">Earned</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Top Leaders -->
-                            <div class="space-y-rhythm-sm">
-                                <div
-                                    v-for="(leader, index) in topReferrers.slice(0, 5)"
-                                    :key="leader.user_id"
-                                    class="bg-white rounded-xl p-rhythm-md flex items-center justify-between hover:shadow-rhythm-md transition-all"
-                                >
-                                    <div class="flex items-center gap-rhythm-sm flex-1">
-                                        <!-- Rank Badge -->
-                                        <div
-                                            class="w-10 h-10 rounded-full flex items-center justify-center font-bold flex-shrink-0"
-                                            :class="{
-                                                'bg-gold-500 text-white': index === 0,
-                                                'bg-gray-400 text-white': index === 1,
-                                                'bg-sunrise-500 text-white': index === 2,
-                                                'bg-gray-100 text-gray-700': index >= 3
-                                            }"
-                                        >
-                                            <span v-if="index === 0">🥇</span>
-                                            <span v-else-if="index === 1">🥈</span>
-                                            <span v-else-if="index === 2">🥉</span>
-                                            <span v-else>#{{ index + 1 }}</span>
-                                        </div>
-
-                                        <!-- User Info -->
-                                        <div class="flex-1">
-                                            <p class="font-semibold text-gray-900">
-                                                {{ leader.user?.name || 'Anonymous' }}
-                                            </p>
-                                            <p class="text-sm text-gray-600">
-                                                {{ leader.referral_count }} referrals
-                                            </p>
-                                        </div>
-
-                                        <!-- Earnings -->
-                                        <div class="text-right">
-                                            <p class="font-bold text-growth-600">
-                                                ৳{{ leader.total_earnings?.toFixed(2) || '0.00' }}
-                                            </p>
-                                            <div v-if="index < 3" class="flex items-center gap-1 justify-end">
-                                                <FireIcon class="h-3 w-3 text-sunrise-500" />
-                                                <span class="text-xs text-sunrise-600 font-semibold">HOT</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- CTA -->
-                            <div class="mt-rhythm-lg pt-rhythm-lg border-t border-gold-200">
-                                <div class="flex flex-col sm:flex-row items-center justify-between gap-rhythm-md">
-                                    <p class="text-sm text-gray-600">
-                                        <span class="font-semibold">Refer friends</span> and climb the leaderboard!
-                                    </p>
-                                    <FlowButton 
-                                        variant="gold"
-                                        :href="route('referral.index')"
-                                        size="sm"
+                                    <span 
+                                        v-if="service.badge" 
+                                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800"
                                     >
-                                        <template #icon-left>
-                                            <SparklesIcon class="h-4 w-4" />
-                                        </template>
-                                        Start Referring
-                                    </FlowButton>
+                                        {{ service.badge }}
+                                    </span>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                                    {{ service.name }}
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-4">{{ service.description }}</p>
+                                <div class="flex items-center text-sm font-medium text-blue-600 group-hover:text-blue-700">
+                                    <span>Manage</span>
+                                    <ChevronRightIcon class="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
                                 </div>
                             </div>
-                        </template>
-                    </RhythmicCard>
-                </div>
+                        </Link>
+                    </div>
+                </section>
 
                 <!-- Featured Services -->
-                <div class="animate-fadeInUp">
-                    <h3 class="text-xl font-bold text-gray-900 mb-rhythm-lg">Featured Services</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-rhythm-lg">
-                        <!-- Travel Insurance -->
-                        <RhythmicCard variant="growth" hover-lift>
-                            <template #icon>
-                                <ShieldCheckIcon class="h-6 w-6" />
-                            </template>
-                            <template #badge>
-                                <StatusBadge status="new" />
-                            </template>
-                            <template #default>
-                                <h4 class="font-bold text-gray-900 mb-rhythm-xs">Travel Insurance</h4>
-                                <p class="text-sm text-gray-600 mb-rhythm-md">Protect your journey worldwide</p>
-                                <div class="grid grid-cols-3 gap-rhythm-sm text-xs">
-                                    <div>
-                                        <div class="font-semibold text-gray-900">6 Packages</div>
-                                        <div class="text-gray-500">Available</div>
-                                    </div>
-                                    <div>
-                                        <div class="font-semibold text-gray-900">৳150/day</div>
-                                        <div class="text-gray-500">From</div>
-                                    </div>
-                                    <div>
-                                        <div class="font-semibold text-gray-900">24/7</div>
-                                        <div class="text-gray-500">Support</div>
-                                    </div>
-                                </div>
-                            </template>
-                            <template #footer>
-                                <FlowButton 
-                                    variant="growth"
-                                    href="/travel-insurance"
-                                    size="sm"
-                                    full-width
-                                >
-                                    View Packages
-                                </FlowButton>
-                            </template>
-                        </RhythmicCard>
-
-                        <!-- CV Builder -->
-                        <RhythmicCard variant="ocean" hover-lift>
-                            <template #icon>
-                                <DocumentTextIcon class="h-6 w-6" />
-                            </template>
-                            <template #badge>
-                                <StatusBadge status="new" />
-                            </template>
-                            <template #default>
-                                <h4 class="font-bold text-gray-900 mb-rhythm-xs">Professional CV Builder</h4>
-                                <p class="text-sm text-gray-600 mb-rhythm-md">Create stunning CVs in minutes</p>
-                                <div class="grid grid-cols-3 gap-rhythm-sm text-xs">
-                                    <div>
-                                        <div class="font-semibold text-gray-900">6 Templates</div>
-                                        <div class="text-gray-500">Professional</div>
-                                    </div>
-                                    <div>
-                                        <div class="font-semibold text-gray-900">3 Free</div>
-                                        <div class="text-gray-500">Premium ৳300</div>
-                                    </div>
-                                    <div>
-                                        <div class="font-semibold text-gray-900">PDF</div>
-                                        <div class="text-gray-500">Export</div>
-                                    </div>
-                                </div>
-                            </template>
-                            <template #footer>
-                                <FlowButton 
-                                    variant="ocean"
-                                    href="/cv-builder"
-                                    size="sm"
-                                    full-width
-                                >
-                                    Create CV
-                                </FlowButton>
-                            </template>
-                        </RhythmicCard>
-
-                        <!-- Job Opportunities -->
-                        <RhythmicCard variant="heritage" hover-lift>
-                            <template #icon>
-                                <BriefcaseIcon class="h-6 w-6" />
-                            </template>
-                            <template #badge>
-                                <StatusBadge status="active" />
-                            </template>
-                            <template #default>
-                                <h4 class="font-bold text-gray-900 mb-rhythm-xs">Job Opportunities Abroad</h4>
-                                <p class="text-sm text-gray-600 mb-rhythm-md">Find your dream job overseas</p>
-                                <div class="grid grid-cols-3 gap-rhythm-sm text-xs">
-                                    <div>
-                                        <div class="font-semibold text-gray-900">10+ Jobs</div>
-                                        <div class="text-gray-500">Active</div>
-                                    </div>
-                                    <div>
-                                        <div class="font-semibold text-gray-900">6 Countries</div>
-                                        <div class="text-gray-500">UAE, Saudi</div>
-                                    </div>
-                                    <div>
-                                        <div class="font-semibold text-gray-900">Easy</div>
-                                        <div class="text-gray-500">Apply</div>
-                                    </div>
-                                </div>
-                            </template>
-                            <template #footer>
-                                <FlowButton 
-                                    variant="heritage"
-                                    href="/jobs"
-                                    size="sm"
-                                    full-width
-                                >
-                                    Browse Jobs
-                                </FlowButton>
-                            </template>
-                        </RhythmicCard>
+                <section v-if="featuredServices.length > 0" class="mb-8 sm:mb-12">
+                    <div class="flex items-center mb-4 sm:mb-6 px-1">
+                        <FireIcon class="h-6 w-6 text-orange-500 mr-2" />
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Featured Services</h2>
                     </div>
-                </div>
-
-                <!-- Featured Platform Services -->
-                <div class="animate-fadeInUp">
-                    <h3 class="text-xl font-bold text-gray-900 mb-rhythm-lg flex items-center gap-rhythm-sm">
-                        <FireIcon class="h-6 w-6 text-sunrise-500" />
-                        Featured Services
-                    </h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-rhythm-lg">
-                        <RhythmicCard
-                            v-for="service in featuredServices"
-                            :key="service.id"
-                            :variant="service.variant"
-                            hover-lift
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                        <Link 
+                            v-for="service in featuredServices" 
+                            :key="service.name"
+                            :href="route(service.route, service.params || {})"
+                            class="bg-gradient-to-br from-orange-50 to-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group border border-orange-100"
                         >
-                            <template #icon>
-                                <component :is="service.icon" class="h-6 w-6" />
-                            </template>
-                            <template #badge>
-                                <StatusBadge status="featured" />
-                            </template>
-                            <template #default>
-                                <h4 class="font-semibold text-gray-900 mb-rhythm-xs text-lg">{{ service.name }}</h4>
-                                <p class="text-sm text-gray-600">{{ service.description }}</p>
-                            </template>
-                            <template #footer>
-                                <FlowButton 
-                                    :variant="service.variant"
-                                    :href="route(service.route, service.params)"
-                                    size="md"
-                                    full-width
-                                >
-                                    Open {{ service.name }}
-                                </FlowButton>
-                            </template>
-                        </RhythmicCard>
-                    </div>
-                </div>
-
-                <!-- Support & Help Services -->
-                <div class="animate-fadeInUp">
-                    <h3 class="text-xl font-bold text-gray-900 mb-rhythm-lg flex items-center gap-rhythm-sm">
-                        <ShieldCheckIcon class="h-6 w-6 text-ocean-500" />
-                        Support & Help
-                    </h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-rhythm-lg">
-                        <RhythmicCard
-                            v-for="service in supportServices"
-                            :key="service.id"
-                            :variant="service.variant"
-                            hover-lift
-                        >
-                            <template #icon>
-                                <component :is="service.icon" class="h-6 w-6" />
-                            </template>
-                            <template #default>
-                                <h4 class="font-semibold text-gray-900 mb-rhythm-xs">{{ service.name }}</h4>
-                                <p class="text-sm text-gray-600">{{ service.description }}</p>
-                            </template>
-                            <template #footer>
-                                <FlowButton 
-                                    :variant="service.variant"
-                                    :href="route(service.route, service.params)"
-                                    size="sm"
-                                    full-width
-                                >
-                                    Access
-                                </FlowButton>
-                            </template>
-                        </RhythmicCard>
-                    </div>
-                </div>
-
-                <!-- Document Services -->
-                <div class="animate-fadeInUp" v-if="documentServices.length > 0">
-                    <h3 class="text-xl font-bold text-gray-900 mb-rhythm-lg flex items-center gap-rhythm-sm">
-                        <DocumentTextIcon class="h-6 w-6 text-growth-500" />
-                        Document Management
-                    </h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-rhythm-lg">
-                        <RhythmicCard
-                            v-for="service in documentServices"
-                            :key="service.id"
-                            :variant="service.variant"
-                            hover-lift
-                        >
-                            <template #icon>
-                                <component :is="service.icon" class="h-6 w-6" />
-                            </template>
-                            <template #default>
-                                <h4 class="font-semibold text-gray-900 mb-rhythm-xs">{{ service.name }}</h4>
-                                <p class="text-sm text-gray-600">{{ service.description }}</p>
-                            </template>
-                            <template #footer>
-                                <FlowButton 
-                                    :variant="service.variant"
-                                    :href="route(service.route, service.params)"
-                                    size="sm"
-                                    full-width
-                                >
-                                    Open
-                                </FlowButton>
-                            </template>
-                        </RhythmicCard>
-                    </div>
-                </div>
-
-                <!-- Profile Quick Links (Collapsed Section) -->
-                <div class="animate-fadeInUp">
-                    <details class="group">
-                        <summary class="cursor-pointer list-none">
-                            <div class="flex items-center justify-between p-rhythm-md bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
-                                <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-rhythm-sm">
-                                    <UserCircleIcon class="h-5 w-5 text-gray-600" />
-                                    Profile Quick Links
-                                    <span class="text-sm text-gray-500">(Click to expand)</span>
-                                </h3>
-                                <svg class="w-5 h-5 text-gray-600 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </div>
-                        </summary>
-                        <div class="mt-rhythm-lg grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-rhythm-lg">
-                            <RhythmicCard
-                                v-for="service in profileServices"
-                                :key="service.id"
-                                :variant="service.variant"
-                                hover-lift
-                                size="sm"
-                            >
-                                <template #icon>
-                                    <component :is="service.icon" class="h-5 w-5" />
-                                </template>
-                                <template #badge v-if="service.badge !== null && service.badge !== undefined">
-                                    <StatusBadge 
-                                        :status="service.badge > 0 ? 'success' : 'pending'"
-                                        :label="`${service.badge}`"
+                            <div class="p-6">
+                                <div class="p-3 bg-orange-100 rounded-lg inline-block mb-4">
+                                    <component 
+                                        :is="getIcon(service.icon)" 
+                                        class="h-6 w-6 sm:h-7 sm:w-7 text-orange-600"
                                     />
-                                </template>
-                                <template #default>
-                                    <h4 class="font-semibold text-gray-900 text-sm mb-rhythm-xs">{{ service.name }}</h4>
-                                    <p class="text-xs text-gray-600">{{ service.description }}</p>
-                                </template>
-                                <template #footer>
-                                    <FlowButton 
-                                        :variant="service.variant"
-                                        :href="route(service.route, service.params)"
-                                        size="sm"
-                                        full-width
-                                    >
-                                        Edit
-                                    </FlowButton>
-                                </template>
-                            </RhythmicCard>
-                        </div>
-                    </details>
-                </div>
-
-                <!-- Recent Activity -->
-                <div v-if="recentActivity && recentActivity.length > 0" class="animate-fadeInUp">
-                    <RhythmicCard variant="sky" size="lg">
-                        <template #default>
-                            <div class="flex items-center gap-rhythm-sm mb-rhythm-lg">
-                                <ClockIcon class="h-6 w-6 text-sky-500" />
-                                <h3 class="text-xl font-bold text-gray-900">Recent Activity</h3>
-                            </div>
-                            <div class="space-y-rhythm-md">
-                                <div 
-                                    v-for="(activity, index) in recentActivity.slice(0, 5)" 
-                                    :key="index"
-                                    class="flex items-start gap-rhythm-sm pb-rhythm-md border-b border-gray-100 last:border-0"
-                                >
-                                    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-sky-100 flex items-center justify-center">
-                                        <CheckCircleIcon class="h-5 w-5 text-sky-600" />
-                                    </div>
-                                    <div class="flex-1">
-                                        <p class="font-medium text-gray-900">{{ activity.description }}</p>
-                                        <p class="text-sm text-gray-500 mt-rhythm-xs">{{ activity.date }}</p>
-                                    </div>
+                                </div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">
+                                    {{ service.name }}
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-4">{{ service.description }}</p>
+                                <div class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold text-white bg-orange-600 group-hover:bg-orange-700 transition-colors">
+                                    <span>Explore</span>
+                                    <ChevronRightIcon class="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
                                 </div>
                             </div>
-                        </template>
-                    </RhythmicCard>
-                </div>
+                        </Link>
+                    </div>
+                </section>
 
-                <!-- Empty State -->
-                <div v-else class="animate-fadeInUp">
-                    <RhythmicCard variant="sky" size="lg">
-                        <template #default>
-                            <div class="text-center py-rhythm-2xl">
-                                <SparklesIcon class="mx-auto h-12 w-12 text-gray-400 mb-rhythm-md" />
-                                <h3 class="text-lg font-medium text-gray-900 mb-rhythm-sm">No activity yet</h3>
-                                <p class="text-gray-600 mb-rhythm-lg">Start by completing your profile sections</p>
-                                <FlowButton 
-                                    variant="sky"
-                                    :href="route('profile.edit')"
-                                >
-                                    Get Started
-                                </FlowButton>
+                <!-- All Services -->
+                <section v-if="otherServices.length > 0">
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6 px-1">All Services</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                        <Link 
+                            v-for="service in otherServices" 
+                            :key="service.name"
+                            :href="route(service.route, service.params || {})"
+                            class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group"
+                        >
+                            <div class="p-6">
+                                <div class="p-3 bg-gray-100 rounded-lg inline-block mb-4">
+                                    <component 
+                                        :is="getIcon(service.icon)" 
+                                        class="h-6 w-6 text-gray-600"
+                                    />
+                                </div>
+                                <h3 class="text-base font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                                    {{ service.name }}
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-4 line-clamp-2">{{ service.description }}</p>
+                                <div class="flex items-center text-sm font-medium text-blue-600 group-hover:text-blue-700">
+                                    <span>View</span>
+                                    <ChevronRightIcon class="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                                </div>
                             </div>
-                        </template>
-                    </RhythmicCard>
-                </div>
+                        </Link>
+                    </div>
+                </section>
+
+                <!-- Suggestions Section -->
+                <section v-if="suggestions && suggestions.length > 0" class="mt-8 sm:mt-12">
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6 px-1">Suggestions for You</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                        <div 
+                            v-for="suggestion in suggestions" 
+                            :key="suggestion.title"
+                            class="bg-blue-50 border border-blue-200 rounded-xl p-6 hover:shadow-md transition-shadow"
+                        >
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ suggestion.title }}</h3>
+                            <p class="text-sm text-gray-600 mb-4">{{ suggestion.message }}</p>
+                            <Link 
+                                v-if="suggestion.action_route"
+                                :href="route(suggestion.action_route)" 
+                                class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-semibold text-white bg-orange-600 hover:bg-orange-700 transition-colors"
+                            >
+                                {{ suggestion.action_text }}
+                                <ChevronRightIcon class="h-4 w-4 ml-1" />
+                            </Link>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Leaderboard Section -->
+                <section v-if="topReferrers && topReferrers.length > 0" class="mt-8 sm:mt-12">
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6 px-1">Top Referrers This Month</h2>
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Referrals</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr v-for="(referrer, index) in topReferrers" :key="referrer.id" :class="userRank && userRank.user_id === referrer.id ? 'bg-blue-50' : ''">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                            <span v-if="index === 0" class="text-yellow-500">🥇</span>
+                                            <span v-else-if="index === 1" class="text-gray-400">🥈</span>
+                                            <span v-else-if="index === 2" class="text-orange-600">🥉</span>
+                                            <span v-else>{{ index + 1 }}</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ referrer.name }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ referrer.total_referrals }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
 
             </div>
         </div>
