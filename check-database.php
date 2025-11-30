@@ -158,6 +158,20 @@ $expectedSchema = [
         'is_published', 'is_featured', 'registration_deadline',
         'created_by', 'created_at', 'updated_at', 'deleted_at'
     ],
+    'payment_transactions' => [
+        'id', 'user_id', 'wallet_id', 'transaction_id', 'gateway',
+        'gateway_transaction_id', 'payment_reference_id', 'amount', 'currency',
+        'gateway_fee', 'net_amount', 'status', 'payment_method',
+        'customer_name', 'customer_email', 'customer_phone',
+        'product_name', 'description', 'gateway_response', 'metadata',
+        'callback_url', 'redirect_url', 'error_code', 'error_message',
+        'refund_amount', 'refund_reference', 'refunded_at',
+        'paid_at', 'failed_at', 'cancelled_at', 'created_at', 'updated_at'
+    ],
+    'profile_views' => [
+        'id', 'user_id', 'ip_address', 'user_agent', 'referrer',
+        'country', 'city', 'viewed_at', 'created_at', 'updated_at'
+    ],
 ];
 
 $allTables = DB::select('SHOW TABLES');
