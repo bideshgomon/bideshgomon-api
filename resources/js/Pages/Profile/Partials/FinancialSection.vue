@@ -52,43 +52,43 @@ const form = useForm({
   employer_name: props.userProfile?.employer_name || '',
   job_title: props.userProfile?.job_title || '',
   employment_start_date: props.userProfile?.employment_start_date || '',
-  monthly_income: props.userProfile?.monthly_income || '',
-  annual_income: props.userProfile?.annual_income || '',
+  monthly_income_bdt: props.userProfile?.monthly_income_bdt || '',
+  annual_income_bdt: props.userProfile?.annual_income_bdt || '',
   
   // Bank
   bank_name: props.userProfile?.bank_name || '',
   bank_branch: props.userProfile?.bank_branch || '',
-  account_number: props.userProfile?.bank_account_number || '',
-  bank_balance: props.userProfile?.bank_balance || '',
+  bank_account_number: props.userProfile?.bank_account_number || '',
+  bank_balance_bdt: props.userProfile?.bank_balance_bdt || '',
   
   // Assets
-  property_value: props.userProfile?.property_value_bdt || '',
-  property_details: props.userProfile?.property_details || '',
-  vehicle_value: props.userProfile?.vehicle_value_bdt || '',
-  vehicle_details: props.userProfile?.vehicle_details || '',
-  investment_value: props.userProfile?.investment_value_bdt || '',
-  investment_details: props.userProfile?.investment_details || '',
+  property_value_bdt: props.userProfile?.property_value_bdt || '',
+  property_type: props.userProfile?.property_type || '',
+  vehicle_value_bdt: props.userProfile?.vehicle_value_bdt || '',
+  vehicle_type: props.userProfile?.vehicle_type || '',
+  investment_value_bdt: props.userProfile?.investment_value_bdt || '',
+  investment_types: props.userProfile?.investment_types || '',
   
   // Liabilities
-  liabilities_amount: props.userProfile?.liabilities_amount_bdt || '',
-  liabilities_details: props.userProfile?.liabilities_details || '',
+  liabilities_amount_bdt: props.userProfile?.liabilities_amount_bdt || '',
+  liability_types: props.userProfile?.liability_types || '',
 })
 
 // Auto-calculate annual income from monthly income
-watch(() => form.monthly_income, (newValue) => {
+watch(() => form.monthly_income_bdt, (newValue) => {
   if (newValue && !isNaN(newValue)) {
-    form.annual_income = (parseFloat(newValue) * 12).toFixed(2)
+    form.annual_income_bdt = (parseFloat(newValue) * 12).toFixed(2)
   }
 })
 
 // Calculate net worth
 const netWorth = computed(() => {
   const assets = 
-    (parseFloat(form.property_value) || 0) +
-    (parseFloat(form.vehicle_value) || 0) +
-    (parseFloat(form.investment_value) || 0) +
-    (parseFloat(form.bank_balance) || 0)
-  const liabilities = parseFloat(form.liabilities_amount) || 0
+    (parseFloat(form.property_value_bdt) || 0) +
+    (parseFloat(form.vehicle_value_bdt) || 0) +
+    (parseFloat(form.investment_value_bdt) || 0) +
+    (parseFloat(form.bank_balance_bdt) || 0)
+  const liabilities = parseFloat(form.liabilities_amount_bdt) || 0
   return (assets - liabilities).toFixed(2)
 })
 
@@ -197,13 +197,13 @@ const submitForm = () => {
           <div>
             <span class="text-gray-500 dark:text-gray-400">Monthly Income:</span>
             <p class="font-semibold text-gray-900 dark:text-white mt-0.5">
-              {{ showIncome ? `৳ ${form.monthly_income}` : maskAmount(form.monthly_income) }}
+              {{ showIncome ? `৳ ${form.monthly_income_bdt}` : maskAmount(form.monthly_income_bdt) }}
             </p>
           </div>
           <div>
             <span class="text-gray-500 dark:text-gray-400">Annual Income:</span>
             <p class="font-semibold text-gray-900 dark:text-white mt-0.5">
-              {{ showIncome ? `৳ ${form.annual_income}` : maskAmount(form.annual_income) }}
+              {{ showIncome ? `৳ ${form.annual_income_bdt}` : maskAmount(form.annual_income_bdt) }}
             </p>
           </div>
         </div>
@@ -227,13 +227,13 @@ const submitForm = () => {
           <div class="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
             <span class="text-gray-500 dark:text-gray-400">Account Number:</span>
             <span class="font-mono font-semibold text-gray-900 dark:text-white">
-              {{ maskAccount(form.account_number) }}
+              {{ maskAccount(form.bank_account_number) }}
             </span>
           </div>
           <div class="flex justify-between items-center py-2">
             <span class="text-gray-500 dark:text-gray-400">Current Balance:</span>
             <span class="font-semibold text-green-600 dark:text-green-400">
-              {{ showBankDetails ? `৳ ${form.bank_balance}` : maskAmount(form.bank_balance) }}
+              {{ showBankDetails ? `৳ ${form.bank_balance_bdt}` : maskAmount(form.bank_balance_bdt) }}
             </span>
           </div>
         </div>
@@ -243,7 +243,7 @@ const submitForm = () => {
     <!-- Assets Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <!-- Property Card -->
-      <div v-if="form.property_value" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
+      <div v-if="form.property_value_bdt" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
         <div class="h-1 bg-gradient-to-r from-purple-600 to-pink-600"></div>
         <div class="p-4">
           <div class="flex items-center gap-3 mb-3">
@@ -252,13 +252,13 @@ const submitForm = () => {
             </div>
             <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Property</h3>
           </div>
-          <p class="text-lg font-bold text-gray-900 dark:text-white">৳ {{ form.property_value }}</p>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{{ form.property_details || 'Real estate holdings' }}</p>
+          <p class="text-lg font-bold text-gray-900 dark:text-white">৳ {{ form.property_value_bdt }}</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{{ form.property_type || 'Real estate holdings' }}</p>
         </div>
       </div>
 
       <!-- Vehicle Card -->
-      <div v-if="form.vehicle_value" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
+      <div v-if="form.vehicle_value_bdt" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
         <div class="h-1 bg-gradient-to-r from-orange-600 to-red-600"></div>
         <div class="p-4">
           <div class="flex items-center gap-3 mb-3">
@@ -267,13 +267,13 @@ const submitForm = () => {
             </div>
             <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Vehicle</h3>
           </div>
-          <p class="text-lg font-bold text-gray-900 dark:text-white">৳ {{ form.vehicle_value }}</p>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{{ form.vehicle_details || 'Vehicle assets' }}</p>
+          <p class="text-lg font-bold text-gray-900 dark:text-white">৳ {{ form.vehicle_value_bdt }}</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{{ form.vehicle_type || 'Vehicle assets' }}</p>
         </div>
       </div>
 
       <!-- Investment Card -->
-      <div v-if="form.investment_value" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
+      <div v-if="form.investment_value_bdt" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
         <div class="h-1 bg-gradient-to-r from-teal-600 to-cyan-600"></div>
         <div class="p-4">
           <div class="flex items-center gap-3 mb-3">
@@ -282,14 +282,14 @@ const submitForm = () => {
             </div>
             <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Investments</h3>
           </div>
-          <p class="text-lg font-bold text-gray-900 dark:text-white">৳ {{ form.investment_value }}</p>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{{ form.investment_details || 'Investment portfolio' }}</p>
+          <p class="text-lg font-bold text-gray-900 dark:text-white">৳ {{ form.investment_value_bdt }}</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{{ form.investment_types || 'Investment portfolio' }}</p>
         </div>
       </div>
     </div>
 
     <!-- Liabilities Card (if exists) -->
-    <div v-if="form.liabilities_amount" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-red-200 dark:border-red-900/50">
+    <div v-if="form.liabilities_amount_bdt" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-red-200 dark:border-red-900/50">
       <div class="h-1 bg-gradient-to-r from-red-600 to-orange-600"></div>
       <div class="p-4">
         <div class="flex items-start gap-3">
@@ -300,15 +300,15 @@ const submitForm = () => {
           </div>
           <div class="flex-1 min-w-0">
             <h3 class="text-base font-semibold text-gray-900 dark:text-white">Liabilities</h3>
-            <p class="text-lg font-bold text-red-600 dark:text-red-400 mt-1">৳ {{ form.liabilities_amount }}</p>
-            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">{{ form.liabilities_details || 'Outstanding debts and obligations' }}</p>
+            <p class="text-lg font-bold text-red-600 dark:text-red-400 mt-1">৳ {{ form.liabilities_amount_bdt }}</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">{{ form.liability_types || 'Outstanding debts and obligations' }}</p>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Empty State -->
-    <div v-if="!form.employer_name && !form.bank_name && !form.property_value && !form.vehicle_value && !form.investment_value" class="text-center py-12 bg-gray-50 dark:bg-gray-800/50 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700">
+    <div v-if="!form.employer_name && !form.bank_name && !form.property_value_bdt && !form.vehicle_value_bdt && !form.investment_value_bdt" class="text-center py-12 bg-gray-50 dark:bg-gray-800/50 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700">
       <BanknotesIcon class="w-12 h-12 text-gray-400 mx-auto mb-3" />
       <p class="text-gray-600 dark:text-gray-400 font-medium">No financial information added yet</p>
       <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">Add your financial details for visa applications</p>
@@ -370,25 +370,25 @@ const submitForm = () => {
               </div>
 
               <div>
-                <InputLabel for="monthly_income" value="Monthly Income (৳ BDT)" />
+                <InputLabel for="monthly_income_bdt" value="Monthly Income (৳ BDT)" />
                 <TextInput
-                  id="monthly_income"
-                  v-model="form.monthly_income"
+                  id="monthly_income_bdt"
+                  v-model="form.monthly_income_bdt"
                   type="number"
                   step="0.01"
                   class="mt-1 block w-full"
                   style="font-size: 16px"
                   placeholder="50000.00"
                 />
-                <InputError class="mt-2" :message="form.errors.monthly_income" />
+                <InputError class="mt-2" :message="form.errors.monthly_income_bdt" />
               </div>
 
               <div>
-                <InputLabel for="annual_income" value="Annual Income (৳ BDT)" />
+                <InputLabel for="annual_income_bdt" value="Annual Income (৳ BDT)" />
                 <div class="relative">
                   <TextInput
-                    id="annual_income"
-                    v-model="form.annual_income"
+                    id="annual_income_bdt"
+                    v-model="form.annual_income_bdt"
                     type="number"
                     step="0.01"
                     class="mt-1 block w-full"
@@ -398,7 +398,7 @@ const submitForm = () => {
                   />
                   <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 dark:text-gray-400">Auto-calculated</span>
                 </div>
-                <InputError class="mt-2" :message="form.errors.annual_income" />
+                <InputError class="mt-2" :message="form.errors.annual_income_bdt" />
               </div>
             </div>
           </div>
@@ -437,30 +437,30 @@ const submitForm = () => {
               </div>
 
               <div>
-                <InputLabel for="account_number" value="Account Number" />
+                <InputLabel for="bank_account_number" value="Account Number" />
                 <TextInput
-                  id="account_number"
-                  v-model="form.account_number"
+                  id="bank_account_number"
+                  v-model="form.bank_account_number"
                   type="text"
                   class="mt-1 block w-full"
                   style="font-size: 16px"
                   placeholder="Account number"
                 />
-                <InputError class="mt-2" :message="form.errors.account_number" />
+                <InputError class="mt-2" :message="form.errors.bank_account_number" />
               </div>
 
               <div>
-                <InputLabel for="bank_balance" value="Current Balance (৳ BDT)" />
+                <InputLabel for="bank_balance_bdt" value="Current Balance (৳ BDT)" />
                 <TextInput
-                  id="bank_balance"
-                  v-model="form.bank_balance"
+                  id="bank_balance_bdt"
+                  v-model="form.bank_balance_bdt"
                   type="number"
                   step="0.01"
                   class="mt-1 block w-full"
                   style="font-size: 16px"
                   placeholder="2500000.00"
                 />
-                <InputError class="mt-2" :message="form.errors.bank_balance" />
+                <InputError class="mt-2" :message="form.errors.bank_balance_bdt" />
               </div>
             </div>
           </div>
@@ -474,85 +474,85 @@ const submitForm = () => {
             
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <InputLabel for="property_value" value="Property Value (৳ BDT)" />
+                <InputLabel for="property_value_bdt" value="Property Value (৳ BDT)" />
                 <TextInput
-                  id="property_value"
-                  v-model="form.property_value"
+                  id="property_value_bdt"
+                  v-model="form.property_value_bdt"
                   type="number"
                   step="0.01"
                   class="mt-1 block w-full"
                   style="font-size: 16px"
                   placeholder="15000000.00"
                 />
-                <InputError class="mt-2" :message="form.errors.property_value" />
+                <InputError class="mt-2" :message="form.errors.property_value_bdt" />
               </div>
 
               <div>
-                <InputLabel for="vehicle_value" value="Vehicle Value (৳ BDT)" />
+                <InputLabel for="vehicle_value_bdt" value="Vehicle Value (৳ BDT)" />
                 <TextInput
-                  id="vehicle_value"
-                  v-model="form.vehicle_value"
+                  id="vehicle_value_bdt"
+                  v-model="form.vehicle_value_bdt"
                   type="number"
                   step="0.01"
                   class="mt-1 block w-full"
                   style="font-size: 16px"
                   placeholder="3500000.00"
                 />
-                <InputError class="mt-2" :message="form.errors.vehicle_value" />
+                <InputError class="mt-2" :message="form.errors.vehicle_value_bdt" />
               </div>
 
               <div>
-                <InputLabel for="investment_value" value="Investment Value (৳ BDT)" />
+                <InputLabel for="investment_value_bdt" value="Investment Value (৳ BDT)" />
                 <TextInput
-                  id="investment_value"
-                  v-model="form.investment_value"
+                  id="investment_value_bdt"
+                  v-model="form.investment_value_bdt"
                   type="number"
                   step="0.01"
                   class="mt-1 block w-full"
                   style="font-size: 16px"
                   placeholder="5000000.00"
                 />
-                <InputError class="mt-2" :message="form.errors.investment_value" />
+                <InputError class="mt-2" :message="form.errors.investment_value_bdt" />
               </div>
             </div>
 
             <div class="sm:col-span-2">
-              <InputLabel for="property_details" value="Property Details" />
+              <InputLabel for="property_type" value="Property Type" />
               <textarea
-                id="property_details"
-                v-model="form.property_details"
+                id="property_type"
+                v-model="form.property_type"
                 rows="2"
                 class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 focus:ring-green-500 rounded-lg shadow-sm"
                 style="font-size: 16px"
                 placeholder="Describe your properties..."
               ></textarea>
-              <InputError class="mt-2" :message="form.errors.property_details" />
+              <InputError class="mt-2" :message="form.errors.property_type" />
             </div>
 
             <div class="sm:col-span-2">
-              <InputLabel for="vehicle_details" value="Vehicle Details" />
+              <InputLabel for="vehicle_type" value="Vehicle Type" />
               <textarea
-                id="vehicle_details"
-                v-model="form.vehicle_details"
+                id="vehicle_type"
+                v-model="form.vehicle_type"
                 rows="2"
                 class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 focus:ring-green-500 rounded-lg shadow-sm"
                 style="font-size: 16px"
                 placeholder="Make, model, year..."
               ></textarea>
-              <InputError class="mt-2" :message="form.errors.vehicle_details" />
+              <InputError class="mt-2" :message="form.errors.vehicle_type" />
             </div>
 
             <div class="sm:col-span-2">
-              <InputLabel for="investment_details" value="Investment Details" />
+              <InputLabel for="investment_types" value="Investment Types" />
               <textarea
-                id="investment_details"
-                v-model="form.investment_details"
+                id="investment_types"
+                v-model="form.investment_types"
                 rows="2"
                 class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-green-500 focus:ring-green-500 rounded-lg shadow-sm"
                 style="font-size: 16px"
                 placeholder="Describe your investments..."
               ></textarea>
-              <InputError class="mt-2" :message="form.errors.investment_details" />
+              <InputError class="mt-2" :message="form.errors.investment_types" />
             </div>
           </div>
 
@@ -566,30 +566,30 @@ const submitForm = () => {
             </h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <InputLabel for="liabilities_amount" value="Total Liabilities (৳ BDT)" />
+                <InputLabel for="liabilities_amount_bdt" value="Total Liabilities (৳ BDT)" />
                 <TextInput
-                  id="liabilities_amount"
-                  v-model="form.liabilities_amount"
+                  id="liabilities_amount_bdt"
+                  v-model="form.liabilities_amount_bdt"
                   type="number"
                   step="0.01"
                   class="mt-1 block w-full"
                   style="font-size: 16px"
                   placeholder="2000000.00"
                 />
-                <InputError class="mt-2" :message="form.errors.liabilities_amount" />
+                <InputError class="mt-2" :message="form.errors.liabilities_amount_bdt" />
               </div>
 
               <div class="sm:col-span-2">
-                <InputLabel for="liabilities_details" value="Liabilities Details" />
+                <InputLabel for="liability_types" value="Liability Types" />
                 <textarea
-                  id="liabilities_details"
-                  v-model="form.liabilities_details"
+                  id="liability_types"
+                  v-model="form.liability_types"
                   rows="2"
                   class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-red-500 focus:ring-red-500 rounded-lg shadow-sm"
                   style="font-size: 16px"
                   placeholder="List all liabilities: type, amount, repayment terms..."
                 ></textarea>
-                <InputError class="mt-2" :message="form.errors.liabilities_details" />
+                <InputError class="mt-2" :message="form.errors.liability_types" />
               </div>
             </div>
           </div>

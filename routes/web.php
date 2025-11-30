@@ -374,6 +374,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/financial', function () {
         return redirect()->route('profile.edit', ['section' => 'financial']);
     })->name('profile.financial.index');
+    Route::post('/profile/financial', [ProfileController::class, 'updateDetails'])->name('profile.financial.update');
     
     Route::get('/profile/languages', function () {
         return redirect()->route('profile.edit', ['section' => 'languages']);
