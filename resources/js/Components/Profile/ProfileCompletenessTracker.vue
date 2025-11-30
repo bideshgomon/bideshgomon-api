@@ -42,7 +42,7 @@ const sections = [
         id: 'phone',
         name: 'Phone Numbers',
         icon: PhoneIcon,
-        color: 'purple',
+        color: 'blue',
         checkArray: 'phoneNumbers',
         weight: 5
     },
@@ -50,7 +50,7 @@ const sections = [
         id: 'social',
         name: 'Social Media',
         icon: GlobeAltIcon,
-        color: 'pink',
+        color: 'blue',
         fields: ['social_links'],
         weight: 5
     },
@@ -114,7 +114,7 @@ const sections = [
         id: 'references',
         name: 'References',
         icon: UsersIcon,
-        color: 'violet',
+        color: 'gray',
         fields: ['references'],
         weight: 5
     },
@@ -122,7 +122,7 @@ const sections = [
         id: 'certifications',
         name: 'Certifications',
         icon: ShieldCheckIcon,
-        color: 'emerald',
+        color: 'green',
         fields: ['certifications'],
         weight: 5
     },
@@ -130,7 +130,7 @@ const sections = [
         id: 'family',
         name: 'Family Information',
         icon: UsersIcon,
-        color: 'rose',
+        color: 'red',
         checkArray: 'familyMembers',
         weight: 5
     },
@@ -188,19 +188,11 @@ const completedCount = computed(() =>
 const getColorClasses = (color, type = 'bg') => {
     const colors = {
         blue: { bg: 'bg-blue-500', text: 'text-blue-600', border: 'border-blue-500', ring: 'ring-blue-500' },
-        purple: { bg: 'bg-purple-500', text: 'text-purple-600', border: 'border-purple-500', ring: 'ring-purple-500' },
-        pink: { bg: 'bg-pink-500', text: 'text-pink-600', border: 'border-pink-500', ring: 'ring-pink-500' },
-        red: { bg: 'bg-red-500', text: 'text-red-600', border: 'border-red-500', ring: 'ring-red-500' },
-        green: { bg: 'bg-green-500', text: 'text-green-600', border: 'border-green-500', ring: 'ring-green-500' },
-        indigo: { bg: 'bg-indigo-500', text: 'text-indigo-600', border: 'border-indigo-500', ring: 'ring-indigo-500' },
+        gray: { bg: 'bg-gray-500', text: 'text-gray-600', border: 'border-gray-500', ring: 'ring-gray-500' },
+        red: { bg: 'bg-red-600', text: 'text-red-600', border: 'border-red-600', ring: 'ring-red-600' },
+        green: { bg: 'bg-green-600', text: 'text-green-600', border: 'border-green-600', ring: 'ring-green-600' },
         yellow: { bg: 'bg-yellow-500', text: 'text-yellow-600', border: 'border-yellow-500', ring: 'ring-yellow-500' },
         orange: { bg: 'bg-orange-500', text: 'text-orange-600', border: 'border-orange-500', ring: 'ring-orange-500' },
-        cyan: { bg: 'bg-cyan-500', text: 'text-cyan-600', border: 'border-cyan-500', ring: 'ring-cyan-500' },
-        teal: { bg: 'bg-teal-500', text: 'text-teal-600', border: 'border-teal-500', ring: 'ring-teal-500' },
-        violet: { bg: 'bg-violet-500', text: 'text-violet-600', border: 'border-violet-500', ring: 'ring-violet-500' },
-        emerald: { bg: 'bg-emerald-500', text: 'text-emerald-600', border: 'border-emerald-500', ring: 'ring-emerald-500' },
-        rose: { bg: 'bg-rose-500', text: 'text-rose-600', border: 'border-rose-500', ring: 'ring-rose-500' },
-        amber: { bg: 'bg-amber-500', text: 'text-amber-600', border: 'border-amber-500', ring: 'ring-amber-500' },
     };
     return colors[color]?.[type] || colors.blue[type];
 };

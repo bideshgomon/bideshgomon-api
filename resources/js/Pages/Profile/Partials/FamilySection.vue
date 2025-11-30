@@ -279,7 +279,7 @@ onMounted(() => {
     <header class="mb-rhythm-lg">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-pink-600 flex items-center justify-center shadow-sm">
+          <div class="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center shadow-sm">
             <UsersIcon class="w-6 h-6 text-white" />
           </div>
           <div>
@@ -305,13 +305,13 @@ onMounted(() => {
         class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200"
       >
         <!-- Gradient Header Stripe -->
-        <div class="h-px bg-gradient-to-r from-pink-600 to-rose-600"></div>
+        <div class="h-px bg-gradient-to-r from-red-600 to-green-600"></div>
         
         <!-- Card Content -->
         <div class="p-4 sm:p-6">
           <!-- Header with Icon and Name -->
           <div class="flex items-start gap-3 mb-4">
-            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-pink-600 to-rose-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-red-600 to-red-700 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
               <UsersIcon class="w-6 h-6 sm:w-7 sm:h-7 text-white" />
             </div>
             <div class="flex-1 min-w-0">
@@ -342,7 +342,7 @@ onMounted(() => {
             </span>
             <span
               v-if="member.is_dependent"
-              class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-300"
+              class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300"
             >
               Dependent
             </span>
@@ -423,7 +423,7 @@ onMounted(() => {
             <div v-if="member.phone_number" class="flex items-start gap-2">
               <PhoneIcon class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
               <div class="flex-1">
-                <a :href="`tel:${member.phone_number}`" class="text-pink-600 dark:text-pink-400 hover:underline font-medium">
+                <a :href="`tel:${member.phone_number}`" class="text-red-600 dark:text-red-400 hover:underline font-medium">
                   {{ member.phone_number }}
                 </a>
               </div>
@@ -432,7 +432,7 @@ onMounted(() => {
             <div v-if="member.email" class="flex items-start gap-2">
               <EnvelopeIcon class="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
               <div class="flex-1">
-                <a :href="`mailto:${member.email}`" class="text-pink-600 dark:text-pink-400 hover:underline font-medium">
+                <a :href="`mailto:${member.email}`" class="text-red-600 dark:text-red-400 hover:underline font-medium">
                   {{ member.email }}
                 </a>
               </div>
@@ -474,7 +474,7 @@ onMounted(() => {
     <!-- Add Button -->
     <button
       @click="openAddModal"
-      class="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-base mt-6"
+      class="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-base mt-6"
     >
       <PlusIcon class="h-5 w-5" />
       <span>ADD FAMILY MEMBER</span>
@@ -485,7 +485,7 @@ onMounted(() => {
       <div class="p-6 bg-white dark:bg-gray-800">
         <!-- Modal Header -->
         <div class="flex items-center gap-4 mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
-          <div class="w-12 h-12 bg-gradient-to-br from-pink-600 to-rose-600 rounded-xl flex items-center justify-center shadow-lg">
+          <div class="w-12 h-12 bg-gradient-to-br from-red-600 to-red-700 rounded-xl flex items-center justify-center shadow-lg">
             <UsersIcon class="w-7 h-7 text-white" />
           </div>
           <h2 class="text-xl font-bold text-gray-900 dark:text-white">
@@ -727,7 +727,7 @@ onMounted(() => {
               <input
                 v-model="form.is_dependent"
                 type="checkbox"
-                class="w-5 h-5 rounded border-gray-300 text-pink-600 focus:ring-pink-500"
+                class="w-5 h-5 rounded border-gray-300 text-red-600 focus:ring-red-500"
               />
               <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
                 This person is my dependent (for visa sponsorship)
@@ -738,7 +738,7 @@ onMounted(() => {
               <input
                 v-model="form.lives_with_user"
                 type="checkbox"
-                class="w-5 h-5 rounded border-gray-300 text-pink-600 focus:ring-pink-500"
+                class="w-5 h-5 rounded border-gray-300 text-red-600 focus:ring-red-500"
               />
               <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Lives with me</span>
             </label>
@@ -747,7 +747,7 @@ onMounted(() => {
               <input
                 v-model="form.will_accompany_travel"
                 type="checkbox"
-                class="w-5 h-5 rounded border-gray-300 text-pink-600 focus:ring-pink-500"
+                class="w-5 h-5 rounded border-gray-300 text-red-600 focus:ring-red-500"
               />
               <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Will accompany me on travel</span>
             </label>
