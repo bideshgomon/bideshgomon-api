@@ -117,6 +117,8 @@ class ProfileController extends Controller
             'skills' => $user->skills,
             'travelHistory' => $user->travelHistory,
             'phoneNumbers' => $user->phoneNumbers,
+            'passports' => $user->passports,
+            'visaHistory' => $user->visaHistory,
             'divisions' => get_bd_divisions(),
             'countries' => \App\Models\Country::where('is_active', true)->orderBy('name')->get(['id', 'name', 'nationality']),
             'degrees' => \App\Models\Degree::where('is_active', true)->orderBy('name')->get(['id', 'name']),

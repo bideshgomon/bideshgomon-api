@@ -74,6 +74,8 @@ const props = defineProps({
     skills: Array,
     travelHistory: Array,
     phoneNumbers: Array,
+    passports: Array,
+    visaHistory: Array,
     divisions: Array,
     countries: Array,
     degrees: Array,
@@ -222,6 +224,12 @@ const getSectionCompletion = (sectionId) => {
         },
         'security': () => {
             return props.securityInformation ? 100 : 0;
+        },
+        'passports': () => {
+            return props.passports?.length > 0 ? 100 : 0;
+        },
+        'visa-history': () => {
+            return props.visaHistory?.length > 0 ? 100 : 0;
         },
         'completeness': () => completion.value.percentage,
         'privacy': () => 50, // Default for settings sections
