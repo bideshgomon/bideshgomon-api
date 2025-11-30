@@ -31,19 +31,40 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 $expectedSchema = [
     'users' => [
         'id', 'name', 'email', 'email_verified_at', 'password', 'phone', 
-        'referral_code', 'remember_token', 'created_at', 'updated_at'
+        'referral_code', 'remember_token', 'language', 'role_id', 'referred_by',
+        'google_id', 'google_token', 'google_refresh_token',
+        'public_profile_slug', 'profile_is_public', 'profile_visibility_settings',
+        'profile_bio', 'profile_headline', 'created_at', 'updated_at'
     ],
     'user_profiles' => [
-        'id', 'user_id', 'first_name', 'middle_name', 'last_name', 'name_as_per_passport',
-        'date_of_birth', 'gender', 'nationality', 'nid_number', 'nid_scan_upload',
-        'birth_certificate_number', 'birth_certificate_upload', 'profile_picture',
-        'marital_status', 'religion', 'blood_group', 'present_address', 'permanent_address',
-        'city', 'state', 'postal_code', 'country', 'created_at', 'updated_at'
+        'id', 'user_id', 'first_name', 'middle_name', 'last_name', 'name_as_per_passport', 'full_name',
+        'date_of_birth', 'dob', 'gender', 'nationality', 'nid', 'nid_number', 'nid_scan_upload',
+        'birth_certificate_number', 'birth_certificate_upload', 'profile_picture', 'profile_photo',
+        'passport_number', 'passport_issue_date', 'passport_expiry_date', 'passport_issue_place',
+        'marital_status', 'religion', 'blood_group', 
+        'present_address', 'present_address_line', 'present_division', 'present_district', 
+        'present_city', 'present_postal_code', 'present_country',
+        'permanent_address', 'permanent_address_line', 'permanent_division', 'permanent_district', 
+        'permanent_city', 'permanent_postal_code', 'permanent_country',
+        'city', 'state', 'postal_code', 'country', 'phone',
+        'emergency_contact_name', 'emergency_contact_phone', 'emergency_contact_relation',
+        'emergency_contact_relationship',
+        'monthly_income_bdt', 'annual_income_bdt', 'employer_name', 
+        'bank_name', 'bank_account_number', 'bank_balance_bdt', 'other_assets_bdt', 
+        'tax_identification_number', 'source_of_funds',
+        'bio', 'social_links', 'facebook_url', 'linkedin_url', 'twitter_url', 'instagram_url',
+        'whatsapp_number', 'telegram_username', 'certifications',
+        'health_insurance_provider', 'health_insurance_number', 'health_insurance_expiry_date',
+        'medical_conditions', 'allergies', 'medications', 'vaccinations',
+        'created_at', 'updated_at'
     ],
     'user_passports' => [
         'id', 'user_id', 'passport_number', 'passport_type', 'issue_date', 'expiry_date',
-        'issue_country', 'issue_place', 'scan_front_upload', 'scan_back_upload',
-        'is_primary', 'notes', 'created_at', 'updated_at'
+        'issue_country', 'issuing_country', 'issue_place', 'place_of_issue', 'issuing_authority',
+        'scan_front_upload', 'scan_back_upload', 'passport_scan_path', 'additional_pages_path',
+        'is_primary', 'is_current_passport', 'is_lost_or_stolen', 'reported_lost_date',
+        'surname', 'given_names', 'nationality', 'sex', 'date_of_birth', 'place_of_birth',
+        'notes', 'created_at', 'updated_at'
     ],
     'user_educations' => [
         'id', 'user_id', 'institution_name', 'degree', 'degree_level', 'field_of_study', 
@@ -52,15 +73,21 @@ $expectedSchema = [
         'degree_certificate_path', 'transcript_path', 'created_at', 'updated_at', 'deleted_at'
     ],
     'user_work_experiences' => [
-        'id', 'user_id', 'company_name', 'job_title', 'employment_type',
-        'start_date', 'end_date', 'is_current', 'country', 'city',
-        'responsibilities', 'achievements', 'reference_name', 'reference_contact',
-        'experience_letter_path', 'created_at', 'updated_at', 'deleted_at'
+        'id', 'user_id', 'company_name', 'job_title', 'position', 'employment_type',
+        'start_date', 'end_date', 'is_current', 'is_current_employment', 'country', 'city',
+        'responsibilities', 'job_description', 'achievements', 'reference_name', 'reference_contact',
+        'supervisor_name', 'supervisor_phone', 'supervisor_email',
+        'experience_letter_path', 'employment_letter_path', 'payslip_paths', 'tax_return_paths',
+        'salary', 'currency', 'salary_period', 'reason_for_leaving',
+        'created_at', 'updated_at', 'deleted_at'
     ],
     'user_languages' => [
-        'id', 'user_id', 'language', 'proficiency_level', 'test_type',
-        'test_date', 'overall_score', 'listening_score', 'reading_score',
-        'writing_score', 'speaking_score', 'certificate_path',
+        'id', 'user_id', 'language', 'language_id', 'proficiency_level', 'proficiency',
+        'can_read', 'can_write', 'can_speak', 'can_understand',
+        'test_type', 'test_taken', 'language_test_id', 'test_other_name',
+        'test_date', 'overall_score', 'test_score', 'listening_score', 'reading_score',
+        'writing_score', 'speaking_score', 'certificate_path', 'test_certificate_path',
+        'test_reference_number', 'certificate_expiry_date', 'is_native',
         'created_at', 'updated_at', 'deleted_at'
     ],
     'referrals' => [
@@ -73,39 +100,46 @@ $expectedSchema = [
         'description', 'approved_by', 'approved_at', 'created_at', 'updated_at'
     ],
     'wallets' => [
-        'id', 'user_id', 'balance', 'currency', 'created_at', 'updated_at'
+        'id', 'user_id', 'balance', 'currency', 'is_active', 'created_at', 'updated_at'
     ],
     'wallet_transactions' => [
-        'id', 'wallet_id', 'type', 'amount', 'balance_before', 'balance_after',
-        'description', 'reference_type', 'reference_id', 'created_at', 'updated_at'
+        'id', 'wallet_id', 'user_id', 'type', 'amount', 'balance_before', 'balance_after',
+        'description', 'reference_type', 'reference_id', 'status', 'created_at', 'updated_at'
     ],
     'countries' => [
-        'id', 'name', 'iso_code_2', 'iso_code_3', 'phone_code', 'capital',
-        'currency', 'currency_symbol', 'nationality', 'region',
+        'id', 'name', 'code', 'iso_code_2', 'iso_code_3', 'phone_code', 'capital',
+        'currency', 'currency_code', 'currency_symbol', 'nationality', 'region',
+        'flag_emoji', 'continent', 'timezone', 'is_popular', 'is_active', 'display_order',
         'created_at', 'updated_at'
     ],
     'service_modules' => [
-        'id', 'name', 'slug', 'description', 'icon', 'service_type',
+        'id', 'name', 'slug', 'description', 'icon', 'service_type', 'service_category_id',
+        'short_description', 'full_description', 'image', 'coming_soon',
         'is_active', 'is_featured', 'sort_order', 'created_at', 'updated_at'
     ],
     'profile_assessments' => [
         'id', 'user_id', 'overall_score', 'profile_completeness',
-        'document_readiness', 'visa_readiness', 'recommendations',
+        'document_readiness', 'visa_readiness', 'visa_eligibility', 'visa_eligibility_breakdown',
+        'risk_level', 'risk_factors', 'recommendations',
         'missing_documents', 'strengths', 'weaknesses',
         'education_score', 'work_experience_score', 'language_score',
         'financial_score', 'travel_history_score', 'family_score',
-        'document_quality_score', 'data_quality_score',
+        'document_quality_score', 'data_quality_score', 'personal_info_score',
+        'language_proficiency_score', 'passport_score',
         'profile_strength', 'visa_success_probability',
         'priority_actions', 'quick_wins', 'long_term_improvements',
         'estimated_completion_time', 'next_milestone',
+        'recommended_visa_types', 'eligible_countries',
+        'ai_summary', 'ai_metadata',
         'usa_readiness', 'canada_readiness', 'uk_readiness',
         'australia_readiness', 'europe_readiness',
-        'last_assessed_at', 'created_at', 'updated_at'
+        'assessed_at', 'last_assessed_at', 'assessment_version',
+        'created_at', 'updated_at'
     ],
     'appointments' => [
         'id', 'user_id', 'appointment_type', 'appointment_number',
-        'preferred_date', 'preferred_time', 'duration', 'status',
-        'purpose', 'notes', 'admin_notes', 'is_online', 'meeting_link',
+        'preferred_date', 'preferred_time', 'appointment_date', 'appointment_time',
+        'duration', 'status', 'purpose', 'notes', 'admin_notes', 'is_online', 'meeting_link',
         'location', 'assigned_to', 'confirmed_at', 'completed_at',
         'created_at', 'updated_at', 'deleted_at'
     ],
