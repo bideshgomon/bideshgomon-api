@@ -335,14 +335,14 @@ const getProficiencyLabel = (level) => {
 
                 <!-- Education & Qualifications -->
                 <div id="education" class="bg-white dark:bg-gray-800 shadow-md sm:rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 scroll-mt-20">
-                    <div class="h-1 bg-purple-500"></div>
+                    <div class="h-1 bg-blue-500"></div>
                     <div class="p-4 sm:p-6">
                         <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                             <span class="text-2xl">🎓</span>
                             <span>Education & Qualifications</span>
                         </h3>
                         <div v-if="educations && educations.length > 0" class="space-y-3">
-                            <div v-for="education in educations" :key="education.id" class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                            <div v-for="education in educations" :key="education.id" class="bg-blue-50 border border-blue-200 rounded-lg p-4">
                                 <div class="flex justify-between items-start gap-3 mb-3">
                                     <div class="flex-1 min-w-0">
                                         <h4 class="font-semibold text-gray-900 text-sm">{{ education.institution_name }}</h4>
@@ -541,14 +541,14 @@ const getProficiencyLabel = (level) => {
 
                 <!-- Address Information -->
                 <div id="address" class="bg-white dark:bg-gray-800 shadow-md sm:rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 scroll-mt-20">
-                    <div class="h-1 bg-emerald-500"></div>
+                    <div class="h-1 bg-green-500"></div>
                     <div class="p-4 sm:p-6">
                         <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-2">
                             <span class="text-2xl">📍</span>
                             <span>Address Information</span>
                         </h3>
                         <div v-if="userProfile?.present_address_line || userProfile?.permanent_address_line" class="space-y-6">
-                            <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
                                 <h4 class="text-sm font-bold text-gray-900 dark:text-gray-100 mb-3">🏠 Present Address</h4>
                                 <dl class="grid grid-cols-1 gap-3 sm:grid-cols-3">
                                     <div class="bg-white/60 rounded p-2">
@@ -661,20 +661,20 @@ const getProficiencyLabel = (level) => {
 
                 <!-- Family Members -->
                 <div id="family" class="bg-white dark:bg-gray-800 shadow-md sm:rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 scroll-mt-20">
-                    <div class="h-1 bg-purple-500"></div>
+                    <div class="h-1 bg-red-500"></div>
                     <div class="p-4 sm:p-6">
                         <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                             <span class="text-2xl">👨‍👩‍👧‍👦</span>
                             <span>Family Members</span>
                         </h3>
                         <div v-if="familyMembers && familyMembers.length > 0" class="space-y-3">
-                            <div v-for="member in familyMembers" :key="member.id" class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                            <div v-for="member in familyMembers" :key="member.id" class="bg-red-50 border border-red-200 rounded-lg p-4">
                                 <div class="flex justify-between items-start mb-3">
                                     <div class="flex-1 min-w-0">
                                         <h4 class="font-semibold text-gray-900 text-sm">{{ member.full_name }}</h4>
                                         <p class="text-xs text-gray-600 capitalize mt-0.5">{{ member.relationship }}</p>
                                     </div>
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-600 text-white capitalize flex-shrink-0">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-600 text-white capitalize flex-shrink-0">
                                         {{ member.relationship }}
                                     </span>
                                 </div>
@@ -736,12 +736,12 @@ const getProficiencyLabel = (level) => {
                                 <div class="bg-blue-100 rounded-lg p-4 border border-blue-300">
                                     <dt class="text-xs font-medium text-gray-700">Bank Balance</dt>
                                     <dd class="text-2xl font-bold text-blue-700 mt-1">
-                                        {{ userProfile?.bank_balance_bdt ? formatCurrency(userProfile.bank_balance_bdt) : '৳0' }}
+                                        {{ userProfile?.bank_balance_bdt ? formatCurrency(userProfile.bank_balance_bdt) : '৳০' }}
                                     </dd>
                                 </div>
-                                <div class="bg-purple-100 rounded-lg p-4 border border-purple-300">
+                                <div class="bg-green-100 rounded-lg p-4 border border-green-300">
                                     <dt class="text-xs font-medium text-gray-700">Net Worth</dt>
-                                    <dd class="text-2xl font-bold text-purple-700 mt-1">
+                                    <dd class="text-2xl font-bold text-green-700 mt-1">
                                         {{ userProfile?.net_worth_bdt ? formatCurrency(userProfile.net_worth_bdt) : '৳0' }}
                                     </dd>
                                 </div>
@@ -765,7 +765,7 @@ const getProficiencyLabel = (level) => {
                             </div>
 
                             <!-- Assets -->
-                            <div v-if="userProfile?.owns_property || userProfile?.owns_vehicle" class="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+                            <div v-if="userProfile?.owns_property || userProfile?.owns_vehicle" class="bg-green-50 border border-green-200 rounded-lg p-4">
                                 <h4 class="font-semibold text-gray-900 text-sm mb-3 flex items-center gap-2">
                                     <span>🏡</span> Assets
                                 </h4>

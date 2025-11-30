@@ -329,7 +329,7 @@ const sortedWorkList = computed(() => {
             </span>
             <span
               v-if="work.job_category"
-              class="inline-flex items-center px-2.5 py-1 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs font-medium rounded-full"
+              class="inline-flex items-center px-2.5 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-medium rounded-full"
             >
               {{ work.job_category }}
             </span>
@@ -377,7 +377,7 @@ const sortedWorkList = computed(() => {
       <!-- Add More Button -->
       <button
         @click="openModal()"
-        class="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-base"
+        class="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-base"
       >
         <PlusIcon class="h-5 w-5" />
         <span>ADD MORE EXPERIENCE</span>

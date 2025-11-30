@@ -124,7 +124,7 @@ const submitForm = () => {
     <!-- Section Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-rhythm-lg">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center shadow-sm">
+        <div class="w-10 h-10 rounded-xl bg-green-600 flex items-center justify-center shadow-sm">
           <BanknotesIcon class="w-6 h-6 text-white" />
         </div>
         <div>
@@ -171,7 +171,7 @@ const submitForm = () => {
     </div>
 
     <!-- Net Worth Summary Card -->
-    <div class="bg-gradient-to-br from-green-600 to-emerald-700 rounded-xl p-6 text-white shadow-lg">
+    <div class="bg-gradient-to-br from-green-600 to-green-700 rounded-xl p-6 text-white shadow-lg">
       <div class="flex items-center gap-2 mb-2">
         <ChartBarIcon class="w-5 h-5" />
         <span class="text-sm font-medium opacity-90">Net Worth</span>
@@ -182,7 +182,7 @@ const submitForm = () => {
 
     <!-- Employment Card -->
     <div v-if="form.employer_name" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
-      <div class="h-1 bg-gradient-to-r from-green-600 to-emerald-700"></div>
+      <div class="h-1 bg-gradient-to-r from-green-600 to-green-700"></div>
       <div class="p-4">
         <div class="flex items-start gap-3 mb-4">
           <div class="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
@@ -244,11 +244,11 @@ const submitForm = () => {
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <!-- Property Card -->
       <div v-if="form.property_value_bdt" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
-        <div class="h-1 bg-gradient-to-r from-purple-600 to-pink-600"></div>
+        <div class="h-1 bg-gradient-to-r from-red-600 to-green-600"></div>
         <div class="p-4">
           <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-              <HomeIcon class="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+              <HomeIcon class="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
             <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Property</h3>
           </div>
@@ -314,7 +314,7 @@ const submitForm = () => {
       <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">Add your financial details for visa applications</p>
       <button
         @click="openEditModal"
-        class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-emerald-700 rounded-lg hover:from-green-700 hover:to-emerald-800 transition-all shadow-md"
+        class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-green-700 rounded-lg hover:from-green-700 hover:to-green-800 transition-all shadow-md"
         style="min-height: 44px"
       >
         <PlusIcon class="w-5 h-5" />
@@ -326,7 +326,7 @@ const submitForm = () => {
     <Modal :show="showModal" @close="closeModal" max-width="3xl">
       <div class="p-6">
         <div class="flex items-center gap-3 mb-6">
-          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-600 to-green-700 flex items-center justify-center">
             <BanknotesIcon class="w-6 h-6 text-white" />
           </div>
           <div>
@@ -468,7 +468,7 @@ const submitForm = () => {
           <!-- Assets Section -->
           <div class="space-y-4">
             <h3 class="text-base font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-              <HomeIcon class="w-5 h-5 text-purple-600" />
+              <HomeIcon class="w-5 h-5 text-blue-600" />
               Assets & Property
             </h3>
             
@@ -616,7 +616,7 @@ const submitForm = () => {
             <button
               type="submit"
               :disabled="form.processing"
-              class="w-full sm:w-auto px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-emerald-700 rounded-lg hover:from-green-700 hover:to-emerald-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              class="w-full sm:w-auto px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-green-700 rounded-lg hover:from-green-700 hover:to-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
               style="min-height: 44px"
             >
               <span v-if="form.processing">Saving...</span>
