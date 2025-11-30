@@ -210,10 +210,15 @@ Route::get('/dashboard', function () {
             $endDate = \Carbon\Carbon::create($year, $month, 1)->endOfMonth();
             
             // Get top 5 referrers for this month
-            $topReferrers = \App\Models\Referral::select('referrer_id', \Illuminate\Support\Facades\DB::raw('COUNT(*) as referral_count'), \Illuminate\Support\Facades\DB::raw('SUM(reward_amount) as total_earnings'))
-                ->whereBetween('created_at', [$startDate, $endDate])
-                ->where('status', 'completed')
-                ->groupBy('referrer_id')
+            $topReferrers = \App\Models\Referral::select(
+                    'referrals.referrer_id',
+                    \Illuminate\Support\Facades\DB::raw('COUNT(DISTINCT referrals.id) as referral_count'),
+                    \Illuminate\Support\Facades\DB::raw('COALESCE(SUM(CASE WHEN rewards.status = "paid" THEN rewards.amount ELSE 0 END), 0) as total_earnings')
+                )
+                ->leftJoin('rewards', 'referrals.id', '=', 'rewards.referral_id')
+                ->whereBetween('referrals.created_at', [$startDate, $endDate])
+                ->where('referrals.status', 'completed')
+                ->groupBy('referrals.referrer_id')
                 ->orderByDesc('referral_count')
                 ->orderByDesc('total_earnings')
                 ->limit(5)
@@ -234,10 +239,15 @@ Route::get('/dashboard', function () {
                 });
             
             // Get user's rank
-            $allReferrers = \App\Models\Referral::select('referrer_id', \Illuminate\Support\Facades\DB::raw('COUNT(*) as referral_count'), \Illuminate\Support\Facades\DB::raw('SUM(reward_amount) as total_earnings'))
-                ->whereBetween('created_at', [$startDate, $endDate])
-                ->where('status', 'completed')
-                ->groupBy('referrer_id')
+            $allReferrers = \App\Models\Referral::select(
+                    'referrals.referrer_id',
+                    \Illuminate\Support\Facades\DB::raw('COUNT(DISTINCT referrals.id) as referral_count'),
+                    \Illuminate\Support\Facades\DB::raw('COALESCE(SUM(CASE WHEN rewards.status = "paid" THEN rewards.amount ELSE 0 END), 0) as total_earnings')
+                )
+                ->leftJoin('rewards', 'referrals.id', '=', 'rewards.referral_id')
+                ->whereBetween('referrals.created_at', [$startDate, $endDate])
+                ->where('referrals.status', 'completed')
+                ->groupBy('referrals.referrer_id')
                 ->orderByDesc('referral_count')
                 ->orderByDesc('total_earnings')
                 ->get();

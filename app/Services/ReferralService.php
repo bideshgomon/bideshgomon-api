@@ -118,7 +118,8 @@ class ReferralService
         $totalReferrals = $user->referrals()->count();
         $completedReferrals = $user->referrals()->where('status', 'completed')->count();
         $pendingReferrals = $user->referrals()->where('status', 'pending')->count();
-        $totalEarnings = $user->referrals()->where('reward_paid', true)->sum('reward_amount');
+        // Calculate total earnings from rewards table where status is 'paid'
+        $totalEarnings = $user->rewards()->where('status', 'paid')->sum('amount');
         $pendingRewards = $user->rewards()->where('status', 'pending')->sum('amount');
 
         return [

@@ -179,7 +179,7 @@ class ProfileAssessmentService
 
         // Quality factors
         foreach ($educations as $education) {
-            if ($education->certificates_upload) $score += 10;
+            if ($education->degree_certificate_path) $score += 10;
             if ($education->gpa) $score += 5;
             if ($education->degree_level === 'masters' || $education->degree_level === 'phd') {
                 $score += 15;
@@ -392,7 +392,7 @@ class ProfileAssessmentService
         
         // Check essential documents
         if ($user->userPassports()->exists()) $score++;
-        if ($user->educations()->whereNotNull('certificates_upload')->exists()) $score++;
+        if ($user->educations()->whereNotNull('degree_certificate_path')->exists()) $score++;
         if ($user->userProfile && $user->userProfile->nid_scan_upload) $score++;
         
         $financial = $user->financialInformation;
@@ -600,7 +600,7 @@ class ProfileAssessmentService
             $missing[] = 'Passport copy (front & back)';
         }
         
-        if (!$user->educations()->whereNotNull('certificates_upload')->exists()) {
+        if (!$user->educations()->whereNotNull('degree_certificate_path')->exists()) {
             $missing[] = 'Education certificates';
         }
         
@@ -810,7 +810,7 @@ class ProfileAssessmentService
         $quality = 50; // Base score
         
         // Complete records increase quality
-        if ($user->educations()->whereNotNull('certificates_upload')->count() > 0) {
+        if ($user->educations()->whereNotNull('degree_certificate_path')->count() > 0) {
             $quality += 10;
         }
         

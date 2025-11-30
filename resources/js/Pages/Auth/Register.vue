@@ -212,18 +212,30 @@ const submit = () => {
                             </p>
                         </div>
 
-                        <!-- Referral Code (if provided) -->
-                        <div v-if="referralCode">
+                        <!-- Referral Code -->
+                        <div>
                             <label for="referral_code" class="block text-sm font-semibold text-gray-700 mb-2">
-                                Referral Code
+                                Referral Code (Optional)
                             </label>
-                            <input
-                                id="referral_code"
-                                type="text"
-                                v-model="form.referral_code"
-                                readonly
-                                class="block w-full px-4 py-4 text-base border-2 border-amber-200 bg-amber-50 rounded-2xl font-mono font-semibold text-amber-900"
-                            />
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <GiftIcon class="h-5 w-5 text-gray-400" />
+                                </div>
+                                <input
+                                    id="referral_code"
+                                    type="text"
+                                    v-model="form.referral_code"
+                                    :readonly="!!referralCode"
+                                    placeholder="Enter referral code"
+                                    class="block w-full pl-11 pr-4 py-4 text-base border-2 rounded-2xl font-mono uppercase transition-colors"
+                                    :class="referralCode ? 'border-amber-300 bg-amber-50 text-amber-900 font-semibold' : 'border-gray-200 bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500'"
+                                />
+                            </div>
+                            <p v-if="referralCode" class="mt-1 text-xs text-amber-600 flex items-center">
+                                <span class="inline-block w-1.5 h-1.5 bg-amber-600 rounded-full mr-2"></span>
+                                Referral code applied! You'll earn rewards after registration.
+                            </p>
+                            <p v-else class="mt-1 text-xs text-gray-500">Have a referral code? Enter it to earn rewards!</p>
                         </div>
 
                         <!-- Password Input -->
