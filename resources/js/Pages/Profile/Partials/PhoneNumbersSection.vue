@@ -38,11 +38,22 @@ const isSendingCode = ref(false)
 const form = ref({
     country_code: '+880',
     phone_number: '',
+    phone_type: 'mobile',
     label: '',
     is_primary: false
 })
 
 const errors = ref({})
+
+// Phone type options
+const phoneTypes = [
+    { value: 'mobile', label: 'Mobile', icon: '📱' },
+    { value: 'home', label: 'Home', icon: '🏠' },
+    { value: 'work', label: 'Work', icon: '💼' },
+    { value: 'whatsapp', label: 'WhatsApp', icon: '💬' },
+    { value: 'fax', label: 'Fax', icon: '📠' },
+    { value: 'other', label: 'Other', icon: '📞' },
+]
 
 // Common country codes (can be extended or fetched from API)
 const countryCodes = [
@@ -150,6 +161,7 @@ const openEditModal = (phone) => {
     form.value = {
         country_code: phone.country_code,
         phone_number: phone.phone_number,
+        phone_type: phone.phone_type || 'mobile',
         label: phone.label,
         is_primary: phone.is_primary
     }
@@ -197,6 +209,7 @@ const resetForm = () => {
     form.value = {
         country_code: '+880',
         phone_number: '',
+        phone_type: 'mobile',
         label: '',
         is_primary: false
     }
@@ -497,6 +510,25 @@ onMounted(() => {
                         </p>
                     </div>
 
+                    <!-- Phone Type -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Phone Type <span class="text-red-500">*</span>
+                        </label>
+                        <select
+                            v-model="form.phone_type"
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
+                            style="font-size: 16px; min-height: 44px"
+                        >
+                            <option v-for="type in phoneTypes" :key="type.value" :value="type.value">
+                                {{ type.icon }} {{ type.label }}
+                            </option>
+                        </select>
+                        <p v-if="errors.phone_type" class="text-xs text-red-600 dark:text-red-400 mt-1">
+                            {{ errors.phone_type }}
+                        </p>
+                    </div>
+
                     <!-- Label -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -505,7 +537,7 @@ onMounted(() => {
                         <input
                             v-model="form.label"
                             type="text"
-                            placeholder="e.g., Mobile, WhatsApp, Office"
+                            placeholder="e.g., Personal, Office, Emergency"
                             class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600"
                             :class="{ 'border-red-500': errors.label }"
                             style="font-size: 16px; min-height: 44px"
