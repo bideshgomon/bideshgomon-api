@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('appointment_type')->default('consultation'); // consultation, document_review, interview_prep
             $table->string('appointment_number')->unique();
-            $table->date('preferred_date');
-            $table->time('preferred_time');
+            $table->date('appointment_date'); // Changed from preferred_date to match controller
+            $table->time('appointment_time'); // Changed from preferred_time to match controller
             $table->string('duration')->default('30'); // minutes
             $table->string('status')->default('pending'); // pending, confirmed, completed, cancelled
             $table->text('purpose')->nullable();
