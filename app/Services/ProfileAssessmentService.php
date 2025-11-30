@@ -651,7 +651,7 @@ class ProfileAssessmentService
             }
         }
         
-        if ($user->visaHistory()->where('visa_status', 'rejected')->exists()) {
+        if ($user->visaHistory()->where('status', 'rejected')->exists()) {
             $risks[] = 'History of visa rejections';
         }
         
