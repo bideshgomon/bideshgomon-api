@@ -135,16 +135,17 @@ const getSectionCompletion = (sectionId) => {
     const completionMap = {
         'basic': () => {
             let completed = 0;
-            let total = 3;
-            if (user?.name) completed++;
+            let total = 4;
+            if (profile?.first_name) completed++;
+            if (profile?.last_name) completed++;
+            if (profile?.name_as_per_passport) completed++;
             if (user?.email) completed++;
-            if (profile?.bio) completed++;
             return Math.round((completed / total) * 100);
         },
         'profile': () => {
             let completed = 0;
             let total = 5;
-            if (profile?.dob) completed++;
+            if (profile?.date_of_birth) completed++;
             if (profile?.gender) completed++;
             if (profile?.nationality) completed++;
             if (profile?.nid) completed++;
@@ -214,7 +215,7 @@ const getSectionCompletion = (sectionId) => {
         'financial': () => {
             let completed = 0;
             let total = 3;
-            if (profile?.monthly_income) completed++;
+            if (profile?.monthly_income_bdt) completed++;
             if (profile?.bank_account_number) completed++;
             if (profile?.bank_name) completed++;
             return Math.round((completed / total) * 100);

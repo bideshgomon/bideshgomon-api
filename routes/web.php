@@ -85,15 +85,8 @@ Route::get('/dashboard', function () {
         'profile_strength' => $user->educations()->count() > 0 && $user->workExperiences()->count() > 0 ? 'Strong' : 'Basic',
     ];
     
-    // Calculate profile completion (simplified)
-    $completion = 0;
-    if ($user->name) $completion += 15;
-    if ($user->email) $completion += 15;
-    if ($user->userProfile) $completion += 20;
-    if ($user->educations()->count() > 0) $completion += 15;
-    if ($user->workExperiences()->count() > 0) $completion += 15;
-    if ($user->familyMembers()->count() > 0) $completion += 10;
-    if ($user->languages()->count() > 0) $completion += 10;
+    // Calculate profile completion using User model method (12-section system)
+    $completion = $user->calculateProfileCompletion();
     
     // Get leaderboard data
     $topReferrers = [];
