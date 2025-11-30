@@ -291,7 +291,7 @@
                     </button>
                     <button
                         @click="deleteScan"
-                        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                        class="px-4 py-2 bg-red-50 border-2 border-red-300 text-red-700 rounded-lg hover:bg-red-100 transition-colors"
                     >
                         Delete
                     </button>

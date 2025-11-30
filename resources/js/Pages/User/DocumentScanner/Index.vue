@@ -134,9 +134,9 @@
                                     <button
                                         type="button"
                                         @click.stop="clearFile"
-                                        class="absolute top-2 right-2 p-2 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg transition-colors"
+                                        class="absolute top-2 right-2 p-2 bg-red-50 border-2 border-red-300 text-red-700 rounded-full shadow-lg hover:bg-red-100 transition-colors"
                                     >
-                                        <TrashIcon class="h-5 w-5" />
+                                        <TrashIcon class="h-5 w-5 opacity-70" />
                                     </button>
                                 </div>
                                 <p class="text-sm font-medium text-gray-600">Click trash icon to remove and upload a different image</p>
@@ -344,9 +344,9 @@
                     </button>
                     <button
                         @click="deleteScan"
-                        class="px-5 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors font-medium flex items-center gap-2"
+                        class="px-5 py-2.5 bg-red-50 border-2 border-red-300 text-red-700 rounded-xl hover:bg-red-100 transition-colors font-medium flex items-center gap-2"
                     >
-                        <TrashIcon class="h-4 w-4" />
+                        <TrashIcon class="h-4 w-4 opacity-70" />
                         Delete Scan
                     </button>
                 </div>

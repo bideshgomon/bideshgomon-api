@@ -44,8 +44,8 @@ const closeModal = () => {
 <template>
     <section class="space-y-6">
         <header class="flex items-start gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-heritage-500 flex items-center justify-center shadow-rhythmic-md flex-shrink-0">
-                <ExclamationTriangleIcon class="w-6 h-6 text-white" />
+            <div class="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center shadow-rhythmic-md flex-shrink-0 border-2 border-red-200">
+                <ExclamationTriangleIcon class="w-6 h-6 text-red-600 opacity-70" />
             </div>
             <div class="flex-1">
                 <h2 class="font-display font-bold text-xl text-gray-800">

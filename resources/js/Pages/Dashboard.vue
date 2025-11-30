@@ -226,7 +226,7 @@ const getColorClasses = (color) => {
                         <div 
                             v-for="suggestion in suggestions" 
                             :key="suggestion.title"
-                            class="bg-gradient-to-br from-yellow-50 to-white border-2 border-yellow-200 rounded-xl p-6 hover:shadow-lg transition-shadow group"
+                            class="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6 hover:shadow-lg transition-shadow group"
                         >
                             <div class="flex items-start mb-4">
                                 <div class="p-3 bg-yellow-100 rounded-lg">
@@ -282,7 +282,7 @@ const getColorClasses = (color) => {
 
                 <!-- Browse Revenue Services -->
                 <section class="mb-8 sm:mb-12">
-                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-8 text-center">
+                    <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-8 text-center">
                         <div class="inline-flex items-center justify-center p-4 bg-blue-100 rounded-full mb-4">
                             <GlobeAltIcon class="h-10 w-10 text-blue-600" />
                         </div>

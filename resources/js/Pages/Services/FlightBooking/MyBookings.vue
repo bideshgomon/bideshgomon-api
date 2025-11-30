@@ -274,7 +274,7 @@ const getPaymentStatusColor = (status) => {
                                 <button
                                     v-if="booking.can_cancel"
                                     @click="openCancelModal(booking)"
-                                    class="flex-1 bg-red-600 text-white py-3 rounded-xl font-semibold hover:bg-red-700 transition-all text-sm"
+                                    class="flex-1 bg-red-50 border-2 border-red-300 text-red-700 py-3 rounded-xl font-semibold hover:bg-red-100 transition-all text-sm"
                                 >
                                     Cancel Booking
                                 </button>
@@ -391,7 +391,7 @@ const getPaymentStatusColor = (status) => {
                         <button
                             @click="submitCancellation"
                             :disabled="cancelForm.processing"
-                            class="flex-1 px-4 py-3 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition-all disabled:opacity-50"
+                            class="flex-1 px-4 py-3 bg-red-50 border-2 border-red-300 text-red-700 rounded-xl font-semibold hover:bg-red-100 transition-all disabled:opacity-50"
                         >
                             {{ cancelForm.processing ? 'Cancelling...' : 'Cancel Booking' }}
                         </button>

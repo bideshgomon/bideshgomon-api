@@ -132,13 +132,13 @@ export function useProfileCompletion(user, userProfile) {
     const getCompletionColor = (percentage) => {
         if (percentage >= 80) return 'text-green-600'
         if (percentage >= 50) return 'text-yellow-600'
-        return 'text-red-600'
+        return 'text-orange-600'
     }
 
     const getCompletionBgColor = (percentage) => {
         if (percentage >= 80) return 'bg-green-600'
         if (percentage >= 50) return 'bg-yellow-600'
-        return 'bg-red-600'
+        return 'bg-orange-600'
     }
 
     return {

@@ -674,7 +674,7 @@ const getProficiencyLabel = (level) => {
                                         <h4 class="font-semibold text-gray-900 text-sm">{{ member.full_name }}</h4>
                                         <p class="text-xs text-gray-600 capitalize mt-0.5">{{ member.relationship }}</p>
                                     </div>
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-600 text-white capitalize flex-shrink-0">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 border border-red-300 text-red-700 capitalize flex-shrink-0">
                                         {{ member.relationship }}
                                     </span>
                                 </div>

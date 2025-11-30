@@ -199,7 +199,7 @@
                         <!-- Category Header -->
                         <div 
                             @click="toggleCategory(category)"
-                            class="bg-gradient-to-r from-gray-50 to-white px-6 py-4 border-b border-gray-200 cursor-pointer hover:from-gray-100 hover:to-gray-50 transition"
+                            class="bg-gray-50 px-6 py-4 border-b border-gray-200 cursor-pointer hover:bg-gray-100 transition"
                         >
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center flex-1">

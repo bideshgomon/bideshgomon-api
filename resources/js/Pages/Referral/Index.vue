@@ -83,33 +83,33 @@ const shareViaEmail = () => {
                         
                         <div class="relative z-10">
                             <div class="flex items-center justify-center mb-4">
-                                <ShareIcon class="h-8 w-8 text-white mr-3" />
-                                <h3 class="text-2xl font-bold text-white">Your Referral Code</h3>
+                                <ShareIcon class="h-8 w-8 text-indigo-600 mr-3" />
+                                <h3 class="text-2xl font-bold text-gray-900">Your Referral Code</h3>
                             </div>
                             
                             <div class="text-center mb-6">
-                                <p class="text-white/90 mb-4 text-lg">Share with friends and family to earn rewards!</p>
+                                <p class="text-gray-700 mb-4 text-lg">Share with friends and family to earn rewards!</p>
                                 
                                 <!-- Large Referral Code Display -->
-                                <div class="bg-white/20 backdrop-blur-sm border-2 border-white/30 rounded-2xl p-6 mb-6">
-                                    <p class="text-5xl md:text-6xl font-black tracking-widest text-white mb-2">
+                                <div class="bg-indigo-50 border-2 border-indigo-200 rounded-2xl p-6 mb-6">
+                                    <p class="text-5xl md:text-6xl font-black tracking-widest text-indigo-700 mb-2">
                                         {{ referralCode }}
                                     </p>
-                                    <p class="text-white/80 text-sm">Click to copy your unique code</p>
+                                    <p class="text-gray-600 text-sm">Click to copy your unique code</p>
                                 </div>
 
                                 <!-- Referral Link -->
                                 <div class="max-w-2xl mx-auto mb-6">
-                                    <div class="flex items-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl overflow-hidden">
+                                    <div class="flex items-center bg-white border-2 border-indigo-200 rounded-xl overflow-hidden">
                                         <input 
                                             type="text" 
                                             :value="referralLink" 
                                             readonly 
-                                            class="flex-1 bg-transparent text-white placeholder-white/50 px-4 py-3 text-sm font-mono border-0 focus:ring-0"
+                                            class="flex-1 bg-transparent text-gray-700 placeholder-gray-400 px-4 py-3 text-sm font-mono border-0 focus:ring-0"
                                         />
                                         <button
                                             @click="copyToClipboard"
-                                            class="flex items-center gap-2 px-6 py-3 bg-white text-purple-600 hover:bg-gray-50 font-semibold transition-all duration-200"
+                                            class="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white hover:bg-indigo-700 font-semibold transition-all duration-200"
                                         >
                                             <CheckCircleIcon v-if="copied" class="h-5 w-5 text-green-600" />
                                             <ClipboardDocumentIcon v-else class="h-5 w-5" />
@@ -120,7 +120,7 @@ const shareViaEmail = () => {
 
                                 <!-- Share Buttons -->
                                 <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-                                    <p class="text-white/90 font-semibold mr-2 w-full sm:w-auto text-center">Quick Share:</p>
+                                    <p class="text-gray-700 font-semibold mr-2 w-full sm:w-auto text-center">Quick Share:</p>
                                     <div class="flex flex-wrap justify-center gap-3">
                                         <!-- WhatsApp -->
                                         <button

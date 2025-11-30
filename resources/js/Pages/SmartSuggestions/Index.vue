@@ -35,12 +35,12 @@ const lowPrioritySuggestions = computed(() =>
 
 const getPriorityColor = (priority) => {
     const colors = {
-        urgent: 'bg-red-600',
-        high: 'bg-orange-500',
-        medium: 'bg-yellow-500',
-        low: 'bg-blue-500',
+        urgent: 'bg-red-100 border-2 border-red-300 text-red-700',
+        high: 'bg-orange-100 border-2 border-orange-300 text-orange-700',
+        medium: 'bg-yellow-100 border-2 border-yellow-300 text-yellow-700',
+        low: 'bg-blue-100 border-2 border-blue-300 text-blue-700',
     };
-    return colors[priority] || 'bg-gray-500';
+    return colors[priority] || 'bg-gray-100 border-2 border-gray-300 text-gray-700';
 };
 
 const getPriorityBadgeColor = (priority) => {
@@ -201,7 +201,7 @@ const getStrengthLabel = (score) => {
                                 <div class="flex items-center gap-3">
                                     <Link
                                         :href="suggestion.action_url"
-                                        class="inline-flex items-center px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors"
+                                        class="inline-flex items-center px-4 py-2 bg-red-50 border-2 border-red-300 text-red-700 font-semibold rounded-lg hover:bg-red-100 transition-colors"
                                     >
                                         Take Action
                                     </Link>

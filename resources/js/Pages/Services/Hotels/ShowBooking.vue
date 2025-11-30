@@ -254,7 +254,7 @@ const cancelBooking = () => {
                                 Back to My Bookings
                             </Link>
                             <button v-if="booking.is_cancellable" @click="showCancelModal = true"
-                                class="flex-1 bg-red-600 text-white py-3 px-6 rounded-lg hover:bg-red-700 transition">
+                                class="flex-1 bg-red-50 border-2 border-red-300 text-red-700 py-3 px-6 rounded-lg hover:bg-red-100 transition">
                                 Cancel Booking
                             </button>
                             <Link v-if="booking.status === 'confirmed' || booking.status === 'checked_in'" 
@@ -287,7 +287,7 @@ const cancelBooking = () => {
                                     Keep Booking
                                 </button>
                                 <button type="submit" :disabled="cancelForm.processing"
-                                    class="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition disabled:opacity-50">
+                                    class="flex-1 bg-red-50 border-2 border-red-300 text-red-700 py-2 px-4 rounded-lg hover:bg-red-100 transition disabled:opacity-50">
                                     <span v-if="cancelForm.processing">Processing...</span>
                                     <span v-else>Cancel Booking</span>
                                 </button>

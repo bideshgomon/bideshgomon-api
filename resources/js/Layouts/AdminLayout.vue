@@ -985,11 +985,11 @@ const navigationSections = {
               <template #trigger>
                 <button
                   type="button"
-                  class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 dark:hover:from-indigo-900/20 dark:hover:to-purple-900/20 transition-all group"
+                  class="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all group"
                 >
                   <div class="relative">
                     <div
-                      class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 flex items-center justify-center text-white font-bold text-sm shadow-lg transform group-hover:scale-105 transition-transform"
+                      class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-lg transform group-hover:scale-105 transition-transform border-2 border-blue-700"
                     >
                       {{ user.name.charAt(0).toUpperCase() }}
                     </div>
@@ -1008,7 +1008,7 @@ const navigationSections = {
               </template>
 
               <template #content>
-                <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-indigo-50/50 to-purple-50/30 dark:from-indigo-900/20 dark:to-purple-900/10">
+                <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700 bg-blue-50 dark:bg-blue-900/20">
                   <p class="text-sm font-bold text-gray-900 dark:text-white truncate">
                     {{ user.name }}
                   </p>
@@ -1063,7 +1063,7 @@ const navigationSections = {
             <div class="flex items-center justify-between mb-4">
               <div class="flex items-center gap-3">
                 <div
-                  class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-md"
+                  class="w-10 h-10 rounded-lg bg-blue-600 flex items-center justify-center shadow-md border-2 border-blue-700"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -1150,7 +1150,7 @@ const navigationSections = {
             <div class="flex grow flex-col gap-y-3 overflow-y-auto bg-white pb-4">
               <!-- Mobile Logo -->
               <div
-                class="flex h-16 shrink-0 items-center justify-center bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 px-4"
+                class="flex h-16 shrink-0 items-center justify-center bg-blue-600 px-4 border-b-2 border-blue-700"
               >
                 <Link :href="route('admin.dashboard')">
                   <ApplicationLogo class="block h-10 w-auto brightness-0 invert" />
@@ -1187,7 +1187,7 @@ const navigationSections = {
                             :href="item.disabled ? '#' : item.href"
                             :class="[
                               item.current
-                                ? 'bg-gradient-to-r from-brand-red-50 to-brand-red-100 text-brand-red-700 border-l-4 border-brand-red-600'
+                                ? 'bg-brand-red-50 text-brand-red-700 border-l-4 border-brand-red-600'
                                 : 'text-gray-700 hover:text-brand-red-600 hover:bg-gray-50 border-l-4 border-transparent',
                               'group flex items-center px-3 py-2.5 text-sm font-medium rounded-r-lg transition-all duration-150',
                               item.disabled ? 'opacity-50 cursor-not-allowed' : '',

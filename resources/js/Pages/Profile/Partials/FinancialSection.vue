@@ -274,7 +274,7 @@ const submitForm = () => {
 
       <!-- Investment Card -->
       <div v-if="form.investment_value_bdt" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
-        <div class="h-1 bg-gradient-to-r from-teal-600 to-cyan-600"></div>
+        <div class="h-1 bg-teal-600"></div>
         <div class="p-4">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-10 h-10 rounded-lg bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center">
@@ -290,7 +290,7 @@ const submitForm = () => {
 
     <!-- Liabilities Card (if exists) -->
     <div v-if="form.liabilities_amount_bdt" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-red-200 dark:border-red-900/50">
-      <div class="h-1 bg-gradient-to-r from-red-600 to-orange-600"></div>
+      <div class="h-1 bg-red-200"></div>
       <div class="p-4">
         <div class="flex items-start gap-3">
           <div class="w-10 h-10 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0">
@@ -314,7 +314,7 @@ const submitForm = () => {
       <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">Add your financial details for visa applications</p>
       <button
         @click="openEditModal"
-        class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-green-700 rounded-lg hover:from-green-700 hover:to-green-800 transition-all shadow-md"
+        class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all shadow-md"
         style="min-height: 44px"
       >
         <PlusIcon class="w-5 h-5" />
@@ -326,7 +326,7 @@ const submitForm = () => {
     <Modal :show="showModal" @close="closeModal" max-width="3xl">
       <div class="p-6">
         <div class="flex items-center gap-3 mb-6">
-          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-600 to-green-700 flex items-center justify-center">
+          <div class="w-12 h-12 rounded-xl bg-green-600 flex items-center justify-center border-2 border-green-700">
             <BanknotesIcon class="w-6 h-6 text-white" />
           </div>
           <div>
@@ -616,7 +616,7 @@ const submitForm = () => {
             <button
               type="submit"
               :disabled="form.processing"
-              class="w-full sm:w-auto px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-green-700 rounded-lg hover:from-green-700 hover:to-green-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              class="w-full sm:w-auto px-6 py-3 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
               style="min-height: 44px"
             >
               <span v-if="form.processing">Saving...</span>

@@ -651,7 +651,7 @@ onMounted(() => {
                     <button
                         type="button"
                         @click="confirmDelete"
-                        class="w-full sm:w-auto px-6 py-3 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        class="w-full sm:w-auto px-6 py-3 text-sm font-medium text-red-700 bg-red-50 border-2 border-red-300 rounded-lg hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         style="min-height: 44px"
                         :disabled="isLoading"
                     >

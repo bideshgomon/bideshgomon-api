@@ -92,7 +92,7 @@ const securityStatus = computed(() => {
       icon: ShieldExclamationIcon,
       text: 'Security Issues Reported',
       class: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
-      badge: 'bg-red-600'
+      badge: 'bg-red-100 border-2 border-red-300'
     }
   }
   return {
@@ -109,8 +109,8 @@ const securityStatus = computed(() => {
     <!-- Section Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-rhythm-lg">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center shadow-sm">
-          <ShieldCheckIcon class="w-6 h-6 text-white" />
+        <div class="w-10 h-10 rounded-xl bg-red-50 border-2 border-red-200 flex items-center justify-center shadow-sm">
+          <ShieldCheckIcon class="w-6 h-6 text-red-600 opacity-70" />
         </div>
         <div>
           <h2 class="font-display font-bold text-xl text-gray-800">Security & Background</h2>
@@ -126,7 +126,7 @@ const securityStatus = computed(() => {
 
     <!-- Status Card -->
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
-      <div class="h-1" :class="hasAnySecurityIssues ? 'bg-red-600' : 'bg-green-600'"></div>
+      <div class="h-1" :class="hasAnySecurityIssues ? 'bg-red-200' : 'bg-green-600'"></div>
       <div class="p-6">
         <div class="flex items-center gap-4">
           <div class="w-12 h-12 rounded-xl flex items-center justify-center" :class="securityStatus.class">
@@ -144,7 +144,7 @@ const securityStatus = computed(() => {
 
     <!-- Security Checks Summary -->
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
-      <div class="h-1 bg-red-600"></div>
+      <div class="h-1 bg-red-200"></div>
       <div class="p-4">
         <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-4">Security Checks</h3>
         <div class="space-y-3">
@@ -286,8 +286,8 @@ const securityStatus = computed(() => {
     <Modal :show="showModal" @close="closeModal" max-width="4xl">
       <div class="p-6">
         <div class="flex items-center gap-3 mb-6">
-          <div class="w-12 h-12 rounded-xl bg-red-600 flex items-center justify-center border-2 border-red-700">
-            <ShieldCheckIcon class="w-6 h-6 text-white" />
+          <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center border-2 border-red-200">
+            <ShieldCheckIcon class="w-6 h-6 text-red-600 opacity-70" />
           </div>
           <div>
             <h2 class="text-xl font-bold text-gray-900 dark:text-white">Security & Background Check</h2>
@@ -555,7 +555,7 @@ const securityStatus = computed(() => {
             <button
               type="submit"
               :disabled="form.processing"
-              class="w-full sm:w-auto px-6 py-3 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              class="w-full sm:w-auto px-6 py-3 text-sm font-medium text-red-700 bg-red-50 border-2 border-red-300 rounded-lg hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
               style="min-height: 44px"
             >
               <span v-if="form.processing">Saving...</span>

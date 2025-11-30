@@ -194,7 +194,7 @@
                         <button
                             type="submit"
                             :disabled="cancelForm.processing"
-                            class="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium transition-colors"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-red-50 border-2 border-red-300 text-red-700 rounded-lg hover:bg-red-100 font-medium transition-colors"
                             :class="{ 'opacity-50 cursor-not-allowed': cancelForm.processing }"
                         >
                             <XMarkIcon v-if="!cancelForm.processing" class="w-5 h-5" />

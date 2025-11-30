@@ -163,7 +163,7 @@ const getStatusColor = (status) => {
                                         </Link>
                                         <Link v-if="booking.is_cancellable" 
                                             :href="route('hotels.bookings.show', booking.id)"
-                                            class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition">
+                                            class="bg-red-50 border-2 border-red-300 text-red-700 px-4 py-2 rounded-lg hover:bg-red-100 transition">
                                             Cancel Booking
                                         </Link>
                                     </div>

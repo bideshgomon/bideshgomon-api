@@ -56,7 +56,7 @@
             </div>
 
             <!-- No Status Card -->
-            <div v-else class="mb-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg shadow-md p-6 text-white">
+            <div v-else class="mb-8 bg-blue-600 rounded-lg shadow-md p-6 text-white border-2 border-blue-700">
                 <h2 class="text-2xl font-bold mb-2">Get Verified Today!</h2>
                 <p class="mb-4">Verified agencies receive more applications and build stronger trust with clients.</p>
                 <ul class="space-y-2">

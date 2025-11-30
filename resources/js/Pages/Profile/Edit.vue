@@ -959,10 +959,13 @@ const backToCards = () => {
                                         <div :class="[
                                             'flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center border transition-colors duration-200',
                                             section.id === 'delete' 
-                                                ? 'bg-red-600 border-red-700' 
+                                                ? 'bg-red-50 border-2 border-red-300' 
                                                 : 'border-gray-200 ' + getSectionGradient(section.id)
                                         ]">
-                                            <component :is="section.icon" class="w-5 h-5 md:w-6 md:h-6 text-white" />
+                                            <component :is="section.icon" :class="[
+                                                'w-5 h-5 md:w-6 md:h-6',
+                                                section.id === 'delete' ? 'text-red-600 opacity-70' : 'text-white'
+                                            ]" />
                                         </div>
                                         <div class="flex-1 min-w-0">
                                             <div class="flex items-center gap-2 mb-1">

@@ -558,7 +558,7 @@ const isExpired = () => {
         <!-- Approval Modal -->
         <div v-if="showApprovalModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-                <div class="bg-gradient-to-r from-green-600 to-emerald-600 text-white p-6 rounded-t-2xl">
+                <div class="bg-green-600 text-white p-6 rounded-t-2xl border-b-2 border-green-700">
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-bold">Approve Job Posting</h3>
                         <button @click="showApprovalModal = false" class="text-white hover:text-gray-200">
