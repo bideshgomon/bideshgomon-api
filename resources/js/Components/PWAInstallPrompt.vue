@@ -3,7 +3,7 @@
     <div v-if="showPrompt" class="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm z-50">
       <div class="bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
         <!-- Header -->
-        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-4">
+        <div class="bg-gradient-to-r from-blue-600 to-green-600 p-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-3">
               <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center p-1.5">
@@ -11,7 +11,7 @@
               </div>
               <div>
                 <h3 class="text-white font-semibold text-sm">Install BideshGomon</h3>
-                <p class="text-indigo-100 text-xs">Get quick access</p>
+                <p class="text-blue-100 text-xs">Get quick access</p>
               </div>
             </div>
             <button
@@ -58,7 +58,7 @@
             <button
               @click="install"
               :disabled="isInstalling"
-              class="flex-1 bg-indigo-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors disabled:opacity-50 text-sm"
+              class="flex-1 bg-blue-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-50 text-sm"
             >
               <span v-if="isInstalling">Installing...</span>
               <span v-else>Install App</span>

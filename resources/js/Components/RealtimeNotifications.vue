@@ -32,10 +32,10 @@ const showToast = (notification) => {
   const toast = document.createElement('div');
   toast.className = 'fixed top-20 right-4 z-50 animate-slide-in';
   toast.innerHTML = `
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 max-w-sm border-l-4 border-indigo-600">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 max-w-sm border-l-4 border-blue-600">
       <div class="flex items-start gap-3">
         <div class="flex-shrink-0">
-          <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
           </svg>
         </div>
@@ -121,7 +121,7 @@ onUnmounted(() => {
     <!-- Notification Bell Button -->
     <button
       @click="showNotifications = !showNotifications"
-      class="relative p-2 text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-xl transition-all transform hover:scale-105"
+      class="relative p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all transform hover:scale-105"
       title="Notifications"
     >
       <BellIcon class="w-6 h-6" />
@@ -150,7 +150,7 @@ onUnmounted(() => {
           <button
             v-if="notifications.length > 0"
             @click="markAllAsRead"
-            class="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300"
+            class="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
           >
             Mark all read
           </button>
@@ -176,7 +176,7 @@ onUnmounted(() => {
             :key="notification.id"
             :class="[
               'px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer',
-              !notification.read && 'bg-indigo-50 dark:bg-indigo-900/10'
+              !notification.read && 'bg-blue-50 dark:bg-blue-900/10'
             ]"
             @click="markAsRead(notification.id)"
           >
