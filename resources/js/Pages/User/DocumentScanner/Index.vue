@@ -3,15 +3,15 @@
 
     <AuthenticatedLayout>
         <!-- Hero Section with better gradient -->
-        <div class="relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50 border-b border-gray-200">
+        <div class="relative overflow-hidden bg-blue-50 border-b border-gray-200">
             <div class="absolute inset-0 bg-grid-gray-100 [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))] -z-10"></div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div class="flex items-start gap-6">
-                    <div class="flex-shrink-0 p-4 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 shadow-xl shadow-indigo-200">
+                    <div class="flex-shrink-0 p-4 rounded-2xl bg-blue-600 shadow-xl shadow-blue-200 border-2 border-blue-700">
                         <DocumentMagnifyingGlassIcon class="h-14 w-14 text-white" />
                     </div>
                     <div class="flex-1">
-                        <h1 class="text-4xl font-bold mb-2 bg-gradient-to-r from-indigo-900 to-purple-900 bg-clip-text text-transparent">
+                        <h1 class="text-4xl font-bold mb-2 text-blue-900">
                             AI Document Scanner
                         </h1>
                         <p class="text-xl text-gray-600 mb-4">
@@ -19,15 +19,15 @@
                         </p>
                         <div class="flex flex-wrap gap-6 text-sm">
                             <div class="flex items-center gap-2 text-gray-600">
-                                <SparklesIcon class="h-5 w-5 text-indigo-500" />
+                                <SparklesIcon class="h-5 w-5 text-blue-600" />
                                 <span>98% accuracy rate</span>
                             </div>
                             <div class="flex items-center gap-2 text-gray-600">
-                                <ClockIcon class="h-5 w-5 text-indigo-500" />
+                                <ClockIcon class="h-5 w-5 text-blue-600" />
                                 <span>Process in 5-30 seconds</span>
                             </div>
                             <div class="flex items-center gap-2 text-gray-600">
-                                <CheckCircleIcon class="h-5 w-5 text-indigo-500" />
+                                <CheckCircleIcon class="h-5 w-5 text-blue-600" />
                                 <span>Auto-fill your profile</span>
                             </div>
                         </div>
@@ -39,7 +39,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Upload Section with modern card design -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden mb-8">
-                <div class="bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-4">
+                <div class="bg-blue-600 px-6 py-4 border-b-2 border-blue-700">
                     <h2 class="text-2xl font-bold text-white flex items-center gap-2">
                         <CloudArrowUpIcon class="h-7 w-7" />
                         Upload New Document
@@ -108,11 +108,11 @@
                             />
 
                             <div v-if="!previewUrl" class="py-8">
-                                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+                                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-blue-600 flex items-center justify-center border-2 border-blue-700">
                                     <CloudArrowUpIcon class="h-10 w-10 text-white" />
                                 </div>
                                 <p class="text-lg font-semibold text-gray-900 mb-2">
-                                    <span class="text-indigo-600">Click to upload</span> or drag and drop
+                                    <span class="text-blue-600">Click to upload</span> or drag and drop
                                 </p>
                                 <p class="text-sm text-gray-500 mb-4">PNG, JPG up to 10MB</p>
                                 <div class="flex items-center justify-center gap-4 text-xs text-gray-400">
@@ -145,26 +145,26 @@
                     </div>
 
                     <!-- Tips -->
-                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+                    <div class="bg-blue-50 rounded-2xl p-6 border-2 border-blue-100">
                         <div class="flex items-center gap-2 mb-4">
-                            <LightBulbIcon class="h-6 w-6 text-indigo-600" />
+                            <LightBulbIcon class="h-6 w-6 text-blue-600" />
                             <h3 class="font-semibold text-gray-900">Pro Tips for Best Results</h3>
                         </div>
                         <ul class="space-y-3 text-sm text-gray-600">
                             <li class="flex items-start gap-3">
-                                <CheckCircleIcon class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5" />
+                                <CheckCircleIcon class="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                                 <span>Ensure good lighting and avoid shadows on your document</span>
                             </li>
                             <li class="flex items-start gap-3">
-                                <CheckCircleIcon class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5" />
+                                <CheckCircleIcon class="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                                 <span>Capture the entire document within the frame for complete data</span>
                             </li>
                             <li class="flex items-start gap-3">
-                                <CheckCircleIcon class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5" />
+                                <CheckCircleIcon class="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                                 <span>Keep the document flat on a contrasting surface to avoid glare</span>
                             </li>
                             <li class="flex items-start gap-3">
-                                <CheckCircleIcon class="h-5 w-5 text-indigo-500 flex-shrink-0 mt-0.5" />
+                                <CheckCircleIcon class="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                                 <span>Use a high-resolution image for maximum OCR accuracy</span>
                             </li>
                         </ul>
@@ -177,8 +177,8 @@
                         @click="uploadDocument"
                         :class="[
                             'w-full py-4 px-6 rounded-2xl font-semibold text-white shadow-lg transition-all duration-200',
-                            'bg-gradient-to-r from-indigo-500 to-purple-500',
-                            'hover:from-indigo-600 hover:to-purple-600 hover:shadow-xl hover:scale-[1.02]',
+                            'bg-blue-600',
+                            'hover:bg-blue-700 hover:shadow-xl hover:scale-[1.02]',
                             'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100',
                             'flex items-center justify-center gap-3'
                         ]"
@@ -192,7 +192,7 @@
             <!-- Previous Scans -->
             <div>
                 <div class="flex items-center gap-3 mb-6">
-                    <div class="w-1 h-8 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-full"></div>
+                    <div class="w-1 h-8 bg-blue-600 rounded-full"></div>
                     <h2 class="text-2xl font-bold text-gray-900">Scan History</h2>
                 </div>
 
@@ -272,7 +272,7 @@
                                 <Link
                                     v-if="scan.status === 'completed'"
                                     :href="route('document-scanner.show', scan.id)"
-                                    class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all flex items-center gap-2 text-sm font-medium"
+                                    class="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all flex items-center gap-2 text-sm font-medium"
                                 >
                                     <EyeIcon class="h-4 w-4" />
                                     View Details
@@ -302,14 +302,14 @@
 
                 <!-- Empty State -->
                 <div v-else class="bg-white rounded-2xl shadow-md p-12 text-center border border-gray-100">
-                    <div class="w-20 h-20 mx-auto mb-6 rounded-3xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
-                        <DocumentMagnifyingGlassIcon class="h-12 w-12 text-indigo-600" />
+                    <div class="w-20 h-20 mx-auto mb-6 rounded-3xl bg-blue-100 flex items-center justify-center border-2 border-blue-200">
+                        <DocumentMagnifyingGlassIcon class="h-12 w-12 text-blue-600" />
                     </div>
                     <h3 class="text-xl font-semibold text-gray-900 mb-2">No scans yet</h3>
                     <p class="text-gray-500 mb-6 max-w-md mx-auto">Upload your first document to get started with AI-powered data extraction</p>
                     <button
                         @click="scrollToUpload"
-                        class="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all font-medium inline-flex items-center gap-2"
+                        class="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all font-medium inline-flex items-center gap-2"
                     >
                         <CloudArrowUpIcon class="h-5 w-5" />
                         Upload Document

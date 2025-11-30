@@ -120,7 +120,7 @@ const bgClass = computed(() => {
         default: 'bg-white',
         light: 'bg-white',
         dark: 'bg-gray-900',
-        gradient: 'bg-gradient-to-br from-red-600 via-green-600 to-green-600',
+        gradient: 'bg-red-600',
         ocean: 'bg-ocean-50',
         sky: 'bg-sky-50',
         growth: 'bg-growth-50',

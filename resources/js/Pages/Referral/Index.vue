@@ -58,8 +58,9 @@ const shareViaEmail = () => {
         <template #header>
             <div class="flex items-center justify-between animate-fadeIn">
                 <div class="flex items-center gap-3">
-                    <div class="p-2 bg-gradient-to-br from-red-100 to-green-100 rounded-lg">
+                    <div class="p-3 bg-red-100 rounded-xl border-2 border-red-200 relative">
                         <ShareIcon class="h-8 w-8 text-red-600" />
+                        <div class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"></div>
                     </div>
                     <div>
                         <h2 class="text-2xl font-bold text-gray-900">

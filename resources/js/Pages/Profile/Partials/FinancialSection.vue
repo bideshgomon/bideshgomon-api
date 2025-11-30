@@ -171,7 +171,7 @@ const submitForm = () => {
     </div>
 
     <!-- Net Worth Summary Card -->
-    <div class="bg-gradient-to-br from-green-600 to-green-700 rounded-xl p-6 text-white shadow-lg">
+    <div class="bg-green-600 rounded-xl p-6 text-white shadow-lg border-2 border-green-700">
       <div class="flex items-center gap-2 mb-2">
         <ChartBarIcon class="w-5 h-5" />
         <span class="text-sm font-medium opacity-90">Net Worth</span>
@@ -182,7 +182,7 @@ const submitForm = () => {
 
     <!-- Employment Card -->
     <div v-if="form.employer_name" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
-      <div class="h-1 bg-gradient-to-r from-green-600 to-green-700"></div>
+      <div class="h-1 bg-green-600"></div>
       <div class="p-4">
         <div class="flex items-start gap-3 mb-4">
           <div class="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
@@ -212,7 +212,7 @@ const submitForm = () => {
 
     <!-- Bank Account Card -->
     <div v-if="form.bank_name" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
-      <div class="h-1 bg-gradient-to-r from-blue-600 to-cyan-600"></div>
+      <div class="h-1 bg-blue-600"></div>
       <div class="p-4">
         <div class="flex items-start gap-3 mb-4">
           <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
@@ -244,7 +244,7 @@ const submitForm = () => {
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <!-- Property Card -->
       <div v-if="form.property_value_bdt" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
-        <div class="h-1 bg-gradient-to-r from-red-600 to-green-600"></div>
+        <div class="h-1 bg-blue-600"></div>
         <div class="p-4">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
@@ -259,7 +259,7 @@ const submitForm = () => {
 
       <!-- Vehicle Card -->
       <div v-if="form.vehicle_value_bdt" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
-        <div class="h-1 bg-gradient-to-r from-orange-600 to-red-600"></div>
+        <div class="h-1 bg-orange-600"></div>
         <div class="p-4">
           <div class="flex items-center gap-3 mb-3">
             <div class="w-10 h-10 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center">

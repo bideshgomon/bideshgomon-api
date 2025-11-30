@@ -210,12 +210,12 @@ onMounted(() => {
                     :key="travel.id"
                     class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
                 >
-                    <div class="h-1 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
+                    <div class="h-1 bg-green-500"></div>
                     <div class="p-4 sm:p-6">
                         <div class="flex items-start justify-between gap-3 mb-3">
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-2 mb-1">
-                                    <GlobeAltIcon class="w-6 h-6 md:w-7 md:h-7 text-emerald-600 flex-shrink-0" />
+                                    <GlobeAltIcon class="w-6 h-6 md:w-7 md:h-7 text-green-600 flex-shrink-0" />
                                     <h3 class="text-base sm:text-lg font-bold text-gray-900 truncate">
                                         {{ travel.country }}
                                     </h3>
@@ -281,7 +281,7 @@ onMounted(() => {
 
                 <button
                     @click="openAddModal"
-                    class="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-base"
+                    class="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-base"
                 >
                     <PlusIcon class="h-5 w-5" />
                     <span>ADD MORE TRAVEL</span>

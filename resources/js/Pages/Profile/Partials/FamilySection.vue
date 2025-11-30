@@ -305,13 +305,13 @@ onMounted(() => {
         class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200"
       >
         <!-- Gradient Header Stripe -->
-        <div class="h-px bg-gradient-to-r from-red-600 to-green-600"></div>
+        <div class="h-px bg-red-600"></div>
         
         <!-- Card Content -->
         <div class="p-4 sm:p-6">
           <!-- Header with Icon and Name -->
           <div class="flex items-start gap-3 mb-4">
-            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-red-600 to-red-700 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-red-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg border-2 border-red-700">
               <UsersIcon class="w-6 h-6 sm:w-7 sm:h-7 text-white" />
             </div>
             <div class="flex-1 min-w-0">
@@ -474,7 +474,7 @@ onMounted(() => {
     <!-- Add Button -->
     <button
       @click="openAddModal"
-      class="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-base mt-6"
+      class="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-base mt-6"
     >
       <PlusIcon class="h-5 w-5" />
       <span>ADD FAMILY MEMBER</span>
@@ -485,7 +485,7 @@ onMounted(() => {
       <div class="p-6 bg-white dark:bg-gray-800">
         <!-- Modal Header -->
         <div class="flex items-center gap-4 mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
-          <div class="w-12 h-12 bg-gradient-to-br from-red-600 to-red-700 rounded-xl flex items-center justify-center shadow-lg">
+          <div class="w-12 h-12 bg-red-600 rounded-xl flex items-center justify-center shadow-lg border-2 border-red-700">
             <UsersIcon class="w-7 h-7 text-white" />
           </div>
           <h2 class="text-xl font-bold text-gray-900 dark:text-white">

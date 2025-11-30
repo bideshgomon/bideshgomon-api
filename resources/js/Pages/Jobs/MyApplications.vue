@@ -50,16 +50,16 @@ const getStatusLabel = (status) => {
 
     <AuthenticatedLayout>
         <!-- Header -->
-        <div class="bg-gradient-to-br from-indigo-50 via-white to-purple-50 border-b border-gray-200 px-4 py-8 sm:px-6 lg:px-8">
+        <div class="bg-blue-50 border-b border-gray-200 px-4 py-8 sm:px-6 lg:px-8">
             <div class="max-w-7xl mx-auto">
                 <div class="flex items-center justify-between mb-6">
                     <div>
-                        <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">My Applications</h1>
+                        <h1 class="text-3xl font-bold text-blue-900">My Applications</h1>
                         <p class="text-gray-600 text-sm mt-2">Track your job applications and status</p>
                     </div>
                     <Link
                         :href="route('jobs.index')"
-                        class="flex items-center space-x-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white px-5 py-2.5 rounded-xl transition-all shadow-md hover:shadow-lg font-medium"
+                        class="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl transition-all shadow-md hover:shadow-lg font-medium"
                     >
                         <BriefcaseIcon class="h-5 w-5" />
                         <span class="hidden sm:inline">Browse Jobs</span>
@@ -82,7 +82,7 @@ const getStatusLabel = (status) => {
                     </div>
                     <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
                         <div class="text-gray-500 text-xs font-medium mb-1">Shortlisted</div>
-                        <div class="text-2xl font-bold text-indigo-600">{{ stats.shortlisted }}</div>
+                        <div class="text-2xl font-bold text-blue-600">{{ stats.shortlisted }}</div>
                     </div>
                     <div class="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
                         <div class="text-gray-500 text-xs font-medium mb-1">Rejected</div>
@@ -99,14 +99,14 @@ const getStatusLabel = (status) => {
         <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
             <!-- No Applications -->
             <div v-if="applications.data.length === 0" class="text-center py-16">
-                <div class="w-24 h-24 mx-auto mb-6 rounded-3xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">
-                    <BriefcaseIcon class="h-14 w-14 text-indigo-600" />
+                <div class="w-24 h-24 mx-auto mb-6 rounded-3xl bg-blue-100 flex items-center justify-center border-2 border-blue-200">
+                    <BriefcaseIcon class="h-14 w-14 text-blue-600" />
                 </div>
                 <h3 class="text-2xl font-bold text-gray-900 mb-3">No applications yet</h3>
                 <p class="text-gray-600 mb-8 max-w-md mx-auto">Start applying for jobs to track them here and manage your career opportunities</p>
                 <Link
                     :href="route('jobs.index')"
-                    class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all shadow-lg hover:shadow-xl"
+                    class="inline-flex items-center px-8 py-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl"
                 >
                     <BriefcaseIcon class="h-5 w-5 mr-2" />
                     Browse Jobs
@@ -189,7 +189,7 @@ const getStatusLabel = (status) => {
                         <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-100">
                             <Link
                                 :href="route('jobs.show', application.job_posting.id)"
-                                class="flex-1 flex items-center justify-center space-x-2 px-5 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl font-semibold hover:from-indigo-600 hover:to-purple-600 transition-all shadow-md hover:shadow-lg"
+                                class="flex-1 flex items-center justify-center space-x-2 px-5 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all shadow-md hover:shadow-lg"
                             >
                                 <EyeIcon class="h-5 w-5" />
                                 <span>View Job Details</span>

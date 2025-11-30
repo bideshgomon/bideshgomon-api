@@ -525,7 +525,7 @@ const categoryList = computed(() => {
                 <!-- Featured Badge -->
                 <span 
                   v-if="service.is_featured"
-                  class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-orange-100 to-yellow-100 text-orange-800"
+                  class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-800 border border-orange-200"
                 >
                   <FireIcon class="w-3 h-3" />
                   <span>Popular</span>

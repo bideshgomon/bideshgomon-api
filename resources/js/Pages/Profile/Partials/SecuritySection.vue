@@ -126,7 +126,7 @@ const securityStatus = computed(() => {
 
     <!-- Status Card -->
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
-      <div class="h-1" :class="'bg-gradient-to-r from-' + (hasAnySecurityIssues ? 'red' : 'green') + '-600 to-' + (hasAnySecurityIssues ? 'orange' : 'emerald') + '-600'"></div>
+      <div class="h-1" :class="hasAnySecurityIssues ? 'bg-red-600' : 'bg-green-600'"></div>
       <div class="p-6">
         <div class="flex items-center gap-4">
           <div class="w-12 h-12 rounded-xl flex items-center justify-center" :class="securityStatus.class">
@@ -144,7 +144,7 @@ const securityStatus = computed(() => {
 
     <!-- Security Checks Summary -->
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700">
-      <div class="h-1 bg-gradient-to-r from-red-600 to-orange-600"></div>
+      <div class="h-1 bg-red-600"></div>
       <div class="p-4">
         <h3 class="text-base font-semibold text-gray-900 dark:text-white mb-4">Security Checks</h3>
         <div class="space-y-3">
@@ -286,7 +286,7 @@ const securityStatus = computed(() => {
     <Modal :show="showModal" @close="closeModal" max-width="4xl">
       <div class="p-6">
         <div class="flex items-center gap-3 mb-6">
-          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-600 to-orange-600 flex items-center justify-center">
+          <div class="w-12 h-12 rounded-xl bg-red-600 flex items-center justify-center border-2 border-red-700">
             <ShieldCheckIcon class="w-6 h-6 text-white" />
           </div>
           <div>
@@ -555,7 +555,7 @@ const securityStatus = computed(() => {
             <button
               type="submit"
               :disabled="form.processing"
-              class="w-full sm:w-auto px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-red-600 to-orange-600 rounded-lg hover:from-red-700 hover:to-orange-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              class="w-full sm:w-auto px-6 py-3 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
               style="min-height: 44px"
             >
               <span v-if="form.processing">Saving...</span>

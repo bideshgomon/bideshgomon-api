@@ -35,12 +35,12 @@ const lowPrioritySuggestions = computed(() =>
 
 const getPriorityColor = (priority) => {
     const colors = {
-        urgent: 'from-red-500 to-orange-500',
-        high: 'from-orange-500 to-amber-500',
-        medium: 'from-yellow-500 to-lime-500',
-        low: 'from-blue-500 to-cyan-500',
+        urgent: 'bg-red-600',
+        high: 'bg-orange-500',
+        medium: 'bg-yellow-500',
+        low: 'bg-blue-500',
     };
-    return colors[priority] || 'from-gray-500 to-gray-600';
+    return colors[priority] || 'bg-gray-500';
 };
 
 const getPriorityBadgeColor = (priority) => {
@@ -95,23 +95,23 @@ const getStrengthLabel = (score) => {
 
     <AuthenticatedLayout>
         <!-- Header -->
-        <div class="bg-indigo-600 text-white">
+        <div class="bg-blue-600 text-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-4">
-                        <div class="p-3 bg-indigo-500 rounded-xl">
+                        <div class="p-3 bg-blue-700 rounded-xl border-2 border-blue-800">
                             <SparklesIcon class="h-8 w-8 text-white" />
                         </div>
                         <div>
                             <h1 class="text-3xl font-bold">Smart Suggestions</h1>
-                            <p class="text-indigo-100 text-sm mt-1">
+                            <p class="text-blue-100 text-sm mt-1">
                                 Personalized recommendations to strengthen your profile
                             </p>
                         </div>
                     </div>
                     <button
                         @click="refreshSuggestions"
-                        class="inline-flex items-center gap-2 bg-white text-indigo-600 px-4 py-2 rounded-lg hover:bg-indigo-50 transition-colors font-medium"
+                        class="inline-flex items-center gap-2 bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors font-medium"
                     >
                         <ArrowPathIcon class="h-5 w-5" />
                         <span>Refresh</span>

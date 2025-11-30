@@ -249,7 +249,7 @@ const getProficiencyColor = (level) => {
                     :key="userSkill.id"
                     class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
                 >
-                    <div class="h-1 bg-gradient-to-r from-blue-500 to-green-500"></div>
+                    <div class="h-1 bg-blue-600"></div>
                     <div class="p-4">
                         <div class="flex items-start justify-between gap-3 mb-3">
                             <div class="flex-1 min-w-0">
@@ -268,7 +268,7 @@ const getProficiencyColor = (level) => {
                             </div>
                             <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
                                 <div 
-                                    class="h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-300"
+                                    class="h-full bg-blue-600 transition-all duration-300"
                                     :style="{ width: (userSkill.proficiency_level === 'Expert' ? '100' : userSkill.proficiency_level === 'Advanced' ? '75' : userSkill.proficiency_level === 'Intermediate' ? '50' : '25') + '%' }"
                                 ></div>
                             </div>
@@ -298,7 +298,7 @@ const getProficiencyColor = (level) => {
                 <!-- Add More Button -->
                 <button
                     @click="openModal()"
-                    class="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-base"
+                    class="w-full inline-flex items-center justify-center gap-2 px-6 py-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-base"
                 >
                     <PlusIcon class="h-5 w-5" />
                     <span>ADD MORE SKILLS</span>

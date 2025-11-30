@@ -385,7 +385,7 @@ onMounted(() => {
                 :key="phone.id"
                 class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700"
             >
-                <div class="h-1 bg-gradient-to-r from-sky-600 to-blue-600"></div>
+                <div class="h-1 bg-blue-600"></div>
                 <div class="p-4">
                     <div class="flex items-start justify-between gap-3 mb-3">
                         <div class="flex items-start gap-3 flex-1 min-w-0">
@@ -430,7 +430,7 @@ onMounted(() => {
                         <button
                             v-if="!phone.is_verified"
                             @click="sendVerificationCode(phone)"
-                            class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all shadow-md disabled:opacity-50"
+                            class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all shadow-md disabled:opacity-50"
                             :disabled="isSendingCode || isLoading"
                             style="min-height: 44px"
                         >
@@ -467,7 +467,7 @@ onMounted(() => {
             <p class="text-sm text-gray-500 dark:text-gray-500 mt-1">Add your contact numbers for communication</p>
             <button
                 @click="openAddModal"
-                class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-sky-600 to-blue-600 rounded-lg hover:from-sky-700 hover:to-blue-700 transition-all shadow-md"
+                class="mt-4 inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all shadow-md"
                 style="min-height: 44px"
             >
                 <PlusIcon class="w-5 h-5" />
@@ -609,7 +609,7 @@ onMounted(() => {
                         </button>
                         <button
                             type="submit"
-                            class="w-full sm:w-auto px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-sky-600 to-blue-600 rounded-lg hover:from-sky-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+                            class="w-full sm:w-auto px-6 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
                             style="min-height: 44px"
                             :disabled="isLoading"
                         >
@@ -666,7 +666,7 @@ onMounted(() => {
         <Modal :show="showVerifyModal" @close="closeVerifyModal" max-width="md">
             <div class="p-6">
                 <div class="flex items-center gap-3 mb-4">
-                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center">
+                    <div class="w-12 h-12 rounded-xl bg-green-600 flex items-center justify-center border-2 border-green-700">
                         <CheckBadgeIcon class="w-6 h-6 text-white" />
                     </div>
                     <div>
@@ -733,7 +733,7 @@ onMounted(() => {
                         </button>
                         <button
                             type="submit"
-                            class="w-full sm:flex-1 px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+                            class="w-full sm:flex-1 px-6 py-3 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
                             style="min-height: 44px"
                             :disabled="isVerifying || !verificationCode || verificationCode.length !== 6"
                         >

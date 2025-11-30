@@ -50,7 +50,7 @@ const submit = () => {
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
                         <!-- Stats Card -->
-                        <div class="mb-6 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 p-6 text-white">
+                        <div class="mb-6 rounded-lg bg-blue-600 p-6 text-white border-2 border-blue-700">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <h3 class="text-lg font-semibold">Profile Views</h3>

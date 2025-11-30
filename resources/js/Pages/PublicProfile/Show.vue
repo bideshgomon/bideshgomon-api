@@ -94,15 +94,15 @@ const canShowQR = (platform) => {
     <div class="min-h-screen bg-gray-50 py-12">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header Card -->
-            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl shadow-lg overflow-hidden mb-8">
+            <div class="bg-blue-600 rounded-xl shadow-lg overflow-hidden mb-8 border-2 border-blue-700">
                 <div class="p-8 text-white">
                     <div class="flex items-start justify-between">
                         <div>
                             <h1 class="text-4xl font-bold mb-2">{{ profile.name }}</h1>
-                            <p v-if="profile.headline" class="text-xl text-indigo-100 mb-4">
+                            <p v-if="profile.headline" class="text-xl text-blue-100 mb-4">
                                 {{ profile.headline }}
                             </p>
-                            <div class="flex items-center text-indigo-100">
+                            <div class="flex items-center text-blue-100">
                                 <EyeIcon class="h-5 w-5 mr-2" />
                                 <span>{{ totalViews }} profile views</span>
                             </div>
