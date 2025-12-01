@@ -46,7 +46,7 @@
                                                 {{ transaction.transaction_id }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {{ transaction.gateway.toUpperCase() }}
+                                                {{ (transaction.gateway || '').toUpperCase() }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                 ৳{{ parseFloat(transaction.amount).toLocaleString('en-BD', { minimumFractionDigits: 2 }) }}
@@ -58,7 +58,7 @@
                                                     'bg-red-100 text-red-800': transaction.status === 'failed' || transaction.status === 'cancelled',
                                                     'bg-blue-100 text-blue-800': transaction.status === 'refunded'
                                                 }" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
-                                                    {{ transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1) }}
+                                                    {{ ((transaction.status || '').charAt(0).toUpperCase() || '') + (transaction.status || '').slice(1) }}
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

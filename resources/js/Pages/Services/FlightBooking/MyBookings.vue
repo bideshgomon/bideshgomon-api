@@ -187,7 +187,7 @@ const getPaymentStatusColor = (status) => {
                                         getStatusColor(booking.status)
                                     ]"
                                 >
-                                    {{ booking.status.toUpperCase() }}
+                                    {{ (booking.status || '').toUpperCase() }}
                                 </span>
                                 <span 
                                     :class="[
@@ -195,7 +195,7 @@ const getPaymentStatusColor = (status) => {
                                         getPaymentStatusColor(booking.payment_status)
                                     ]"
                                 >
-                                    {{ booking.payment_status.toUpperCase() }}
+                                    {{ (booking.payment_status || '').toUpperCase() }}
                                 </span>
                             </div>
                         </div>
@@ -246,7 +246,7 @@ const getPaymentStatusColor = (status) => {
                                 </div>
                                 <div>
                                     <span class="text-gray-600">Class:</span>
-                                    <div class="font-semibold text-gray-900 capitalize">{{ booking.flight_class.replace('_', ' ') }}</div>
+                                    <div class="font-semibold text-gray-900 capitalize">{{ (booking.flight_class || '').replace('_', ' ') }}</div>
                                 </div>
                                 <div>
                                     <span class="text-gray-600">Booked On:</span>

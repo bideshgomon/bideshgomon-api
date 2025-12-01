@@ -143,7 +143,7 @@ const getProficiencyLabel = (level) => {
                             </svg>
                         </button>
                         <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-heritage-600 shadow-lg flex items-center justify-center text-white font-bold text-3xl sm:text-4xl">
-                            {{ user.name.charAt(0).toUpperCase() }}
+                            {{ (user.name || '').charAt(0).toUpperCase() }}
                         </div>
                         <div class="flex-1">
                             <h1 class="text-2xl sm:text-3xl font-bold text-heritage-900">{{ user.name }}</h1>

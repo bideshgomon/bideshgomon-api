@@ -189,7 +189,7 @@ const submitBooking = () => {
                     </div>
                     <div class="pt-2 flex items-center justify-between text-sm">
                         <span class="text-gray-600">Class:</span>
-                        <span class="font-semibold text-gray-900 capitalize">{{ flightClass.replace('_', ' ') }}</span>
+                        <span class="font-semibold text-gray-900 capitalize">{{ (flightClass || '').replace('_', ' ') }}</span>
                     </div>
                 </div>
 

@@ -84,7 +84,7 @@ const bookRoom = (room) => {
                             <div class="flex flex-wrap gap-2">
                                 <span v-for="amenity in hotel.amenities" :key="amenity" 
                                     class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm">
-                                    {{ amenity.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) }}
+                                    {{ (amenity || '').replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) }}
                                 </span>
                             </div>
                         </div>
@@ -160,7 +160,7 @@ const bookRoom = (room) => {
                                     <div v-if="room.amenities && room.amenities.length" class="flex flex-wrap gap-2">
                                         <span v-for="amenity in room.amenities.slice(0, 6)" :key="amenity" 
                                             class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                                            {{ amenity.replace('_', ' ') }}
+                                            {{ (amenity || '').replace('_', ' ') }}
                                         </span>
                                     </div>
                                 </div>

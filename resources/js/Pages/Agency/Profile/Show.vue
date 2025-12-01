@@ -182,7 +182,7 @@
                                 <div class="flex items-center gap-3 mb-2">
                                     <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
                                         <span class="text-indigo-700 font-semibold text-sm">
-                                            {{ review.user.name.charAt(0).toUpperCase() }}
+                                            {{ (review.user.name || '').charAt(0).toUpperCase() }}
                                         </span>
                                     </div>
                                     <div class="flex-1">

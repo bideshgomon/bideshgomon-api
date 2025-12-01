@@ -118,7 +118,7 @@ const getRequirementsByType = (visaType, profession = null) => {
                                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                 ]"
                             >
-                                {{ visaType.charAt(0).toUpperCase() + visaType.slice(1) }}
+                                {{ ((visaType || '').charAt(0).toUpperCase() || '') + (visaType || '').slice(1) }}
                             </button>
                         </nav>
                     </div>
@@ -237,7 +237,7 @@ const getRequirementsByType = (visaType, profession = null) => {
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Visa Type</label>
                                     <select v-model="selectedVisaType" class="w-full border-gray-300 rounded-md">
                                         <option v-for="type in visaTypes" :key="type" :value="type">
-                                            {{ type.charAt(0).toUpperCase() + type.slice(1) }}
+                                            {{ ((type || '').charAt(0).toUpperCase() || '') + (type || '').slice(1) }}
                                         </option>
                                     </select>
                                 </div>

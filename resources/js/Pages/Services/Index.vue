@@ -132,10 +132,10 @@ const filteredServices = computed(() => {
   }
   
   if (search.value) {
-    const searchLower = search.value.toLowerCase();
+    const searchLower = (search.value || '').toLowerCase();
     services = services.filter(s => 
-      s.name.toLowerCase().includes(searchLower) ||
-      s.description.toLowerCase().includes(searchLower)
+      (s.name || '').toLowerCase().includes(searchLower) ||
+      (s.description || '').toLowerCase().includes(searchLower)
     );
   }
   

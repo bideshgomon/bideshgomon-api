@@ -251,7 +251,7 @@ const rejectReward = (rewardId) => {
                                                     }"
                                                     class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
                                                 >
-                                                    {{ reward.status.charAt(0).toUpperCase() + reward.status.slice(1) }}
+                                                    {{ ((reward.status || '').charAt(0).toUpperCase() || '') + (reward.status || '').slice(1) }}
                                                 </span>
                                                 <div v-if="reward.status === 'rejected' && reward.metadata?.rejection_reason" class="text-xs text-red-600 mt-1">
                                                     {{ reward.metadata.rejection_reason }}

@@ -423,7 +423,7 @@ const impersonateUser = (user) => {
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
                                             <div class="h-10 w-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold">
-                                                {{ user.name.charAt(0).toUpperCase() }}
+                                                {{ (user.name || '').charAt(0).toUpperCase() }}
                                             </div>
                                             <div>
                                                 <div class="font-medium text-gray-900">{{ user.name }}</div>

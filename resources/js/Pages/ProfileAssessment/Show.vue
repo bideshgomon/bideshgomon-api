@@ -206,9 +206,9 @@ const getPriorityColor = (priority) => {
                             <div v-for="(score, section) in assessment.section_scores" :key="section">
                                 <div class="flex justify-between items-center mb-2">
                                     <span class="text-sm font-medium text-gray-700 capitalize">
-                                        {{ section.replace('_', ' ') }}
+                                        {{ (section || '').replace('_', ' ') }}
                                     </span>
-                                    <span class="text-sm font-bold" :class="getScoreBarColor(score).replace('bg-', 'text-')">
+                                    <span class="text-sm font-bold" :class="(getScoreBarColor(score) || '').replace('bg-', 'text-')">
                                         {{ Math.round(score) }}/100
                                     </span>
                                 </div>

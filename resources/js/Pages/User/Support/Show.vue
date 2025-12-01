@@ -70,7 +70,7 @@
                         <div class="flex items-start gap-4">
                             <div class="flex-shrink-0">
                                 <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
-                                    {{ ticket.user.name.charAt(0).toUpperCase() }}
+                                    {{ (ticket.user.name || '').charAt(0).toUpperCase() }}
                                 </div>
                             </div>
                             <div class="flex-1">
@@ -112,7 +112,7 @@
                                     :class="reply.is_staff_reply ? 'bg-green-600' : 'bg-blue-600'"
                                     class="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
                                 >
-                                    {{ reply.user.name.charAt(0).toUpperCase() }}
+                                    {{ (reply.user.name || '').charAt(0).toUpperCase() }}
                                 </div>
                             </div>
                             <div class="flex-1">

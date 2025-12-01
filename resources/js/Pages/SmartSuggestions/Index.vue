@@ -249,7 +249,7 @@ const getStrengthLabel = (score) => {
                                 <h3 class="font-bold text-gray-900">{{ suggestion.title }}</h3>
                             </div>
                             <span :class="getPriorityBadgeColor(suggestion.priority)" class="px-2 py-1 text-xs font-semibold rounded-lg border">
-                                {{ suggestion.priority.toUpperCase() }}
+                                {{ (suggestion.priority || '').toUpperCase() }}
                             </span>
                         </div>
                         <p class="text-sm text-gray-700 mb-4">{{ suggestion.description }}</p>

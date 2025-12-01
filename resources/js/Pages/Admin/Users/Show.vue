@@ -216,7 +216,7 @@ const tabs = [
                             <!-- Avatar and Basic Info -->
                             <div class="flex items-center gap-4">
                                 <div class="h-20 w-20 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 text-3xl font-bold">
-                                    {{ user.name.charAt(0).toUpperCase() }}
+                                    {{ (user.name || '').charAt(0).toUpperCase() }}
                                 </div>
                                 <div>
                                     <h1 class="text-2xl font-bold text-gray-900">{{ user.name }}</h1>

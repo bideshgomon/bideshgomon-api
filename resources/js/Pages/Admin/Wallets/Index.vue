@@ -228,7 +228,7 @@ const getStatusIcon = (status) => {
                                                     class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full items-center gap-1"
                                                 >
                                                     <component :is="getStatusIcon(wallet.status)" class="h-3 w-3" />
-                                                    {{ wallet.status.charAt(0).toUpperCase() + wallet.status.slice(1) }}
+                                                    {{ ((wallet.status || '').charAt(0).toUpperCase() || '') + (wallet.status || '').slice(1) }}
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">

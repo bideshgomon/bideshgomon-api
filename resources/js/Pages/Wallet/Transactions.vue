@@ -140,7 +140,7 @@ const getTransactionSign = (transactionType) => {
                                         <td class="px-6 py-4 text-sm text-gray-900">
                                             <div>{{ transaction.description }}</div>
                                             <div v-if="transaction.reference_type" class="text-xs text-gray-500">
-                                                {{ transaction.reference_type.replace('_', ' ') }}
+                                                {{ (transaction.reference_type || '').replace('_', ' ') }}
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">

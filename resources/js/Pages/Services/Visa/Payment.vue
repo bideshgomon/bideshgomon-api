@@ -216,7 +216,7 @@ const selectedPaymentMethodName = computed(() => {
 });
 
 const formatStatus = (status) => {
-    return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    return (status || '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 };
 
 const submit = () => {

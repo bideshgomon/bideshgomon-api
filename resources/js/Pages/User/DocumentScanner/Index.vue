@@ -213,7 +213,7 @@
                                         size="md"
                                     />
                                     <span class="text-sm font-medium text-gray-700 capitalize">
-                                        {{ scan.document_type.replace('_', ' ') }}
+                                        {{ (scan.document_type || '').replace('_', ' ') }}
                                     </span>
                                     <span class="text-sm text-gray-400">
                                         {{ formatDate(scan.created_at) }}

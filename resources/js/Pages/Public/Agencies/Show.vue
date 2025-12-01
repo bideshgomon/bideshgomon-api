@@ -260,7 +260,7 @@
                                     <span class="text-sm">{{ agency.phone }}</span>
                                 </a>
 
-                                <a v-if="agency.whatsapp" :href="`https://wa.me/${agency.whatsapp.replace(/[^0-9]/g, '')}`" target="_blank" class="flex items-center text-gray-700 hover:text-indigo-600">
+                                <a v-if="agency.whatsapp" :href="`https://wa.me/${(agency.whatsapp || '').replace(/[^0-9]/g, '')}`" target="_blank" class="flex items-center text-gray-700 hover:text-indigo-600">
                                     <ChatBubbleLeftIcon class="h-5 w-5 mr-3 text-gray-400" />
                                     <span class="text-sm">WhatsApp</span>
                                 </a>
@@ -394,7 +394,7 @@ const formatBusinessType = (type) => {
 };
 
 const formatServiceName = (service) => {
-    return service.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    return (service || '').split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 };
 
 const formatDate = (date) => {

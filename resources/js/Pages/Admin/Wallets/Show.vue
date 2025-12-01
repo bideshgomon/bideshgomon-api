@@ -145,7 +145,7 @@ const getStatusColor = (status) => {
                                 <div class="text-sm text-gray-500 dark:text-gray-400 mb-1">Current Balance</div>
                                 <div class="text-3xl font-bold text-gray-900 dark:text-white">{{ formatCurrency(wallet.balance) }}</div>
                                 <span :class="getStatusColor(wallet.status)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-2">
-                                    {{ wallet.status.charAt(0).toUpperCase() + wallet.status.slice(1) }}
+                                    {{ ((wallet.status || '').charAt(0).toUpperCase() || '') + (wallet.status || '').slice(1) }}
                                 </span>
                             </div>
                         </div>
@@ -177,7 +177,7 @@ const getStatusColor = (status) => {
                                                 <div class="flex items-center gap-2">
                                                     <component :is="getTransactionTypeIcon(transaction.transaction_type)" :class="getTransactionTypeColor(transaction.transaction_type)" class="h-5 w-5" />
                                                     <span class="text-sm font-medium" :class="getTransactionTypeColor(transaction.transaction_type)">
-                                                        {{ transaction.transaction_type.charAt(0).toUpperCase() + transaction.transaction_type.slice(1) }}
+                                                        {{ ((transaction.transaction_type || '').charAt(0).toUpperCase() || '') + (transaction.transaction_type || '').slice(1) }}
                                                     </span>
                                                 </div>
                                             </td>

@@ -49,7 +49,7 @@
                                             class="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center text-white text-sm font-bold"
                                             :style="{ backgroundColor: category.color }"
                                         >
-                                            {{ category.icon || category.name.charAt(0).toUpperCase() }}
+                                            {{ category.icon || (category.name || '').charAt(0).toUpperCase() }}
                                         </div>
                                         <div class="ml-4">
                                             <div class="text-sm font-medium text-gray-900">{{ category.name }}</div>

@@ -380,7 +380,7 @@ const handleFileChange = (event) => {
                                 <select v-model="form.gender" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <option value="">Select gender</option>
                                     <option v-for="gender in genderOptions" :key="gender" :value="gender">
-                                        {{ gender.charAt(0).toUpperCase() + gender.slice(1) }}
+                                        {{ ((gender || '').charAt(0).toUpperCase() || '') + (gender || '').slice(1) }}
                                     </option>
                                 </select>
                                 <p v-if="form.errors.gender" class="mt-1 text-sm text-red-600">{{ form.errors.gender }}</p>
@@ -444,7 +444,7 @@ const handleFileChange = (event) => {
                                 <select v-model="form.marital_status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <option value="">Select marital status</option>
                                     <option v-for="status in maritalStatusOptions" :key="status" :value="status">
-                                        {{ status.charAt(0).toUpperCase() + status.slice(1) }}
+                                        {{ ((status || '').charAt(0).toUpperCase() || '') + (status || '').slice(1) }}
                                     </option>
                                 </select>
                             </div>

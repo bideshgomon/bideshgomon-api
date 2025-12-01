@@ -118,7 +118,7 @@ export function parseDateDDMMYYYY(dateString, separator = ' ') {
     
     try {
         // Normalize separators
-        const normalized = dateString.replace(/[\/\-\s]+/g, '-');
+        const normalized = (dateString || '').replace(/[\/\-\s]+/g, '-');
         const parts = normalized.split('-');
         
         if (parts.length === 3) {

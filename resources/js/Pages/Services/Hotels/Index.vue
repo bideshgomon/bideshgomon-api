@@ -220,7 +220,7 @@ const formatPrice = (price) => {
                                         <div v-if="hotel.amenities && hotel.amenities.length > 0" class="flex flex-wrap gap-2 mb-3">
                                             <span v-for="amenity in hotel.amenities.slice(0, 5)" :key="amenity" 
                                                 class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                                                {{ amenity.replace('_', ' ') }}
+                                                {{ (amenity || '').replace('_', ' ') }}
                                             </span>
                                         </div>
                                     </div>

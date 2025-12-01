@@ -231,7 +231,7 @@ const updateSetting = (key, value) => {
                                     <div class="flex-1 min-w-0">
                                         <div class="flex items-center gap-2 mb-1">
                                             <label :for="setting.key" class="text-sm font-semibold text-gray-900">
-                                                {{ setting.key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') }}
+                                                {{ (setting.key || '').split('_').map(w => ((w || '').charAt(0).toUpperCase() || '') + (w || '').slice(1)).join(' ') }}
                                             </label>
                                             <span
                                                 v-if="form.settings.find(s => s.key === setting.key)?.value"

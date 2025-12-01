@@ -474,7 +474,7 @@ function generateSitemap() {
 }
 
 function formatPageType(type) {
-    return type.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+    return (type || '').split('-').map(word => ((word || '').charAt(0).toUpperCase() || '') + (word || '').slice(1)).join(' ')
 }
 
 // Load initial settings

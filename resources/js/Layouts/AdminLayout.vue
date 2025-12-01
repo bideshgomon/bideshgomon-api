@@ -991,7 +991,7 @@ const navigationSections = {
                     <div
                       class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-lg transform group-hover:scale-105 transition-transform border-2 border-blue-700"
                     >
-                      {{ user.name.charAt(0).toUpperCase() }}
+                      {{ (user.name || '').charAt(0).toUpperCase() }}
                     </div>
                     <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-gray-900 rounded-full"></div>
                   </div>

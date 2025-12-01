@@ -41,7 +41,7 @@ const getStatusLabel = (status) => {
         'rejected': 'Rejected',
         'withdrawn': 'Withdrawn',
     };
-    return labels[status] || status.charAt(0).toUpperCase() + status.slice(1);
+    return labels[status] || ((status || '').charAt(0).toUpperCase() || '') + (status || '').slice(1);
 };
 </script>
 

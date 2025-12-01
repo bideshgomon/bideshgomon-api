@@ -158,7 +158,7 @@
                                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         ]"
                     >
-                        {{ filterType.charAt(0).toUpperCase() + filterType.slice(1) }}
+                        {{ ((filterType || '').charAt(0).toUpperCase() || '') + (filterType || '').slice(1) }}
                     </button>
                 </div>
             </div>

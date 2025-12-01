@@ -63,7 +63,7 @@ const submit = () => {
                             <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
                                 <div class="flex items-center gap-3">
                                     <div class="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
-                                        {{ user.name.charAt(0).toUpperCase() }}
+                                        {{ (user.name || '').charAt(0).toUpperCase() }}
                                     </div>
                                     <div>
                                         <div class="font-semibold text-gray-900">{{ user.name }}</div>

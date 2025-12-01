@@ -67,10 +67,10 @@ const openQRModal = (platform, value) => {
     qrPlatform.value = platform;
     
     if (platform === 'whatsapp') {
-        const cleanNumber = value.replace(/\D/g, '');
+        const cleanNumber = (value || '').replace(/\D/g, '');
         qrValue.value = `https://wa.me/${cleanNumber}`;
     } else if (platform === 'telegram') {
-        const username = value.replace('@', '');
+        const username = (value || '').replace('@', '');
         qrValue.value = `https://t.me/${username}`;
     }
     

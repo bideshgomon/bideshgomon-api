@@ -32,7 +32,7 @@ const formatDateForInput = (dateStr) => {
     // If it's already in YYYY-MM-DD format, return as is
     if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
     // If it's a full datetime, extract the date part
-    return dateStr.split(' ')[0];
+    return (dateStr || '').split(' ')[0];
 };
 
 const sameAsPresent = ref(false)
