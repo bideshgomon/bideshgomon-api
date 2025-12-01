@@ -50,12 +50,13 @@ class ApplicationController extends Controller
         }
 
         // Get form with pre-filled data from user profile
-        $formData = $this->dataMapper->getFormWithData($service, auth()->user());
+        $formWithData = $this->dataMapper->getFormWithData($service, auth()->user());
 
-        return Inertia::render('Applications/Create', [
+        return Inertia::render('Services/ApplicationForm', [
             'service' => $service,
-            'formData' => $formData,
-            'draftApplication' => $existingApplication,
+            'formFields' => $service->formFields,
+            'prefilledData' => $formWithData['formData'] ?? [],
+            'existingApplication' => $existingApplication,
         ]);
     }
 
@@ -124,7 +125,9 @@ class ApplicationController extends Controller
     {
         $query = auth()->user()
             ->serviceApplications()
-            ->with(['serviceModule'])
+            ->with(['serviceModule', 'statusHistory' => function ($q) {
+                $q->latest()->limit(1);
+            }])
             ->when($request->status, function ($q, $status) {
                 $q->where('status', $status);
             })
@@ -138,21 +141,29 @@ class ApplicationController extends Controller
             })
             ->latest();
 
-        $applications = $query->paginate(10)->withQueryString();
+        $applications = $query->paginate(20)->withQueryString();
 
-        // Get counts by status
-        $statusCounts = [
-            'all' => auth()->user()->serviceApplications()->count(),
-            'draft' => auth()->user()->serviceApplications()->where('status', 'draft')->count(),
-            'pending' => auth()->user()->serviceApplications()->where('status', 'pending')->count(),
-            'under_review' => auth()->user()->serviceApplications()->where('status', 'under_review')->count(),
-            'approved' => auth()->user()->serviceApplications()->where('status', 'approved')->count(),
-            'rejected' => auth()->user()->serviceApplications()->where('status', 'rejected')->count(),
-        ];
+        // Transform applications to include service relationship
+        $applications->through(function ($application) {
+            return [
+                'id' => $application->id,
+                'application_number' => $application->application_number,
+                'status' => $application->status,
+                'submitted_at' => $application->submitted_at,
+                'created_at' => $application->created_at,
+                'updated_at' => $application->updated_at,
+                'service' => [
+                    'id' => $application->serviceModule->id,
+                    'name' => $application->serviceModule->name,
+                    'slug' => $application->serviceModule->slug,
+                    'processing_days' => $application->serviceModule->processing_days,
+                ],
+                'latest_status_update' => $application->statusHistory->first(),
+            ];
+        });
 
-        return Inertia::render('Applications/Index', [
+        return Inertia::render('Services/MyApplications', [
             'applications' => $applications,
-            'statusCounts' => $statusCounts,
             'filters' => $request->only(['status', 'search']),
         ]);
     }
@@ -170,13 +181,60 @@ class ApplicationController extends Controller
         $application->load([
             'serviceModule.formFields',
             'documents',
-            'statusHistory.changer',
+            'statusHistory' => function ($query) {
+                $query->with('changer')->latest();
+            },
         ]);
 
-        return Inertia::render('Applications/Show', [
-            'application' => $application,
-            'canEdit' => $application->status === 'draft',
-            'canCancel' => in_array($application->status, ['draft', 'pending', 'under_review']),
+        // Group form data by field groups
+        $groupedFormData = [];
+        if ($application->form_data && $application->serviceModule->formFields) {
+            foreach ($application->serviceModule->formFields as $field) {
+                $groupName = $field->group_name ?: 'General Information';
+                if (!isset($groupedFormData[$groupName])) {
+                    $groupedFormData[$groupName] = [];
+                }
+                
+                $groupedFormData[$groupName][] = [
+                    'name' => $field->field_name,
+                    'label' => $field->field_label,
+                    'value' => $application->form_data[$field->field_name] ?? null,
+                    'type' => $field->field_type,
+                ];
+            }
+        }
+
+        return Inertia::render('Services/ApplicationDetails', [
+            'application' => [
+                'id' => $application->id,
+                'application_number' => $application->application_number,
+                'status' => $application->status,
+                'form_data' => $application->form_data,
+                'profile_snapshot' => $application->profile_snapshot,
+                'submitted_at' => $application->submitted_at,
+                'created_at' => $application->created_at,
+                'updated_at' => $application->updated_at,
+                'service' => [
+                    'id' => $application->serviceModule->id,
+                    'name' => $application->serviceModule->name,
+                    'slug' => $application->serviceModule->slug,
+                    'short_description' => $application->serviceModule->short_description,
+                    'processing_days' => $application->serviceModule->processing_days,
+                    'requires_approval' => $application->serviceModule->requires_approval,
+                ],
+                'documents' => $application->documents,
+                'status_history' => $application->statusHistory->map(function ($history) {
+                    return [
+                        'id' => $history->id,
+                        'old_status' => $history->old_status,
+                        'new_status' => $history->new_status,
+                        'notes' => $history->notes,
+                        'created_at' => $history->created_at,
+                        'changed_by_name' => $history->changer ? $history->changer->name : null,
+                    ];
+                }),
+                'grouped_form_data' => $groupedFormData,
+            ],
         ]);
     }
 
