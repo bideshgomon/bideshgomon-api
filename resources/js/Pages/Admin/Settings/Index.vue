@@ -38,18 +38,28 @@ const togglePasswordVisibility = (key) => {
     visiblePasswords.value[key] = !visiblePasswords.value[key];
 };
 
+// Settings organized by category for better UX
 const groupConfig = {
+    // 1️⃣ ESSENTIAL SETTINGS (Site Identity & Contact)
     general: { icon: CogIcon, label: 'General', color: 'indigo' },
     branding: { icon: SparklesIcon, label: 'Branding', color: 'purple' },
-    seo: { icon: ShieldCheckIcon, label: 'SEO', color: 'blue' },
-    email: { icon: EnvelopeIcon, label: 'Email', color: 'blue' },
     contact: { icon: ChatBubbleLeftRightIcon, label: 'Contact', color: 'green' },
+    
+    // 2️⃣ FEATURE MANAGEMENT (Control what's enabled)
     modules: { icon: CogIcon, label: 'Modules', color: 'blue' },
-    homepage: { icon: SparklesIcon, label: 'Homepage', color: 'purple' },
-    jobs: { icon: BriefcaseIcon, label: 'Jobs', color: 'purple' },
-    wallet: { icon: WalletIcon, label: 'Wallet', color: 'green' },
     features: { icon: FlagIcon, label: 'Features', color: 'orange' },
+    homepage: { icon: SparklesIcon, label: 'Homepage Widgets', color: 'purple' },
+    
+    // 3️⃣ MODULE-SPECIFIC SETTINGS
+    jobs: { icon: BriefcaseIcon, label: 'Jobs Settings', color: 'purple' },
+    wallet: { icon: WalletIcon, label: 'Wallet Settings', color: 'green' },
+    
+    // 4️⃣ MARKETING & SEO
+    seo: { icon: ShieldCheckIcon, label: 'SEO & Analytics', color: 'blue' },
     social: { icon: ShareIcon, label: 'Social Media', color: 'pink' },
+    email: { icon: EnvelopeIcon, label: 'Email', color: 'blue' },
+    
+    // 5️⃣ ADVANCED (Technical Settings)
     api: { icon: KeyIcon, label: 'API Keys', color: 'red' },
     advanced: { icon: CogIcon, label: 'Advanced', color: 'gray' },
 };
