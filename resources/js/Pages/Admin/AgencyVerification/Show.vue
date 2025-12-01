@@ -30,7 +30,7 @@
                             'bg-yellow-100 text-yellow-800'
                         ]"
                     >
-                        {{ request.status.replace('_', ' ').toUpperCase() }}
+                        {{ (request?.status || '').replace('_', ' ').toUpperCase() }}
                     </span>
                 </div>
 
@@ -84,7 +84,7 @@
                                             {{ doc.status }}
                                         </span>
                                     </div>
-                                    <p class="text-sm text-gray-500 mt-1">{{ doc.document_type.replace('_', ' ') }}</p>
+                                    <p class="text-sm text-gray-500 mt-1">{{ (doc?.document_type || '').replace('_', ' ') }}</p>
                                     <p class="text-xs text-gray-400 mt-1">{{ formatFileSize(doc.file_size) }}</p>
 
                                     <div v-if="doc.status === 'rejected' && doc.rejection_reason" class="mt-2 p-3 bg-red-50 rounded">

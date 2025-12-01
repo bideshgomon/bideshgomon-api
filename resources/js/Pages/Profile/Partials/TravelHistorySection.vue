@@ -160,9 +160,8 @@ const formatDate = (date) => {
     return new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 };
 
-onMounted(() => {
-    loadTravelHistory();
-});
+// Data is loaded via props from ProfileController - no need to fetch
+// onMounted removed - travelHistory prop is already reactive
 </script>
 
 <template>

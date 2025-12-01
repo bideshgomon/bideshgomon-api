@@ -220,12 +220,12 @@ const getPaymentStatusColor = (status) => {
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span :class="getStatusColor(booking.status)" class="px-2 py-1 rounded text-xs font-medium">
-                                                {{ booking.status.replace('_', ' ').toUpperCase() }}
+                                                {{ (booking?.status || '').replace('_', ' ').toUpperCase() }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span :class="getPaymentStatusColor(booking.payment_status)" class="px-2 py-1 rounded text-xs font-medium">
-                                                {{ booking.payment_status.replace('_', ' ').toUpperCase() }}
+                                                {{ (booking?.payment_status || '').replace('_', ' ').toUpperCase() }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">

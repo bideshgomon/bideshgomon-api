@@ -23,7 +23,7 @@
                             'bg-yellow-100 text-yellow-800'
                         ]"
                     >
-                        {{ latestRequest.status.replace('_', ' ').toUpperCase() }}
+                        {{ (latestRequest?.status || '').replace('_', ' ').toUpperCase() }}
                     </span>
                 </div>
 
@@ -153,7 +153,7 @@
                             <DocumentIcon class="h-6 w-6 text-gray-400 mr-3" />
                             <div class="flex-1">
                                 <p class="font-medium text-gray-900">{{ doc.document_name }}</p>
-                                <p class="text-sm text-gray-500">{{ doc.document_type.replace('_', ' ') }}</p>
+                                <p class="text-sm text-gray-500">{{ (doc?.document_type || '').replace('_', ' ') }}</p>
                                 <div class="flex items-center mt-1 space-x-4">
                                     <span class="text-xs text-gray-400">{{ doc.file_size ? formatFileSize(doc.file_size) : 'Unknown' }}</span>
                                     <span

@@ -289,7 +289,7 @@ const paymentColors = {
                                                 statusColors[application.status] || 'bg-gray-100 text-gray-800'
                                             ]"
                                         >
-                                            {{ application.status.replace('_', ' ') }}
+                                            {{ (application?.status || '').replace('_', ' ') }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">

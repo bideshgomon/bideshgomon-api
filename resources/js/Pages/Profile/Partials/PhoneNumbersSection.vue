@@ -115,7 +115,7 @@ const validateForm = () => {
     }
     
     // Basic phone number validation (digits only, 10-15 characters)
-    const phoneDigits = form.value.phone_number.replace(/\D/g, '')
+    const phoneDigits = (form.value?.phone_number || '').replace(/\D/g, '')
     if (phoneDigits.length < 10 || phoneDigits.length > 15) {
         errors.value.phone_number = 'Phone number must be 10-15 digits'
     }

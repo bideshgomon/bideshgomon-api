@@ -203,7 +203,7 @@
                                         :class="request.status_color"
                                         class="px-2 py-1 rounded-full text-xs font-medium border"
                                     >
-                                        {{ request.status.replace('_', ' ').toUpperCase() }}
+                                        {{ (request?.status || '').replace('_', ' ').toUpperCase() }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">

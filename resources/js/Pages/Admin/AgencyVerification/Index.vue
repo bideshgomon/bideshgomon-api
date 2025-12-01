@@ -83,7 +83,7 @@
                                         'bg-yellow-100 text-yellow-800'
                                     ]"
                                 >
-                                    {{ request.status.replace('_', ' ') }}
+                                    {{ (request?.status || '').replace('_', ' ') }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

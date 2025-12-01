@@ -23,7 +23,7 @@
                                 size="md"
                             />
                             <span class="px-rhythm-sm py-1 bg-heritage-100 text-heritage-800 rounded-lg text-sm font-medium capitalize">
-                                {{ (scan.document_type || '').replace('_', ' ') }}
+                                {{ (scan?.document_type || '').replace('_', ' ') }}
                             </span>
                             <span class="text-gray-400 text-sm">
                                 {{ formatDate(scan.created_at) }}
@@ -174,7 +174,7 @@
                                     class="flex justify-between items-start py-rhythm-sm border-b-2 border-ocean-100 last:border-0"
                                 >
                                     <span class="font-medium text-gray-700 capitalize">
-                                        {{ key.replace(/_/g, ' ') }}
+                                        {{ (key || '').replace(/_/g, ' ') }}
                                     </span>
                                     <span class="text-gray-900 text-right max-w-xs font-semibold">{{ value }}</span>
                                 </div>
@@ -249,7 +249,7 @@
                                 class="mt-1 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                             />
                             <div class="flex-1">
-                                <p class="font-medium text-gray-900 capitalize">{{ key.replace(/_/g, ' ') }}</p>
+                                <p class="font-medium text-gray-900 capitalize">{{ (key || '').replace(/_/g, ' ') }}</p>
                                 <p class="text-sm text-gray-600">{{ value }}</p>
                             </div>
                         </label>

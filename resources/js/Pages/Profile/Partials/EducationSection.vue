@@ -139,15 +139,16 @@ const openEditModal = (education) => {
     console.error('Education data is undefined')
     return
   }
+  // Defensive: use optional chaining for all property access
   form.value = {
-    institution_name: education.institution_name || '',
-    degree: education.degree || '',
-    field_of_study: education.field_of_study || '',
-    start_date: education.start_date ? education.start_date.substring(0, 10) : '',
-    end_date: education.end_date ? education.end_date.substring(0, 10) : '',
-    country: education.country || '',
-    city: education.city || '',
-    is_completed: education.is_completed || false,
+    institution_name: education?.institution_name || '',
+    degree: education?.degree || '',
+    field_of_study: education?.field_of_study || '',
+    start_date: education?.start_date ? education.start_date.substring(0, 10) : '',
+    end_date: education?.end_date ? education.end_date.substring(0, 10) : '',
+    country: education?.country || '',
+    city: education?.city || '',
+    is_completed: education?.is_completed || false,
     gpa_or_grade: education.gpa_or_grade || '',
     language_of_instruction: education.language_of_instruction || '',
     courses_completed: education.courses_completed || '',

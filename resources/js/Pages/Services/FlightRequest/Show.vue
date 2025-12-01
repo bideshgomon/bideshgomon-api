@@ -25,7 +25,7 @@
                                     :class="flightRequest.status_color"
                                     class="px-3 py-1 rounded-full text-sm font-medium border"
                                 >
-                                    {{ (flightRequest.status || '').replace('_', ' ').toUpperCase() }}
+                                    {{ (flightRequest?.status || '').replace('_', ' ').toUpperCase() }}
                                 </span>
                             </div>
                             <p class="text-gray-600">Request Reference: <span class="font-semibold">{{ flightRequest.request_reference }}</span></p>
@@ -51,7 +51,7 @@
                             <div class="space-y-4">
                                 <div>
                                     <div class="text-sm text-gray-500">Trip Type</div>
-                                    <div class="font-medium text-gray-900 capitalize">{{ (flightRequest.trip_type || '').replace('_', ' ') }}</div>
+                                    <div class="font-medium text-gray-900 capitalize">{{ (flightRequest?.trip_type || '').replace('_', ' ') }}</div>
                                 </div>
 
                                 <div v-if="flightRequest.trip_type !== 'multi_city'">

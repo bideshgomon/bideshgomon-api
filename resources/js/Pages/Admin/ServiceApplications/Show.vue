@@ -81,7 +81,7 @@ const getStatusIcon = (status) => {
                         getStatusColor(application.status) === 'green' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
                         'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
                     ]">
-                        {{ application.status.replace('_', ' ').toUpperCase() }}
+                        {{ (application?.status || '').replace('_', ' ').toUpperCase() }}
                     </div>
                 </div>
 

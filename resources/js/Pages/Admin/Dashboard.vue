@@ -807,7 +807,7 @@ const formatDateTime = (date) => {
                                         'bg-gray-50 text-gray-700': application.status === 'cancelled'
                                     }"
                                 >
-                                    {{ application.status.replace(/_/g, ' ') }}
+                                    {{ (application?.status || '').replace(/_/g, ' ') }}
                                 </span>
                                 <span class="text-sm font-bold text-purple-600">{{ formatCurrency(application.total_amount) }}</span>
                             </div>

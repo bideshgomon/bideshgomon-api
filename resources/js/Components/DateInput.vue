@@ -37,7 +37,7 @@ const handleInput = (event) => {
   displayValue.value = value
 
   // Auto-format as user types
-  value = value.replace(/[^\d/]/g, '') // Only numbers and /
+  value = (value || '').replace(/[^\d/]/g, '') // Only numbers and /
   
   // Auto-add slashes
   if (value.length === 2 && !value.includes('/')) {

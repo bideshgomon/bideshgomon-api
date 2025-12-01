@@ -128,7 +128,7 @@ const currentStep = computed(() => {
               class="inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold"
               :class="statusColor"
             >
-              {{ (application.status || '').replace('_', ' ').toUpperCase() }}
+              {{ (application?.status || '').replace('_', ' ').toUpperCase() }}
             </span>
           </div>
 

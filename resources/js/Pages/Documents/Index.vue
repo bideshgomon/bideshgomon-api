@@ -44,7 +44,7 @@ function handleFile(e) {
             <label class="block text-sm font-medium mb-1">Document Type</label>
             <select v-model="form.document_type" class="w-full border rounded p-2">
               <option value="">Select type...</option>
-              <option v-for="t in supportedTypes" :key="t" :value="t">{{ t.replace('_',' ') }}</option>
+              <option v-for="t in supportedTypes" :key="t" :value="t">{{ (t || '').replace('_',' ') }}</option>
             </select>
             <p v-if="form.errors.document_type" class="text-red-600 text-sm mt-1">{{ form.errors.document_type }}</p>
           </div>
@@ -90,7 +90,7 @@ function handleFile(e) {
             </thead>
             <tbody class="divide-y divide-gray-200 bg-white">
               <tr v-for="doc in documents.data" :key="doc.id" class="hover:bg-gray-50">
-                <td class="px-3 py-2 text-sm font-medium text-gray-900">{{ doc.document_type.replace('_',' ') }}</td>
+                <td class="px-3 py-2 text-sm font-medium text-gray-900">{{ (doc?.document_type || '').replace('_',' ') }}</td>
                 <td class="px-3 py-2 text-sm text-gray-600">{{ doc.original_filename }}</td>
                 <td class="px-3 py-2">
                   <span :class="badgeClass(doc.status)" class="px-2 py-1 rounded-full text-xs font-semibold">{{ doc.status }}</span>

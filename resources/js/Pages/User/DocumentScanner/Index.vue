@@ -213,7 +213,7 @@
                                         size="md"
                                     />
                                     <span class="text-sm font-medium text-gray-700 capitalize">
-                                        {{ (scan.document_type || '').replace('_', ' ') }}
+                                        {{ (scan?.document_type || '').replace('_', ' ') }}
                                     </span>
                                     <span class="text-sm text-gray-400">
                                         {{ formatDate(scan.created_at) }}
@@ -237,7 +237,7 @@
                                             :key="key"
                                             class="px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-medium"
                                         >
-                                            {{ value[0].replace('_', ' ') }}: {{ value[1] }}
+                                            {{ (value?.[0] || '').replace('_', ' ') }}: {{ value?.[1] || '' }}
                                         </span>
                                         <span v-if="Object.keys(scan.extracted_data).length > 3" class="px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg text-xs font-medium self-center">
                                             +{{ Object.keys(scan.extracted_data).length - 3 }} more fields

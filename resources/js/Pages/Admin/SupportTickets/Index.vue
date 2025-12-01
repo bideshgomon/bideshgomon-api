@@ -255,7 +255,7 @@ const getPriorityBadgeClass = (priority) => {
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span :class="getStatusBadgeClass(ticket.status)" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
-                                            {{ ticket.status.replace('_', ' ') }}
+                                            {{ (ticket?.status || '').replace('_', ' ') }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">

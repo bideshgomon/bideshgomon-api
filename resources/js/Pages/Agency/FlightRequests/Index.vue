@@ -95,7 +95,7 @@
                                         :class="request.status_color"
                                         class="px-3 py-1 rounded-full text-xs font-medium border"
                                     >
-                                        {{ request.status.replace('_', ' ').toUpperCase() }}
+                                        {{ (request?.status || '').replace('_', ' ').toUpperCase() }}
                                     </span>
                                     <span v-if="hasQuoted(request)" class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium">
                                         Quote Submitted
