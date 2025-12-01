@@ -84,6 +84,15 @@ class HandleInertiaRequests extends Middleware
                     'unread_notifications' => $user ? \App\Models\UserNotification::where('user_id', $user->id)->whereNull('read_at')->count() : 0,
                 ] : null,
             ],
+            // Global Settings - Available in all components via usePage().props.settings
+            'settings' => get_public_settings(),
+            // Dynamic Menus - Available via usePage().props.menus
+            'menus' => [
+                'header_main' => \App\Models\Menu::getMenuByLocation('header_main'),
+                'footer_column_1' => \App\Models\Menu::getMenuByLocation('footer_column_1'),
+                'footer_column_2' => \App\Models\Menu::getMenuByLocation('footer_column_2'),
+                'footer_column_3' => \App\Models\Menu::getMenuByLocation('footer_column_3'),
+            ],
         ];
     }
 }

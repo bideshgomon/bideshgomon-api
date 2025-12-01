@@ -58,9 +58,17 @@ class AdminSettingsController extends Controller
             }
         }
 
-        SiteSetting::clearCache();
+        // CRITICAL: Clear all caches
+        clear_settings_cache();
 
-        return back()->with('success', "Successfully updated {$updatedCount} setting(s)!");
+        return back()->with('success', "Successfully updated {$updatedCount} setting(s)! Cache cleared.");
+    }
+
+    public function clearCache()
+    {
+        clear_settings_cache();
+        
+        return back()->with('success', 'All settings caches cleared successfully!');
     }
 
     public function create()

@@ -31,18 +31,16 @@ const mobileMenuOpen = ref(false)
 
         <!-- Desktop Navigation -->
         <div class="hidden md:flex md:items-center md:space-x-8">
-          <Link :href="route('welcome')" class="text-gray-700 hover:text-green-600 font-medium transition-colors">
-            Home
-          </Link>
-          <a href="#services" class="text-gray-700 hover:text-green-600 font-medium transition-colors">
-            Services
-          </a>
-          <a href="#about" class="text-gray-700 hover:text-green-600 font-medium transition-colors">
-            About
-          </a>
-          <a href="#contact" class="text-gray-700 hover:text-green-600 font-medium transition-colors">
-            Contact
-          </a>
+          <template v-for="item in $page.props.menus?.header_main || []" :key="item.id">
+            <Link 
+              v-if="item.is_active"
+              :href="item.is_external ? item.url : (item.route_name ? route(item.route_name) : item.url)"
+              :target="item.target || '_self'"
+              class="text-gray-700 hover:text-green-600 font-medium transition-colors"
+            >
+              {{ item.label }}
+            </Link>
+          </template>
         </div>
 
         <!-- Auth Buttons -->
@@ -79,21 +77,16 @@ const mobileMenuOpen = ref(false)
         v-show="mobileMenuOpen"
         class="md:hidden py-4 space-y-2 border-t border-gray-200"
       >
-        <Link
-          :href="route('welcome')"
-          class="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg font-medium"
-        >
-          Home
-        </Link>
-        <a href="#services" class="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg font-medium">
-          Services
-        </a>
-        <a href="#about" class="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg font-medium">
-          About
-        </a>
-        <a href="#contact" class="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg font-medium">
-          Contact
-        </a>
+        <template v-for="item in $page.props.menus?.header_main || []" :key="item.id">
+          <Link
+            v-if="item.is_active"
+            :href="item.is_external ? item.url : (item.route_name ? route(item.route_name) : item.url)"
+            :target="item.target || '_self'"
+            class="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg font-medium"
+          >
+            {{ item.label }}
+          </Link>
+        </template>
         <template v-if="canLogin">
           <Link
             :href="route('login')"

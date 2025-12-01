@@ -1,6 +1,7 @@
 <script setup>
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
+import { useSettings } from '@/Composables/useSettings';
 import Header from '@/Components/Header.vue';
 import Footer from '@/Components/Footer.vue';
 import RhythmicCard from '@/Components/Rhythmic/RhythmicCard.vue';
@@ -42,6 +43,7 @@ const props = defineProps({
 });
 
 const page = usePage();
+const { homepageWidgets } = useSettings();
 
 // Redirect authenticated users to dashboard
 onMounted(() => {
@@ -151,7 +153,7 @@ const testimonials = [
                 </p>
 
                 <!-- CTA Buttons with FlowButton -->
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-rhythm-md mb-rhythm-2xl">
+                <div v-if="homepageWidgets.showHeroSearch" class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-rhythm-md mb-rhythm-2xl">
                     <Link
                         v-if="canRegister"
                         :href="route('register')"
@@ -177,7 +179,7 @@ const testimonials = [
                 </div>
 
                 <!-- Stats with rhythmic spacing -->
-                <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-rhythm-lg max-w-4xl mx-auto">
+                <div v-if="homepageWidgets.showStats" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-rhythm-lg max-w-4xl mx-auto">
                     <div v-for="stat in stats" :key="stat.label" class="text-center group animate-scale-in">
                         <div class="mb-rhythm-md inline-flex items-center justify-center w-16 h-16 rounded-rhythm-xl bg-white shadow-rhythm group-hover:shadow-rhythm-xl transition-all duration-400 group-hover:scale-110">
                             <component :is="stat.icon" :class="`h-8 w-8 ${stat.color}`" />
@@ -369,6 +371,7 @@ const testimonials = [
 
         <!-- Testimonials Section -->
         <AnimatedSection
+            v-if="homepageWidgets.showTestimonials"
             title="Loved by Thousands"
             subtitle="See what our users have to say about their experience with Bidesh Gomon."
             badge="Customer Reviews"

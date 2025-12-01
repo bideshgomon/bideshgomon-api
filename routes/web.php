@@ -1381,6 +1381,7 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::get('/settings', [AdminSettingsController::class, 'index'])->name('admin.settings.index');
     Route::post('/settings', [AdminSettingsController::class, 'update'])->name('admin.settings.update');
     Route::post('/settings/seed', [AdminSettingsController::class, 'seed'])->name('admin.settings.seed');
+    Route::post('/settings/clear-cache', [AdminSettingsController::class, 'clearCache'])->name('admin.settings.clear-cache');
     
     // SEO Settings Management
     Route::prefix('seo-settings')->name('seo-settings.')->middleware('role:admin')->group(function () {

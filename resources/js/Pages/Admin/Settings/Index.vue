@@ -44,6 +44,8 @@ const groupConfig = {
     seo: { icon: ShieldCheckIcon, label: 'SEO', color: 'blue' },
     email: { icon: EnvelopeIcon, label: 'Email', color: 'blue' },
     contact: { icon: ChatBubbleLeftRightIcon, label: 'Contact', color: 'green' },
+    modules: { icon: CogIcon, label: 'Modules', color: 'blue' },
+    homepage: { icon: SparklesIcon, label: 'Homepage', color: 'purple' },
     jobs: { icon: BriefcaseIcon, label: 'Jobs', color: 'purple' },
     wallet: { icon: WalletIcon, label: 'Wallet', color: 'green' },
     features: { icon: FlagIcon, label: 'Features', color: 'orange' },
@@ -160,6 +162,15 @@ const updateSetting = (key, value) => {
                             </p>
                         </div>
                         <div class="flex gap-3">
+                            <Link
+                                :href="route('admin.settings.clear-cache')"
+                                method="post"
+                                as="button"
+                                class="inline-flex items-center px-4 py-2 border border-emerald-300 rounded-lg shadow-sm text-sm font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors"
+                            >
+                                <ArrowPathIcon class="h-5 w-5 mr-2" />
+                                Clear Cache
+                            </Link>
                             <Link
                                 :href="route('admin.settings.seed')"
                                 method="post"

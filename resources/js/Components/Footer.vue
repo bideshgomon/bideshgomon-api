@@ -50,22 +50,15 @@ const currentYear = new Date().getFullYear()
         <div>
           <h3 class="text-white font-semibold mb-4">Quick Links</h3>
           <ul class="space-y-2">
-            <li>
-              <Link :href="route('welcome')" class="text-sm hover:text-white transition-colors">
-                Home
+            <li v-for="item in $page.props.menus?.footer_column_1 || []" :key="item.id">
+              <Link 
+                v-if="item.is_active"
+                :href="item.is_external ? item.url : (item.route_name ? route(item.route_name) : item.url)"
+                :target="item.target || '_self'"
+                class="text-sm hover:text-white transition-colors"
+              >
+                {{ item.label }}
               </Link>
-            </li>
-            <li>
-              <a href="#services" class="text-sm hover:text-white transition-colors">Services</a>
-            </li>
-            <li>
-              <a href="#about" class="text-sm hover:text-white transition-colors">About Us</a>
-            </li>
-            <li>
-              <a href="#" class="text-sm hover:text-white transition-colors">Pricing</a>
-            </li>
-            <li>
-              <a href="#" class="text-sm hover:text-white transition-colors">Blog</a>
             </li>
           </ul>
         </div>
@@ -74,20 +67,15 @@ const currentYear = new Date().getFullYear()
         <div>
           <h3 class="text-white font-semibold mb-4">Services</h3>
           <ul class="space-y-2">
-            <li>
-              <a href="#" class="text-sm hover:text-white transition-colors">Visa Applications</a>
-            </li>
-            <li>
-              <a href="#" class="text-sm hover:text-white transition-colors">Job Search</a>
-            </li>
-            <li>
-              <a href="#" class="text-sm hover:text-white transition-colors">Flight Booking</a>
-            </li>
-            <li>
-              <a href="#" class="text-sm hover:text-white transition-colors">Travel Insurance</a>
-            </li>
-            <li>
-              <a href="#" class="text-sm hover:text-white transition-colors">Document Translation</a>
+            <li v-for="item in $page.props.menus?.footer_column_2 || []" :key="item.id">
+              <Link 
+                v-if="item.is_active"
+                :href="item.is_external ? item.url : (item.route_name ? route(item.route_name) : item.url)"
+                :target="item.target || '_self'"
+                class="text-sm hover:text-white transition-colors"
+              >
+                {{ item.label }}
+              </Link>
             </li>
           </ul>
         </div>
@@ -123,9 +111,16 @@ const currentYear = new Date().getFullYear()
             © {{ currentYear }} Bidesh Gomon. All rights reserved.
           </p>
           <div class="flex space-x-6 text-sm">
-            <a href="#" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" class="text-gray-400 hover:text-white transition-colors">Terms of Service</a>
-            <a href="#" class="text-gray-400 hover:text-white transition-colors">Cookie Policy</a>
+            <Link 
+              v-for="item in $page.props.menus?.footer_column_3 || []" 
+              :key="item.id"
+              v-if="item.is_active"
+              :href="item.is_external ? item.url : (item.route_name ? route(item.route_name) : item.url)"
+              :target="item.target || '_self'"
+              class="text-gray-400 hover:text-white transition-colors"
+            >
+              {{ item.label }}
+            </Link>
           </div>
         </div>
       </div>

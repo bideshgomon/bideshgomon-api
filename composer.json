@@ -39,7 +39,8 @@
         },
         "files": [
             "app/Helpers/bangladesh_helpers.php",
-            "app/Helpers/DateHelper.php"
+            "app/Helpers/DateHelper.php",
+            "app/Helpers/settings_helper.php"
         ]
     },
     "autoload-dev": {
