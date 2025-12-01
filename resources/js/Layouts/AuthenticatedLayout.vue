@@ -62,7 +62,7 @@ const leaveImpersonation = () => {
     <div>
         <div class="min-h-screen bg-gray-100">
             <!-- Impersonation Banner -->
-            <div v-if="$page.props.auth.user.impersonating" class="bg-red-600 text-white shadow-inner">
+            <div v-if="$page.props.auth.user?.impersonating" class="bg-red-600 text-white shadow-inner">
                 <div class="max-w-7xl mx-auto px-4 py-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-[13px]">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-3">
                         <div class="flex items-center space-x-2">
@@ -71,12 +71,12 @@ const leaveImpersonation = () => {
                         </div>
                         <div class="flex items-center space-x-2">
                             <span class="opacity-90">Acting as:</span>
-                            <span class="font-semibold">{{ $page.props.auth.user.name }}</span>
+                            <span class="font-semibold">{{ $page.props.auth.user?.name }}</span>
                         </div>
-                        <div v-if="$page.props.auth.user.impersonator" class="flex items-center space-x-2">
-                            <span class="opacity-90">Original Admin:</span>
-                            <span class="font-medium">{{ $page.props.auth.user.impersonator.name }}</span>
-                            <span class="px-2 py-0.5 rounded bg-black/20 text-xs">ID {{ $page.props.auth.user.impersonator.id }}</span>
+                        <div v-if="$page.props.auth.user?.impersonator" class="flex items-center space-x-2">
+                            <span class="opacity-75">Original admin:</span>
+                            <span class="font-medium">{{ $page.props.auth.user?.impersonator?.name }}</span>
+                            <span class="px-2 py-0.5 rounded bg-black/20 text-xs">ID {{ $page.props.auth.user?.impersonator?.id }}</span>
                         </div>
                     </div>
                     <form @submit.prevent="leaveImpersonation" class="flex items-center">
@@ -165,13 +165,11 @@ const leaveImpersonation = () => {
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
-                                            >
-                                                {{ $page.props.auth.user.name }}
-
-                                                <svg
+                            <button
+                                type="button"
+                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
+                            >
+                                {{ $page.props.auth.user?.name }}                                                <svg
                                                     class="-me-0.5 ms-2 h-4 w-4"
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     viewBox="0 0 20 20"
@@ -676,10 +674,10 @@ const leaveImpersonation = () => {
                             <div
                                 class="text-base font-medium text-gray-800"
                             >
-                                {{ $page.props.auth.user.name }}
+                                {{ $page.props.auth.user?.name }}
                             </div>
                             <div class="text-sm font-medium text-gray-500">
-                                {{ $page.props.auth.user.email }}
+                                {{ $page.props.auth.user?.email }}
                             </div>
                         </div>
 

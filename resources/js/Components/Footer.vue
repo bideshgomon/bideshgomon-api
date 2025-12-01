@@ -9,6 +9,20 @@ import {
 } from '@heroicons/vue/24/outline'
 
 const currentYear = new Date().getFullYear()
+
+// Helper function to safely get route URL
+const getMenuUrl = (item) => {
+  if (item.is_external) return item.url
+  if (item.route_name) {
+    try {
+      return route(item.route_name)
+    } catch (error) {
+      console.warn(`Route "${item.route_name}" not found for menu item "${item.label}"`)
+      return '#'
+    }
+  }
+  return item.url || '#'
+}
 </script>
 
 <template>
@@ -53,7 +67,7 @@ const currentYear = new Date().getFullYear()
             <li v-for="item in $page.props.menus?.footer_column_1 || []" :key="item.id">
               <Link 
                 v-if="item.is_active"
-                :href="item.is_external ? item.url : (item.route_name ? route(item.route_name) : item.url)"
+                :href="getMenuUrl(item)"
                 :target="item.target || '_self'"
                 class="text-sm hover:text-white transition-colors"
               >
@@ -70,7 +84,7 @@ const currentYear = new Date().getFullYear()
             <li v-for="item in $page.props.menus?.footer_column_2 || []" :key="item.id">
               <Link 
                 v-if="item.is_active"
-                :href="item.is_external ? item.url : (item.route_name ? route(item.route_name) : item.url)"
+                :href="getMenuUrl(item)"
                 :target="item.target || '_self'"
                 class="text-sm hover:text-white transition-colors"
               >
@@ -110,17 +124,38 @@ const currentYear = new Date().getFullYear()
           <p class="text-sm text-gray-400">
             © {{ currentYear }} Bidesh Gomon. All rights reserved.
           </p>
-          <div class="flex space-x-6 text-sm">
+          <div class="flex flex-wrap justify-center gap-4 md:gap-6 text-sm">
+            <!-- Legal Pages (Payment Gateway Requirement) -->
             <Link 
-              v-for="item in $page.props.menus?.footer_column_3 || []" 
-              :key="item.id"
-              v-if="item.is_active"
-              :href="item.is_external ? item.url : (item.route_name ? route(item.route_name) : item.url)"
-              :target="item.target || '_self'"
+              :href="route('legal.privacy')"
               class="text-gray-400 hover:text-white transition-colors"
             >
-              {{ item.label }}
+              Privacy Policy
             </Link>
+            <Link 
+              :href="route('legal.terms')"
+              class="text-gray-400 hover:text-white transition-colors"
+            >
+              Terms of Service
+            </Link>
+            <Link 
+              :href="route('legal.refund')"
+              class="text-gray-400 hover:text-white transition-colors"
+            >
+              Refund Policy
+            </Link>
+            
+            <!-- Dynamic Footer Menu Items -->
+            <template v-for="item in $page.props.menus?.footer_column_3 || []" :key="item.id">
+              <Link 
+                v-if="item.is_active"
+                :href="getMenuUrl(item)"
+                :target="item.target || '_self'"
+                class="text-gray-400 hover:text-white transition-colors"
+              >
+                {{ item.label }}
+              </Link>
+            </template>
           </div>
         </div>
       </div>

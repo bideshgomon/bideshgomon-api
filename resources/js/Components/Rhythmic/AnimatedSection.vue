@@ -78,7 +78,7 @@ const props = defineProps({
     title: String,
     subtitle: String,
     badge: String,
-    badgeIcon: Object,
+    badgeIcon: [Object, Function],
     variant: {
         type: String,
         default: 'light', // light, dark, ocean, gradient

@@ -29,11 +29,52 @@ use App\Http\Controllers\Admin\VisaController as AdminVisaController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\SitemapController;
+
+// Sitemap
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 // PWA Routes
 Route::get('/offline', function () {
     return Inertia::render('Offline');
 })->name('offline');
+
+// Legal Pages (Payment Gateway Requirement)
+Route::get('/legal/privacy-policy', function () {
+    return Inertia::render('Legal/PrivacyPolicy');
+})->name('legal.privacy');
+
+Route::get('/legal/terms-of-service', function () {
+    return Inertia::render('Legal/TermsOfService');
+})->name('legal.terms');
+
+Route::get('/legal/refund-policy', function () {
+    return Inertia::render('Legal/RefundPolicy');
+})->name('legal.refund');
+
+// Success & Error Pages
+Route::get('/success/application/{application}', function () {
+    // This will be handled by ApplicationController
+})->name('success.application');
+
+Route::get('/success/payment/{transaction}', function () {
+    // This will be handled by PaymentController
+})->name('success.payment');
+
+Route::get('/failed/payment', function () {
+    return Inertia::render('Success/PaymentFailed', [
+        'errorMessage' => request('message', 'Payment could not be processed'),
+        'amount' => request('amount'),
+        'retryUrl' => request('retry_url')
+    ]);
+})->name('failed.payment');
+
+Route::get('/cancelled/payment', function () {
+    return Inertia::render('Success/PaymentCancelled', [
+        'amount' => request('amount'),
+        'retryUrl' => request('retry_url')
+    ]);
+})->name('cancelled.payment');
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -1418,13 +1459,16 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::post('/users/{id}/suspend', [AdminUserController::class, 'suspend'])->name('admin.users.suspend');
     Route::post('/users/{id}/unsuspend', [AdminUserController::class, 'unsuspend'])->name('admin.users.unsuspend');
     Route::post('/users/{id}/update-role', [AdminUserController::class, 'updateRole'])->name('admin.users.update-role');
-    // Impersonation (admin only, will be guarded within controller by role check)
-    Route::post('/users/{id}/impersonate', [\App\Http\Controllers\Admin\AdminImpersonationController::class, 'impersonate'])
-        ->name('admin.users.impersonate');
-    Route::post('/impersonation/leave', [\App\Http\Controllers\Admin\AdminImpersonationController::class, 'leave'])->name('admin.impersonation.leave');
+    Route::post('/users/{id}/impersonate', [\App\Http\Controllers\Admin\ImpersonationController::class, 'impersonate'])->name('admin.users.impersonate');
+    Route::post('/impersonate/leave', [\App\Http\Controllers\Admin\ImpersonationController::class, 'leave'])->name('admin.impersonate.leave');
+    
     // Admin Impersonation Logs (Audit)
     Route::get('/impersonations', [\App\Http\Controllers\Admin\AdminImpersonationLogController::class, 'index'])->name('admin.impersonations.index');
     Route::get('/impersonations/export', [\App\Http\Controllers\Admin\AdminImpersonationLogController::class, 'export'])->name('admin.impersonations.export');
+    
+    // Activity Log (Audit)
+    Route::get('/activity-log', [\App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('admin.activity-log.index');
+    Route::get('/activity-log/{activity}', [\App\Http\Controllers\Admin\ActivityLogController::class, 'show'])->name('admin.activity-log.show');
     
     // Agency Verification
     Route::prefix('agency-verification')->name('agency-verification.')->group(function () {
@@ -1449,6 +1493,11 @@ Route::prefix('admin')->middleware(['auth'])->group(function () {
     Route::post('/settings', [AdminSettingsController::class, 'update'])->name('admin.settings.update');
     Route::post('/settings/seed', [AdminSettingsController::class, 'seed'])->name('admin.settings.seed');
     Route::post('/settings/clear-cache', [AdminSettingsController::class, 'clearCache'])->name('admin.settings.clear-cache');
+    
+    // Menu Management
+    Route::resource('menus', \App\Http\Controllers\Admin\MenuController::class)->except(['show']);
+    Route::post('/menus/reorder', [\App\Http\Controllers\Admin\MenuController::class, 'reorder'])->name('menus.reorder');
+    Route::post('/menus/clear-cache', [\App\Http\Controllers\Admin\MenuController::class, 'clearCache'])->name('menus.clear-cache');
     
     // SEO Settings Management
     Route::prefix('seo-settings')->name('seo-settings.')->middleware('role:admin')->group(function () {

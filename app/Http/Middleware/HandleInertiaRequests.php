@@ -36,8 +36,9 @@ class HandleInertiaRequests extends Middleware
         }
 
         $impersonator = null;
-        if (session()->has('impersonator_id')) {
-            $originalId = session('impersonator_id');
+        // Support both old 'impersonator_id' and new 'impersonate_original_user' session keys
+        $originalId = session('impersonate_original_user') ?? session('impersonator_id');
+        if ($originalId) {
             if ($user && $user->id !== $originalId) {
                 // Fetch minimal original admin data
                 $impersonatorModel = \App\Models\User::query()->with('role')->select(['id','name','email','role_id'])->find($originalId);
@@ -78,8 +79,8 @@ class HandleInertiaRequests extends Middleware
                         'name' => $user->role->name,
                         'slug' => $user->role->slug,
                     ] : null,
-                    'impersonating' => session()->has('impersonator_id'),
-                    'impersonator_id' => session('impersonator_id'),
+                    'impersonating' => $originalId !== null,
+                    'impersonator_id' => $originalId,
                     'impersonator' => $impersonator,
                     'unread_notifications' => $user ? \App\Models\UserNotification::where('user_id', $user->id)->whereNull('read_at')->count() : 0,
                 ] : null,

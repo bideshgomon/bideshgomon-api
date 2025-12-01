@@ -605,6 +605,14 @@ const navigation = [
     description: 'Platform configuration',
   },
   {
+    name: 'Menus',
+    href: route('menus.index'),
+    icon: Bars3Icon,
+    current: route().current('menus.*'),
+    section: 'settings',
+    description: 'Navigation menu management',
+  },
+  {
     name: 'SEO Settings',
     href: route('seo-settings.index'),
     icon: ChartBarIcon,

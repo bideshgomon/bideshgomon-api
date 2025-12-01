@@ -16,6 +16,20 @@ defineProps({
 })
 
 const mobileMenuOpen = ref(false)
+
+// Helper function to safely get route URL
+const getMenuUrl = (item) => {
+  if (item.is_external) return item.url
+  if (item.route_name) {
+    try {
+      return route(item.route_name)
+    } catch (error) {
+      console.warn(`Route "${item.route_name}" not found for menu item "${item.label}"`)
+      return '#'
+    }
+  }
+  return item.url || '#'
+}
 </script>
 
 <template>
@@ -34,7 +48,7 @@ const mobileMenuOpen = ref(false)
           <template v-for="item in $page.props.menus?.header_main || []" :key="item.id">
             <Link 
               v-if="item.is_active"
-              :href="item.is_external ? item.url : (item.route_name ? route(item.route_name) : item.url)"
+              :href="getMenuUrl(item)"
               :target="item.target || '_self'"
               class="text-gray-700 hover:text-green-600 font-medium transition-colors"
             >
@@ -80,7 +94,7 @@ const mobileMenuOpen = ref(false)
         <template v-for="item in $page.props.menus?.header_main || []" :key="item.id">
           <Link
             v-if="item.is_active"
-            :href="item.is_external ? item.url : (item.route_name ? route(item.route_name) : item.url)"
+            :href="getMenuUrl(item)"
             :target="item.target || '_self'"
             class="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg font-medium"
           >

@@ -52,10 +52,28 @@ class PaymentController extends Controller
         $result = $this->paymentGateway->processCallback('sslcommerz', $request->all());
 
         if ($result['success']) {
-            return redirect()->route('wallet.index')->with('success', 'Payment successful! Your wallet has been credited.');
+            $transaction = $result['transaction'] ?? null;
+            $user = auth()->user();
+            
+            return Inertia::render('Success/PaymentSuccess', [
+                'transaction' => [
+                    'id' => $transaction->id ?? null,
+                    'transaction_id' => $transaction->transaction_id ?? $request->input('tran_id'),
+                    'amount' => $transaction->amount ?? $request->input('amount'),
+                    'payment_method' => 'SSLCommerz',
+                    'reference' => $transaction->reference ?? null,
+                    'reference_type' => $transaction->reference_type ?? null,
+                    'reference_id' => $transaction->reference_id ?? null,
+                    'created_at' => $transaction->created_at ?? now(),
+                ],
+                'walletBalance' => $user->wallet->balance ?? 0,
+            ]);
         }
 
-        return redirect()->route('wallet.index')->with('error', $result['message'] ?? 'Payment failed');
+        return redirect()->route('failed.payment', [
+            'message' => $result['message'] ?? 'Payment processing failed',
+            'amount' => $request->input('amount'),
+        ]);
     }
 
     /**
@@ -64,19 +82,24 @@ class PaymentController extends Controller
     public function sslcommerzFail(Request $request)
     {
         $transactionId = $request->input('tran_id');
+        $amount = null;
         
         if ($transactionId) {
             $transaction = PaymentTransaction::where('transaction_id', $transactionId)->first();
             
             if ($transaction) {
+                $amount = $transaction->amount;
                 $transaction->markAsFailed(
-                    'USER_CANCELLED',
-                    'Payment failed or was cancelled by user'
+                    'GATEWAY_DECLINED',
+                    'Payment failed at gateway'
                 );
             }
         }
 
-        return redirect()->route('wallet.index')->with('error', 'Payment failed. Please try again.');
+        return redirect()->route('failed.payment', [
+            'message' => $request->input('error') ?? 'Payment could not be processed. Please try again.',
+            'amount' => $amount ?? $request->input('amount'),
+        ]);
     }
 
     /**
@@ -85,16 +108,20 @@ class PaymentController extends Controller
     public function sslcommerzCancel(Request $request)
     {
         $transactionId = $request->input('tran_id');
+        $amount = null;
         
         if ($transactionId) {
             $transaction = PaymentTransaction::where('transaction_id', $transactionId)->first();
             
             if ($transaction) {
+                $amount = $transaction->amount;
                 $transaction->markAsCancelled('User cancelled the payment');
             }
         }
 
-        return redirect()->route('wallet.index')->with('info', 'Payment was cancelled.');
+        return redirect()->route('cancelled.payment', [
+            'amount' => $amount ?? $request->input('amount'),
+        ]);
     }
 
     /**

@@ -22,7 +22,9 @@ import {
     ShieldCheckIcon,
     ChatBubbleLeftRightIcon,
     SparklesIcon,
-    ExclamationTriangleIcon
+    ExclamationTriangleIcon,
+    ChevronDownIcon,
+    ChevronUpIcon
 } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
@@ -33,9 +35,21 @@ const props = defineProps({
 
 const activeTab = ref(props.currentGroup || 'general');
 const visiblePasswords = ref({});
+const expandedApiGroups = ref({
+    authentication: true,
+    payment: false,
+    cloud: false,
+    communication: false,
+    ai: false,
+    security: false
+});
 
 const togglePasswordVisibility = (key) => {
     visiblePasswords.value[key] = !visiblePasswords.value[key];
+};
+
+const toggleApiGroup = (group) => {
+    expandedApiGroups.value[group] = !expandedApiGroups.value[group];
 };
 
 // Settings organized by category for better UX
@@ -64,7 +78,46 @@ const groupConfig = {
     advanced: { icon: CogIcon, label: 'Advanced', color: 'gray' },
 };
 
-// API service configuration with icons and colors
+// API service configuration with icons, colors, and grouping
+const apiServiceGroups = {
+    authentication: {
+        label: 'Authentication & OAuth',
+        icon: ShieldCheckIcon,
+        color: 'blue',
+        services: ['google_oauth', 'facebook']
+    },
+    payment: {
+        label: 'Payment Gateways',
+        icon: CreditCardIcon,
+        color: 'green',
+        services: ['stripe', 'paypal', 'sslcommerz', 'bkash', 'nagad']
+    },
+    cloud: {
+        label: 'Cloud Services',
+        icon: CloudIcon,
+        color: 'orange',
+        services: ['aws', 'google_maps']
+    },
+    communication: {
+        label: 'Communication',
+        icon: ChatBubbleLeftRightIcon,
+        color: 'purple',
+        services: ['pusher', 'mailgun', 'twilio']
+    },
+    ai: {
+        label: 'AI & Machine Learning',
+        icon: SparklesIcon,
+        color: 'pink',
+        services: ['openai']
+    },
+    security: {
+        label: 'Security',
+        icon: ShieldCheckIcon,
+        color: 'red',
+        services: ['recaptcha']
+    }
+};
+
 const apiServices = {
     google_maps: { icon: MapIcon, color: 'green', label: 'Google Maps' },
     google_oauth: { icon: ShieldCheckIcon, color: 'blue', label: 'Google OAuth' },
@@ -90,6 +143,32 @@ const getApiServiceConfig = (key) => {
     }
     return null;
 };
+
+const getApiGroupForSetting = (setting) => {
+    const key = setting.key.toLowerCase();
+    for (const [groupKey, group] of Object.entries(apiServiceGroups)) {
+        for (const service of group.services) {
+            if (key.includes(service.replace('_', ''))) {
+                return groupKey;
+            }
+        }
+    }
+    return 'other';
+};
+
+const groupedApiSettings = computed(() => {
+    if (activeTab.value !== 'api') return {};
+    
+    const groups = {};
+    activeSettings.value.forEach(setting => {
+        const groupKey = getApiGroupForSetting(setting);
+        if (!groups[groupKey]) {
+            groups[groupKey] = [];
+        }
+        groups[groupKey].push(setting);
+    });
+    return groups;
+});
 
 const form = useForm({
     settings: props.settings.map(setting => ({
@@ -217,8 +296,8 @@ const updateSetting = (key, value) => {
 
                     <!-- Settings Form -->
                     <form @submit.prevent="submit" class="p-6">
-                        <!-- API Keys Section - Enhanced Layout -->
-                        <div v-if="activeTab === 'api'" class="space-y-4">
+                        <!-- API Keys Section - Enhanced with Collapsible Groups -->
+                        <div v-if="activeTab === 'api'" class="space-y-6">
                             <!-- Warning Banner -->
                             <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
                                 <div class="flex">
@@ -227,95 +306,139 @@ const updateSetting = (key, value) => {
                                         <h3 class="text-sm font-medium text-amber-800">Security Notice</h3>
                                         <p class="mt-1 text-sm text-amber-700">
                                             API keys are sensitive credentials. Never share them publicly or commit them to version control.
-                                            These values are stored securely in your .env file.
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Group API keys by service -->
+                            <!-- Collapsible API Service Groups -->
                             <div
-                                v-for="setting in activeSettings"
-                                :key="setting.key"
-                                class="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow"
+                                v-for="(groupConfig, groupKey) in apiServiceGroups"
+                                :key="groupKey"
+                                class="bg-white border border-gray-200 rounded-lg overflow-hidden"
                             >
-                                <div class="flex items-start gap-4">
-                                    <!-- Service Icon -->
-                                    <div class="flex-shrink-0 rounded-lg p-3 bg-indigo-100">
-                                        <component 
-                                            :is="getApiServiceConfig(setting.key)?.icon || KeyIcon" 
-                                            class="h-6 w-6 text-indigo-600"
-                                        />
-                                    </div>
-
-                                    <!-- Setting Details -->
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex items-center gap-2 mb-1">
-                                            <label :for="setting.key" class="text-sm font-semibold text-gray-900">
-                                                {{ (setting.key || '').split('_').map(w => ((w || '').charAt(0).toUpperCase() || '') + (w || '').slice(1)).join(' ') }}
-                                            </label>
-                                            <span
-                                                v-if="form.settings.find(s => s.key === setting.key)?.value"
-                                                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
-                                            >
-                                                <CheckIcon class="h-3 w-3 mr-1" />
-                                                Configured
-                                            </span>
-                                            <span
-                                                v-else
-                                                class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600"
-                                            >
-                                                Not Set
-                                            </span>
+                                <!-- Group Header (Collapsible) -->
+                                <button
+                                    type="button"
+                                    @click="toggleApiGroup(groupKey)"
+                                    class="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+                                >
+                                    <div class="flex items-center gap-3">
+                                        <div :class="[
+                                            'rounded-lg p-2',
+                                            `bg-${groupConfig.color}-100`
+                                        ]">
+                                            <component :is="groupConfig.icon" :class="[
+                                                'h-5 w-5',
+                                                `text-${groupConfig.color}-600`
+                                            ]" />
                                         </div>
-                                        
-                                        <p class="text-sm text-gray-600 mb-3">
-                                            {{ setting.description }}
-                                        </p>
+                                        <div class="text-left">
+                                            <h3 class="text-sm font-semibold text-gray-900">
+                                                {{ groupConfig.label }}
+                                            </h3>
+                                            <p class="text-xs text-gray-500">
+                                                {{ (groupedApiSettings[groupKey] || []).length }} service{{ (groupedApiSettings[groupKey] || []).length === 1 ? '' : 's' }}
+                                                <span class="ml-1">•</span>
+                                                <span class="ml-1">
+                                                    {{ (groupedApiSettings[groupKey] || []).filter(s => form.settings.find(fs => fs.key === s.key)?.value).length }} configured
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <ChevronDownIcon 
+                                        :class="[
+                                            'h-5 w-5 text-gray-400 transition-transform',
+                                            expandedApiGroups[groupKey] ? 'rotate-180' : ''
+                                        ]"
+                                    />
+                                </button>
 
-                                        <!-- Password Input with Toggle -->
-                                        <div class="relative">
-                                            <input
-                                                :id="setting.key"
-                                                :type="visiblePasswords[setting.key] ? 'text' : 'password'"
-                                                :value="form.settings.find(s => s.key === setting.key)?.value"
-                                                @input="updateSetting(setting.key, $event.target.value)"
-                                                :placeholder="form.settings.find(s => s.key === setting.key)?.value ? '••••••••••••••••••••' : `Enter ${setting.key.split('_').pop()}`"
-                                                class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm pr-10 font-mono text-sm"
-                                            >
-                                            <button
-                                                type="button"
-                                                @click="togglePasswordVisibility(setting.key)"
-                                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
-                                            >
-                                                <EyeIcon v-if="!visiblePasswords[setting.key]" class="h-5 w-5" />
-                                                <EyeSlashIcon v-else class="h-5 w-5" />
-                                            </button>
+                                <!-- Group Settings (Collapsible Content) -->
+                                <div
+                                    v-if="expandedApiGroups[groupKey] && groupedApiSettings[groupKey]"
+                                    class="border-t border-gray-200 divide-y divide-gray-100"
+                                >
+                                    <div
+                                        v-for="setting in groupedApiSettings[groupKey]"
+                                        :key="setting.key"
+                                        class="p-4 hover:bg-gray-50 transition-colors"
+                                    >
+                                        <div class="flex items-start gap-3">
+                                            <!-- Service Icon (Smaller) -->
+                                            <div class="flex-shrink-0 rounded p-2 bg-gray-100">
+                                                <component 
+                                                    :is="getApiServiceConfig(setting.key)?.icon || KeyIcon" 
+                                                    class="h-4 w-4 text-gray-600"
+                                                />
+                                            </div>
+
+                                            <!-- Setting Details -->
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center gap-2 mb-1">
+                                                    <label :for="setting.key" class="text-sm font-medium text-gray-900">
+                                                        {{ (setting.key || '').split('_').map(w => ((w || '').charAt(0).toUpperCase() || '') + (w || '').slice(1)).join(' ') }}
+                                                    </label>
+                                                    <span
+                                                        v-if="form.settings.find(s => s.key === setting.key)?.value"
+                                                        class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700"
+                                                    >
+                                                        ✓
+                                                    </span>
+                                                </div>
+                                                
+                                                <p v-if="setting.description" class="text-xs text-gray-500 mb-2">
+                                                    {{ setting.description }}
+                                                </p>
+
+                                                <!-- Password Input with Toggle -->
+                                                <div class="relative">
+                                                    <input
+                                                        :id="setting.key"
+                                                        :type="visiblePasswords[setting.key] ? 'text' : 'password'"
+                                                        :value="form.settings.find(s => s.key === setting.key)?.value"
+                                                        @input="updateSetting(setting.key, $event.target.value)"
+                                                        :placeholder="form.settings.find(s => s.key === setting.key)?.value ? '••••••••••••••••••••' : `Enter ${setting.key.split('_').pop()}`"
+                                                        class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm pr-10 font-mono"
+                                                    >
+                                                    <button
+                                                        type="button"
+                                                        @click="togglePasswordVisibility(setting.key)"
+                                                        class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                                                    >
+                                                        <EyeIcon v-if="!visiblePasswords[setting.key]" class="h-4 w-4" />
+                                                        <EyeSlashIcon v-else class="h-4 w-4" />
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Standard Settings Layout for Other Tabs -->
-                        <div v-else class="space-y-6">
+                        <!-- Standard Settings Layout for Other Tabs - Improved 2-Column Grid -->
+                        <div v-else class="space-y-8">
                             <div
                                 v-for="setting in activeSettings"
                                 :key="setting.key"
-                                class="pb-6 border-b border-gray-100 last:border-0"
+                                :class="[
+                                    'pb-6 border-b border-gray-100 last:border-0',
+                                    setting.type === 'textarea' ? 'col-span-2' : ''
+                                ]"
                             >
                                 <div class="flex items-start justify-between gap-4">
                                     <div class="flex-1">
-                                        <label :for="setting.key" class="block text-sm font-medium text-gray-900">
+                                        <label :for="setting.key" class="block text-sm font-semibold text-gray-900 mb-1">
                                             {{ setting.key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') }}
                                             <span
                                                 v-if="setting.is_public"
-                                                class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800"
+                                                class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700"
                                             >
                                                 Public
                                             </span>
                                         </label>
-                                        <p v-if="setting.description" class="mt-1 text-sm text-gray-500">
+                                        <p v-if="setting.description" class="text-xs text-gray-500 mb-3">
                                             {{ setting.description }}
                                         </p>
 

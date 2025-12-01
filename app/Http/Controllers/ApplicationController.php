@@ -109,6 +109,24 @@ class ApplicationController extends Controller
                 ? 'Application saved as draft. You can complete it later.'
                 : 'Application submitted successfully! You will receive updates via email.';
 
+            // Redirect to success page for submitted applications
+            if (!$isDraft) {
+                return Inertia::render('Success/ApplicationSuccess', [
+                    'application' => [
+                        'id' => $application->id,
+                        'application_number' => $application->application_number,
+                        'status' => $application->status,
+                        'amount_paid' => $application->amount_paid,
+                        'created_at' => $application->created_at,
+                    ],
+                    'service' => [
+                        'id' => $service->id,
+                        'name' => $service->name,
+                        'slug' => $service->slug,
+                    ]
+                ]);
+            }
+
             return redirect()->route('applications.show', $application->id)
                 ->with('success', $message);
 
