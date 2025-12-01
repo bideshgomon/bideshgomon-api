@@ -207,6 +207,7 @@ const submit = async () => {
       formErrors.value = error.response.data.errors
     } else {
       console.error('Form submission error:', error)
+      alert('Failed to save education record. Please try again.')
     }
   } finally {
     isProcessing.value = false
@@ -221,6 +222,7 @@ const confirmDelete = async (educationId) => {
       router.reload({ only: ['educations'] })
     } catch (error) {
       console.error('Delete error:', error)
+      alert('Failed to delete education record. Please try again.')
     }
   }
 }
@@ -536,7 +538,7 @@ const formatDate = (dateString) => {
             <SecondaryButton type="button" @click="closeModal" class="w-full sm:w-auto py-3 px-6 text-base touch-manipulation justify-center" style="min-height: 48px">
               Cancel
             </SecondaryButton>
-            <PrimaryButton :disabled="isProcessing" class="w-full sm:w-auto py-3 px-6 text-base touch-manipulation justify-center" style="min-height: 48px">
+            <PrimaryButton type="submit" :disabled="isProcessing" class="w-full sm:w-auto py-3 px-6 text-base touch-manipulation justify-center" style="min-height: 48px">
               <span v-if="isProcessing">Saving...</span>
               <span v-else>{{ isEditMode ? 'Update Education' : 'Save Education' }}</span>
             </PrimaryButton>

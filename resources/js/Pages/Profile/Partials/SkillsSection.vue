@@ -90,6 +90,7 @@ const fetchUserSkills = async () => {
         userSkills.value = response.data
     } catch (error) {
         console.error('Error fetching user skills:', error)
+        alert('Failed to load skills. Please refresh the page.')
     } finally {
         isLoading.value = false
     }
@@ -101,6 +102,7 @@ const fetchAllSkills = async () => {
         allSkills.value = response.data
     } catch (error) {
         console.error('Error fetching all skills:', error)
+        alert('Failed to load available skills. Please refresh the page.')
     }
 }
 
@@ -164,6 +166,8 @@ const submit = () => {
                     Object.keys(error.response.data.errors).forEach(key => {
                         form.errors[key] = error.response.data.errors[key][0]
                     })
+                } else {
+                    alert('Failed to add skill. Please try again.')
                 }
             })
     }
@@ -416,7 +420,7 @@ const getProficiencyColor = (level) => {
                         <SecondaryButton @click="closeModal" type="button" class="w-full sm:w-auto py-3 px-6 text-base touch-manipulation justify-center" style="min-height: 48px">
                             Cancel
                         </SecondaryButton>
-                        <PrimaryButton :disabled="form.processing" class="w-full sm:w-auto py-3 px-6 text-base touch-manipulation justify-center" style="min-height: 48px">
+                        <PrimaryButton type="submit" :disabled="form.processing" class="w-full sm:w-auto py-3 px-6 text-base touch-manipulation justify-center" style="min-height: 48px">
                             {{ editMode ? 'Update Skill' : 'Add Skill' }}
                         </PrimaryButton>
                     </div>

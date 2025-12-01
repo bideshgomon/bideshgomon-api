@@ -102,6 +102,18 @@ const saveError = ref('');
 
 const submit = () => {
     saveError.value = '';
+    
+    // Validation: Check required fields
+    if (!form.gender) {
+        saveError.value = 'Please select your gender.';
+        return;
+    }
+    
+    if (!form.nationality) {
+        saveError.value = 'Please enter your nationality.';
+        return;
+    }
+    
     form.post(route('profile.update.details'), {
         preserveScroll: true,
         onSuccess: () => {

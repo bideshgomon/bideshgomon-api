@@ -98,6 +98,7 @@ const fetchPhoneNumbers = async () => {
         error.value = 'Failed to load phone numbers'
         phoneNumbers.value = [] // Ensure it's always an array
         console.error('Failed to fetch phone numbers:', err)
+        alert('Failed to load phone numbers. Please refresh the page.')
     } finally {
         isLoading.value = false
     }

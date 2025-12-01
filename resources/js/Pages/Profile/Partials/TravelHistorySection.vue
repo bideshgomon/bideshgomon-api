@@ -138,6 +138,8 @@ const submitEdit = async () => {
             Object.keys(error.response.data.errors).forEach(key => {
                 form.setError(key, error.response.data.errors[key][0]);
             });
+        } else {
+            alert('Failed to update travel record. Please try again.');
         }
     }
 };
@@ -511,7 +513,7 @@ const formatDate = (date) => {
                         <SecondaryButton @click="closeModals" type="button">
                             Cancel
                         </SecondaryButton>
-                        <PrimaryButton :disabled="form.processing">
+                        <PrimaryButton type="submit" :disabled="form.processing">
                             {{ showAddModal ? 'Add Travel Record' : 'Update Travel Record' }}
                         </PrimaryButton>
                     </div>

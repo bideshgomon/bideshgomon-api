@@ -179,6 +179,7 @@ const submit = async () => {
       formErrors.value = error.response.data.errors
     } else {
       console.error('Form submission error:', error)
+      alert('Failed to save work experience. Please try again.')
     }
   } finally {
     isProcessing.value = false
@@ -193,6 +194,7 @@ const deleteWork = async (id) => {
       router.reload({ only: ['workExperiences'] })
     } catch (error) {
       console.error('Delete error:', error)
+      alert('Failed to delete work experience. Please try again.')
     }
   }
 }
@@ -575,7 +577,7 @@ const sortedWorkList = computed(() => {
             <SecondaryButton @click="closeModal" type="button" class="w-full sm:w-auto py-3 px-6 text-base touch-manipulation justify-center" style="min-height: 48px">
               Cancel
             </SecondaryButton>
-            <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="isProcessing" class="w-full sm:w-auto py-3 px-6 text-base touch-manipulation justify-center" style="min-height: 48px">
+            <PrimaryButton type="submit" :class="{ 'opacity-25': form.processing }" :disabled="isProcessing" class="w-full sm:w-auto py-3 px-6 text-base touch-manipulation justify-center" style="min-height: 48px">
               {{ editingId ? 'Update' : 'Save' }} Experience
             </PrimaryButton>
           </div>
