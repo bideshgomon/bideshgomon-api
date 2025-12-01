@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useForm } from '@inertiajs/vue3'
+import axios from 'axios'
 
 // Import components
 import Modal from '@/Components/Modal.vue'
