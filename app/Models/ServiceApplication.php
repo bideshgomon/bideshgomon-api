@@ -31,10 +31,14 @@ class ServiceApplication extends Model
         'completed_at',
         'timeline',
         'reviewed_at',
+        'form_data',
+        'profile_snapshot',
     ];
 
     protected $casts = [
         'application_data' => 'array',
+        'form_data' => 'array',
+        'profile_snapshot' => 'array',
         'timeline' => 'array',
         'quoted_amount' => 'decimal:2',
         'service_fee' => 'decimal:2',
@@ -114,6 +118,14 @@ class ServiceApplication extends Model
     public function documents(): HasMany
     {
         return $this->hasMany(ApplicationDocument::class);
+    }
+
+    /**
+     * Get application status history
+     */
+    public function statusHistory(): HasMany
+    {
+        return $this->hasMany(ApplicationStatusHistory::class, 'application_id')->latest();
     }
 
     public function pendingDocuments(): HasMany

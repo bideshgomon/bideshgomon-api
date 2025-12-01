@@ -9,6 +9,8 @@ use App\Http\Controllers\CvBuilderController;
 use App\Http\Controllers\FlightBookingController;
 use App\Http\Controllers\FlightRequestController;
 use App\Http\Controllers\HotelBookingController;
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\ApplicationController;
 // use App\Http\Controllers\VisaApplicationController; // Removed - use bgproject's tourist-visa system
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\JobController;
@@ -19,6 +21,9 @@ use App\Http\Controllers\Admin\AdminJobApplicationController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminAnalyticsController;
 use App\Http\Controllers\Admin\AdminSettingsController;
+use App\Http\Controllers\Admin\AdminServiceController;
+use App\Http\Controllers\Admin\AdminServiceFieldController;
+use App\Http\Controllers\Admin\AdminApplicationController;
 use App\Http\Controllers\Admin\HotelController as AdminHotelController;
 use App\Http\Controllers\Admin\VisaController as AdminVisaController;
 use Illuminate\Foundation\Application;
@@ -360,6 +365,20 @@ Route::middleware('auth')->group(function () {
     // User Services Routes
     Route::get('/services', [\App\Http\Controllers\ServiceController::class, 'index'])->name('services.index');
     Route::get('/services/{slug}', [\App\Http\Controllers\ServiceController::class, 'show'])->name('services.show');
+    Route::get('/services/search', [\App\Http\Controllers\ServiceController::class, 'search'])->name('services.search');
+    
+    // Plugin Service Applications (User-facing)
+    Route::prefix('applications')->name('applications.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\ApplicationController::class, 'index'])->name('index');
+        Route::get('/create/{serviceSlug}', [\App\Http\Controllers\ApplicationController::class, 'create'])->name('create');
+        Route::post('/store/{serviceSlug}', [\App\Http\Controllers\ApplicationController::class, 'store'])->name('store');
+        Route::get('/{application}', [\App\Http\Controllers\ApplicationController::class, 'show'])->name('show');
+        Route::put('/{application}', [\App\Http\Controllers\ApplicationController::class, 'update'])->name('update');
+        Route::post('/{application}/submit', [\App\Http\Controllers\ApplicationController::class, 'submit'])->name('submit');
+        Route::post('/{application}/cancel', [\App\Http\Controllers\ApplicationController::class, 'cancel'])->name('cancel');
+        Route::delete('/{application}', [\App\Http\Controllers\ApplicationController::class, 'destroy'])->name('destroy');
+        Route::get('/{application}/download-pdf', [\App\Http\Controllers\ApplicationController::class, 'downloadPdf'])->name('download-pdf');
+    });
     
     // Visa Requirements API
     Route::get('/api/visa-requirements', [\App\Http\Controllers\VisaRequirementController::class, 'getRequirements'])->name('visa.requirements');
@@ -994,6 +1013,54 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
         Route::post('/institution-types-process-upload', [\App\Http\Controllers\Admin\DataManagement\InstitutionTypeController::class, 'processBulkUpload'])->name('institution-types.process-upload');
         Route::get('/institution-types-template', [\App\Http\Controllers\Admin\DataManagement\InstitutionTypeController::class, 'downloadTemplate'])->name('institution-types.template');
         Route::get('/institution-types-export', [\App\Http\Controllers\Admin\DataManagement\InstitutionTypeController::class, 'export'])->name('institution-types.export');
+    });
+    
+    // Plugin Service Architecture Routes
+    Route::prefix('plugin-services')->name('plugin-services.')->group(function () {
+        // Service Management
+        Route::get('/', [\App\Http\Controllers\Admin\AdminServiceController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\AdminServiceController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\AdminServiceController::class, 'store'])->name('store');
+        Route::get('/{service}', [\App\Http\Controllers\Admin\AdminServiceController::class, 'show'])->name('show');
+        Route::get('/{service}/edit', [\App\Http\Controllers\Admin\AdminServiceController::class, 'edit'])->name('edit');
+        Route::put('/{service}', [\App\Http\Controllers\Admin\AdminServiceController::class, 'update'])->name('update');
+        Route::delete('/{service}', [\App\Http\Controllers\Admin\AdminServiceController::class, 'destroy'])->name('destroy');
+        Route::post('/reorder', [\App\Http\Controllers\Admin\AdminServiceController::class, 'reorder'])->name('reorder');
+        Route::post('/{service}/toggle-status', [\App\Http\Controllers\Admin\AdminServiceController::class, 'toggleStatus'])->name('toggle-status');
+        Route::post('/{service}/duplicate', [\App\Http\Controllers\Admin\AdminServiceController::class, 'duplicate'])->name('duplicate');
+        Route::get('/{service}/statistics', [\App\Http\Controllers\Admin\AdminServiceController::class, 'statistics'])->name('statistics');
+        
+        // Service Form Fields Management
+        Route::prefix('{service}/fields')->name('fields.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\AdminServiceFieldController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\AdminServiceFieldController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\AdminServiceFieldController::class, 'store'])->name('store');
+            Route::get('/{field}/edit', [\App\Http\Controllers\Admin\AdminServiceFieldController::class, 'edit'])->name('edit');
+            Route::put('/{field}', [\App\Http\Controllers\Admin\AdminServiceFieldController::class, 'update'])->name('update');
+            Route::delete('/{field}', [\App\Http\Controllers\Admin\AdminServiceFieldController::class, 'destroy'])->name('destroy');
+            Route::post('/reorder', [\App\Http\Controllers\Admin\AdminServiceFieldController::class, 'reorder'])->name('reorder');
+            Route::post('/{field}/duplicate', [\App\Http\Controllers\Admin\AdminServiceFieldController::class, 'duplicate'])->name('duplicate');
+            Route::post('/{field}/toggle-status', [\App\Http\Controllers\Admin\AdminServiceFieldController::class, 'toggleStatus'])->name('toggle-status');
+            Route::get('/profile-fields', [\App\Http\Controllers\Admin\AdminServiceFieldController::class, 'getProfileFields'])->name('profile-fields');
+            Route::get('/preview', [\App\Http\Controllers\Admin\AdminServiceFieldController::class, 'preview'])->name('preview');
+            Route::post('/validate', [\App\Http\Controllers\Admin\AdminServiceFieldController::class, 'validateField'])->name('validate');
+            Route::post('/bulk-update', [\App\Http\Controllers\Admin\AdminServiceFieldController::class, 'bulkUpdate'])->name('bulk-update');
+        });
+    });
+    
+    // Plugin Service Applications Management
+    Route::prefix('plugin-applications')->name('plugin-applications.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\AdminApplicationController::class, 'index'])->name('index');
+        Route::get('/{application}', [\App\Http\Controllers\Admin\AdminApplicationController::class, 'show'])->name('show');
+        Route::post('/{application}/change-status', [\App\Http\Controllers\Admin\AdminApplicationController::class, 'changeStatus'])->name('change-status');
+        Route::post('/{application}/approve', [\App\Http\Controllers\Admin\AdminApplicationController::class, 'approve'])->name('approve');
+        Route::post('/{application}/reject', [\App\Http\Controllers\Admin\AdminApplicationController::class, 'reject'])->name('reject');
+        Route::post('/{application}/request-info', [\App\Http\Controllers\Admin\AdminApplicationController::class, 'requestInfo'])->name('request-info');
+        Route::post('/{application}/add-notes', [\App\Http\Controllers\Admin\AdminApplicationController::class, 'addNotes'])->name('add-notes');
+        Route::post('/{application}/documents/{document}/verify', [\App\Http\Controllers\Admin\AdminApplicationController::class, 'verifyDocument'])->name('verify-document');
+        Route::post('/bulk-action', [\App\Http\Controllers\Admin\AdminApplicationController::class, 'bulkAction'])->name('bulk-action');
+        Route::get('/statistics', [\App\Http\Controllers\Admin\AdminApplicationController::class, 'statistics'])->name('statistics');
+        Route::get('/{application}/download-pdf', [\App\Http\Controllers\Admin\AdminApplicationController::class, 'downloadPdf'])->name('download-pdf');
     });
     
     Route::get('/wallets', [\App\Http\Controllers\Admin\WalletController::class, 'index'])->name('wallets.index');

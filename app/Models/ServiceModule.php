@@ -28,7 +28,10 @@ class ServiceModule extends Model
         'requirements',
         'documents_required',
         'processing_time',
+        'processing_days',
+        'requires_approval',
         'settings',
+        'config',
         'route_prefix',
         'controller',
         'allowed_roles',
@@ -46,12 +49,15 @@ class ServiceModule extends Model
         'is_active' => 'boolean',
         'is_featured' => 'boolean',
         'coming_soon' => 'boolean',
+        'requires_approval' => 'boolean',
         'launch_date' => 'date',
         'base_price' => 'decimal:2',
         'requirements' => 'array',
         'documents_required' => 'array',
         'processing_time' => 'array',
+        'processing_days' => 'integer',
         'settings' => 'array',
+        'config' => 'array',
         'allowed_roles' => 'array',
         'min_profile_completion' => 'integer',
         'views_count' => 'integer',
@@ -90,6 +96,24 @@ class ServiceModule extends Model
     public function approvedReviews(): HasMany
     {
         return $this->hasMany(ServiceReview::class)->where('is_approved', true);
+    }
+
+    /**
+     * Get all form fields for this service (Dynamic Form Builder)
+     */
+    public function formFields(): HasMany
+    {
+        return $this->hasMany(ServiceFormField::class)->orderBy('sort_order');
+    }
+
+    /**
+     * Get active form fields only
+     */
+    public function activeFormFields(): HasMany
+    {
+        return $this->hasMany(ServiceFormField::class)
+            ->where('is_active', true)
+            ->orderBy('sort_order');
     }
 
     /**
