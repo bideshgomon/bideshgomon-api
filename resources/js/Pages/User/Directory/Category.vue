@@ -7,43 +7,43 @@
     <AuthenticatedLayout>
         <!-- Category Hero -->
         <div class="text-white" :style="{ backgroundColor: category.color || '#3B82F6' }">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div class="flex items-center gap-4 mb-4">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4 sm:mb-6">
                     <div
                         v-if="category.icon"
-                        class="w-16 h-16 bg-white/20 rounded-lg flex items-center justify-center"
+                        class="w-12 h-12 sm:w-16 sm:h-16 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0"
                         v-html="category.icon"
                     ></div>
                     <div>
-                        <h1 class="text-4xl font-bold mb-2">{{ category.name }}</h1>
-                        <p v-if="category.description" class="text-lg opacity-90">{{ category.description }}</p>
+                        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">{{ category.name }}</h1>
+                        <p v-if="category.description" class="text-sm sm:text-base lg:text-lg opacity-90">{{ category.description }}</p>
                     </div>
                 </div>
                 
-                <div class="flex items-center gap-6 text-sm">
+                <div class="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm">
                     <div class="flex items-center gap-2">
-                        <BuildingOffice2Icon class="h-5 w-5" />
+                        <BuildingOffice2Icon class="h-4 w-4 sm:h-5 sm:w-5" />
                         <span>{{ directories.total }} Directories</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
             <!-- Breadcrumb -->
-            <nav class="flex items-center gap-2 text-sm text-gray-600 mb-8">
+            <nav class="flex items-center gap-2 text-xs sm:text-sm text-gray-600 mb-6 sm:mb-8">
                 <Link :href="route('directory.index')" class="hover:text-blue-600">Directory</Link>
-                <ChevronRightIcon class="h-4 w-4" />
-                <span class="text-gray-900 font-medium">{{ category.name }}</span>
+                <ChevronRightIcon class="h-3 w-3 sm:h-4 sm:w-4" />
+                <span class="text-gray-900 font-medium truncate">{{ category.name }}</span>
             </nav>
 
             <!-- Directory Grid -->
-            <div v-if="directories.data.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div v-if="directories.data.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
                 <Link
                     v-for="directory in directories.data"
                     :key="directory.id"
                     :href="route('directory.show', directory.slug)"
-                    class="bg-white rounded-lg shadow-sm hover:shadow-lg transition-all overflow-hidden group"
+                    class="bg-white rounded-xl sm:rounded-2xl shadow-sm hover:shadow-lg transition-all overflow-hidden group active:scale-95"
                 >
                     <!-- Image -->
                     <div class="aspect-video bg-gray-200 overflow-hidden">
@@ -81,7 +81,7 @@
                         <div class="flex items-center justify-between pt-3 border-t border-gray-100">
                             <div class="flex items-center gap-1 text-xs text-gray-500">
                                 <EyeIcon class="h-4 w-4" />
-                                <span>{{ directory.view_count || 0 }} views</span>
+                                <span>{{ directory.views_count || 0 }} views</span>
                             </div>
                             <span class="text-blue-600 text-sm font-medium group-hover:underline">
                                 View Details →

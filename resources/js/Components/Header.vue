@@ -24,7 +24,7 @@ const getMenuUrl = (item) => {
     try {
       return route(item.route_name)
     } catch (error) {
-      console.warn(`Route "${item.route_name}" not found for menu item "${item.label}"`)
+      console.warn(`Route "${item.route_name}" not found for menu item "${item.name}"`)
       return '#'
     }
   }
@@ -52,7 +52,7 @@ const getMenuUrl = (item) => {
               :target="item.target || '_self'"
               class="text-gray-700 hover:text-green-600 font-medium transition-colors"
             >
-              {{ item.label }}
+              {{ item.name }}
             </Link>
           </template>
         </div>
@@ -98,7 +98,7 @@ const getMenuUrl = (item) => {
             :target="item.target || '_self'"
             class="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg font-medium"
           >
-            {{ item.label }}
+            {{ item.name }}
           </Link>
         </template>
         <template v-if="canLogin">

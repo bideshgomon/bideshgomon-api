@@ -8,16 +8,18 @@ use Illuminate\Support\Facades\Cache;
 class Menu extends Model
 {
     protected $fillable = [
+        'name',
+        'slug',
         'location',
-        'label',
         'url',
         'route_name',
         'icon',
         'parent_id',
+        'type',
+        'target',
+        'classes',
         'order',
         'is_active',
-        'is_external',
-        'target',
         'permissions',
     ];
 

@@ -12,8 +12,20 @@ echo "  Bidesh Gomon - Full Deployment"
 echo "======================================"
 echo ""
 
-DB_PASSWORD="Nakib##123@@@"
-APP_DOMAIN="148.135.136.95"
+APP_DOMAIN_DEFAULT="148.135.136.95"
+
+# Prompt for application domain (defaults to server IP if blank)
+read -p "Enter application domain (or press Enter to use ${APP_DOMAIN_DEFAULT}): " APP_DOMAIN
+APP_DOMAIN=${APP_DOMAIN:-$APP_DOMAIN_DEFAULT}
+
+# Securely prompt for database password instead of hard-coding
+echo "Enter MySQL database password for user 'bideshgomon_user' (will not echo)."
+read -s DB_PASSWORD
+echo ""
+if [ -z "$DB_PASSWORD" ]; then
+    echo "No password entered. Aborting for safety."
+    exit 1
+fi
 
 # Fix MySQL
 echo "Step 1: Fixing MySQL..."
@@ -48,12 +60,12 @@ echo "Step 3: Setting up Laravel..."
 cd /var/www/bideshgomon
 
 # Create .env
-cat > .env << 'ENVEOF'
+cat > .env << ENVEOF
 APP_NAME="Bidesh Gomon"
 APP_ENV=production
 APP_KEY=
 APP_DEBUG=false
-APP_URL=http://148.135.136.95
+APP_URL=http://$APP_DOMAIN
 
 LOG_CHANNEL=stack
 LOG_LEVEL=error
@@ -63,7 +75,7 @@ DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=bideshgomon
 DB_USERNAME=bideshgomon_user
-DB_PASSWORD=Nakib##123@@@
+DB_PASSWORD=$DB_PASSWORD
 
 BROADCAST_DRIVER=log
 CACHE_DRIVER=file

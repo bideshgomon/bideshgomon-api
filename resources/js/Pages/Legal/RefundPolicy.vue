@@ -1,5 +1,6 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3'
+import LegalLayout from '@/Layouts/LegalLayout.vue';
 import { 
   ShieldCheckIcon,
   DocumentTextIcon,
@@ -13,40 +14,32 @@ const companyPhone = '+880 1712-345678'
 </script>
 
 <template>
-  <div>
-    <Head title="Refund Policy - BideshGomon" />
-
-    <div class="min-h-screen bg-gray-50 py-12">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="bg-white shadow rounded-lg overflow-hidden mb-6">
-          <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-8">
-            <div class="flex items-center justify-center mb-4">
-              <ShieldCheckIcon class="h-12 w-12 text-white" />
-            </div>
-            <h1 class="text-3xl font-bold text-white text-center">Refund Policy</h1>
-            <p class="text-blue-100 text-center mt-2">Last Updated: December 1, 2025</p>
-          </div>
-
-          <div class="px-6 py-4 bg-blue-50 border-b border-blue-100">
-            <p class="text-sm text-blue-800 text-center">
-              At BideshGomon, your satisfaction is our priority. Please read our refund policy carefully.
-            </p>
-          </div>
-        </div>
-
-        <!-- Content -->
-        <div class="bg-white shadow rounded-lg p-8 space-y-8">
+  <LegalLayout
+    title="Refund Policy"
+    :header-icon="ShieldCheckIcon"
+    header-title="Refund Policy"
+    last-updated="December 1, 2025"
+    header-gradient="bg-gradient-to-r from-blue-600 to-blue-700"
+    :header-colors="{ text: 'text-white', subtext: 'text-blue-100' }"
+    summary-text="At BideshGomon, your satisfaction is our priority. This policy outlines our transparent refund terms for all services."
+    :summary-colors="{ bg: 'bg-blue-50', border: 'border-blue-100', text: 'text-blue-800' }"
+  >
           <!-- Overview -->
           <section>
             <h2 class="text-2xl font-semibold text-gray-900 mb-4 flex items-center">
               <DocumentTextIcon class="h-6 w-6 mr-2 text-blue-600" />
               Overview
             </h2>
+            <p class="text-gray-700 leading-relaxed mb-4">
+              This Refund Policy ("Policy") constitutes a binding agreement between you ("Client", "you", or "your") 
+              and BideshGomon ("Company", "we", "our", or "us") governing the refund process for services purchased 
+              through bideshgomon.com (the "Platform"). This Policy applies to all Services including but not limited to 
+              visa applications, job placement programs, educational consultancy, travel packages, and related offerings.
+            </p>
             <p class="text-gray-700 leading-relaxed">
-              This Refund Policy governs the refund process for services purchased through BideshGomon.com. 
-              We strive to provide transparent and fair refund terms for all our services including visa applications, 
-              job placements, educational consultancy, and travel packages.
+              We are committed to maintaining transparent, fair, and legally compliant refund procedures. 
+              All refund requests are evaluated on a case-by-case basis in accordance with the terms outlined herein, 
+              the nature of the Service purchased, and applicable consumer protection laws of Bangladesh.
             </p>
           </section>
 
@@ -334,10 +327,7 @@ const companyPhone = '+880 1712-345678'
               </Link>
             </div>
           </section>
-        </div>
-      </div>
-    </div>
-  </div>
+  </LegalLayout>
 </template>
 
 

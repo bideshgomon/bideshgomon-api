@@ -1,5 +1,6 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3'
+import LegalLayout from '@/Layouts/LegalLayout.vue';
 import { 
   ScaleIcon,
   DocumentCheckIcon,
@@ -14,30 +15,16 @@ const companyEmail = 'legal@bideshgomon.com'
 </script>
 
 <template>
-  <div>
-    <Head title="Terms of Service - BideshGomon" />
-
-    <div class="min-h-screen bg-gray-50 py-12">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="bg-white shadow rounded-lg overflow-hidden mb-6">
-          <div class="bg-gradient-to-r from-purple-600 to-purple-700 px-6 py-8">
-            <div class="flex items-center justify-center mb-4">
-              <ScaleIcon class="h-12 w-12 text-white" />
-            </div>
-            <h1 class="text-3xl font-bold text-white text-center">Terms of Service</h1>
-            <p class="text-purple-100 text-center mt-2">Last Updated: December 1, 2025</p>
-          </div>
-
-          <div class="px-6 py-4 bg-purple-50 border-b border-purple-100">
-            <p class="text-sm text-purple-800 text-center">
-              Please read these Terms carefully before using BideshGomon services. By using our platform, you agree to be bound by these Terms.
-            </p>
-          </div>
-        </div>
-
-        <!-- Content -->
-        <div class="bg-white shadow rounded-lg p-8 space-y-8">
+  <LegalLayout
+    title="Terms of Service"
+    :header-icon="ScaleIcon"
+    header-title="Terms of Service"
+    last-updated="December 1, 2025"
+    header-gradient="bg-gradient-to-r from-purple-600 to-purple-700"
+    :header-colors="{ text: 'text-white', subtext: 'text-purple-100' }"
+    summary-text="Please read these Terms carefully before using BideshGomon services. By using our platform, you agree to be bound by these Terms."
+    :summary-colors="{ bg: 'bg-purple-50', border: 'border-purple-100', text: 'text-purple-800' }"
+  >
           <!-- Introduction -->
           <section>
             <h2 class="text-2xl font-semibold text-gray-900 mb-4">1. Agreement to Terms</h2>
@@ -565,8 +552,5 @@ const companyEmail = 'legal@bideshgomon.com'
               </Link>
             </div>
           </section>
-        </div>
-      </div>
-    </div>
-  </div>
+  </LegalLayout>
 </template>

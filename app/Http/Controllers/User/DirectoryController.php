@@ -52,7 +52,7 @@ class DirectoryController extends Controller
         $sortOrder = $request->get('sort_order', 'asc');
         
         if ($sortBy === 'views') {
-            $query->orderBy('view_count', $sortOrder);
+            $query->orderBy('views_count', $sortOrder);
         } else {
             $query->orderBy($sortBy, $sortOrder);
         }
@@ -83,7 +83,7 @@ class DirectoryController extends Controller
             ->firstOrFail();
 
         // Increment view count
-        $directory->increment('view_count');
+        $directory->increment('views_count');
 
         // Parse opening hours if JSON
         $openingHours = $directory->opening_hours;

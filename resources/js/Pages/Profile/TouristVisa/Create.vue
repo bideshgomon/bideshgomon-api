@@ -25,18 +25,22 @@ const professions = [
 
 const requirements = ref(null);
 const loadingRequirements = ref(false);
+const requirementsError = ref(null);
 
 // Fetch requirements when both country and profession are selected
 watch([() => form.destination_country_id, () => form.profession], async ([countryId, profession]) => {
+    requirements.value = null; // Clear old requirements
+    requirementsError.value = null; // Clear old errors
     if (countryId && profession) {
         loadingRequirements.value = true;
         try {
             const response = await axios.get(route('profile.tourist-visa.requirements', countryId), {
                 params: { profession }
             });
-            requirements.value = response.data.requirements;
+            requirements.value = response.data.requirements || { mandatory_documents: [], optional_documents: [] };
         } catch (error) {
             console.error('Error fetching requirements:', error);
+            requirementsError.value = 'Could not load document requirements. Please try again or contact support.';
             requirements.value = null;
         } finally {
             loadingRequirements.value = false;
@@ -201,6 +205,15 @@ const submit = () => {
                             </div>
                         </div>
 
+                        <div v-else-if="requirementsError" class="border border-red-200 rounded-lg p-6 bg-red-50">
+                            <div class="flex items-center">
+                                <svg class="h-6 w-6 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span class="text-red-800">{{ requirementsError }}</span>
+                            </div>
+                        </div>
+
                         <div v-else-if="requirements" class="border border-indigo-200 rounded-lg bg-indigo-50">
                             <div class="p-4 border-b border-indigo-200 bg-indigo-100">
                                 <div class="flex items-start gap-2">
@@ -263,6 +276,12 @@ const submit = () => {
                                     </ul>
                                 </div>
 
+                                <div v-if="requirements.mandatory_documents.length === 0 && requirements.optional_documents.length === 0" class="bg-blue-100 border border-blue-200 rounded-lg p-3 text-center">
+                                    <p class="text-sm text-blue-800">
+                                        No specific document requirements are listed for this combination. Our team will advise you after submission.
+                                    </p>
+                                </div>
+
                                 <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                                     <div class="flex gap-2">
                                         <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -322,4 +341,3 @@ const submit = () => {
         </div>
     </AuthenticatedLayout>
 </template>
-

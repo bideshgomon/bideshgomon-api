@@ -1,6 +1,7 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3'
-import { 
+import LegalLayout from '@/Layouts/LegalLayout.vue';
+import {
   LockClosedIcon,
   ShieldCheckIcon,
   EyeIcon,
@@ -10,46 +11,45 @@ import {
 } from '@heroicons/vue/24/outline'
 
 const companyEmail = 'privacy@bideshgomon.com'
-const companyAddress = 'Dhaka, Bangladesh'
+const companyAddress = 'House 15, Road 7, Sector 3, Uttara, Dhaka-1230, Bangladesh'
+const dpoEmail = 'dpo@bideshgomon.com'
+const companyPhone = '+880 1712-345678'
 </script>
 
 <template>
-  <div>
-    <Head title="Privacy Policy - BideshGomon" />
-
-    <div class="min-h-screen bg-gray-50 py-12">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="bg-white shadow rounded-lg overflow-hidden mb-6">
-          <div class="bg-gradient-to-r from-green-600 to-green-700 px-6 py-8">
-            <div class="flex items-center justify-center mb-4">
-              <LockClosedIcon class="h-12 w-12 text-white" />
-            </div>
-            <h1 class="text-3xl font-bold text-white text-center">Privacy Policy</h1>
-            <p class="text-green-100 text-center mt-2">Last Updated: December 1, 2025</p>
-          </div>
-
-          <div class="px-6 py-4 bg-green-50 border-b border-green-100">
-            <p class="text-sm text-green-800 text-center">
-              Your privacy is critically important to us. This policy explains how we collect, use, and protect your personal data.
-            </p>
-          </div>
-        </div>
-
-        <!-- Content -->
-        <div class="bg-white shadow rounded-lg p-8 space-y-8">
+  <LegalLayout
+    title="Privacy Policy"
+    :header-icon="LockClosedIcon"
+    header-title="Privacy Policy"
+    last-updated="December 1, 2025"
+    header-gradient="bg-gradient-to-r from-green-600 to-green-700"
+    :header-colors="{ text: 'text-white', subtext: 'text-green-100' }"
+    summary-text="Your privacy is critically important to us. This policy explains how we collect, use, and protect your personal data."
+    :summary-colors="{ bg: 'bg-green-50', border: 'border-green-100', text: 'text-green-800' }"
+  >
           <!-- Introduction -->
           <section>
             <h2 class="text-2xl font-semibold text-gray-900 mb-4">Introduction</h2>
             <p class="text-gray-700 leading-relaxed mb-4">
-              BideshGomon ("we", "our", or "us") operates bideshgomon.com and provides visa application, job placement, 
-              education consultancy, and travel services to users in Bangladesh and internationally. This Privacy Policy 
-              governs the collection, use, disclosure, and protection of your personal information.
+              BideshGomon ("Company", "we", "our", or "us") operates bideshgomon.com (the "Platform") and provides 
+              comprehensive visa application, job placement, education consultancy, travel services, and related offerings 
+              (collectively, the "Services") to users in Bangladesh and internationally. This Privacy Policy constitutes 
+              a legally binding agreement governing the collection, processing, use, disclosure, storage, and protection 
+              of your personal information.
             </p>
-            <p class="text-gray-700 leading-relaxed">
-              By using our services, you agree to the collection and use of information in accordance with this policy. 
-              If you do not agree, please discontinue use of our platform.
+            <p class="text-gray-700 leading-relaxed mb-4">
+              We are committed to safeguarding your privacy rights in accordance with applicable data protection laws, 
+              including but not limited to the General Data Protection Regulation (GDPR), Digital Security Act of Bangladesh (2018), 
+              and international privacy standards. This policy applies to all users of our Platform, regardless of geographic location.
             </p>
+            <div class="bg-green-50 border-l-4 border-green-500 p-4">
+              <p class="text-green-900 font-semibold mb-2">🔒 Your Acceptance</p>
+              <p class="text-green-800">
+                By accessing, registering, or using our Services, you acknowledge that you have read, understood, 
+                and expressly consent to the collection and processing of your personal information as described herein. 
+                If you do not agree with any provision of this Privacy Policy, you must immediately discontinue use of the Platform.
+              </p>
+            </div>
           </section>
 
           <!-- Information We Collect -->
@@ -169,6 +169,51 @@ const companyAddress = 'Dhaka, Bangladesh'
                   <span><strong>Legal Compliance:</strong> Comply with visa regulations, tax laws, anti-fraud measures, court orders</span>
                 </li>
               </ul>
+            </div>
+          </section>
+
+          <!-- Legal Basis for Processing (GDPR Compliance) -->
+          <section>
+            <h2 class="text-2xl font-semibold text-gray-900 mb-4 flex items-center">
+              <ShieldCheckIcon class="h-6 w-6 mr-2 text-green-600" />
+              Legal Basis for Processing
+            </h2>
+            <p class="text-gray-700 leading-relaxed mb-4">
+              Under data protection laws, including GDPR, we process your personal data based on the following legal grounds:
+            </p>
+            
+            <div class="space-y-4">
+              <div class="border border-gray-200 rounded-lg p-5">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Contractual Necessity</h3>
+                <p class="text-gray-700">
+                  Processing is necessary to fulfill our contractual obligations when you purchase services 
+                  (visa applications, job placements, consultancy, travel bookings).
+                </p>
+              </div>
+
+              <div class="border border-gray-200 rounded-lg p-5">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Legitimate Interest</h3>
+                <p class="text-gray-700">
+                  We process data for business purposes such as fraud prevention, service improvement, 
+                  security monitoring, and analytics—always balanced against your privacy rights.
+                </p>
+              </div>
+
+              <div class="border border-gray-200 rounded-lg p-5">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Legal Obligation</h3>
+                <p class="text-gray-700">
+                  Compliance with visa regulations, tax laws, financial reporting requirements, 
+                  and valid legal requests from authorities.
+                </p>
+              </div>
+
+              <div class="border border-gray-200 rounded-lg p-5">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Consent</h3>
+                <p class="text-gray-700">
+                  For marketing communications, newsletters, and optional features—you can withdraw consent 
+                  anytime through account settings or by contacting us.
+                </p>
+              </div>
             </div>
           </section>
 
@@ -423,13 +468,23 @@ const companyAddress = 'Dhaka, Bangladesh'
           <section class="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-8">
             <h2 class="text-2xl font-semibold text-gray-900 mb-4 text-center">Contact Our Privacy Team</h2>
             <p class="text-gray-700 text-center mb-6">
-              Questions, concerns, or data requests? We're here to help.
+              For any privacy-related questions, data access requests, or concerns, please reach out to our dedicated privacy team.
             </p>
             
             <div class="space-y-3 max-w-md mx-auto">
               <div class="flex items-center justify-between bg-white rounded-lg p-4 border border-green-200">
-                <span class="font-semibold text-gray-900">Email:</span>
+                <span class="font-semibold text-gray-900">Privacy Officer Email:</span>
                 <a :href="`mailto:${companyEmail}`" class="text-green-600 hover:underline">{{ companyEmail }}</a>
+              </div>
+              
+              <div class="flex items-center justify-between bg-white rounded-lg p-4 border border-green-200">
+                <span class="font-semibold text-gray-900">Data Protection Officer:</span>
+                <a :href="`mailto:${dpoEmail}`" class="text-green-600 hover:underline">{{ dpoEmail }}</a>
+              </div>
+
+              <div class="flex items-center justify-between bg-white rounded-lg p-4 border border-green-200">
+                <span class="font-semibold text-gray-900">Phone Support:</span>
+                <a :href="`tel:${companyPhone}`" class="text-green-600 hover:underline">{{ companyPhone }}</a>
               </div>
               
               <div class="flex items-center justify-between bg-white rounded-lg p-4 border border-green-200">
@@ -466,8 +521,5 @@ const companyAddress = 'Dhaka, Bangladesh'
               </Link>
             </div>
           </section>
-        </div>
-      </div>
-    </div>
-  </div>
+  </LegalLayout>
 </template>

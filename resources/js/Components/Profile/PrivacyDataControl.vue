@@ -48,10 +48,13 @@ const submit = () => {
 
 const downloadData = () => {
     downloading.value = true;
-    window.location.href = route('profile.download-data');
-    setTimeout(() => {
-        downloading.value = false;
-    }, 3000);
+    try {
+        window.location.href = route('profile.download-data');
+    } finally {
+        setTimeout(() => {
+            downloading.value = false;
+        }, 3000); // Reset button state after 3s for UX
+    }
 };
 
 const getVisibilityInfo = (value) => {

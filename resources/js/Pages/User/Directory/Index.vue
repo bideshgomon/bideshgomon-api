@@ -12,30 +12,30 @@
                 <div class="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl"></div>
             </div>
             
-            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
                 <div class="text-center max-w-4xl mx-auto">
-                    <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-medium mb-4">
-                        <BuildingOffice2Icon class="h-4 w-4" />
+                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6">
+                        <BuildingOffice2Icon class="h-4 w-4 sm:h-5 sm:w-5" />
                         <span>{{ directories.total || 0 }}+ Verified Organizations</span>
                     </div>
                     
-                    <h1 class="text-3xl md:text-4xl font-bold mb-3 leading-tight">
+                    <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 leading-tight">
                         Global Directory
                     </h1>
-                    <p class="text-base md:text-lg text-blue-100 mb-6 max-w-2xl mx-auto">
+                    <p class="text-sm sm:text-base md:text-lg text-blue-100 mb-6 sm:mb-8 max-w-2xl mx-auto px-4">
                         Find embassies, airlines, training centers, and essential services worldwide
                     </p>
                     
                     <!-- Enhanced Search Bar -->
-                    <div class="max-w-2xl mx-auto">
-                        <div class="relative flex items-center bg-white rounded-xl shadow-lg overflow-hidden">
-                            <MagnifyingGlassIcon class="absolute left-4 h-5 w-5 text-gray-400" />
+                    <div class="max-w-2xl mx-auto px-2 sm:px-0">
+                        <div class="relative flex items-center bg-white rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl overflow-hidden">
+                            <MagnifyingGlassIcon class="absolute left-4 sm:left-5 h-5 w-5 sm:h-6 sm:w-6 text-gray-400" />
                             <input
                                 v-model="searchQuery"
                                 @input="debouncedSearch"
                                 type="text"
                                 placeholder="Search by name, location, or service..."
-                                class="w-full pl-12 pr-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none bg-transparent"
+                                class="w-full pl-12 sm:pl-14 pr-12 sm:pr-14 py-3 sm:py-4 text-sm sm:text-base text-gray-900 placeholder-gray-400 focus:outline-none bg-transparent"
                             />
                             <button 
                                 v-if="searchQuery"
@@ -50,20 +50,20 @@
                     </div>
 
                     <!-- Quick Stats -->
-                    <div class="flex items-center justify-center gap-8 mt-6">
+                    <div class="flex items-center justify-center gap-4 sm:gap-6 lg:gap-8 mt-6 sm:mt-8">
                         <div class="text-center">
-                            <div class="text-xl font-bold">{{ categories.length }}+</div>
-                            <div class="text-xs text-blue-200">Categories</div>
+                            <div class="text-lg sm:text-xl lg:text-2xl font-bold">{{ categories.length }}+</div>
+                            <div class="text-xs sm:text-sm text-blue-200">Categories</div>
                         </div>
-                        <div class="h-8 w-px bg-white/20"></div>
+                        <div class="h-8 sm:h-10 w-px bg-white/20"></div>
                         <div class="text-center">
-                            <div class="text-xl font-bold">{{ directories.total || 0 }}</div>
-                            <div class="text-xs text-blue-200">Organizations</div>
+                            <div class="text-lg sm:text-xl lg:text-2xl font-bold">{{ directories.total || 0 }}</div>
+                            <div class="text-xs sm:text-sm text-blue-200">Organizations</div>
                         </div>
-                        <div class="h-8 w-px bg-white/20"></div>
+                        <div class="h-8 sm:h-10 w-px bg-white/20"></div>
                         <div class="text-center">
-                            <div class="text-xl font-bold">50+</div>
-                            <div class="text-xs text-blue-200">Countries</div>
+                            <div class="text-lg sm:text-xl lg:text-2xl font-bold">50+</div>
+                            <div class="text-xs sm:text-sm text-blue-200">Countries</div>
                         </div>
                     </div>
                 </div>
@@ -71,11 +71,34 @@
         </div>
 
         <!-- Main Content -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                <!-- Enhanced Sidebar Filters -->
-                <div class="lg:col-span-1">
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+            <!-- Mobile Category Pills (visible on mobile/tablet only) -->
+            <div class="lg:hidden mb-6 -mx-4 px-4 overflow-x-auto scrollbar-hide">
+                <div class="flex gap-2 pb-2">
+                    <button
+                        @click="filterByCategory(null)"
+                        class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all"
+                        :class="!selectedCategory ? 'bg-blue-600 text-white shadow-lg' : 'bg-white text-gray-700 border border-gray-200'"
+                    >
+                        All Categories
+                    </button>
+                    <button
+                        v-for="category in categories"
+                        :key="category.id"
+                        @click="filterByCategory(category.slug)"
+                        class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all whitespace-nowrap"
+                        :class="selectedCategory === category.slug ? 'text-white shadow-lg' : 'bg-white text-gray-700 border border-gray-200'"
+                        :style="selectedCategory === category.slug ? { backgroundColor: categoryColors[category.slug]?.bg || '#6B7280' } : {}"
+                    >
+                        {{ category.name }}
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+                <!-- Enhanced Sidebar Filters (desktop only) -->
+                <div class="lg:col-span-1 hidden lg:block">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto scrollbar-hide">
                         <div class="flex items-center justify-between mb-6">
                             <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
                                 <svg class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -240,12 +263,12 @@
                     </div>
 
                     <!-- Modern Directory Cards - Grid View -->
-                    <div v-if="directories.data.length > 0 && viewMode === 'grid'" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <div v-if="directories.data.length > 0 && viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
                         <Link
                             v-for="directory in directories.data"
                             :key="directory.id"
                             :href="route('directory.show', directory.slug)"
-                            class="group bg-white rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200 transform hover:-translate-y-1 flex flex-col h-[380px]"
+                            class="group bg-white rounded-xl sm:rounded-2xl shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200 transform hover:-translate-y-1 active:scale-95 flex flex-col h-[360px] sm:h-[380px]"
                         >
                             <!-- Image with Overlay -->
                             <div class="relative h-48 overflow-hidden flex-shrink-0">
@@ -316,7 +339,7 @@
                             <!-- Content -->
                             <div class="p-5 flex flex-col flex-grow">
                                 <!-- Name -->
-                                <h3 class="text-base font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight h-[48px] overflow-hidden">
+                                <h3 class="text-base font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight min-h-[48px]">
                                     {{ directory.name }}
                                 </h3>
 
@@ -338,13 +361,12 @@
                                 <!-- Footer -->
                                 <div class="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
                                     <div class="flex items-center gap-3">
-                                        <!-- Category Badge -->
+                                        <!-- Category Badge - Solid Color to Match Banner -->
                                         <div v-if="directory.category">
                                             <span
-                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap"
+                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap text-white shadow-sm"
                                                 :style="{ 
-                                                    backgroundColor: (categoryColors[directory.category.slug]?.bg || '#6B7280') + '15', 
-                                                    color: categoryColors[directory.category.slug]?.bg || '#6B7280'
+                                                    backgroundColor: categoryColors[directory.category.slug]?.bg || '#6B7280'
                                                 }"
                                             >
                                                 <span class="leading-none">{{ directory.category.name }}</span>
@@ -353,7 +375,7 @@
                                         <!-- View Count -->
                                         <div class="flex items-center gap-1.5 text-xs text-gray-500">
                                             <EyeIcon class="h-4 w-4" />
-                                            <span class="font-medium">{{ formatNumber(directory.view_count || 0) }}</span>
+                                            <span class="font-medium">{{ formatNumber(directory.views_count || 0) }}</span>
                                         </div>
                                     </div>
                                     <span class="inline-flex items-center gap-1.5 text-blue-600 text-sm font-semibold group-hover:gap-2 transition-all">
@@ -368,15 +390,15 @@
                     </div>
 
                     <!-- List View -->
-                    <div v-if="directories.data.length > 0 && viewMode === 'list'" class="space-y-4">
+                    <div v-if="directories.data.length > 0 && viewMode === 'list'" class="space-y-4 sm:space-y-5">
                         <Link
                             v-for="directory in directories.data"
                             :key="directory.id"
                             :href="route('directory.show', directory.slug)"
-                            class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200 flex"
+                            class="group bg-white rounded-xl sm:rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-blue-200 flex flex-col sm:flex-row active:scale-[0.99]"
                         >
                             <!-- Thumbnail -->
-                            <div class="relative w-48 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200">
+                            <div class="relative w-full sm:w-48 h-40 sm:h-auto flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200">
                                 <img
                                     v-if="directory.featured_image"
                                     :src="directory.featured_image"
@@ -389,7 +411,7 @@
                             </div>
 
                             <!-- Content -->
-                            <div class="flex-1 p-6 flex flex-col">
+                            <div class="flex-1 p-4 sm:p-6 flex flex-col">
                                 <div class="flex items-start justify-between mb-3">
                                     <div class="flex-1">
                                         <div class="flex items-center gap-3 mb-2">
@@ -422,7 +444,7 @@
                                     </div>
                                     <div class="flex items-center gap-1 ml-auto">
                                         <EyeIcon class="h-4 w-4 text-gray-400" />
-                                        <span>{{ formatNumber(directory.view_count || 0) }}</span>
+                                        <span>{{ formatNumber(directory.views_count || 0) }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -430,7 +452,7 @@
                     </div>
 
                     <!-- Enhanced Empty State -->
-                    <div v-else class="text-center py-20">
+                    <div v-if="directories.data.length === 0" class="text-center py-20">
                         <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-6">
                             <BuildingOffice2Icon class="h-10 w-10 text-gray-400" />
                         </div>

@@ -17,7 +17,7 @@ const getMenuUrl = (item) => {
     try {
       return route(item.route_name)
     } catch (error) {
-      console.warn(`Route "${item.route_name}" not found for menu item "${item.label}"`)
+      console.warn(`Route "${item.route_name}" not found for menu item "${item.name}"`)
       return '#'
     }
   }
@@ -71,7 +71,7 @@ const getMenuUrl = (item) => {
                 :target="item.target || '_self'"
                 class="text-sm hover:text-white transition-colors"
               >
-                {{ item.label }}
+                {{ item.name }}
               </Link>
             </li>
           </ul>
@@ -88,7 +88,7 @@ const getMenuUrl = (item) => {
                 :target="item.target || '_self'"
                 class="text-sm hover:text-white transition-colors"
               >
-                {{ item.label }}
+                {{ item.name }}
               </Link>
             </li>
           </ul>
@@ -153,7 +153,7 @@ const getMenuUrl = (item) => {
                 :target="item.target || '_self'"
                 class="text-gray-400 hover:text-white transition-colors"
               >
-                {{ item.label }}
+                {{ item.name }}
               </Link>
             </template>
           </div>

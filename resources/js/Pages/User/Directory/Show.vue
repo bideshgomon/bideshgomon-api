@@ -7,9 +7,9 @@
     <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
         <Header />
         
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
             <!-- Enhanced Breadcrumb -->
-            <nav class="flex items-center gap-2 text-sm mb-8 overflow-x-auto">
+            <nav class="flex items-center gap-2 text-xs sm:text-sm mb-6 sm:mb-8 overflow-x-auto scrollbar-hide pb-2">
                 <Link 
                     :href="route('directory.index')" 
                     class="flex items-center gap-1 px-3 py-1.5 bg-white rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all group border border-gray-200"
@@ -35,7 +35,7 @@
                 <span class="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg font-semibold border border-blue-200">{{ directory.name }}</span>
             </nav>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
                 <!-- Main Content -->
                 <div class="lg:col-span-2 space-y-8">
                     <!-- Hero Image with Enhanced Gallery -->
@@ -52,16 +52,17 @@
                             </div>
                             
                             <!-- Overlay Badges -->
-                            <div class="absolute top-4 left-4 flex items-center gap-2">
+                            <div class="absolute top-3 sm:top-4 left-3 sm:left-4 flex flex-col gap-2">
                                 <span
                                     v-if="directory.category"
-                                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold backdrop-blur-sm shadow-lg"
-                                    :style="{ backgroundColor: directory.category.color + 'E6', color: 'white' }"
+                                    class="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold bg-white/95 backdrop-blur-sm shadow-lg text-gray-900"
                                 >
-                                    <span v-if="directory.category.icon" v-html="directory.category.icon" class="w-4 h-4"></span>
+                                    <svg class="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                    </svg>
                                     {{ directory.category.name }}
                                 </span>
-                                <span v-if="directory.is_verified" class="inline-flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-xl text-sm font-bold backdrop-blur-sm shadow-lg">
+                                <span v-if="directory.is_verified" class="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-green-500 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold backdrop-blur-sm shadow-lg">
                                     <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                                     </svg>
@@ -83,18 +84,18 @@
                     </div>
 
                     <!-- Header Section -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-                        <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ directory.name }}</h1>
+                    <div class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6 lg:p-8">
+                        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">{{ directory.name }}</h1>
 
                         <!-- Meta Info Bar -->
-                        <div class="flex items-center flex-wrap gap-6 pb-6 border-b border-gray-200">
+                        <div class="flex items-center flex-wrap gap-4 sm:gap-6 pb-5 sm:pb-6 border-b border-gray-200">
                             <div class="flex items-center gap-2 text-gray-600">
                                 <div class="p-2 bg-blue-50 rounded-lg">
                                     <EyeIcon class="h-5 w-5 text-blue-600" />
                                 </div>
                                 <div>
                                     <p class="text-xs text-gray-500">Views</p>
-                                    <p class="font-semibold">{{ formatNumber(directory.view_count || 0) }}</p>
+                                    <p class="font-semibold">{{ formatNumber(directory.views_count || 0) }}</p>
                                 </div>
                             </div>
                             <div v-if="directory.country" class="flex items-center gap-2 text-gray-600">
@@ -132,16 +133,16 @@
                     </div>
 
                     <!-- Services -->
-                    <div v-if="directory.services && directory.services.length > 0" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                    <div v-if="directory.services && directory.services.length > 0" class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6 lg:p-8">
                         <div class="flex items-center gap-3 mb-6">
                             <div class="p-2 bg-purple-50 rounded-lg">
                                 <svg class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                                 </svg>
                             </div>
-                            <h2 class="text-2xl font-bold text-gray-900">Services Offered</h2>
+                            <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Services Offered</h2>
                         </div>
-                        <div class="grid grid-cols-2 gap-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div
                                 v-for="(service, index) in directory.services"
                                 :key="index"
@@ -156,14 +157,14 @@
                     </div>
 
                     <!-- Opening Hours -->
-                    <div v-if="directory.opening_hours" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                    <div v-if="directory.opening_hours" class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6 lg:p-8">
                         <div class="flex items-center gap-3 mb-6">
                             <div class="p-2 bg-green-50 rounded-lg">
                                 <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
-                            <h2 class="text-2xl font-bold text-gray-900">Opening Hours</h2>
+                            <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Opening Hours</h2>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div
@@ -178,12 +179,12 @@
                     </div>
 
                     <!-- Map -->
-                    <div v-if="directory.gps_latitude && directory.gps_longitude" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                    <div v-if="directory.gps_latitude && directory.gps_longitude" class="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6 lg:p-8">
                         <div class="flex items-center gap-3 mb-6">
                             <div class="p-2 bg-red-50 rounded-lg">
                                 <MapPinIcon class="h-6 w-6 text-red-600" />
                             </div>
-                            <h2 class="text-2xl font-bold text-gray-900">Location Map</h2>
+                            <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Location Map</h2>
                         </div>
                         <div class="bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl overflow-hidden" style="height: 450px;">
                             <!-- Replace with actual map integration (Google Maps, Mapbox, etc.) -->
@@ -208,16 +209,16 @@
                 </div>
 
                 <!-- Enhanced Sidebar -->
-                <div class="lg:col-span-1 space-y-6">
+                <div class="lg:col-span-1 space-y-6 lg:space-y-8">
                     <!-- Contact Card -->
-                    <div class="bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-4">
+                    <div class="bg-gradient-to-br from-white to-gray-50 rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6 sticky top-4">
                         <div class="flex items-center gap-3 mb-6 pb-6 border-b border-gray-200">
                             <div class="p-3 bg-blue-50 rounded-xl">
                                 <svg class="h-7 w-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                 </svg>
                             </div>
-                            <h3 class="text-xl font-bold text-gray-900">Contact Information</h3>
+                            <h3 class="text-lg sm:text-xl font-bold text-gray-900">Contact Information</h3>
                         </div>
                         
                         <div class="space-y-5">

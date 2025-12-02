@@ -77,11 +77,19 @@ Route::get('/cancelled/payment', function () {
 })->name('cancelled.payment');
 
 Route::get('/', function () {
+    // Get latest blog posts for homepage
+    $latestPosts = \App\Models\BlogPost::with(['category', 'author'])
+        ->published()
+        ->latest('published_at')
+        ->take(3)
+        ->get();
+
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
+        'latestPosts' => $latestPosts,
     ]);
 })->name('welcome');
 

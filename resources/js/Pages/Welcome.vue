@@ -29,6 +29,8 @@ import {
     LightBulbIcon,
     RocketLaunchIcon,
     TrophyIcon,
+    NewspaperIcon,
+    CalendarIcon,
 } from '@heroicons/vue/24/outline';
 import {
     CheckBadgeIcon,
@@ -40,6 +42,7 @@ const props = defineProps({
     canRegister: Boolean,
     laravelVersion: String,
     phpVersion: String,
+    latestPosts: Array,
 });
 
 const page = usePage();
@@ -367,6 +370,77 @@ const testimonials = [
                     </RhythmicCard>
                 </div>
             </div>
+        </AnimatedSection>
+
+        <!-- Blog Section -->
+        <AnimatedSection
+            v-if="latestPosts && latestPosts.length > 0"
+            id="blog"
+            title="Latest Insights"
+            subtitle="Stay updated with guides, tips, and news for your journey abroad."
+            badge="From Our Blog"
+            :badgeIcon="NewspaperIcon"
+            variant="sky"
+            :animated="true"
+        >
+            <div class="grid md:grid-cols-3 gap-rhythm-lg">
+                <Link
+                    v-for="post in latestPosts"
+                    :key="post.id"
+                    :href="route('blog.show', post.slug)"
+                    class="group"
+                >
+                    <RhythmicCard
+                        :variant="post.category?.slug === 'visa-guides' ? 'ocean' : post.category?.slug === 'study-abroad' ? 'growth' : post.category?.slug === 'travel-tips' ? 'sunrise' : 'sky'"
+                        class="h-full hover:shadow-rhythm-xl transition-all duration-400 hover:-translate-y-1"
+                    >
+                        <div v-if="post.featured_image" class="mb-rhythm-md -mx-6 -mt-6 overflow-hidden rounded-t-rhythm-xl">
+                            <img
+                                :src="post.featured_image"
+                                :alt="post.title"
+                                class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                        </div>
+                        <div v-if="post.category" class="mb-rhythm-sm">
+                            <StatusBadge :status="'active'" size="sm" class="inline-block">
+                                {{ post.category.name }}
+                            </StatusBadge>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-rhythm-sm group-hover:text-ocean-600 transition-colors line-clamp-2">
+                            {{ post.title }}
+                        </h3>
+                        <p class="text-sm text-gray-600 mb-rhythm-md line-clamp-3">
+                            {{ post.excerpt }}
+                        </p>
+                        <template #footer>
+                            <div class="flex items-center justify-between text-xs text-gray-500">
+                                <div class="flex items-center gap-1">
+                                    <CalendarIcon class="h-4 w-4" />
+                                    <span>{{ new Date(post.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) }}</span>
+                                </div>
+                                <div class="text-ocean-600 font-medium group-hover:translate-x-1 transition-transform">
+                                    Read More →
+                                </div>
+                            </div>
+                        </template>
+                    </RhythmicCard>
+                </Link>
+            </div>
+            <template #footer>
+                <div class="text-center mt-rhythm-xl">
+                    <Link :href="route('blog.index')">
+                        <FlowButton variant="outline" size="lg">
+                            <template #iconBefore>
+                                <NewspaperIcon class="h-5 w-5" />
+                            </template>
+                            View All Articles
+                            <template #iconAfter>
+                                <ArrowRightIcon class="h-5 w-5" />
+                            </template>
+                        </FlowButton>
+                    </Link>
+                </div>
+            </template>
         </AnimatedSection>
 
         <!-- Testimonials Section -->
